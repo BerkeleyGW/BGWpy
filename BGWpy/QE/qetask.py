@@ -64,7 +64,8 @@ class QETask(MPITask):
 
     def check_pseudos(self):
         for pseudo in self.pseudos:
-            fname = os.path.join(self.dirname, self.pseudo_dir, pseudo)
+            fname = os.path.relpath(
+                    os.path.join(self.dirname, self.pseudo_dir, pseudo))
             if not os.path.exists(fname):
                 warnings.warn('Pseudopotential not found:\n{}'.format(fname))
 
