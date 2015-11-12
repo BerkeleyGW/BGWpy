@@ -37,8 +37,6 @@ class SigmaTask(BGWTask):
             Q-point used to treat the Gamma point.
         nbnd : int
             Number of bands included in the calculation.
-        nbnd_occ : int
-            Number of occupied bands.
         ecuteps : float
             Energy cutoff for the dielectric function.
         ecutsigx : float
@@ -57,6 +55,9 @@ class SigmaTask(BGWTask):
             Path to the eps0mat file produced by epsilon.
         epsmat_fname : str
             Path to the epsmat file produced by epsilon.
+        nbnd_occ : int, optional
+            Number of occupied bands. This feature is deprecated in BerkeleyGW
+            but is kept here for backward compatibility.
         extra_lines : list, optional
             Any other lines that should appear in the input file.
         extra_variables : dict, optional
@@ -79,17 +80,22 @@ class SigmaTask(BGWTask):
         ngkpt = kwargs['ngkpt']
         kpts_ush, wtks_ush = get_kpt_grid(structure, ngkpt)
 
+        extra_lines = kwargs.get('extra_lines',[])
+        extra_variables = kwargs.get('extra_variables',{})
+
+        if 'nbnd_occ' in kwargs:
+            extra_variables['nbnd_occ'] = kwargs.pop('nbnd_occ')
+
         # Input file
         self.input = SigmaInput(
             kwargs['ecuteps'],
             kwargs['ecutsigx'],
             kwargs['nbnd'],
-            kwargs['nbnd_occ'],
             kwargs['ibnd_min'],
             kwargs['ibnd_max'],
             kpts_ush,
-            *kwargs.get('extra_lines',[]),
-            **kwargs.get('extra_variables',{}))
+            *extra_lines,
+            **extra_variables)
 
         self.input.fname = self._input_fname
 

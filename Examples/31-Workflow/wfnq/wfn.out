@@ -1,5 +1,5 @@
 
-     Program PWSCF v.5.1.2 starts on 12Nov2015 at 11:30:12 
+     Program PWSCF v.5.1.2 starts on 12Nov2015 at 13:15:30 
 
      This program is part of the open-source Quantum ESPRESSO suite
      for quantum simulation of materials; please cite
@@ -211,9 +211,9 @@
      cegterg      :      0.71s CPU      0.72s WALL (      21 calls)
 
      Called by *egterg:
-     h_psi        :      0.17s CPU      0.18s WALL (     379 calls)
+     h_psi        :      0.18s CPU      0.18s WALL (     379 calls)
      g_psi        :      0.00s CPU      0.00s WALL (     348 calls)
-     cdiaghg      :      0.42s CPU      0.42s WALL (     358 calls)
+     cdiaghg      :      0.41s CPU      0.41s WALL (     358 calls)
 
      Called by h_psi:
      add_vuspsi   :      0.02s CPU      0.02s WALL (     379 calls)
@@ -221,7 +221,7 @@
      General routines
      calbec       :      0.02s CPU      0.02s WALL (     379 calls)
      fft          :      0.00s CPU      0.00s WALL (      10 calls)
-     fftw         :      0.11s CPU      0.11s WALL (    6602 calls)
+     fftw         :      0.11s CPU      0.12s WALL (    6602 calls)
      davcio       :      0.00s CPU      0.00s WALL (      10 calls)
 
      Parallel routines
@@ -230,7 +230,7 @@
      PWSCF        :     0.87s CPU         0.90s WALL
 
 
-   This run was terminated on:  11:30:13  12Nov2015            
+   This run was terminated on:  13:15:31  12Nov2015            
 
 =------------------------------------------------------------------------------=
    JOB DONE.

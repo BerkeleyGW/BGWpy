@@ -1,7 +1,7 @@
 
  BerkeleyGW tag 1.1 beta2 revision 6543
 
- Sigma  Complex version  Run on  12-Nov-2015  at  11:30:43 -0800
+ Sigma  Complex version  Run on  12-Nov-2015  at  13:16:01 -0800
 
  Running MPI version (parallel)
 
@@ -21,7 +21,7 @@
 
  Reading exchange-correlation matrix elements from vxc.dat file
 
- Memory available:    3230.6 MB per PE
+ Memory available:    3175.9 MB per PE
  Memory required for execution:    1.6 MB per PE
  Memory required for vcoul:  114.4 MB per PE
 

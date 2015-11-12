@@ -1,5 +1,5 @@
 
-     Program PWSCF v.5.1.2 starts on 12Nov2015 at 11:29:45 
+     Program PWSCF v.5.1.2 starts on 12Nov2015 at 13:15: 2 
 
      This program is part of the open-source Quantum ESPRESSO suite
      for quantum simulation of materials; please cite
@@ -191,7 +191,7 @@
      Davidson diagonalization with overlap
      ethr =  8.44E-09,  avg # of iterations =  3.0
 
-     total cpu time spent up to now is        0.2 secs
+     total cpu time spent up to now is        0.1 secs
 
      total energy              =     -16.93923428 Ry
      Harris-Foulkes estimate   =     -16.93923454 Ry
@@ -288,7 +288,7 @@
 
      Writing output data file GaAs.save
 
-     init_run     :      0.06s CPU      0.06s WALL (       1 calls)
+     init_run     :      0.05s CPU      0.06s WALL (       1 calls)
      electrons    :      0.09s CPU      0.10s WALL (       1 calls)
 
      Called by init_run:
@@ -296,7 +296,7 @@
      potinit      :      0.00s CPU      0.00s WALL (       1 calls)
 
      Called by electrons:
-     c_bands      :      0.06s CPU      0.07s WALL (      14 calls)
+     c_bands      :      0.06s CPU      0.06s WALL (      14 calls)
      sum_band     :      0.01s CPU      0.01s WALL (      14 calls)
      v_of_rho     :      0.02s CPU      0.02s WALL (      14 calls)
      mix_rho      :      0.00s CPU      0.00s WALL (      14 calls)
@@ -316,16 +316,16 @@
      General routines
      calbec       :      0.01s CPU      0.01s WALL (     191 calls)
      fft          :      0.00s CPU      0.00s WALL (     155 calls)
-     fftw         :      0.03s CPU      0.04s WALL (    1854 calls)
+     fftw         :      0.03s CPU      0.03s WALL (    1854 calls)
      davcio       :      0.00s CPU      0.00s WALL (       4 calls)
 
      Parallel routines
      fft_scatter  :      0.00s CPU      0.00s WALL (    2009 calls)
 
-     PWSCF        :     0.21s CPU         0.22s WALL
+     PWSCF        :     0.20s CPU         0.22s WALL
 
 
-   This run was terminated on:  11:29:45  12Nov2015            
+   This run was terminated on:  13:15: 3  12Nov2015            
 
 =------------------------------------------------------------------------------=
    JOB DONE.

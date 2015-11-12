@@ -862,10 +862,14 @@ p357
 asS'sigma_extra_variables'
 p358
 (dp359
-sS'nbnd_occ'
+S'nbnd_occ'
 p360
+I4
+ssg360
 I4
 sS'extra_variables'
 p361
 (dp362
-s.
+g360
+I4
+ss.

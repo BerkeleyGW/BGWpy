@@ -6,13 +6,18 @@ from ..core import BasicInputFile
 
 class EpsilonInput(BasicInputFile):
 
-    def __init__(self, ecuteps, nbnd, nbnd_occ, q0, qpts, *keywords, **variables):
+    def __init__(self, ecuteps, nbnd, q0, qpts, *keywords, **variables):
 
         all_variables = OrderedDict([
             ('epsilon_cutoff' , ecuteps),
             ('number_bands' , nbnd),
-            ('band_occupation' , '{}*1 {}*0'.format(nbnd_occ, nbnd-nbnd_occ)),
             ])
+
+        # band_occupation is deprecated, so I keep it as an optional variable
+        nbnd_occ = variables.pop('nbnd_occ', None)
+        if nbnd_occ:
+            all_variables['band_occupation'] = '{}*1 {}*0'.format(
+                                                nbnd_occ, nbnd-nbnd_occ)
 
         all_variables.update(variables)
 
@@ -39,17 +44,22 @@ class EpsilonInput(BasicInputFile):
 
 class SigmaInput(BasicInputFile):
 
-    def __init__(self, ecuteps, ecutsigx, nbnd, nbnd_occ, ibnd_min, ibnd_max, kpts, 
+    def __init__(self, ecuteps, ecutsigx, nbnd, ibnd_min, ibnd_max, kpts, 
                  *keywords, **variables):
 
         all_variables = OrderedDict([
             ('screened_coulomb_cutoff' , ecuteps),
             ('bare_coulomb_cutoff' , ecutsigx),
             ('number_bands' , nbnd),
-            ('band_occupation' , '{}*1 {}*0'.format(nbnd_occ, nbnd-nbnd_occ)),
             ('band_index_min' , ibnd_min),
             ('band_index_max' , ibnd_max),
             ])
+
+        # band_occupation is deprecated, so I keep it as an optional variable
+        nbnd_occ = variables.pop('nbnd_occ', None)
+        if nbnd_occ:
+            all_variables['band_occupation'] = '{}*1 {}*0'.format(
+                                                nbnd_occ, nbnd-nbnd_occ)
 
         all_variables.update(variables)
 

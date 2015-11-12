@@ -1,7 +1,7 @@
 
  BerkeleyGW tag 1.1 beta2 revision 6543
 
- Epsilon  Complex version  Run on  12-Nov-2015  at  11:30:43 -0800
+ Epsilon  Complex version  Run on  12-Nov-2015  at  13:16:01 -0800
 
  Running MPI version (parallel)
 
@@ -19,7 +19,7 @@
  Number of conduction bands per processor: 2
  Number of valence bands per processor: 4
 
- Memory available:    3234.5 MB per PE
+ Memory available:    3178.9 MB per PE
  Memory required for execution:    2.0 MB per PE
  Memory required for vcoul:    0.0 MB per PE
 

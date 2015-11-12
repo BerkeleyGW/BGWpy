@@ -23,11 +23,10 @@ class BasicFile(Writable):
 
 class BasicInputFile(Writable):
 
-    def __init__(self, variables={}, keywords=[], extra_lines=[]):
+    def __init__(self, variables={}, keywords=[]):
 
         self.variables = OrderedDict(variables)
         self.keywords = list(keywords)
-        self.extra_lines = list(extra_lines)
 
     def __str__(self):
 
@@ -36,7 +35,6 @@ class BasicInputFile(Writable):
             lines.append('{} {}'.format(key, val))
 
         lines.extend(self.keywords)
-        lines.extend(self.extra_lines)
 
         return '\n'.join(lines) + '\n'
 
@@ -54,10 +52,6 @@ class BasicInputFile(Writable):
         elif key in self.keywords:
             i = self.keywords.index(key)
             del self.keywords[i]
-
-        elif key in self.extra_lines:
-            i = self.extra_lines.index(key)
-            del self.extra_lines[i]
 
         else:
             raise KeyError(key)

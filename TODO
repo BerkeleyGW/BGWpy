@@ -15,7 +15,8 @@ TODO
 
 * Tests
     - Examples directory for the user       DONE
-    - Automated testsuite                   x
+    - Automated testsuite                   DONE
+      (through the run_example.sh script)
 
 * Implementation
     - Prune the sources.                    DONE
@@ -25,9 +26,9 @@ TODO
     - Use PWFLAG in QETask                  DONE
     - Task.report                           DONE
     - Check pseudos                         DONE
-    - Remove nbnd_occ from inputs.
+    - Remove nbnd_occ from inputs.          DONE
 
 * Distribution
-    - Set up Git
+    - Set up Git                            DONE
     - Merge to BGW trunk
 
