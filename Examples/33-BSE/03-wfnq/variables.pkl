@@ -1,0 +1,921 @@
+(dp0
+S'nbnd_cond_fi'
+p1
+I4
+sS'absorption_extra_variables'
+p2
+(dp3
+S'energy_resolution'
+p4
+F0.15
+ssS'mpirun'
+p5
+g5
+sS'qshift'
+p6
+(lp7
+F0.001
+aF0.0
+aF0.0
+asS'prefix'
+p8
+S'GaAs'
+p9
+sS'ecuteps'
+p10
+F10.0
+sS'kernel_extra_lines'
+p11
+(lp12
+S'use_symmetries_coarse_grid'
+p13
+aS'screening_semiconductor'
+p14
+asS'ibnd_max'
+p15
+I8
+sS'ecutwfc'
+p16
+F10.0
+sS'absorption_extra_lines'
+p17
+(lp18
+g13
+aS'no_symmetries_fine_grid'
+p19
+aS'no_symmetries_shifted_grid'
+p20
+ag14
+aS'use_velocity'
+p21
+aS'gaussian_broadening'
+p22
+aS'eqp_co_corrections'
+p23
+asS'ngkpt'
+p24
+(lp25
+I2
+aI2
+aI2
+asS'kshift'
+p26
+(lp27
+F0.5
+aF0.5
+aF0.5
+asS'ngkpt_fine'
+p28
+(lp29
+I4
+aI4
+aI4
+asS'nbnd_val_fi'
+p30
+I4
+sS'pseudos'
+p31
+(lp32
+S'31-Ga.PBE.UPF'
+p33
+aS'33-As.PBE.UPF'
+p34
+asS'nproc_per_node'
+p35
+I2
+sS'pseudo_dir'
+p36
+S'Pseudos'
+p37
+sS'wfn_fname'
+p38
+S'wfnq.cplx'
+p39
+sS'ecutsigx'
+p40
+F15.0
+sS'nbnd_cond_co'
+p41
+I4
+sS'nproc'
+p42
+I2
+sS'nbnd_cond'
+p43
+I4
+sS'nbnd_epsilon'
+p44
+I8
+sS'kshift_fine'
+p45
+(lp46
+F0.0
+aF0.0
+aF0.0
+asS'nproc_flag'
+p47
+S'-n'
+p48
+sS'structure'
+p49
+ccopy_reg
+_reconstructor
+p50
+(cpymatgen.core.structure
+Structure
+p51
+c__builtin__
+object
+p52
+Ntp53
+Rp54
+(dp55
+S'_sites'
+p56
+(lp57
+g50
+(cpymatgen.core.sites
+PeriodicSite
+p58
+g52
+Ntp59
+Rp60
+(dp61
+S'_fcoords'
+p62
+cnumpy.core.multiarray
+_reconstruct
+p63
+(cnumpy
+ndarray
+p64
+(I0
+tp65
+S'b'
+p66
+tp67
+Rp68
+(I1
+(I3
+tp69
+cnumpy
+dtype
+p70
+(S'f8'
+p71
+I0
+I1
+tp72
+Rp73
+(I3
+S'<'
+p74
+NNNI-1
+I-1
+I0
+tp75
+bI00
+S'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+p76
+tp77
+bsS'_species'
+p78
+g50
+(cpymatgen.core.composition
+Composition
+p79
+g52
+Ntp80
+Rp81
+(dp82
+S'_elmap'
+p83
+(dp84
+g50
+(cpymatgen.core.periodic_table
+Element
+p85
+g52
+Ntp86
+Rp87
+(dp88
+S'superconduction_temperature'
+p89
+V1.083 K
+p90
+sS'density_of_solid'
+p91
+V5904 kg m<sup>-3</sup>
+p92
+sS'molar_volume'
+p93
+V11.80 cm<sup>3</sup>
+p94
+sS'bulk_modulus'
+p95
+NsS'electronic_structure'
+p96
+V[Ar].3d<sup>10</sup>.4s<sup>2</sup>.4p<sup>1</sup>
+p97
+sS'critical_temperature'
+p98
+NsS'melting_point'
+p99
+V302.91 K
+p100
+sS'mendeleev_no'
+p101
+I81
+sS'brinell_hardness'
+p102
+V60 MN m<sup>-2</sup>
+p103
+sS'_z'
+p104
+I31
+sS'_x'
+p105
+F1.81
+sS'poissons_ratio'
+p106
+NsS'atomic_radius_calculated'
+p107
+F1.36
+sS'atomic_mass'
+p108
+g50
+(cpymatgen.core.units
+FloatWithUnit
+p109
+c__builtin__
+float
+p110
+F69.723
+tp111
+Rp112
+(dp113
+S'_unit'
+p114
+g50
+(cpymatgen.core.units
+Unit
+p115
+g52
+Ntp116
+Rp117
+(dp118
+g114
+ccollections
+defaultdict
+p119
+(c__builtin__
+int
+p120
+tp121
+Rp122
+Vamu
+p123
+I1
+ssbsS'_unit_type'
+p124
+Vmass
+p125
+sVval
+p126
+F69.723
+sbsS'reflectivity'
+p127
+NsS'electrical_resistivity'
+p128
+Vabout  14 10<sup>-8</sup> &Omega; m
+p129
+sS'liquid_range'
+p130
+V2174.09 K
+p131
+sS'rigidity_modulus'
+p132
+NsS'_symbol'
+p133
+VGa
+p134
+sS'van_der_waals_radius'
+p135
+F1.87
+sS'_data'
+p136
+(dp137
+VElectrical resistivity
+p138
+g129
+sVElectronic structure
+p139
+g97
+sVVelocity of sound
+p140
+V2740 m s<sup>-1</sup>
+p141
+sVOxidation states
+p142
+(lp143
+I1
+aI2
+aI3
+asVReflectivity
+p144
+Vno data %
+p145
+sVPoissons ratio
+p146
+Vno data
+p147
+sVMolar volume
+p148
+g94
+sVVan der waals radius
+p149
+F1.87
+sVX
+p150
+F1.81
+sVName
+p151
+VGallium
+p152
+sVBulk modulus
+p153
+Vno data GPa
+p154
+sVMineral hardness
+p155
+V1.5
+p156
+sVAtomic mass
+p157
+F69.723
+sVAtomic no
+p158
+I31
+sVBoiling point
+p159
+V2477 K
+p160
+sVCommon oxidation states
+p161
+(lp162
+I3
+asVBrinell hardness
+p163
+g103
+sVDensity of solid
+p164
+g92
+sVCritical temperature
+p165
+Vno data K
+p166
+sVMelting point
+p167
+g100
+sVMendeleev no
+p168
+I81
+sVCoefficient of linear thermal expansion
+p169
+V120 x10<sup>-6</sup>K<sup>-1</sup>
+p170
+sVYoungs modulus
+p171
+Vno data GPa
+p172
+sVRigidity modulus
+p173
+Vno data GPa
+p174
+sVThermal conductivity
+p175
+V29 W m<sup>-1</sup> K<sup>-1</sup>
+p176
+sVLiquid range
+p177
+g131
+sVAtomic radius calculated
+p178
+F1.36
+sVVickers hardness
+p179
+Vno data MN m<sup>-2</sup>
+p180
+sVSuperconduction temperature
+p181
+g90
+sVRefractive index
+p182
+Vno data
+p183
+sVIonic radii
+p184
+(dp185
+V3
+p186
+F0.76
+ssVAtomic radius
+p187
+F1.3
+ssS'youngs_modulus'
+p188
+NsS'name'
+p189
+g152
+sS'boiling_point'
+p190
+g160
+sS'thermal_conductivity'
+p191
+g176
+sS'velocity_of_sound'
+p192
+g141
+sS'atomic_radius'
+p193
+g50
+(g109
+g110
+F1.3
+tp194
+Rp195
+(dp196
+g114
+g50
+(g115
+g52
+Ntp197
+Rp198
+(dp199
+g114
+g119
+(g120
+tp200
+Rp201
+Vang
+p202
+I1
+ssbsg124
+Vlength
+p203
+sg126
+F1.3
+sbsS'mineral_hardness'
+p204
+g156
+sS'vickers_hardness'
+p205
+NsS'refractive_index'
+p206
+NsS'coefficient_of_linear_thermal_expansion'
+p207
+g170
+sbI1
+ssS'allow_negative'
+p208
+I00
+sS'_natoms'
+p209
+I1
+sbsS'_lattice'
+p210
+g50
+(cpymatgen.core.lattice
+Lattice
+p211
+g52
+Ntp212
+Rp213
+(dp214
+S'_metric_tensor'
+p215
+NsS'_matrix'
+p216
+g63
+(g64
+(I0
+tp217
+g66
+tp218
+Rp219
+(I1
+(I3
+I3
+tp220
+g73
+I00
+S'\x00\x00\x00\x00\x00\x00\x00\x00w\xbe\x9f\x1a/\x9d\x06@w\xbe\x9f\x1a/\x9d\x06@w\xbe\x9f\x1a/\x9d\x06@\x00\x00\x00\x00\x00\x00\x00\x00w\xbe\x9f\x1a/\x9d\x06@w\xbe\x9f\x1a/\x9d\x06@w\xbe\x9f\x1a/\x9d\x06@\x00\x00\x00\x00\x00\x00\x00\x00'
+p221
+tp222
+bsS'_angles'
+p223
+g63
+(g64
+(I0
+tp224
+g66
+tp225
+Rp226
+(I1
+(I3
+tp227
+g73
+I00
+S'\xff\xff\xff\xff\xff\xffM@\xff\xff\xff\xff\xff\xffM@\xff\xff\xff\xff\xff\xffM@'
+p228
+tp229
+bsS'_lengths'
+p230
+g63
+(g64
+(I0
+tp231
+g66
+tp232
+Rp233
+(I1
+(I3
+tp234
+g73
+I00
+S'\xb2\xea\xb4|$\xfb\x0f@\xb2\xea\xb4|$\xfb\x0f@\xb2\xea\xb4|$\xfb\x0f@'
+p235
+tp236
+bsS'_inv_matrix'
+p237
+NsbsS'_coords'
+p238
+g63
+(g64
+(I0
+tp239
+g66
+tp240
+Rp241
+(I1
+(I3
+tp242
+g73
+I00
+S'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+p243
+tp244
+bsS'_properties'
+p245
+(dp246
+sS'_is_ordered'
+p247
+I01
+sbag50
+(g58
+g52
+Ntp248
+Rp249
+(dp250
+g62
+g63
+(g64
+(I0
+tp251
+g66
+tp252
+Rp253
+(I1
+(I3
+tp254
+g73
+I00
+S'\x00\x00\x00\x00\x00\x00\xd0?\x00\x00\x00\x00\x00\x00\xd0?\x00\x00\x00\x00\x00\x00\xd0?'
+p255
+tp256
+bsg78
+g50
+(g79
+g52
+Ntp257
+Rp258
+(dp259
+g83
+(dp260
+g50
+(g85
+g52
+Ntp261
+Rp262
+(dp263
+S'superconduction_temperature'
+p264
+NsS'density_of_solid'
+p265
+V5727 kg m<sup>-3</sup>
+p266
+sS'molar_volume'
+p267
+V12.95 cm<sup>3</sup>
+p268
+sS'bulk_modulus'
+p269
+V22 GPa
+p270
+sS'electronic_structure'
+p271
+V[Ar].3d<sup>10</sup>.4s<sup>2</sup>.4p<sup>3</sup>
+p272
+sS'critical_temperature'
+p273
+V1700 K
+p274
+sS'melting_point'
+p275
+V1090 K
+p276
+sS'mendeleev_no'
+p277
+I89
+sS'brinell_hardness'
+p278
+V1440 MN m<sup>-2</sup>
+p279
+sg104
+I33
+sg105
+F2.18
+sS'poissons_ratio'
+p280
+NsS'atomic_radius_calculated'
+p281
+F1.14
+sg108
+g50
+(g109
+g110
+F74.9216
+tp282
+Rp283
+(dp284
+g114
+g50
+(g115
+g52
+Ntp285
+Rp286
+(dp287
+g114
+g119
+(g120
+tp288
+Rp289
+g123
+I1
+ssbsg124
+g125
+sg126
+F74.9216
+sbsS'reflectivity'
+p290
+NsS'electrical_resistivity'
+p291
+V33 10<sup>-8</sup> &Omega; m
+p292
+sS'liquid_range'
+p293
+V203 K
+p294
+sS'rigidity_modulus'
+p295
+Nsg133
+VAs
+p296
+sS'van_der_waals_radius'
+p297
+F1.85
+sg136
+(dp298
+VElectrical resistivity
+p299
+g292
+sVElectronic structure
+p300
+g272
+sVVelocity of sound
+p301
+Vno data m s<sup>-1</sup>
+p302
+sVOxidation states
+p303
+(lp304
+I-3
+aI2
+aI3
+aI5
+asVReflectivity
+p305
+Vno data %
+p306
+sVPoissons ratio
+p307
+Vno data
+p308
+sVMolar volume
+p309
+g268
+sVVan der waals radius
+p310
+F1.85
+sg150
+F2.18
+sVName
+p311
+VArsenic
+p312
+sVBulk modulus
+p313
+g270
+sVMineral hardness
+p314
+V3.5
+p315
+sVAtomic mass
+p316
+F74.9216
+sVAtomic no
+p317
+I33
+sVBoiling point
+p318
+V887 K
+p319
+sVCommon oxidation states
+p320
+(lp321
+I-3
+aI3
+aI5
+asVBrinell hardness
+p322
+g279
+sVDensity of solid
+p323
+g266
+sVCritical temperature
+p324
+g274
+sVMelting point
+p325
+g276
+sVMendeleev no
+p326
+I89
+sVCoefficient of linear thermal expansion
+p327
+Vno data x10<sup>-6</sup>K<sup>-1</sup>
+p328
+sVYoungs modulus
+p329
+V8 GPa
+p330
+sVRigidity modulus
+p331
+Vno data GPa
+p332
+sVThermal conductivity
+p333
+V50 W m<sup>-1</sup> K<sup>-1</sup>
+p334
+sVLiquid range
+p335
+g294
+sVAtomic radius calculated
+p336
+F1.14
+sVVickers hardness
+p337
+Vno data MN m<sup>-2</sup>
+p338
+sVSuperconduction temperature
+p339
+Vno data K
+p340
+sVRefractive index
+p341
+V1.001552
+p342
+sVIonic radii
+p343
+(dp344
+g186
+F0.72
+sV5
+p345
+F0.6
+ssVAtomic radius
+p346
+F1.15
+ssS'youngs_modulus'
+p347
+g330
+sS'name'
+p348
+g312
+sS'boiling_point'
+p349
+g319
+sS'thermal_conductivity'
+p350
+g334
+sS'velocity_of_sound'
+p351
+Nsg193
+g50
+(g109
+g110
+F1.15
+tp352
+Rp353
+(dp354
+g114
+g50
+(g115
+g52
+Ntp355
+Rp356
+(dp357
+g114
+g119
+(g120
+tp358
+Rp359
+g202
+I1
+ssbsg124
+g203
+sg126
+F1.15
+sbsS'mineral_hardness'
+p360
+g315
+sS'vickers_hardness'
+p361
+NsS'refractive_index'
+p362
+g342
+sS'coefficient_of_linear_thermal_expansion'
+p363
+NsbI1
+ssg208
+I00
+sg209
+I1
+sbsg210
+g213
+sg238
+g63
+(g64
+(I0
+tp364
+g66
+tp365
+Rp366
+(I1
+(I3
+tp367
+g73
+I00
+S'w\xbe\x9f\x1a/\x9d\xf6?w\xbe\x9f\x1a/\x9d\xf6?w\xbe\x9f\x1a/\x9d\xf6?'
+p368
+tp369
+bsg245
+(dp370
+sg247
+I01
+sbasg210
+g213
+sbsS'ibnd_min'
+p371
+I1
+sS'sigma_extra_lines'
+p372
+(lp373
+g14
+asS'nbnd_val'
+p374
+I4
+sS'nbnd_val_co'
+p375
+I4
+sS'nproc_per_node_flag'
+p376
+S'--npernode'
+p377
+sS'nbnd_sigma'
+p378
+I8
+sS'nbnd_occ'
+p379
+I4
+s.

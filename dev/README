@@ -1,0 +1,26 @@
+
+This directory contains scripts for developpers who want to contribute
+to this module.
+
+
+Contributing
+============
+
+Please follow the coding style guide:
+
+    PEP 0008 -- Style Guide for Python Code
+    https://www.python.org/dev/peps/pep-0008/
+
+
+Tests
+=====
+
+At the moment, the examples provided in ~BGWpy/Examples
+serve as a test suite for this module.
+The script run_examples.sh can be executed from the Examples directory.
+The script sync_examples_references.sh can be executed from the Examples
+directory to update the reference files.
+
+When possible, unit tests should be added so that they can be
+executed with nosetests.
+

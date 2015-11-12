@@ -1,0 +1,12 @@
+Metadata-Version: 1.1
+Name: BGWpy
+Version: 1.0.0
+Summary: Interface BerkeleyGW flows in python.
+Home-page: UNKNOWN
+Author: Gabriel Antonius
+Author-email: antonius@civet.berkeley.edu
+License: All rights reserved
+Description: UNKNOWN
+Platform: UNKNOWN
+Requires: numpy (>=1.6)
+Requires: pymatgen (>=3.0)

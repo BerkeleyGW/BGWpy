@@ -1,0 +1,23 @@
+&input_pw2bgw
+   vxcg_file = 'vxc.real'
+   vxc_file = 'vxc.dat'
+   vxc_offdiag_nmin = 0
+   rhog_flag = .true.
+   rhog_file = 'rho.real'
+   vxc_diag_nmax = 8
+   wfng_kgrid = .true.
+   vxcg_flag = .false.
+   vxc_offdiag_nmax = 0
+   wfng_file = 'wfn_co.cplx'
+   prefix = 'GaAs'
+   vxc_flag = .true.
+   vxc_diag_nmin = 1
+   real_or_complex = 2
+   wfng_flag = .true.
+   wfng_nk1 = 2
+   wfng_nk2 = 2
+   wfng_nk3 = 2
+   wfng_dk1 = 0.0
+   wfng_dk2 = 0.0
+   wfng_dk3 = 0.0
+/

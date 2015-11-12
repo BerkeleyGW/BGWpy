@@ -1,0 +1,37 @@
+
+BGWpy is a python module to operate BerkeleyGW (http://www.berkeleygw.org/). 
+
+
+Documentation
+=============
+
+We recommend learning the basic usage from the examples provided
+with the source distribution in ~BGWpy/Examples/.
+The docstrings of the various objects also contain information
+and can be accessed with
+    >>> help(BGWpy.<object>)
+
+Requirements
+============
+
+The following software and modules are required to use BGWpy.
+
+  * python 2.7 required (Python 3 not supported at the moment) 
+  * numpy 1.6+
+  * pymatgen 3.0+ (http://pymatgen.org/)
+  * BerkeleyGW (http://www.berkeleygw.org/)
+
+
+Installing
+==========
+
+Once you have satisfied the requirements, install the package with
+
+  python setup.py build
+  python setup.py install
+
+
+License
+=======
+
+This software is free to use. See BerkeleyGW's license for more information.
