@@ -2,7 +2,7 @@
 BGWpy
 =====
 
-A python module to operate BerkeleyGW.
+A python module to operate BerkeleyGW
 
 
 Documentation
