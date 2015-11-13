@@ -8,7 +8,7 @@
    ibrav = 0
    nat = 2
    ntyp = 2
-   nbnd = 10
+   nbnd = 9
 /
 &electrons
    electron_maxstep = 100

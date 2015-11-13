@@ -13,6 +13,6 @@ ln -nfs ../21-Epsilon/epsmat epsmat
 ln -nfs ../23-Kernel/bsedmat bsedmat
 ln -nfs ../23-Kernel/bsexmat bsexmat
 ln -nfs ../22-Sigma/sigma_hp.log sigma_hp.log
+ln -nfs ../22-Sigma/eqp1.dat eqp_co.dat
 
-$EQP eqp1 sigma_hp.log eqp_co.dat
 $MPIRUN $ABSORPTION &> $ABSORPTIONOUT
