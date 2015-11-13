@@ -1,2 +1,0 @@
-graft Examples
-prune Examples/[0-9]*

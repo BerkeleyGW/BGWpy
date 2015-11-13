@@ -3,5 +3,6 @@ TODO
 build
 build/*
 dist/*/
+dist/*.egg
 # Files produced by the tests not referenced
 Examples/[0-9]*
