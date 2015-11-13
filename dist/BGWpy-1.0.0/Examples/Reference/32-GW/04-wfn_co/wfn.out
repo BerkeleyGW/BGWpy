@@ -1,5 +1,5 @@
 
-     Program PWSCF v.5.1.2 starts on 10Nov2015 at 13:35:10 
+     Program PWSCF v.5.1.2 starts on 12Nov2015 at 11:30:31 
 
      This program is part of the open-source Quantum ESPRESSO suite
      for quantum simulation of materials; please cite
@@ -37,8 +37,8 @@
 
 
      bravais-lattice index     =            0
-     lattice parameter (alat)  =       7.5547  a.u.
-     unit-cell volume          =     304.8842 (a.u.)^3
+     lattice parameter (alat)  =       7.5544  a.u.
+     unit-cell volume          =     304.8518 (a.u.)^3
      number of atoms/cell      =            2
      number of atomic types    =            2
      number of electrons       =         8.00
@@ -47,7 +47,7 @@
      charge density cutoff     =      40.0000  Ry
      Exchange-correlation      = PBE ( 1  4  3  4 0 0)
 
-     celldm(1)=   7.554690  celldm(2)=   0.000000  celldm(3)=   0.000000
+     celldm(1)=   7.554422  celldm(2)=   0.000000  celldm(3)=   0.000000
      celldm(4)=   0.000000  celldm(5)=   0.000000  celldm(6)=   0.000000
 
      crystal axes: (cart. coord. in units of alat)
@@ -124,28 +124,28 @@
 
      ethr =  1.25E-12,  avg # of iterations = 33.7
 
-     total cpu time spent up to now is        0.1 secs
+     total cpu time spent up to now is        0.2 secs
 
      End of band structure calculation
 
           k = 0.0000 0.0000 0.0000 (   169 PWs)   bands (ev):
 
-    -7.5287   5.5505   5.5505   5.5505   6.0645   9.0306   9.0306   9.0306
-    12.8442  16.4306
+    -7.5284   5.5516   5.5516   5.5516   6.0663   9.0318   9.0318   9.0318
+    12.8456  16.4319
 
           k = 0.3536 0.3536-0.3536 (   168 PWs)   bands (ev):
 
-    -5.8000  -1.4786   4.1440   4.1440   6.4006  10.3236  10.3236  13.1810
-    15.9744  17.4951
+    -5.7994  -1.4781   4.1450   4.1450   6.4020  10.3248  10.3248  13.1821
+    15.9764  17.4966
 
           k = 0.7071 0.0000 0.0000 (   150 PWs)   bands (ev):
 
-    -4.8142  -1.5848   2.4796   2.4796   7.2291   7.2991  15.9775  15.9775
-    16.6802  18.8927
+    -4.8135  -1.5842   2.4804   2.4804   7.2301   7.3002  15.9795  15.9795
+    16.6823  18.8943
 
      Writing output data file GaAs.save
 
-     init_run     :      0.02s CPU      0.03s WALL (       1 calls)
+     init_run     :      0.02s CPU      0.02s WALL (       1 calls)
      electrons    :      0.06s CPU      0.06s WALL (       1 calls)
 
      Called by init_run:
@@ -180,7 +180,7 @@
      PWSCF        :     0.16s CPU         0.18s WALL
 
 
-   This run was terminated on:  13:35:10  10Nov2015            
+   This run was terminated on:  11:30:32  12Nov2015            
 
 =------------------------------------------------------------------------------=
    JOB DONE.

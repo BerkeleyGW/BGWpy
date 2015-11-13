@@ -1,13 +1,21 @@
 from __future__ import print_function
 import os
 
-from ..core import Task, MPITask
-from . import get_kpt_grid
-from . import EpsilonInput
+from .bgwtask import BGWTask
+from .kgrid   import get_kpt_grid
+from .inputs  import EpsilonInput
+
+# Public
+__all__ = ['EpsilonTask']
 
 
-class EpsilonTask(MPITask):
+class EpsilonTask(BGWTask):
     """Inverse dielectric function calculation."""
+
+    _TASK_NAME = 'Epsilon task'
+
+    _input_fname  = 'epsilon.inp'
+    _output_fname = 'epsilon.out'
 
     def __init__(self, dirname, **kwargs):
         """
@@ -31,10 +39,6 @@ class EpsilonTask(MPITask):
             in a GW calculation.
         qshift : list(3), float
             Q-point used to treat the Gamma point.
-        nbnd : int
-            Number of bands included in the calculation.
-        nbnd_occ : int
-            Number of occupied bands.
         ecuteps : float
             Energy cutoff for the dielectric function.
         wfn_fname : str
@@ -69,24 +73,25 @@ class EpsilonTask(MPITask):
         ngkpt = kwargs['ngkpt']
         kpts_ush, wtks_ush = get_kpt_grid(structure, ngkpt)
 
+        extra_lines = kwargs.get('extra_lines',[])
+        extra_variables = kwargs.get('extra_variables',{})
+
         # Input file
         self.input = EpsilonInput(
             kwargs['ecuteps'],
-            kwargs['nbnd'],
-            kwargs['nbnd_occ'],
             kwargs['qshift'],
             kpts_ush[1:],
-            *kwargs.get('extra_lines',[]),
-            **kwargs.get('extra_variables',{}))
+            *extra_lines,
+            **extra_variables)
 
-        self.input.fname = 'epsilon.inp'
+        self.input.fname = self._input_fname
 
         # Set up the run script
         self.wfn_fname = kwargs['wfn_fname']
         self.wfnq_fname = kwargs['wfnq_fname']
 
         self.runscript['EPSILON'] = 'epsilon.cplx.x'
-        self.runscript['EPSILONOUT'] = 'epsilon.out'
+        self.runscript['EPSILONOUT'] = self._output_fname
         self.runscript.append('$MPIRUN $EPSILON &> $EPSILONOUT')
 
     @property

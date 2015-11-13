@@ -5,7 +5,7 @@ from .writable import Writable
 
 class RunScript(Writable):
 
-    def __init__(self, variables=None, links=None, main=None,
+    def __init__(self, variables=None, links=None, copies=None, main=None,
                  first_line = '#!/usr/bin/env bash', **kwargs):
         """
         Just a run script. Starts with a few declarations (variables),
@@ -14,21 +14,29 @@ class RunScript(Writable):
         Arguments
         ---------
 
-        variables: A dict or an OrderedDict, for which the keys are
-                   the variable names and the values are interpreted
-                   as strings, for which quotation marks will be added.
+        variables : 
+            A dict or an OrderedDict, for which the keys are
+            the variable names and the values are interpreted
+            as strings, for which quotation marks will be added.
 
-        links: A list of pairs (target, dest), which give statements as
-               ln -nfs target dest
+        links :
+            A list of pairs (target, dest), that will be linked with
+            ln -nfs target dest
 
-        main: A list of executions, e.g.
-              '$MPIRUN $EXECUTABLE < $INPUT >& $OUTPUT'
+        copies :
+            A list of pairs (src, dest), that will be copied with
+            cp -f src dest
+
+        main :
+            A list of executions, e.g.
+            '$MPIRUN $EXECUTABLE < $INPUT >& $OUTPUT'
 
         """
 
         self.first_line = first_line
         self.variables = OrderedDict()  # Variables declared in the preemble
         self.links = list()             # Symbolic links to be made
+        self.copies = list()            # Files to be copied
         self.main = list()              # Main execution lines
 
         if variables is not None:
@@ -36,19 +44,31 @@ class RunScript(Writable):
 
         if links is not None:
             for link in links:
-                try:
-                    l = len(link)
-                    if l != 2:
-                        raise Exception('')
-                except:
-                    raise Exception("The variable 'links' must contains pairs of two elements")
-
+                if not self._check_pair(link):
+                    raise Exception(
+                    "The variable 'links' must contain pairs of two elements")
                 self.add_link(*link)
+
+        if copies is not None:
+            for copy in copies:
+                if not self._check_pair(copy):
+                    raise Exception(
+                    "The variable 'copies' must contain pairs of two elements")
+                self.add_copy(*copy)
 
         if isinstance(main, str):
             self.main.append(main)
         elif main is not None:
             self.main.extend(main)
+
+    def _check_pair(self, pair):
+        """Check that an object is a pair of two elements."""
+        try:
+            if len(pair) == 2:
+                return True
+        except:
+            pass
+        return False
 
     def append(self, line):
         """Append a command to the script."""
@@ -60,6 +80,9 @@ class RunScript(Writable):
 
     def add_link(self, target, dest):
         self.links.append([target, dest])
+
+    def add_copy(self, src, dest):
+        self.copies.append([src, dest])
 
     def merge(self, other):
         """ 
@@ -82,41 +105,51 @@ class RunScript(Writable):
         """Delete a variable."""
         del self.variables[key]
 
+    def _get_quoted_string(self, value):
+
+        # Strip the value of single or double quotes
+        # but strip a single occurence ...
+        single, double = "'", '"'
+        for quote in (single, double):
+            if value.startswith(quote):
+                value = value[1:]
+                if value.endswith(quote):
+                    value = value[:-1]
+
+        if single not in value and double not in value:
+            value = single + value + single
+        elif single in value and double not in value:
+            value = double + value + double
+        elif double in value and single not in value:
+            value = single + value + single
+        else:
+            raise Exception("Cannot process the quotes for variable named " +
+                            "{}\nwith value {}.\n".format(name, value) +
+                            "Action: simply add this declaration " + 
+                            "in the 'main' list of commands.")
+
+        return value
+
     def __str__(self):
         S = ''
         S += self.first_line + 2 * '\n'
 
         for name, value in self.variables.items():
-
-            # Strip the value of single or double quotes
-            # but strip a single occurence ...
-            single, double = "'", '"'
-            for quote in (single, double):
-                if value.startswith(quote):
-                    value = value[1:]
-                    if value.endswith(quote):
-                        value = value[:-1]
-
-            if single not in value and double not in value:
-                value = single + value + single
-            elif single in value and double not in value:
-                value = double + value + double
-            elif double in value and single not in value:
-                value = single + value + single
-            else:
-                raise Exception("Cannot process the quotes for variable named " +
-                                "{}\nwith value {}.\n".format(name, value) +
-                                "Action: simply add this declaration " + 
-                                "in the 'main' list of commands.")
-
+            value = self._get_quoted_string(value)
             S += '{}={}\n'.format(name, value)
 
-        S += '\n'
-        for target, dest in self.links:
-            # Don't attempt to create a link if the names match.
-            if target == dest:
-                continue
-            S += 'ln -nfs {} {}\n'.format(target, dest)
+        if self.links:
+            S += '\n'
+            for target, dest in self.links:
+                # Don't attempt to create a link if the names match.
+                if target == dest:
+                    continue
+                S += 'ln -nfs {} {}\n'.format(target, dest)
+
+        if self.copies:
+            S += '\n'
+            for src, dest in self.copies:
+                S += 'cp -f {} {}\n'.format(src, dest)
 
         S += '\n'
         for line in self.main:

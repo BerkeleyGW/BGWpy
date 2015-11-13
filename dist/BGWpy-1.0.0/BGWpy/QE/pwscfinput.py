@@ -1,4 +1,5 @@
 
+from ..core import fortran_str
 from ..core import Writable, Namelist, Card
 import warnings
 import numpy as np
@@ -16,7 +17,7 @@ class PWscfInput(Writable):
         self.ions = Namelist('ions')
         self.cell = Namelist('cell')
         self.atomic_species = Card('ATOMIC_SPECIES', '')
-        self.atomic_positions = Card('ATOMIC_POSITIONS', 'crystal')
+        self.atomic_positions = Card('ATOMIC_POSITIONS','crystal',quotes=False)
         self.k_points = Card('K_POINTS', '')
         self.cell_parameters = Card('CELL_PARAMETERS', 'angstrom')
         self.constraints = Card('CONSTRAINTS', '')
@@ -67,7 +68,15 @@ class PWscfInput(Writable):
         if self.cell_parameters or self._isfreebrav():
             S += str(self.cell_parameters)
 
-        S += str(self.atomic_species)
+        # This card is special, since only parts of it need quotes.
+        #S += str(self.atomic_species)
+        S += '{} {}\n'.format(self.atomic_species.name,
+                              self.atomic_species.option)
+        for val in self.atomic_species:
+            S += '   {} {}\n'.format(fortran_str(val[0], quotes=False),
+                                     fortran_str(val[1:], quotes=True))
+
+
         S += str(self.atomic_positions)
 
         if self.constraints or self._isconstrained():

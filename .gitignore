@@ -1,3 +1,6 @@
 TODO
+*.pyc
+build
+dist/*/
 # Files produced by the tests not referenced
 Examples/[0-9]*

@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 
-
 cd 01-density
 bash run.sh
 cd ..

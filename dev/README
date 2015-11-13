@@ -1,6 +1,6 @@
 
 This directory contains scripts for developpers who want to contribute
-to this module.
+to this module or simply test it.
 
 
 Contributing
@@ -15,12 +15,14 @@ Please follow the coding style guide:
 Tests
 =====
 
-At the moment, the examples provided in ~BGWpy/Examples
-serve as a test suite for this module.
-The script run_examples.sh can be executed from the Examples directory.
-The script sync_examples_references.sh can be executed from the Examples
-directory to update the reference files.
+For starters, the examples provided in ~BGWpy/Examples can be used
+as a test suite for this module. The script run_examples.sh can be
+executed from the Examples directory. The script sync_examples_references.sh
+can be executed from the Examples directory to update the reference files.
 
-When possible, unit tests should be added so that they can be
-executed with nosetests.
+Automated test can be launched from the top directory using nose,
+e.g. (assuming you have installed nose with color plugin):
+    nosetests --color
 
+Please note that the examples and the tests have to be maintained
+    separately.

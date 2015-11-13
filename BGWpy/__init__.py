@@ -1,9 +1,9 @@
 from . import core
 
 # Development functions
-from . import external
-from . import extractors
-from . import Wannier90
+#from . import external
+#from . import extractors
+#from . import Wannier90
 
 # "Public" objects
 from .external import Structure

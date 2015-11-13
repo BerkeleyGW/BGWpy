@@ -1,6 +1,8 @@
 
 from ..core import Writable
 
+__all__ = ['Sig2WanInput']
+
 class Sig2WanInput(Writable):
 
     def __init__(self, prefix, nbnd, nspin=1, eqp=1, sigma_file='sigma_hp.log', prefix_gw=None):

@@ -97,3 +97,7 @@ class Workflow(Task):
     #    for task in self.tasks:
     #        task.run()
 
+    def report(self, *args, **kwargs):
+        for task in self.tasks:
+            task.report(*args, **kwargs)
+

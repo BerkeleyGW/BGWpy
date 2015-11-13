@@ -6,12 +6,10 @@ from ..core import BasicInputFile
 
 class EpsilonInput(BasicInputFile):
 
-    def __init__(self, ecuteps, nbnd, nbnd_occ, q0, qpts, *keywords, **variables):
+    def __init__(self, ecuteps, q0, qpts, *keywords, **variables):
 
         all_variables = OrderedDict([
             ('epsilon_cutoff' , ecuteps),
-            ('number_bands' , nbnd),
-            ('band_occupation' , '{}*1 {}*0'.format(nbnd_occ, nbnd-nbnd_occ)),
             ])
 
         all_variables.update(variables)
@@ -39,14 +37,9 @@ class EpsilonInput(BasicInputFile):
 
 class SigmaInput(BasicInputFile):
 
-    def __init__(self, ecuteps, ecutsigx, nbnd, nbnd_occ, ibnd_min, ibnd_max, kpts, 
-                 *keywords, **variables):
+    def __init__(self, ibnd_min, ibnd_max, kpts, *keywords, **variables):
 
         all_variables = OrderedDict([
-            ('screened_coulomb_cutoff' , ecuteps),
-            ('bare_coulomb_cutoff' , ecutsigx),
-            ('number_bands' , nbnd),
-            ('band_occupation' , '{}*1 {}*0'.format(nbnd_occ, nbnd-nbnd_occ)),
             ('band_index_min' , ibnd_min),
             ('band_index_max' , ibnd_max),
             ])
@@ -71,14 +64,11 @@ class SigmaInput(BasicInputFile):
 
 class KernelInput(BasicInputFile):
 
-    def __init__(self, nbnd_val, nbnd_cond, ecuteps, ecutsigx,
-                 *keywords, **variables):
+    def __init__(self, nbnd_val, nbnd_cond, *keywords, **variables):
 
         all_variables = OrderedDict([
             ('number_val_bands' , nbnd_val),
             ('number_cond_bands' , nbnd_cond),
-            ('screened_coulomb_cutoff' , ecuteps),
-            ('bare_coulomb_cutoff' , ecutsigx),
             ])
 
         all_variables.update(variables)

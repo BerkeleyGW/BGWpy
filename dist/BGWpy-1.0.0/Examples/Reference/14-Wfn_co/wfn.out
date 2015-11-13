@@ -1,5 +1,5 @@
 
-     Program PWSCF v.5.1.2 starts on 10Nov2015 at 13:34:28 
+     Program PWSCF v.5.1.2 starts on 12Nov2015 at 11:29:49 
 
      This program is part of the open-source Quantum ESPRESSO suite
      for quantum simulation of materials; please cite
@@ -34,8 +34,8 @@
 
 
      bravais-lattice index     =            0
-     lattice parameter (alat)  =       7.5547  a.u.
-     unit-cell volume          =     304.8842 (a.u.)^3
+     lattice parameter (alat)  =       7.5544  a.u.
+     unit-cell volume          =     304.8518 (a.u.)^3
      number of atoms/cell      =            2
      number of atomic types    =            2
      number of electrons       =         8.00
@@ -44,7 +44,7 @@
      charge density cutoff     =      40.0000  Ry
      Exchange-correlation      = PBE ( 1  4  3  4 0 0)
 
-     celldm(1)=   7.554690  celldm(2)=   0.000000  celldm(3)=   0.000000
+     celldm(1)=   7.554422  celldm(2)=   0.000000  celldm(3)=   0.000000
      celldm(4)=   0.000000  celldm(5)=   0.000000  celldm(6)=   0.000000
 
      crystal axes: (cart. coord. in units of alat)
@@ -127,33 +127,33 @@
 
           k = 0.0000 0.0000 0.0000 (   169 PWs)   bands (ev):
 
-    -7.5287   5.5505   5.5505   5.5505   6.0645   9.0306   9.0306   9.0306
-    12.8442  16.4306  16.4306  17.0353  17.0353  17.0353  19.8238  31.9904
-    31.9904  31.9904  32.2400  32.2400
+    -7.5284   5.5516   5.5516   5.5516   6.0663   9.0318   9.0318   9.0318
+    12.8456  16.4319  16.4319  17.0366  17.0366  17.0366  19.8254  31.9935
+    31.9935  31.9935  32.2423  32.2423
 
           k = 0.3536 0.3536-0.3536 (   168 PWs)   bands (ev):
 
-    -5.8000  -1.4786   4.1440   4.1440   6.4006  10.3236  10.3236  13.1810
-    15.9744  17.4951  17.4951  18.1526  19.4351  19.4351  25.0322  27.7335
-    27.7335  27.7758  28.6609  28.6609
+    -5.7994  -1.4781   4.1450   4.1450   6.4020  10.3248  10.3248  13.1821
+    15.9764  17.4966  17.4966  18.1548  19.4366  19.4366  25.0344  27.7357
+    27.7357  27.7780  28.6630  28.6630
 
           k = 0.7071 0.0000 0.0000 (   150 PWs)   bands (ev):
 
-    -4.8142  -1.5848   2.4796   2.4796   7.2291   7.2991  15.9775  15.9775
-    16.6802  18.8927  19.2854  19.8933  19.8933  22.4982  25.0388  25.0388
-    25.0929  25.4835  25.7677  26.4348
+    -4.8135  -1.5842   2.4804   2.4804   7.2301   7.3002  15.9795  15.9795
+    16.6823  18.8943  19.2875  19.8949  19.8949  22.4996  25.0408  25.0408
+    25.0949  25.4856  25.7699  26.4366
 
      Writing output data file GaAs.save
 
-     init_run     :      0.04s CPU      0.04s WALL (       1 calls)
-     electrons    :      0.15s CPU      0.16s WALL (       1 calls)
+     init_run     :      0.05s CPU      0.05s WALL (       1 calls)
+     electrons    :      0.16s CPU      0.16s WALL (       1 calls)
 
      Called by init_run:
      wfcinit      :      0.00s CPU      0.00s WALL (       1 calls)
      potinit      :      0.00s CPU      0.00s WALL (       1 calls)
 
      Called by electrons:
-     c_bands      :      0.15s CPU      0.16s WALL (       1 calls)
+     c_bands      :      0.16s CPU      0.16s WALL (       1 calls)
      v_of_rho     :      0.00s CPU      0.00s WALL (       1 calls)
 
      Called by c_bands:
@@ -161,15 +161,15 @@
      cegterg      :      0.15s CPU      0.15s WALL (       4 calls)
 
      Called by *egterg:
-     h_psi        :      0.04s CPU      0.04s WALL (      75 calls)
+     h_psi        :      0.04s CPU      0.05s WALL (      75 calls)
      g_psi        :      0.00s CPU      0.00s WALL (      68 calls)
      cdiaghg      :      0.07s CPU      0.07s WALL (      71 calls)
 
      Called by h_psi:
-     add_vuspsi   :      0.00s CPU      0.00s WALL (      75 calls)
+     add_vuspsi   :      0.01s CPU      0.01s WALL (      75 calls)
 
      General routines
-     calbec       :      0.00s CPU      0.01s WALL (      75 calls)
+     calbec       :      0.01s CPU      0.01s WALL (      75 calls)
      fft          :      0.00s CPU      0.00s WALL (      10 calls)
      fftw         :      0.03s CPU      0.03s WALL (    1680 calls)
      davcio       :      0.00s CPU      0.00s WALL (       3 calls)
@@ -177,10 +177,10 @@
      Parallel routines
      fft_scatter  :      0.00s CPU      0.00s WALL (    1690 calls)
 
-     PWSCF        :     0.28s CPU         0.29s WALL
+     PWSCF        :     0.29s CPU         0.29s WALL
 
 
-   This run was terminated on:  13:34:28  10Nov2015            
+   This run was terminated on:  11:29:49  12Nov2015            
 
 =------------------------------------------------------------------------------=
    JOB DONE.

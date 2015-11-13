@@ -1,12 +1,20 @@
 from __future__ import print_function
 import os
 
-from . import QETask
-from . import get_bands_input
+from .qetask      import QETask
+from .constructor import get_bands_input
+
+# Public
+__all__ = ['WfnTask']
 
 
 class WfnTask(QETask):
     """Wavefunctions calculation."""
+
+    _TASK_NAME = 'Wavefunction task'
+
+    _input_fname = 'wfn.in'
+    _output_fname = 'wfn.out'
 
     def __init__(self, dirname, **kwargs):
         """
@@ -84,11 +92,12 @@ class WfnTask(QETask):
             wtks,
             )
 
-        self.input.fname = 'wfn.in'
+        self.input.fname = self._input_fname
 
         # Run script
         self.runscript['PW'] = 'pw.x'
-        self.runscript.append('$MPIRUN $PW -in wfn.in &> wfn.out')
+        self.runscript.append('$MPIRUN $PW $PWFLAGS -in {} &> {}'.format(
+                              self._input_fname, self._output_fname))
 
     @property
     def charge_density_fname(self):
@@ -117,9 +126,6 @@ class WfnTask(QETask):
     @data_file_fname.setter
     def data_file_fname(self, value):
         self._data_file_fname = value
-        src = os.path.relpath(value, self.dirname)
         dest = os.path.join(self.savedir, 'data-file.xml')
-        # FIXME: this should be handled by the runscript.
-        if src != dest:
-            self.runscript.main.insert(0, 'cp -f {} {}'.format(src, dest))
+        self.update_copy(value, dest)
 

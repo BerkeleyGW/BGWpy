@@ -1,12 +1,20 @@
 from __future__ import print_function
 import os
 
-from . import QETask
-from . import get_scf_input
+from .qetask      import QETask
+from .constructor import get_scf_input
+
+# Public
+__all__ = ['ScfTask']
 
 
 class ScfTask(QETask):
     """Charge density calculation."""
+
+    _TASK_NAME = 'SCF task'
+
+    _input_fname = 'scf.in'
+    _output_fname = 'scf.out'
 
     def __init__(self, dirname, **kwargs):
         """
@@ -76,11 +84,12 @@ class ScfTask(QETask):
             wtks,
             )
 
-        self.input.fname = 'scf.in'
+        self.input.fname = self._input_fname
 
         # Run script
         self.runscript['PW'] = 'pw.x'
-        self.runscript.append('$MPIRUN $PW -in scf.in &> scf.out')
+        self.runscript.append('$MPIRUN $PW $PWFLAGS -in {} &> {}'.format(
+                              self._input_fname, self._output_fname))
 
     @property
     def charge_density_fname(self):

@@ -18,7 +18,6 @@ task = EpsilonTask(
 
     ngkpt = [2,2,2],        # k-points grid
     qshift = [.001,.0,.0],  # q-shift to treat the Gamma point
-    nbnd_occ = 4,           # Number of occupied bands
     nbnd = 8,               # Number of bands
     ecuteps = 10.0,         # Energy cutoff for the epsilon matrix
 
@@ -38,4 +37,5 @@ task = EpsilonTask(
 # Execution
 task.write()
 task.run()
+task.report()
 

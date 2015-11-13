@@ -1,4 +1,5 @@
-from .constructor import *
-from .GWFlow import *
-from .BSEFlow import *
-from .WannierInterpFlow import *
+
+from .gwflow import *
+from .bseflow import *
+
+__all__ = gwflow.__all__ + bseflow.__all__

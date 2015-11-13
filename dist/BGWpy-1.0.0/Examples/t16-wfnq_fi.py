@@ -54,4 +54,5 @@ pw2bgwtask_fiq = PW2BGWTask(
 for task in (wfntask_fiq, pw2bgwtask_fiq):
     task.write()
     task.run()
+    task.report()
 

@@ -35,3 +35,4 @@ scftask = ScfTask(
 # Execution
 scftask.write()
 scftask.run()
+scftask.report()

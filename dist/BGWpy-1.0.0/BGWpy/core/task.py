@@ -1,4 +1,5 @@
 from __future__ import print_function
+import sys
 import os
 import subprocess
 import pickle
@@ -11,7 +12,13 @@ from .runscript import RunScript
 class Task(object):
     """Task executed from a single directory, from a single script."""
     _dirname = '.'
-    #_main_report_fname = 'report.log'
+
+    _TASK_NAME = 'Task'
+
+    _STATUS_COMPLETED = 'Completed'
+    _STATUS_UNSTARTED = 'Unstarted'
+    _STATUS_UNFINISHED = 'Unfinished'
+    _STATUS_UNKNOWN = 'Unknown'
 
     def __init__(self, dirname='./', runscript_fname='run.sh', store_variables=True, *args, **kwargs):
         """
@@ -87,10 +94,35 @@ class Task(object):
                 link[0] = reltarget
                 break
         else:
-            self.runscript.links.append([reltarget, dest])
+            self.runscript.add_link(reltarget, dest)
         
-    #def report(self):
-    #    pass
+    def update_copy(self, source, dest):
+        """
+        Modify or add a file to copy.
+        If dest is already defined in a link, then the source is replaced.
+        The source will be expressed relative to the dirname.
+        The destination *must* be relative to the dirname.
+        """
+        relsource = os.path.relpath(source, self.dirname)
+        for copy in self.runscript.copies:
+            if copy[1] == dest:
+                copy[0] = relsource
+                break
+        else:
+            self.runscript.add_copy(relsource, dest)
+
+    def get_status(self):
+        """
+        Return the status of the task. Possible status are:
+        Completed, Unstarted, Unfinished, Unknown.
+        """
+        return self._STATUS_UNKNOWN
+        
+    def report(self, file=sys.stdout):
+        status = self.get_status()
+        s = 'Status     :   {}'.format(status)
+        s = '{:<20}  -  Status :  {}'.format(self._TASK_NAME, status)
+        print(s, file=file)
 
 
 # =========================================================================== #

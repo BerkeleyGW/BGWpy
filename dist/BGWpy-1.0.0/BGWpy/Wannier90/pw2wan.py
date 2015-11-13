@@ -1,6 +1,8 @@
 
 from ..core import Namelist
 
+__all__ = ['PW2WanInput']
+
 class PW2WanInput(Namelist):
 
     def __init__(self, prefix, outdir='./', write_amn=True, write_mmn=True, seedname=None, **kwargs):

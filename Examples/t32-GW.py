@@ -13,18 +13,14 @@ flow = GWFlow(
     pseudos = ['31-Ga.PBE.UPF', '33-As.PBE.UPF'],
 
     ecutwfc=10.0,
-    nbnd = 10,
+    nbnd = 9,
 
     ngkpt = [2,2,2],
     kshift = [.5,.5,.5],
     qshift = [.001,.0,.0],
-    nbnd_epsilon = 8,       # Number of bands in the epsilon calculation
-    nbnd_sigma = 8,         # Numver of bands in the sigma calculation
-    nbnd_occ = 4,
     ibnd_min = 1,
     ibnd_max = 8,
     ecuteps = 10.0,
-    ecutsigx = 15.0,
 
     # Extra lines and extra variables
     epsilon_extra_lines = [],

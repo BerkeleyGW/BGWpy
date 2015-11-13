@@ -1,5 +1,5 @@
 
-     Program PW2BGW v.5.1.2 starts on 10Nov2015 at 13:34:53 
+     Program PW2BGW v.5.1.2 starts on 12Nov2015 at 11:30:14 
 
      This program is part of the open-source Quantum ESPRESSO suite
      for quantum simulation of materials; please cite
@@ -22,8 +22,8 @@
      Any further DFT definition will be discarded
      Please, verify this is what you really want
 
-               file 33-As.PBE.UPF: wavefunction(s)  4f renormalized
                file 31-Ga.PBE.UPF: wavefunction(s)  4d 4f renormalized
+               file 33-As.PBE.UPF: wavefunction(s)  4f renormalized
 
      G-vector sticks info
      --------------------
@@ -50,7 +50,7 @@
      PW2BGW       :     0.17s CPU         0.18s WALL
 
 
-   This run was terminated on:  13:34:53  10Nov2015            
+   This run was terminated on:  11:30:14  12Nov2015            
 
 =------------------------------------------------------------------------------=
    JOB DONE.

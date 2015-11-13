@@ -4,7 +4,7 @@ import numpy as np
 
 from ..external import xmltodict
 
-def get_QE_eigs_unpol(savedir):
+def get_eigs_unpol(savedir):
     """
     Read the bandstructure in savedir, relying on the data-file.xml.
     This is for the non spin-polarized case.

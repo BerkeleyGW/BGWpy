@@ -1,12 +1,20 @@
 from __future__ import print_function
 import os
 
-from . import QETask
-from . import PW2BGWInput
+from .qetask import QETask
+from .pwbgwinput import PW2BGWInput
+
+# Public
+__all__ = ['PW2BGWTask']
 
 
 class PW2BGWTask(QETask):
     """Wavefunctions convertion."""
+
+    _TASK_NAME = 'PW to BGW task'
+
+    _input_fname = 'wfn.pp.in'
+    _output_fname = 'wfn.pp.out'
 
     def __init__(self, dirname, **kwargs):
         """
@@ -107,11 +115,12 @@ class PW2BGWTask(QETask):
         if 'vxc_fname' in kwargs:
             self.vxc_fname = kwargs['vxc_fname']
 
-        self.input.fname = 'wfn.pp.in'
+        self.input.fname = self._input_fname
 
         # Run script
         self.runscript['PW2BGW'] = 'pw2bgw.x'
-        self.runscript.append('$MPIRUN $PW2BGW -in wfn.pp.in &> wfn.pp.out')
+        self.runscript.append('$MPIRUN $PW2BGW -in {} &> {}'.format(
+                              self._input_fname, self._output_fname))
 
     _wfn_fname = 'wfn.cplx'
     @property
@@ -142,3 +151,4 @@ class PW2BGWTask(QETask):
     def vxc_fname(self, value):
         self._vxc_fname = value
         self.input['vxc_file'] = value
+

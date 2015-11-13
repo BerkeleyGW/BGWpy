@@ -12,18 +12,19 @@ from os.path import join as pjoin
 
 from BGWpy import Structure, Workflow, ScfTask, WfnTask, PW2BGWTask, EpsilonTask, SigmaTask
 
-workflow = Workflow(dirname='31-workflow')
+workflow = Workflow(dirname='31-Workflow')
 
 # Common arguments for tasks.
 kwargs = dict(
 
     structure = Structure.from_file('Data/GaAs.json'),
     prefix = 'GaAs',
-    pseudo_dir = '../Pseudos',
+    pseudo_dir = 'Pseudos',
     pseudos = ['31-Ga.PBE.UPF', '33-As.PBE.UPF'],
 
     ngkpt = [2,2,2],
     ecutwfc = 10.0,
+    nbnd = 9,
 
     # Parameters for the MPI runner
     nproc = 1,
@@ -44,7 +45,6 @@ scftask = ScfTask(
 # Wavefunctions and eigenvalues calculation (NSCF) on a k-shifted grid
 wfntask_ksh = WfnTask(
     dirname = pjoin(workflow.dirname, 'wfn'),
-    nbnd = 20,
     kshift = [.5,.5,.5],
     charge_density_fname = scftask.charge_density_fname,
     data_file_fname = scftask.data_file_fname,
@@ -62,7 +62,6 @@ pw2bgwtask_ksh = PW2BGWTask(
 # Wavefunctions and eigenvalues calculation (NSCF) on a k+q-shifted grid
 wfntask_qsh = WfnTask(
     dirname = pjoin(workflow.dirname, 'wfnq'),
-    nbnd = 20,
     kshift = [.5,.5,.5],
     qshift = [.001,.0,.0],
     charge_density_fname = scftask.charge_density_fname,
@@ -82,7 +81,6 @@ pw2bgwtask_qsh = PW2BGWTask(
 # Wavefunctions and eigenvalues calculation (NSCF) on an unshifted grid
 wfntask_ush = WfnTask(
     dirname = pjoin(workflow.dirname, 'wfn_co'),
-    nbnd = 20,
     kshift = [.0,.0,.0],
     charge_density_fname = scftask.charge_density_fname,
     data_file_fname = scftask.data_file_fname,
@@ -103,8 +101,6 @@ pw2bgwtask_ush = PW2BGWTask(
 epsilontask = EpsilonTask(
     dirname = pjoin(workflow.dirname, 'epsilon'),
     qshift = [.001,.0,.0],
-    nbnd_occ = 4,
-    nbnd = 8,
     ecuteps = 10.0,
     wfn_fname = pw2bgwtask_ksh.wfn_fname,
     wfnq_fname = pw2bgwtask_qsh.wfn_fname,
@@ -114,12 +110,8 @@ epsilontask = EpsilonTask(
 # Self-energy calculation (sigma)
 sigmatask = SigmaTask(
     dirname = pjoin(workflow.dirname, 'sigma'),
-    nbnd_occ = 4,
-    nbnd = 8,
     ibnd_min = 1,
     ibnd_max = 8,
-    ecuteps = 10.0,
-    ecutsigx = 15.0,
     extra_lines = ['screening_semiconductor'],
     #extra_variables = {'number_of_frequencies' : 10},
     wfn_co_fname = pw2bgwtask_ush.wfn_fname,
@@ -140,4 +132,11 @@ workflow.add_tasks([scftask,
 
 # Execution
 workflow.write()
-workflow.run()
+
+for task in workflow.tasks:
+    task.run()
+    task.report()
+
+# The previous iteration also could have been performed as
+#workflow.run()
+#workflow.report()

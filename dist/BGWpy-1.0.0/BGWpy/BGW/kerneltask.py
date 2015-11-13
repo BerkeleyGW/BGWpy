@@ -1,13 +1,21 @@
 from __future__ import print_function
 import os
 
-from ..core import Task, MPITask
-from . import get_kpt_grid
-from . import KernelInput
+from .bgwtask import BGWTask
+from .kgrid   import get_kpt_grid
+from .inputs  import KernelInput
+
+# Public
+__all__ = ['KernelTask']
 
 
-class KernelTask(MPITask):
+class KernelTask(BGWTask):
     """Kernel calculation for BSE."""
+
+    _TASK_NAME = 'Kernel task'
+
+    _input_fname  = 'kernel.inp'
+    _output_fname = 'kernel.out'
 
     def __init__(self, dirname, **kwargs):
         """
@@ -27,10 +35,6 @@ class KernelTask(MPITask):
             Number of valence bands.
         nbnd_cond : int
             Number of conduction bands.
-        ecuteps : float
-            Energy cutoff for the dielectric function.
-        ecutsigx : float
-            Energy cutoff for the bare coulomb interaction (exchange part).
         wfn_co_fname : str
             Path to the wavefunction file produced by pw2bgw.
         eps0mat_fname : str
@@ -65,12 +69,10 @@ class KernelTask(MPITask):
         self.input = KernelInput(
             kwargs['nbnd_val'],
             kwargs['nbnd_cond'],
-            kwargs['ecuteps'],
-            kwargs['ecutsigx'],
             *kwargs.get('extra_lines',[]),
             **kwargs.get('extra_variables',{}))
 
-        self.input.fname = 'kernel.inp'
+        self.input.fname = self._input_fname
 
         # Set up the run script
         self.wfn_co_fname = kwargs['wfn_co_fname']
@@ -78,7 +80,7 @@ class KernelTask(MPITask):
         self.epsmat_fname = kwargs['epsmat_fname']
 
         self.runscript['KERNEL'] = 'kernel.cplx.x'
-        self.runscript['KERNELOUT'] = 'kernel.out'
+        self.runscript['KERNELOUT'] = self._output_fname
         self.runscript.append('$MPIRUN $KERNEL &> $KERNELOUT')
 
     @property

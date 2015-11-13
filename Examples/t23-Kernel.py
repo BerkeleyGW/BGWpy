@@ -18,7 +18,6 @@ task = KernelTask(
     nbnd_val = 4,           # Number of valence bands
     nbnd_cond = 4,          # Number of conduction bands
     ecuteps = 10.0,         # Energy cutoff for the epsilon matrix
-    ecutsigx = 15.0,        # Energy cutoff for the bare exchange
 
     # These extra lines will be added verbatim to the input file.
     extra_lines = [

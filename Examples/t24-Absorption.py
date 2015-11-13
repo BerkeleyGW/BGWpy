@@ -49,6 +49,7 @@ task = AbsorptionTask(
     bsedmat_fname='23-Kernel/bsedmat',
     bsexmat_fname='23-Kernel/bsexmat',
     sigma_fname='22-Sigma/sigma_hp.log',
+    eqp_fname='22-Sigma/eqp1.dat',
 
     # Parameters for the MPI runner
     nproc = 2,

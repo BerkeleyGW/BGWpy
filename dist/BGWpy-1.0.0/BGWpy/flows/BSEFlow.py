@@ -5,11 +5,12 @@ import subprocess
 import pickle
 
 
-from .. import Structure
+from ..external import Structure
 from ..core import Workflow
-from ..QE import ScfTask, WfnTask, PW2BGWTask  # TODO WfnPwBgwFlow
+from ..QE import ScfTask, WfnTask, PW2BGWTask
 from ..BGW import EpsilonTask, SigmaTask, KernelTask, AbsorptionTask
 
+__all__ = ['BSEFlow']
 
 class BSEFlow(Workflow):
     """
@@ -57,16 +58,8 @@ class BSEFlow(Workflow):
             Number of bands to be computed.
         ecutwfc : float
             Energy cutoff for the wavefunctions
-        nbnd_occ : int
-            Number of occupied bands.
-        nbnd_epsilon : int
-            Number of bands in the epsilon calculation.
-        nbnd_sigma : int
-            Number of bands in the sigma calculation.
         ecuteps : float
             Energy cutoff for the dielectric function.
-        ecutsigx : float
-            Energy cutoff for the bare coulomb interaction (exchange part).
         ibnd_min : int
             Minimum band index for GW corrections.
         ibnd_max : int
@@ -83,6 +76,8 @@ class BSEFlow(Workflow):
             Number of valence bands on the fine grid.
         nbnd_cond_fi : int
             Number of conduction bands on the fine grid.
+        nbnd_absorption : int
+            Number of bands to be computed for absorption.
         epsilon_extra_lines : list, optional
             Any other lines that should appear in the epsilon input file.
         epsilon_extra_variables : dict, optional
@@ -177,7 +172,7 @@ class BSEFlow(Workflow):
             ngkpt = self.ngkpt,
             wfn_fname = 'wfn_co.cplx',
             rho_fname = 'rho.real',
-            vxc_diag_nmax = kwargs.pop('vxc_diag_nmax', kwargs['nbnd_sigma']),
+            vxc_diag_nmax = kwargs.pop('vxc_diag_nmax', self.nbnd-1),
             **kwargs)
         
         
@@ -186,7 +181,6 @@ class BSEFlow(Workflow):
             dirname = pjoin(self.dirname, '05-epsilon'),
             ngkpt = self.ngkpt,
             qshift = self.qshift,
-            nbnd = kwargs.pop('nbnd_epsilon'),
             extra_lines = kwargs.pop('epsilon_extra_lines', []),
             extra_variables = kwargs.pop('epsilon_extra_variables', {}),
             wfn_fname = self.pw2bgwtask_ksh.wfn_fname,
@@ -198,7 +192,6 @@ class BSEFlow(Workflow):
         self.sigmatask = SigmaTask(
             dirname = pjoin(self.dirname, '06-sigma'),
             ngkpt = self.ngkpt,
-            nbnd = kwargs.pop('nbnd_sigma'),
             extra_lines = kwargs.pop('sigma_extra_lines', []),
             extra_variables = kwargs.pop('sigma_extra_variables', {}),
             wfn_co_fname = self.pw2bgwtask_ush.wfn_fname,
@@ -288,6 +281,7 @@ class BSEFlow(Workflow):
             bsedmat_fname = self.kerneltask.bsedmat_fname,
             bsexmat_fname = self.kerneltask.bsexmat_fname,
             sigma_fname = self.sigmatask.sigma_fname,
+            eqp_fname = self.sigmatask.eqp1_fname,
             **kwargs)
 
 

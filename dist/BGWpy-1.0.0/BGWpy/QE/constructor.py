@@ -1,4 +1,5 @@
-from . import PWscfInput, PW2BGWInput
+from .pwscfinput import PWscfInput
+from .pwbgwinput import PW2BGWInput
 
 
 def get_scf_input(prefix, pseudo_dir, pseudos, structure, ecutwfc, kpts, wtks):

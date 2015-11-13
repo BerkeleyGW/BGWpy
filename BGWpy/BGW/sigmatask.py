@@ -38,12 +38,6 @@ class SigmaTask(BGWTask):
             of the reciprocal lattice.
         qshift : list(3), float
             Q-point used to treat the Gamma point.
-        nbnd : int
-            Number of bands included in the calculation.
-        ecuteps : float
-            Energy cutoff for the dielectric function.
-        ecutsigx : float
-            Energy cutoff for the bare coulomb interaction (exchange part).
         ibnd_min : int
             Minimum band index for GW corrections.
         ibnd_max : int
@@ -58,9 +52,6 @@ class SigmaTask(BGWTask):
             Path to the eps0mat file produced by epsilon.
         epsmat_fname : str
             Path to the epsmat file produced by epsilon.
-        nbnd_occ : int, optional
-            Number of occupied bands. This feature is deprecated in BerkeleyGW
-            but is kept here for backward compatibility.
         extra_lines : list, optional
             Any other lines that should appear in the input file.
         extra_variables : dict, optional
@@ -73,12 +64,18 @@ class SigmaTask(BGWTask):
         sigma_fname : str
             Path to the sigma_hp.log file produced.
 
+        eqp0_fname : str
+            Path to the eqp0.dat file produced.
+
+        eqp1_fname : str
+            Path to the eqp1.dat file produced.
+
         """
 
         super(SigmaTask, self).__init__(dirname, **kwargs)
 
         # Compute k-points grids
-        # TODO maybe make these properties
+        # Maybe I should make these properties...
         structure = kwargs.pop('structure')
         ngkpt = kwargs['ngkpt']
         kpts_ush, wtks_ush = get_kpt_grid(structure, ngkpt)
@@ -86,14 +83,8 @@ class SigmaTask(BGWTask):
         extra_lines = kwargs.get('extra_lines',[])
         extra_variables = kwargs.get('extra_variables',{})
 
-        if 'nbnd_occ' in kwargs:
-            extra_variables['nbnd_occ'] = kwargs.pop('nbnd_occ')
-
         # Input file
         self.input = SigmaInput(
-            kwargs['ecuteps'],
-            kwargs['ecutsigx'],
-            kwargs['nbnd'],
             kwargs['ibnd_min'],
             kwargs['ibnd_max'],
             kpts_ush,
@@ -171,5 +162,16 @@ class SigmaTask(BGWTask):
 
     @property
     def sigma_fname(self):
+        """Path to the sigma_hp.log file produced."""
         return os.path.join(self.dirname, 'sigma_hp.log')
+    
+    @property
+    def eqp0_fname(self):
+        """Path to the eqp0.dat file produced."""
+        return os.path.join(self.dirname, 'eqp0.dat')
+    
+    @property
+    def eqp1_fname(self):
+        """Path to the eqp1.dat file produced."""
+        return os.path.join(self.dirname, 'eqp1.dat')
     

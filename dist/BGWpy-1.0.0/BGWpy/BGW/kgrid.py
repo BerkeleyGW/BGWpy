@@ -4,6 +4,9 @@ import subprocess
 import numpy as np
 from ..core import fortran_str
 
+__all__ = ['get_kpt_grid', 'get_kgrid_input', 'get_kpoints', 'get_kqshift',
+           'get_kpt_grid_nosym', ]
+
 def get_kpt_grid(structure, ngkpt, executable='kgrid.x',
                  rootname='tmp.kgrid', clean_after=True, **kwargs):
     """

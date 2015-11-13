@@ -17,6 +17,33 @@ class PW2BGWInput(Namelist):
 
         super(PW2BGWInput, self).__init__('input_pw2bgw', *args, **kwargs)
 
+        # Sort the variables so that they look nice in the input file.
+        prefered_order = [
+            'prefix',
+            'real_or_complex',
+            'wfng_flag',
+            'wfng_file',
+            'rhog_flag',
+            'rhog_file',
+            'vxc_flag',
+            'vxc_file',
+            'vxcg_flag',
+            'vxcg_file',
+            'vxc_offdiag_nmin',
+            'vxc_offdiag_nmax',
+            'vxc_diag_nmin',
+            'vxc_diag_nmax',
+            'wfng_kgrid',
+            ]
+        for key in prefered_order:
+            value = self.pop(key, None)
+            if value:
+                self[key] = value
+        for key in self.keys():
+            if key not in prefered_order:
+                value = self.pop(key)
+                self[key] = value
+
         self.ngkpt = ngkpt
         self.kshift = kshift
         self.qshift = qshift

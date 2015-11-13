@@ -39,17 +39,12 @@ class EpsilonTask(BGWTask):
             in a GW calculation.
         qshift : list(3), float
             Q-point used to treat the Gamma point.
-        nbnd : int
-            Number of bands included in the calculation.
         ecuteps : float
             Energy cutoff for the dielectric function.
         wfn_fname : str
             Path to the wavefunction file produced by pw2bgw.
         wfnq_fname : str
             Path to the q-shifted wavefunction file produced by pw2bgw.
-        nbnd_occ : int, optional
-            Number of occupied bands. This feature is deprecated in BerkeleyGW
-            but is kept here for backward compatibility.
         extra_lines : list, optional
             Any other lines that should appear in the input file.
         extra_variables : dict, optional
@@ -81,13 +76,9 @@ class EpsilonTask(BGWTask):
         extra_lines = kwargs.get('extra_lines',[])
         extra_variables = kwargs.get('extra_variables',{})
 
-        if 'nbnd_occ' in kwargs:
-            extra_variables['nbnd_occ'] = kwargs.pop('nbnd_occ')
-
         # Input file
         self.input = EpsilonInput(
             kwargs['ecuteps'],
-            kwargs['nbnd'],
             kwargs['qshift'],
             kpts_ush[1:],
             *extra_lines,

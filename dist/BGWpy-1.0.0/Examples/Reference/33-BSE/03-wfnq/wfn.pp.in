@@ -1,9 +1,9 @@
 &input_pw2bgw
-   real_or_complex = 2
-   wfng_kgrid = .true.
-   wfng_flag = .true.
    prefix = 'GaAs'
+   real_or_complex = 2
+   wfng_flag = .true.
    wfng_file = 'wfnq.cplx'
+   wfng_kgrid = .true.
    wfng_nk1 = 2
    wfng_nk2 = 2
    wfng_nk3 = 2

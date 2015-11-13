@@ -14,7 +14,7 @@ flow = BSEFlow(
     pseudos = ['31-Ga.PBE.UPF', '33-As.PBE.UPF'],
 
     ecutwfc=10.0,
-    nbnd = 10,
+    nbnd = 9,
 
     ngkpt = [2,2,2],
     kshift = [.5,.5,.5],
@@ -24,13 +24,9 @@ flow = BSEFlow(
     ngkpt_fine = [4,4,4],
     kshift_fine = [.0,.0,.0],
 
-    nbnd_epsilon = 8,
-    nbnd_sigma = 8,
-    nbnd_occ = 4,
     ibnd_min = 1,
     ibnd_max = 8,
     ecuteps = 10.0,
-    ecutsigx = 15.0,
     sigma_extra_lines = ['screening_semiconductor'],
 
     # Kernel variables
