@@ -11,11 +11,10 @@ Documentation
 We recommend learning the basic usage from the examples provided
 with the source distribution in ~BGWpy/Examples/. The docstrings
 of the various objects also contain information and can be accessed
-from a python interpreter with
+from a python interpreter with::
    >>> help(BGWpy.<object>)
 
-or from ipython with
-.. ipython::
+or from ipython with::
    In  [1]: BGWpy.<object>?
 
 
