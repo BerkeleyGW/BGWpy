@@ -54,6 +54,8 @@ class AbsorptionTask(BGWTask):
             Path to the bsexmat file produced by kernel.
         sigma_fname : str
             Path to the sigma_hp.log file produced by sigma.
+        eqp_fname : str
+            Path to either eqp0.dat or eqp1.dat file produced by sigma.
         extra_lines : list, optional
             Any other lines that should appear in the input file.
         extra_variables : dict, optional
@@ -86,11 +88,12 @@ class AbsorptionTask(BGWTask):
         self.bsexmat_fname = kwargs['bsexmat_fname']
 
         self.sigma_fname = kwargs['sigma_fname']
+        self.eqp_fname = kwargs['eqp_fname']
 
         self.runscript['EQP'] = 'eqp.py'
         self.runscript['ABSORPTION'] = 'absorption.cplx.x'
         self.runscript['ABSORPTIONOUT'] = self._output_fname
-        self.runscript.append('$EQP eqp1 sigma_hp.log eqp_co.dat')
+        #self.runscript.append('$EQP eqp1 sigma_hp.log eqp_co.dat')  # Old behavior
         self.runscript.append('$MPIRUN $ABSORPTION &> $ABSORPTIONOUT')
 
     @property
@@ -182,6 +185,15 @@ class AbsorptionTask(BGWTask):
     def sigma_fname(self, value):
         self._sigma_fname = value
         self.update_link(value, 'sigma_hp.log')
+
+    @property
+    def eqp_fname(self):
+        return self._eqp_fname
+
+    @eqp_fname.setter
+    def eqp_fname(self, value):
+        self._eqp_fname = value
+        self.update_link(value, 'eqp_co.dat')
 
     def write(self):
         super(AbsorptionTask, self).write()

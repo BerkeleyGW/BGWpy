@@ -28,7 +28,7 @@ class Namelist(OrderedDict, Writable):
     """A namelist used in fortran input files."""
 
     def __init__(self, name, quotes=True, *args, **kwargs):
-        super(Namelist, self).__init__(*args)
+        super(Namelist, self).__init__(*args, **kwargs)
         self.name = name
         self.update(kwargs)
         self.quotes = quotes

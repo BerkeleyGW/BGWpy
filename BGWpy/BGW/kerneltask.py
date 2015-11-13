@@ -35,10 +35,6 @@ class KernelTask(BGWTask):
             Number of valence bands.
         nbnd_cond : int
             Number of conduction bands.
-        ecuteps : float
-            Energy cutoff for the dielectric function.
-        ecutsigx : float
-            Energy cutoff for the bare coulomb interaction (exchange part).
         wfn_co_fname : str
             Path to the wavefunction file produced by pw2bgw.
         eps0mat_fname : str
@@ -73,8 +69,6 @@ class KernelTask(BGWTask):
         self.input = KernelInput(
             kwargs['nbnd_val'],
             kwargs['nbnd_cond'],
-            kwargs['ecuteps'],
-            kwargs['ecutsigx'],
             *kwargs.get('extra_lines',[]),
             **kwargs.get('extra_variables',{}))
 

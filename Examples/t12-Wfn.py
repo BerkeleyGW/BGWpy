@@ -23,7 +23,7 @@ kwargs = dict(
     ngkpt = [2,2,2],      # k-points grid
     kshift = [.5,.5,.5],  # k-points shift
     ecutwfc = 10.0,       # Wavefunctions cutoff energy
-    nbnd = 20,            # Number of bands
+    nbnd = 9,             # Number of bands
 
     # These are the default parameters for the MPI runner.
     # Please adapt them to your needs.

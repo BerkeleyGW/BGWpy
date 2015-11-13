@@ -1,4 +1,8 @@
 
+
+
+#structures['GaAs'] = 'GaAs.json'
+
 structures_files = [
     'GaAs.cif'
     'GaAs.json'

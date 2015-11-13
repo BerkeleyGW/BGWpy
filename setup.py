@@ -25,7 +25,7 @@ name = 'BGWpy'
 description = 'Interface BerkeleyGW flows in python.'
 author = 'Gabriel Antonius'
 author_email = 'antonius@civet.berkeley.edu'
-license = 'All rights reserved'
+license = 'BSD'
 __version__ = '1.0.0'
 
 
@@ -38,6 +38,10 @@ install_requires = [
 # --------------------------------------------------------------------------- #
 # Helper functions
 # --------------------------------------------------------------------------- #
+
+def get_package_data():
+    package_data={'BGWpy': ['data/structures/*', 'data/pseudos/*']}
+    return package_data
 
 def cleanup():
     """Clean up the junk left around by the build process."""
@@ -65,6 +69,7 @@ setup_args = dict(
       license          = license,
       install_requires = install_requires,
       packages         = find_packages(),
+      package_data     = get_package_data(),
       )
 
 if __name__ == "__main__":
