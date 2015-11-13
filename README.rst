@@ -16,9 +16,10 @@ from a python interpreter with
    >>> help(BGWpy.<object>)
 
 
+
 or from ipython with
-.. ipython::
-   In  [1]: BGWpy.<object>?
+
+    In  [1]: BGWpy.<object>?
 
 
 Requirements

@@ -1,1 +1,0 @@
-from pymatgen import Structure
