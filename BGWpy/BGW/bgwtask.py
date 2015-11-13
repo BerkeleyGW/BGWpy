@@ -4,6 +4,8 @@ import os
 from ..core.util import last_lines_contain
 from ..core import Task, MPITask
 
+# Public
+__all__ = ['BGWTask']
 
 class BGWTask(MPITask):
     """Base class for BerkeleyGW calculations."""

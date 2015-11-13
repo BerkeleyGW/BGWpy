@@ -140,5 +140,11 @@ workflow.add_tasks([scftask,
 
 # Execution
 workflow.write()
-workflow.run()
-workflow.report()
+
+for task in workflow.tasks:
+    task.run()
+    task.report()
+
+# The previous iteration also could have been performed as
+#workflow.run()
+#workflow.report()

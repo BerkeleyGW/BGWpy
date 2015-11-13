@@ -2,6 +2,8 @@ import numpy as np
 
 from ..core import Writable, arr_str
 
+__all__ = ['Wannier90Input']
+
 class Wannier90Input(Writable):
 
     def __init__(self, structure, nbnd, nwann, kbounds, klabels,

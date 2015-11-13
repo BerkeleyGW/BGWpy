@@ -1,8 +1,11 @@
 from __future__ import print_function
 
-from . import BGWTask
-from . import get_kpt_grid
-from . import AbsorptionInput
+from .bgwtask import BGWTask
+from .kgrid   import get_kpt_grid
+from .inputs  import AbsorptionInput
+
+# Public
+__all__ = ['AbsorptionTask']
 
 
 class AbsorptionTask(BGWTask):
