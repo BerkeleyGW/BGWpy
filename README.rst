@@ -1,9 +1,12 @@
 
-BGWpy is a python module to operate BerkeleyGW.
+BGWpy
+=====
+
+A python module to operate BerkeleyGW.
 
 
 Documentation
-=============
+-------------
 
 We recommend learning the basic usage from the examples provided
 with the source distribution in ~BGWpy/Examples/. The docstrings
@@ -11,13 +14,13 @@ of the various objects also contain information and can be accessed
 from a python interpreter with
     >>> help(BGWpy.<object>)
 
-
 or from ipython with
+.. ipython::
     In [1]: BGWpy.<object>?
 
 
 Requirements
-============
+------------
 
 The following software and modules are required to use BGWpy.
 
@@ -31,7 +34,7 @@ in your PATH environment variable.
 
 
 Installing
-==========
+----------
 
 Once you have satisfied the requirements, install the package with
 
@@ -41,7 +44,7 @@ Once you have satisfied the requirements, install the package with
 
 
 License
-=======
+-------
 
 This software is free to use under the BSD license.
 See license.txt for more information.
