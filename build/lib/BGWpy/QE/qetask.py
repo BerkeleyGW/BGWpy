@@ -5,7 +5,12 @@ import warnings
 
 from ..core.util import exec_from_dir, last_lines_contain
 from ..core import Task, MPITask
-from ..BGW import get_kpt_grid, get_kpt_grid_nosym
+
+from ..BGW.kgrid import get_kpt_grid, get_kpt_grid_nosym
+
+# Public
+__all__ = ['QETask']
+
 
 class QETask(MPITask):
     """Base class for Quantum Espresso calculations."""

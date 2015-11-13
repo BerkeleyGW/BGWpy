@@ -1,9 +1,12 @@
 from __future__ import print_function
 import os
 
-from . import BGWTask
-from . import get_kpt_grid
-from . import EpsilonInput
+from .bgwtask import BGWTask
+from .kgrid   import get_kpt_grid
+from .inputs  import EpsilonInput
+
+# Public
+__all__ = ['EpsilonTask']
 
 
 class EpsilonTask(BGWTask):

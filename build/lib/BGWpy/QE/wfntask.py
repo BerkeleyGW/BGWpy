@@ -1,8 +1,11 @@
 from __future__ import print_function
 import os
 
-from . import QETask
-from . import get_bands_input
+from .qetask      import QETask
+from .constructor import get_bands_input
+
+# Public
+__all__ = ['WfnTask']
 
 
 class WfnTask(QETask):

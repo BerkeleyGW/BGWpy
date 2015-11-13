@@ -5,11 +5,12 @@ import subprocess
 import pickle
 
 
-from .. import Structure
+from ..external import Structure
 from ..core import Workflow
 from ..QE import ScfTask, WfnTask, PW2BGWTask  # TODO WfnPwBgwFlow
 from ..BGW import EpsilonTask, SigmaTask, KernelTask, AbsorptionTask
 
+__all__ = ['BSEFlow']
 
 class BSEFlow(Workflow):
     """

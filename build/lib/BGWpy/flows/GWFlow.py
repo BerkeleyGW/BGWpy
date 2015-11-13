@@ -2,11 +2,12 @@ from __future__ import print_function
 
 from os.path import join as pjoin
 
-from .. import Structure
+from ..external import Structure
 from ..core import Workflow
 from ..QE import ScfTask, WfnTask, PW2BGWTask
 from ..BGW import EpsilonTask, SigmaTask
 
+__all__ = ['GWFlow']
 
 class GWFlow(Workflow):
     """

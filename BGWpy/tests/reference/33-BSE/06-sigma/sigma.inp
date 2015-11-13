@@ -1,0 +1,13 @@
+screened_coulomb_cutoff 10.0
+bare_coulomb_cutoff 15.0
+number_bands 8
+band_occupation 4*1 4*0
+band_index_min 1
+band_index_max 8
+screening_semiconductor
+
+begin kpoints
+  0.00000000  0.00000000  0.00000000 1.0
+  0.00000000  0.00000000  0.50000000 1.0
+  0.00000000  0.50000000  0.50000000 1.0
+end

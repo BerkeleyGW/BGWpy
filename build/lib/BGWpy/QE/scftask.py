@@ -1,8 +1,11 @@
 from __future__ import print_function
 import os
 
-from . import QETask
-from . import get_scf_input
+from .qetask      import QETask
+from .constructor import get_scf_input
+
+# Public
+__all__ = ['ScfTask']
 
 
 class ScfTask(QETask):

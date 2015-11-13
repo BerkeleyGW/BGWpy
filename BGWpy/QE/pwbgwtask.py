@@ -1,8 +1,11 @@
 from __future__ import print_function
 import os
 
-from . import QETask
-from . import PW2BGWInput
+from .qetask import QETask
+from .pwbgwinput import PW2BGWInput
+
+# Public
+__all__ = ['PW2BGWTask']
 
 
 class PW2BGWTask(QETask):
