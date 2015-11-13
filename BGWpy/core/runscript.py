@@ -31,9 +31,14 @@ class RunScript(Writable):
             A list of executions, e.g.
             '$MPIRUN $EXECUTABLE < $INPUT >& $OUTPUT'
 
+        header :
+            A list of executions that occur before all other execution.
+            Can be used to transform the script into a submission file.
+
         """
 
         self.first_line = first_line
+        self.header = list()            # Lines that come before all other execution
         self.variables = OrderedDict()  # Variables declared in the preemble
         self.links = list()             # Symbolic links to be made
         self.copies = list()            # Files to be copied
@@ -60,6 +65,12 @@ class RunScript(Writable):
             self.main.append(main)
         elif main is not None:
             self.main.extend(main)
+
+        header = kwargs.get('header', [])
+        if isinstance(header, str):
+            self.header.append(header)
+        elif main is not None:
+            self.header.extend(header)
 
     def _check_pair(self, pair):
         """Check that an object is a pair of two elements."""
@@ -133,6 +144,10 @@ class RunScript(Writable):
     def __str__(self):
         S = ''
         S += self.first_line + 2 * '\n'
+
+        S += '\n'
+        for line in self.header:
+            S += line + '\n'
 
         for name, value in self.variables.items():
             value = self._get_quoted_string(value)
