@@ -1,3 +1,4 @@
+include *.rst
 include *.txt
 graft Examples
 prune Examples/[0-9]*
