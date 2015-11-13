@@ -1,5 +1,5 @@
 
-     Program PWSCF v.5.1.2 starts on 12Nov2015 at 11:30:42 
+     Program PWSCF v.5.1.2 starts on 13Nov2015 at 14: 0: 6 
 
      This program is part of the open-source Quantum ESPRESSO suite
      for quantum simulation of materials; please cite
@@ -20,7 +20,11 @@
      Atomic positions and unit cell read from directory:
      ./GaAs.save/
 
+     Message from routine readpp:
+     file ./GaAs.save/31-Ga.PBE.UPF not found
                file 31-Ga.PBE.UPF: wavefunction(s)  4d 4f renormalized
+     Message from routine readpp:
+     file ./GaAs.save/33-As.PBE.UPF not found
                file 33-As.PBE.UPF: wavefunction(s)  4f renormalized
 
      Subspace diagonalization in iterative solution of the eigenvalue problem:
@@ -42,7 +46,7 @@
      number of atoms/cell      =            2
      number of atomic types    =            2
      number of electrons       =         8.00
-     number of Kohn-Sham states=           10
+     number of Kohn-Sham states=            9
      kinetic-energy cutoff     =      10.0000  Ry
      charge density cutoff     =      40.0000  Ry
      Exchange-correlation      = PBE ( 1  4  3  4 0 0)
@@ -111,15 +115,15 @@
      Dense  grid:     1291 G-vectors     FFT dimensions: (  15,  15,  15)
 
      Largest allocated arrays     est. size (Mb)     dimensions
-        Kohn-Sham Wavefunctions         0.01 Mb     (      87,   10)
+        Kohn-Sham Wavefunctions         0.01 Mb     (      87,    9)
         NL pseudopotentials             0.03 Mb     (      87,   26)
         Each V/rho on FFT grid          0.03 Mb     (    1800)
         Each G-vector array             0.00 Mb     (     646)
         G-vector shells                 0.00 Mb     (      40)
      Largest temporary arrays     est. size (Mb)     dimensions
-        Auxiliary wavefunctions         0.05 Mb     (      87,   40)
-        Each subspace H/S matrix        0.02 Mb     (      40,   40)
-        Each <psi_i|beta_j> matrix      0.00 Mb     (      26,   10)
+        Auxiliary wavefunctions         0.05 Mb     (      87,   36)
+        Each subspace H/S matrix        0.02 Mb     (      36,   36)
+        Each <psi_i|beta_j> matrix      0.00 Mb     (      26,    9)
 
      The potential is recalculated from file :
      ./GaAs.save/charge-density.dat
@@ -129,7 +133,7 @@
      Band Structure Calculation
      Davidson diagonalization with overlap
 
-     ethr =  1.25E-12,  avg # of iterations = 37.0
+     ethr =  1.25E-12,  avg # of iterations = 38.5
 
      total cpu time spent up to now is        0.3 secs
 
@@ -138,91 +142,91 @@
           k = 0.5296-0.1761 0.1775 (   164 PWs)   bands (ev):
 
     -5.4570  -1.0477   1.9751   3.1580   7.7490  10.2191  11.9906  12.7154
-    16.2395  17.7710
+    16.2395
 
           k =-0.1775 0.1775 0.1775 (   162 PWs)   bands (ev):
 
     -6.8167   1.1962   4.6882   4.6882   6.9613  10.1041  10.1041  11.5897
-    14.3072  15.1520
+    14.3072
 
           k = 0.1761 0.1775 0.1775 (   162 PWs)   bands (ev):
 
     -6.8201   1.2077   4.6870   4.6948   6.9630  10.0967  10.1066  11.5787
-    14.3094  15.1408
+    14.3094
 
           k = 0.5296 0.5310-0.1761 (   164 PWs)   bands (ev):
 
     -5.4509  -1.0533   1.9650   3.1541   7.7463  10.2210  12.0006  12.7276
-    16.2328  17.7594
+    16.2328
 
           k = 0.1761-0.1761 0.5310 (   164 PWs)   bands (ev):
 
     -5.4515  -1.0501   1.9654   3.1510   7.7441  10.2101  12.0027  12.7372
-    16.2415  17.7680
+    16.2415
 
           k = 0.8832 0.1775 0.1775 (   164 PWs)   bands (ev):
 
     -5.4504  -1.0565   1.9646   3.1574   7.7483  10.2318  11.9990  12.7175
-    16.2242  17.7506
+    16.2242
 
           k = 0.1761 0.8846-0.1761 (   164 PWs)   bands (ev):
 
     -5.4576  -1.0445   1.9755   3.1549   7.7468  10.2083  11.9926  12.7250
-    16.2482  17.7795
+    16.2482
 
           k =-0.5310 0.5310 0.5310 (   162 PWs)   bands (ev):
 
     -6.8270   1.2308   4.6965   4.6965   6.9661  10.0966  10.0966  11.5567
-    14.3136  15.1459
+    14.3136
 
           k =-0.1775 0.8846 0.1775 (   164 PWs)   bands (ev):
 
     -5.4564  -1.0510   1.9748   3.1612   7.7510  10.2298  11.9892  12.7054
-    16.2310  17.7623
+    16.2310
 
           k = 0.5296 0.5310 0.5310 (   162 PWs)   bands (ev):
 
     -6.8236   1.2193   4.6899   4.6975   6.9646  10.0941  10.1041  11.5677
-    14.3115  15.1388
+    14.3115
 
      Writing output data file GaAs.save
 
-     init_run     :      0.02s CPU      0.03s WALL (       1 calls)
-     electrons    :      0.21s CPU      0.22s WALL (       1 calls)
+     init_run     :      0.02s CPU      0.02s WALL (       1 calls)
+     electrons    :      0.18s CPU      0.19s WALL (       1 calls)
 
      Called by init_run:
      wfcinit      :      0.00s CPU      0.00s WALL (       1 calls)
      potinit      :      0.00s CPU      0.00s WALL (       1 calls)
 
      Called by electrons:
-     c_bands      :      0.21s CPU      0.22s WALL (       1 calls)
+     c_bands      :      0.18s CPU      0.19s WALL (       1 calls)
      v_of_rho     :      0.00s CPU      0.00s WALL (       1 calls)
 
      Called by c_bands:
      init_us_2    :      0.00s CPU      0.00s WALL (      10 calls)
-     cegterg      :      0.19s CPU      0.20s WALL (      21 calls)
+     cegterg      :      0.16s CPU      0.17s WALL (      23 calls)
 
      Called by *egterg:
-     h_psi        :      0.08s CPU      0.09s WALL (     401 calls)
-     g_psi        :      0.00s CPU      0.00s WALL (     370 calls)
-     cdiaghg      :      0.09s CPU      0.10s WALL (     380 calls)
+     h_psi        :      0.08s CPU      0.08s WALL (     418 calls)
+     g_psi        :      0.00s CPU      0.00s WALL (     385 calls)
+     cdiaghg      :      0.07s CPU      0.08s WALL (     395 calls)
 
      Called by h_psi:
-     add_vuspsi   :      0.01s CPU      0.01s WALL (     401 calls)
+     add_vuspsi   :      0.01s CPU      0.01s WALL (     418 calls)
 
      General routines
-     calbec       :      0.01s CPU      0.01s WALL (     401 calls)
+     calbec       :      0.01s CPU      0.01s WALL (     418 calls)
      fft          :      0.00s CPU      0.00s WALL (      10 calls)
-     fftw         :      0.05s CPU      0.06s WALL (    4344 calls)
+     fftw         :      0.05s CPU      0.05s WALL (    4144 calls)
      davcio       :      0.00s CPU      0.00s WALL (      10 calls)
 
      Parallel routines
-     fft_scatter  :      0.01s CPU      0.02s WALL (    4354 calls)
+     fft_scatter  :      0.01s CPU      0.01s WALL (    4154 calls)
 
-     PWSCF        :     0.32s CPU         0.35s WALL
+     PWSCF        :     0.30s CPU         0.32s WALL
 
 
-   This run was terminated on:  11:30:42  12Nov2015            
+   This run was terminated on:  14: 0: 6  13Nov2015            
 
 =------------------------------------------------------------------------------=
    JOB DONE.
