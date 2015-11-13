@@ -74,5 +74,5 @@ setup_args = dict(
 
 if __name__ == "__main__":
     setup(**setup_args)
-    cleanup()
+    #cleanup()
 
