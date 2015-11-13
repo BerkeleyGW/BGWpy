@@ -12,12 +12,12 @@ We recommend learning the basic usage from the examples provided
 with the source distribution in ~BGWpy/Examples/. The docstrings
 of the various objects also contain information and can be accessed
 from a python interpreter with
-    >>> help(BGWpy.<object>)
+   >>> help(BGWpy.<object>)
 
 or from ipython with
 
 .. ipython::
-    In [1]: BGWpy.<object>?
+   In  [1]: BGWpy.<object>?
 
 
 Requirements
