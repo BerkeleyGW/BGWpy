@@ -4,7 +4,7 @@ to this module or simply test it.
 
 
 Contributing
-============
+------------
 
 Please follow the coding style guide:
 
@@ -13,7 +13,7 @@ Please follow the coding style guide:
 
 
 Tests
-=====
+-----
 
 For starters, the examples provided in ~BGWpy/Examples can be used
 as a test suite for this module. The script run_examples.sh can be
@@ -24,5 +24,7 @@ Automated test can be launched from the top directory using nose,
 e.g. (assuming you have installed nose with color plugin):
     nosetests --color
 
-Please note that the examples and the tests have to be maintained
-    separately.
+Before launching the tests, you might want to edit the file
+~BGWpy/tests/preferences.py  to use your mpi environment.
+
+Please note that the examples and the tests have to be maintained separately.

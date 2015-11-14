@@ -2,14 +2,7 @@ import os
 import unittest
 import tempfile, shutil
 
-mpi_preferences = dict(
-            nproc = 1,
-            nproc_per_node = 1,
-            mpirun = 'mpirun',
-            nproc_flag = '-n',
-            nproc_per_node_flag = '--npernode',
-    )
-
+from .preferences import mpi_preferences
 
 class TestTask(unittest.TestCase):
 
