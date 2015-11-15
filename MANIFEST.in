@@ -1,4 +1,7 @@
 include *.rst
 include *.txt
 graft Examples
+graft config
 prune Examples/[0-9]*
+exclude config/user_configuration.py
+exclude BGWpy/config/user_configuration.py

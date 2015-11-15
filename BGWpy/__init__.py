@@ -1,4 +1,5 @@
 from . import core
+from . import config
 
 # Development functions
 #from . import external

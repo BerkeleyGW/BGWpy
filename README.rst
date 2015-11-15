@@ -45,6 +45,8 @@ Once you have satisfied the requirements, install the package with
 
   python setup.py install
 
+See the file INSTALL for more information about configuring
+the module's default parameters.
 
 License
 -------

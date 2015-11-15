@@ -1,0 +1,24 @@
+
+Configuration
+-------------
+
+You can configure the default parameters for your MPI configuration
+and bash environment. To do so, copy the configuration file
+before installing the package, as follow:
+
+    cd config/
+
+    cp user_configuration.py.template user_configuration.py
+
+
+Then edit the file user_configuration.py to your taste.
+
+
+Installation
+------------
+
+Once you have satisfied the requirements listed in README.rst, issue
+
+  python setup.py build
+
+  python setup.py install

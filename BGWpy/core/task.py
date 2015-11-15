@@ -5,6 +5,7 @@ import subprocess
 import pickle
 import contextlib
 
+from ..config import default_mpi
 from .util import exec_from_dir
 from .runscript import RunScript
 
@@ -131,12 +132,11 @@ class Task(object):
 class MPITask(Task):
     """Task whose run script defines MPI variables for the main execution."""
 
-    _mpirun = 'mpirun'
-    _nproc_flag = '-n'
-    _nproc_per_node_flag = '--npernode'
-
-    _nproc = 1
-    _nproc_per_node = 1
+    _mpirun = default_mpi['mpirun']
+    _nproc_flag = default_mpi['nproc_flag']
+    _nproc_per_node_flag = default_mpi['nproc_per_node_flag']
+    _nproc = default_mpi['nproc']
+    _nproc_per_node = default_mpi['nproc_per_node']
 
     def __init__(self, *args, **kwargs):
         """
@@ -165,12 +165,20 @@ class MPITask(Task):
 
         super(MPITask, self).__init__(*args, **kwargs)
 
-        self.mpirun = kwargs.get('mpirun', 'mpirun')
-        self.nproc_flag = kwargs.get('nproc_flag', '-n')
-        self.nproc_per_node_flag = kwargs.get('nproc_per_node_flag', '--npernode')
+        self.mpirun = default_mpi['mpirun']
+        self.nproc_flag = default_mpi['nproc_flag']
+        self.nproc_per_node_flag = default_mpi['nproc_per_node_flag']
+        self.nproc = default_mpi['nproc']
+        self.nproc_per_node = default_mpi['nproc_per_node']
 
-        self.nproc = kwargs.get('nproc', 1)
-        self.nproc_per_node = kwargs.get('nproc_per_node', self.nproc)
+        for key in ('mpirun', 'nproc_flag', 'nproc_per_node_flag',
+                    'nproc', 'nproc_per_node'):
+            if key in kwargs:
+                setattr(self, key, kwargs[key])
+
+        # If nproc is specified but not nproc_per_node, set nproc_per_node = nproc.
+        #if 'nproc' in kwargs:
+        #    self.nproc_per_node = kwargs.get('nproc_per_node', self.nproc)
 
         # This is mostly for backward compatibility
         if 'mpirun_n' in kwargs:

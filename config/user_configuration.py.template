@@ -1,0 +1,31 @@
+"""
+The user is advised to set the default behavior
+of the module to their needs.
+
+IMPORTANT:
+Within this directory, copy this file as follow:
+    cp  user_configuration.py.template  user_configuration.py
+
+Then, edit the file user_configuration.py as desired.
+"""
+
+default_mpi = dict(
+    nproc = 1,
+    nproc_per_node = 1,
+    mpirun = 'mpirun',
+    nproc_flag = '-n',
+    nproc_per_node_flag = '--npernode',
+    )
+
+# BGWpy generate several bash script, essentially to run BerkeleyGW.
+default_runscript = dict(
+    first_line = '#!/bin/bash', # The first line appearing in run scripts.
+                                # Do not use any other shell than bash.
+
+    header = [],                # Preemble lines that appear befor the main
+                                # execution of all runscripts.
+                                # Can be used, e.g. to load modules.
+
+    footer = [],                # Lines that appear at the end of the scripts.
+    )
+

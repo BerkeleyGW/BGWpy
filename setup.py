@@ -43,6 +43,13 @@ def get_package_data():
     package_data={'BGWpy': ['data/structures/*', 'data/pseudos/*']}
     return package_data
 
+def install_user_configuration():
+    user_config = os.path.join('config', 'user_configuration.py')
+    dest = os.path.join('BGWpy', 'config', 'user_configuration.py')
+    if os.path.exists(user_config):
+        shutil.copy(user_config, dest)
+
+# Actually, this function breaks the build...
 def cleanup():
     """Clean up the junk left around by the build process."""
 
@@ -60,6 +67,8 @@ def cleanup():
 # Setup
 # --------------------------------------------------------------------------- #
 
+install_user_configuration()
+
 setup_args = dict(
       name             = name,
       version          = __version__,
@@ -74,5 +83,4 @@ setup_args = dict(
 
 if __name__ == "__main__":
     setup(**setup_args)
-    #cleanup()
 
