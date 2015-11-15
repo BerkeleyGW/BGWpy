@@ -2,8 +2,6 @@ import os
 import unittest
 import tempfile, shutil
 
-from .preferences import mpi_preferences
-
 class TestTask(unittest.TestCase):
 
     def setUp(self):

@@ -2,7 +2,7 @@ from __future__ import print_function
 import os
 from copy import copy
 
-from . import TestTask, mpi_preferences
+from . import TestTask
 from .test_QE_tasks import TestQETasksMaker
 
 from .. import data

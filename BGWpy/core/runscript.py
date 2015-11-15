@@ -1,23 +1,24 @@
 from collections import OrderedDict
 import subprocess
 
+from ..config import default_runscript
 from .writable import Writable
 
 class RunScript(Writable):
 
     def __init__(self, variables=None, links=None, copies=None, main=None,
-                 first_line = '#!/usr/bin/env bash', **kwargs):
+                 **kwargs):
         """
         Just a run script. Starts with a few declarations (variables),
         then create symbolic links, and finally execute a list of commands (main).
 
-        Arguments
-        ---------
+        Keyword arguments
+        -----------------
 
-        variables : 
-            A dict or an OrderedDict, for which the keys are
-            the variable names and the values are interpreted
-            as strings, for which quotation marks will be added.
+        variables : dict or OrderedDict
+            Variables to be declared in the script. The keys of the given dict
+            are the variable names, and the values are interpreted as strings,
+            for which quotation marks will be added.
 
         links :
             A list of pairs (target, dest), that will be linked with
@@ -39,15 +40,18 @@ class RunScript(Writable):
             A list of executions that occur after all other executions.
             Can be used to add some cleaning up.
 
+        first_line :
+            The first line of the script, e.g. '#!/bin/bash'.
+
         """
 
-        self.first_line = first_line
-        self.header = list()            # Lines that come before all other executions
-        self.variables = OrderedDict()  # Variables declared in the preemble
-        self.links = list()             # Symbolic links to be made
-        self.copies = list()            # Files to be copied
-        self.main = list()              # Main execution lines
-        self.footer = list()            # Lines that come after all other executions
+        self.first_line = str()
+        self.header = list()
+        self.variables = OrderedDict()
+        self.links = list()
+        self.copies = list()
+        self.main = list()
+        self.footer = list()
 
         if variables is not None:
             self.variables.update(variables)
@@ -71,13 +75,16 @@ class RunScript(Writable):
         elif main is not None:
             self.main.extend(main)
 
-        header = kwargs.get('header', [])
+        self.first_line = kwargs.get('first_line',
+                                     default_runscript['first_line'])
+
+        header = kwargs.get('header', default_runscript['header'])
         if isinstance(header, str):
             self.header.append(header)
         elif header is not None:
             self.header.extend(header)
 
-        footer = kwargs.get('footer', [])
+        footer = kwargs.get('footer', default_runscript['footer'])
         if isinstance(footer, str):
             self.footer.append(footer)
         elif footer is not None:

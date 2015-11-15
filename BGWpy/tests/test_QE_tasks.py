@@ -1,6 +1,6 @@
 import os
 
-from . import TestTask, mpi_preferences
+from . import TestTask
 
 from .. import data
 from .. import Structure, ScfTask
@@ -23,7 +23,7 @@ class TestQETasksMaker(TestTask):
         kshift = [.5,.5,.5],
         ecutwfc = 8.0,
         nbnd = 9,
-        **mpi_preferences)
+        )
 
     def get_scftask(self, **kwargs):
         """Construct a ScfTask."""
