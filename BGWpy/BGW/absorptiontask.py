@@ -12,7 +12,6 @@ class AbsorptionTask(BGWTask):
     """Absorption spectrum calculation."""
 
     _TASK_NAME = 'Absorption task'
-
     _input_fname  = 'absorption.inp'
     _output_fname = 'absorption.out'
 

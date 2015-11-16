@@ -1,5 +1,6 @@
 from . import core
 from . import config
+from . import DFT
 
 # Development functions
 #from . import external
