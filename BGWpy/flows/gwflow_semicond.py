@@ -84,14 +84,14 @@ class GWFlowSemicond(Workflow):
 
         # Ground state density calculation (SCF)
         self.scftask = ScfTask(
-            dirname = pjoin(self.dirname, '01-density'),
+            dirname = pjoin(self.dirname, '1-mf/1-scf'),
             ngkpt = self.ngkpt,
             kshift = self.kshift,
             **kwargs)
         
         # Wavefunctions and eigenvalues calculation (NSCF) on a k-shifted grid
         self.wfntask_ksh = WfnTask(
-            dirname = pjoin(self.dirname, '02-wfn'),
+            dirname = pjoin(self.dirname, '1-mf/2.1-wfn'),
             ngkpt = self.ngkpt,
             kshift = self.kshift,
             nbnd = self.nbnd,
@@ -113,7 +113,7 @@ class GWFlowSemicond(Workflow):
         
         # Wavefunctions and eigenvalues calculation (NSCF) on a k+q-shifted grid
         self.wfntask_qsh = WfnTask(
-            dirname = pjoin(self.dirname, '03-wfnq'),
+            dirname = pjoin(self.dirname, '1-mf/2.2-wfnq'),
             ngkpt = self.ngkpt,
             kshift = self.kshift,
             qshift = self.qshift,
@@ -138,7 +138,7 @@ class GWFlowSemicond(Workflow):
         if has_kshift:
             # Wavefunctions and eigenvalues calculation (NSCF) on an unshifted grid
             self.wfntask_ush = WfnTask(
-                dirname = pjoin(self.dirname, '04-wfn_co'),
+                dirname = pjoin(self.dirname, '3-wfn_co'),
                 ngkpt = self.ngkpt,
                 nbnd = self.nbnd,
                 charge_density_fname = self.scftask.charge_density_fname,
@@ -161,7 +161,7 @@ class GWFlowSemicond(Workflow):
         
         # Dielectric matrix computation and inversion (epsilon)
         self.epsilontask = EpsilonTask(
-            dirname = pjoin(self.dirname, '05-epsilon'),
+            dirname = pjoin(self.dirname, '2-bgw/1-epsilon'),
             ngkpt = self.ngkpt,
             qshift = self.qshift,
             extra_lines = (kwargs.pop('epsilon_extra_lines', [])
@@ -174,7 +174,7 @@ class GWFlowSemicond(Workflow):
         
         # Self-energy calculation (sigma)
         self.sigmatask = SigmaTask(
-            dirname = pjoin(self.dirname, '06-sigma'),
+            dirname = pjoin(self.dirname, '2-bgw/2-sigma'),
             ngkpt = self.ngkpt,
             extra_lines = (kwargs.pop('sigma_extra_lines', [])
                            + [self.truncation_flag]),
