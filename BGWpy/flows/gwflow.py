@@ -106,7 +106,7 @@ class GWFlow(Workflow):
             ngkpt = self.ngkpt,
             kshift = self.kshift,
             qshift = self.qshift,
-            nbnd = self.nbnd,
+            nbnd = None,
             charge_density_fname = self.scftask.charge_density_fname,
             data_file_fname = self.scftask.data_file_fname,
             **kwargs)

@@ -1,6 +1,6 @@
 
  BerkeleyGW trunk revision 6898
- Epsilon code, Complex version, run on 13-Nov-2015 at 13:59:56 -0800
+ Epsilon code, Complex version, run on 16-Nov-2015 at 09:21:36 -0800
 
                                                                  ..o.          
                                                                 .oxxo.         
@@ -110,36 +110,28 @@
  Number of conduction bands per processor: 2
  Number of valence bands per processor: 4
 
- WARNING: estimation of memory available is zero, probably failed.
-
  Memory available:********** MB per PE
  Memory required for execution:    2.0 MB per PE
  Memory required for vcoul:    0.0 MB per PE
-
- WARNING: Required memory greater than memory available.
-   This calculation will likely die. To reduce memory,
-   first make sure you are running on an ideal # of PEs.
-   Then, try increasing the number of PEs or try adding
-   gcomm_elements to epsilon.inp
 
  Number of electrons per unit cell (from ifmax) = 8.000000
  Number of electrons per unit cell (from occupations) = 8.000000
  Plasma Frequency = 1.148512 Ry
 
 
- Started reading wavefunctions (WFN) with 32 state(s) at 13:59:56.
- [ 13:59:56 |   0% ] state  1 / 32.
- [ 13:59:56 |   6% ] state  3 / 32, remaining: 0 s.
- [ 13:59:56 |   9% ] state  4 / 32, remaining: 0 s.
- [ 13:59:56 |  19% ] state  7 / 32, remaining: 0 s.
- [ 13:59:56 |  28% ] state 10 / 32, remaining: 0 s.
- [ 13:59:56 |  38% ] state 13 / 32, remaining: 0 s.
- [ 13:59:56 |  50% ] state 17 / 32, remaining: 0 s.
- [ 13:59:56 |  59% ] state 20 / 32, remaining: 0 s.
- [ 13:59:56 |  69% ] state 23 / 32, remaining: 0 s.
- [ 13:59:56 |  78% ] state 26 / 32, remaining: 0 s.
- [ 13:59:56 |  88% ] state 29 / 32, remaining: 0 s.
- Finished reading wavefunctions (WFN) at 13:59:56.
+ Started reading wavefunctions (WFN) with 32 state(s) at 09:21:36.
+ [ 09:21:36 |   0% ] state  1 / 32.
+ [ 09:21:36 |   6% ] state  3 / 32, remaining: 0 s.
+ [ 09:21:36 |   9% ] state  4 / 32, remaining: 0 s.
+ [ 09:21:36 |  19% ] state  7 / 32, remaining: 0 s.
+ [ 09:21:36 |  28% ] state 10 / 32, remaining: 0 s.
+ [ 09:21:36 |  38% ] state 13 / 32, remaining: 0 s.
+ [ 09:21:36 |  50% ] state 17 / 32, remaining: 0 s.
+ [ 09:21:36 |  59% ] state 20 / 32, remaining: 0 s.
+ [ 09:21:36 |  69% ] state 23 / 32, remaining: 0 s.
+ [ 09:21:36 |  78% ] state 26 / 32, remaining: 0 s.
+ [ 09:21:36 |  88% ] state 29 / 32, remaining: 0 s.
+ Finished reading wavefunctions (WFN) at 09:21:36.
  Elapsed time: 0 s.
 
  Screened Coulomb cutoff: 10.000 Ry
@@ -158,20 +150,20 @@
  Reading header of WFNq
  Highest occupied band (shifted grid) = 4
 
- Started reading wavefunctions (WFNq) with 40 state(s) at 13:59:56.
- [ 13:59:56 |   0% ] state  1 / 40.
- [ 13:59:56 |   5% ] state  3 / 40, remaining: 0 s.
- [ 13:59:56 |   8% ] state  4 / 40, remaining: 0 s.
- [ 13:59:56 |  18% ] state  8 / 40, remaining: 0 s.
- [ 13:59:56 |  28% ] state 12 / 40, remaining: 0 s.
- [ 13:59:56 |  38% ] state 16 / 40, remaining: 0 s.
- [ 13:59:56 |  48% ] state 20 / 40, remaining: 0 s.
- [ 13:59:56 |  57% ] state 24 / 40, remaining: 0 s.
- [ 13:59:56 |  68% ] state 28 / 40, remaining: 0 s.
- [ 13:59:56 |  78% ] state 32 / 40, remaining: 0 s.
- [ 13:59:56 |  88% ] state 36 / 40, remaining: 0 s.
- [ 13:59:56 |  98% ] state 40 / 40, remaining: 0 s.
- Finished reading wavefunctions (WFNq) at 13:59:56.
+ Started reading wavefunctions (WFNq) with 40 state(s) at 09:21:36.
+ [ 09:21:36 |   0% ] state  1 / 40.
+ [ 09:21:36 |   5% ] state  3 / 40, remaining: 0 s.
+ [ 09:21:36 |   8% ] state  4 / 40, remaining: 0 s.
+ [ 09:21:36 |  18% ] state  8 / 40, remaining: 0 s.
+ [ 09:21:36 |  28% ] state 12 / 40, remaining: 0 s.
+ [ 09:21:36 |  38% ] state 16 / 40, remaining: 0 s.
+ [ 09:21:36 |  48% ] state 20 / 40, remaining: 0 s.
+ [ 09:21:36 |  57% ] state 24 / 40, remaining: 0 s.
+ [ 09:21:36 |  68% ] state 28 / 40, remaining: 0 s.
+ [ 09:21:36 |  78% ] state 32 / 40, remaining: 0 s.
+ [ 09:21:36 |  88% ] state 36 / 40, remaining: 0 s.
+ [ 09:21:36 |  98% ] state 40 / 40, remaining: 0 s.
+ Finished reading wavefunctions (WFNq) at 09:21:36.
  Elapsed time: 0 s.
 
 
@@ -179,7 +171,7 @@
  Number of k-points in the full BZ of WFN (nfk): 32
 
 ================================================================================
- 13:59:56   Dealing with q =  0.001000  0.000000  0.000000                 1 / 3
+ 09:21:36   Dealing with q =  0.001000  0.000000  0.000000                 1 / 3
 ================================================================================
 
  This is the special q->0 point.
@@ -189,34 +181,34 @@
 
  Number of k-points in the irreducible BZ(q) (nrk): 10
 
- Started calculation of matrix elements with 40 transition(s) at 13:59:56.
- [ 13:59:56 |   0% ] transition  1 / 40.
- [ 13:59:56 |   5% ] transition  3 / 40, remaining: 0 s.
- [ 13:59:56 |   8% ] transition  4 / 40, remaining: 0 s.
- [ 13:59:56 |  18% ] transition  8 / 40, remaining: 0 s.
- [ 13:59:56 |  28% ] transition 12 / 40, remaining: 0 s.
- [ 13:59:56 |  38% ] transition 16 / 40, remaining: 0 s.
- [ 13:59:56 |  48% ] transition 20 / 40, remaining: 0 s.
- [ 13:59:56 |  57% ] transition 24 / 40, remaining: 0 s.
- [ 13:59:56 |  68% ] transition 28 / 40, remaining: 0 s.
- [ 13:59:56 |  78% ] transition 32 / 40, remaining: 0 s.
- [ 13:59:56 |  88% ] transition 36 / 40, remaining: 0 s.
- [ 13:59:56 |  98% ] transition 40 / 40, remaining: 0 s.
- Finished calculation of matrix elements at 13:59:56.
+ Started calculation of matrix elements with 40 transition(s) at 09:21:36.
+ [ 09:21:36 |   0% ] transition  1 / 40.
+ [ 09:21:36 |   5% ] transition  3 / 40, remaining: 0 s.
+ [ 09:21:36 |   8% ] transition  4 / 40, remaining: 0 s.
+ [ 09:21:36 |  18% ] transition  8 / 40, remaining: 0 s.
+ [ 09:21:36 |  28% ] transition 12 / 40, remaining: 0 s.
+ [ 09:21:36 |  38% ] transition 16 / 40, remaining: 0 s.
+ [ 09:21:36 |  48% ] transition 20 / 40, remaining: 0 s.
+ [ 09:21:36 |  57% ] transition 24 / 40, remaining: 0 s.
+ [ 09:21:36 |  68% ] transition 28 / 40, remaining: 0 s.
+ [ 09:21:37 |  78% ] transition 32 / 40, remaining: 0 s.
+ [ 09:21:37 |  88% ] transition 36 / 40, remaining: 0 s.
+ [ 09:21:37 |  98% ] transition 40 / 40, remaining: 0 s.
+ Finished calculation of matrix elements at 09:21:37.
  Elapsed time: 0 s.
 
  Allocating Convergence Arrays of Dim           4
 
- Started building polarizability matrix with 2 processor(s) at 13:59:56.
- [ 13:59:56 |   0% ] processor 1 / 2.
- [ 13:59:56 |  50% ] processor 2 / 2.
- Finished building polarizability matrix at 13:59:56.
+ Started building polarizability matrix with 2 processor(s) at 09:21:37.
+ [ 09:21:37 |   0% ] processor 1 / 2.
+ [ 09:21:37 |  50% ] processor 2 / 2.
+ Finished building polarizability matrix at 09:21:37.
  Elapsed time: 0 s.
 
- q-pt      1: Head of Epsilon         =    2.479835132081221E+001   6.260972088494696E-019
- q-pt      1: Epsilon(2,2)            =    1.306347860596898E+000   3.284739075644060E-019
- q-pt      1: Head of Epsilon Inverse =    4.472282002618452E-002  -8.766791004082009E-020
- q-pt      1: Epsilon Inverse(2,2)    =    7.915425408675885E-001   1.084202172485504E-018
+ q-pt      1: Head of Epsilon         =    2.480018549402412E+001  -1.001755534159151E-017
+ q-pt      1: Epsilon(2,2)            =    1.306347862820115E+000  -4.619164325124459E-019
+ q-pt      1: Head of Epsilon Inverse =    4.471936527745413E-002  -1.202786785101106E-019
+ q-pt      1: Epsilon Inverse(2,2)    =    7.915424118125944E-001   1.626303258728257E-018
 
  For q0 points, you should check the symmetry (eps(G,G') = eps*(-G,-G')) by
  using the eps0sym code. Wavefunction convergence, as well as a finite q-shift
@@ -224,26 +216,26 @@
 
  Writing dielectric matrix to file
 
- Started writing matrix with 169 column(s) at 13:59:56.
- [ 13:59:56 |   0% ] column   1 / 169.
- [ 13:59:56 |   1% ] column   3 / 169, remaining: 0 s.
- [ 13:59:56 |   9% ] column  17 / 169, remaining: 0 s.
- [ 13:59:56 |  20% ] column  34 / 169, remaining: 0 s.
- [ 13:59:56 |  30% ] column  51 / 169, remaining: 0 s.
- [ 13:59:56 |  40% ] column  68 / 169, remaining: 0 s.
- [ 13:59:56 |  50% ] column  85 / 169, remaining: 0 s.
- [ 13:59:56 |  60% ] column 102 / 169, remaining: 0 s.
- [ 13:59:56 |  70% ] column 119 / 169, remaining: 0 s.
- [ 13:59:56 |  80% ] column 136 / 169, remaining: 0 s.
- [ 13:59:56 |  90% ] column 153 / 169, remaining: 0 s.
- [ 13:59:56 |  99% ] column 169 / 169, remaining: 0 s.
- Finished writing matrix at 13:59:56.
+ Started writing matrix with 169 column(s) at 09:21:37.
+ [ 09:21:37 |   0% ] column   1 / 169.
+ [ 09:21:37 |   1% ] column   3 / 169, remaining: 0 s.
+ [ 09:21:37 |   9% ] column  17 / 169, remaining: 0 s.
+ [ 09:21:37 |  20% ] column  34 / 169, remaining: 0 s.
+ [ 09:21:37 |  30% ] column  51 / 169, remaining: 0 s.
+ [ 09:21:37 |  40% ] column  68 / 169, remaining: 0 s.
+ [ 09:21:37 |  50% ] column  85 / 169, remaining: 0 s.
+ [ 09:21:37 |  60% ] column 102 / 169, remaining: 0 s.
+ [ 09:21:37 |  70% ] column 119 / 169, remaining: 0 s.
+ [ 09:21:37 |  80% ] column 136 / 169, remaining: 0 s.
+ [ 09:21:37 |  90% ] column 153 / 169, remaining: 0 s.
+ [ 09:21:37 |  99% ] column 169 / 169, remaining: 0 s.
+ Finished writing matrix at 09:21:37.
  Elapsed time: 0 s.
 
  Ok
 
 ================================================================================
- 13:59:56   Dealing with q =  0.000000  0.000000  0.500000                 2 / 3
+ 09:21:37   Dealing with q =  0.000000  0.000000  0.500000                 2 / 3
 ================================================================================
 
  This is a regular non-zero q-point.
@@ -253,28 +245,28 @@
 
  Number of k-points in the irreducible BZ(q) (nrk): 10
 
- Started calculation of matrix elements with 40 transition(s) at 13:59:56.
- [ 13:59:56 |   0% ] transition  1 / 40.
- [ 13:59:56 |   5% ] transition  3 / 40, remaining: 0 s.
- [ 13:59:56 |   8% ] transition  4 / 40, remaining: 0 s.
- [ 13:59:56 |  18% ] transition  8 / 40, remaining: 0 s.
- [ 13:59:56 |  28% ] transition 12 / 40, remaining: 0 s.
- [ 13:59:56 |  38% ] transition 16 / 40, remaining: 0 s.
- [ 13:59:56 |  48% ] transition 20 / 40, remaining: 0 s.
- [ 13:59:56 |  57% ] transition 24 / 40, remaining: 0 s.
- [ 13:59:56 |  68% ] transition 28 / 40, remaining: 0 s.
- [ 13:59:56 |  78% ] transition 32 / 40, remaining: 0 s.
- [ 13:59:56 |  88% ] transition 36 / 40, remaining: 0 s.
- [ 13:59:56 |  98% ] transition 40 / 40, remaining: 0 s.
- Finished calculation of matrix elements at 13:59:56.
+ Started calculation of matrix elements with 40 transition(s) at 09:21:37.
+ [ 09:21:37 |   0% ] transition  1 / 40.
+ [ 09:21:37 |   5% ] transition  3 / 40, remaining: 0 s.
+ [ 09:21:37 |   8% ] transition  4 / 40, remaining: 0 s.
+ [ 09:21:37 |  18% ] transition  8 / 40, remaining: 0 s.
+ [ 09:21:37 |  28% ] transition 12 / 40, remaining: 0 s.
+ [ 09:21:37 |  38% ] transition 16 / 40, remaining: 0 s.
+ [ 09:21:37 |  48% ] transition 20 / 40, remaining: 0 s.
+ [ 09:21:37 |  57% ] transition 24 / 40, remaining: 0 s.
+ [ 09:21:37 |  68% ] transition 28 / 40, remaining: 0 s.
+ [ 09:21:37 |  78% ] transition 32 / 40, remaining: 0 s.
+ [ 09:21:37 |  88% ] transition 36 / 40, remaining: 0 s.
+ [ 09:21:37 |  98% ] transition 40 / 40, remaining: 0 s.
+ Finished calculation of matrix elements at 09:21:37.
  Elapsed time: 0 s.
 
  Allocating Convergence Arrays of Dim           4
 
- Started building polarizability matrix with 2 processor(s) at 13:59:56.
- [ 13:59:56 |   0% ] processor 1 / 2.
- [ 13:59:56 |  50% ] processor 2 / 2.
- Finished building polarizability matrix at 13:59:56.
+ Started building polarizability matrix with 2 processor(s) at 09:21:37.
+ [ 09:21:37 |   0% ] processor 1 / 2.
+ [ 09:21:37 |  50% ] processor 2 / 2.
+ Finished building polarizability matrix at 09:21:37.
  Elapsed time: 0 s.
 
  q-pt      2: Head of Epsilon         =    2.514044872012839E+000  -2.297786774032895E-018
@@ -284,25 +276,25 @@
 
  Writing dielectric matrix to file
 
- Started writing matrix with 168 column(s) at 13:59:56.
- [ 13:59:56 |   0% ] column   1 / 168.
- [ 13:59:56 |   1% ] column   3 / 168, remaining: 0 s.
- [ 13:59:56 |  10% ] column  17 / 168, remaining: 0 s.
- [ 13:59:56 |  20% ] column  34 / 168, remaining: 0 s.
- [ 13:59:56 |  30% ] column  51 / 168, remaining: 0 s.
- [ 13:59:56 |  40% ] column  68 / 168, remaining: 0 s.
- [ 13:59:56 |  50% ] column  85 / 168, remaining: 0 s.
- [ 13:59:56 |  60% ] column 101 / 168, remaining: 0 s.
- [ 13:59:56 |  70% ] column 118 / 168, remaining: 0 s.
- [ 13:59:56 |  80% ] column 135 / 168, remaining: 0 s.
- [ 13:59:56 |  90% ] column 152 / 168, remaining: 0 s.
- Finished writing matrix at 13:59:56.
+ Started writing matrix with 168 column(s) at 09:21:37.
+ [ 09:21:37 |   0% ] column   1 / 168.
+ [ 09:21:37 |   1% ] column   3 / 168, remaining: 0 s.
+ [ 09:21:37 |  10% ] column  17 / 168, remaining: 0 s.
+ [ 09:21:37 |  20% ] column  34 / 168, remaining: 0 s.
+ [ 09:21:37 |  30% ] column  51 / 168, remaining: 0 s.
+ [ 09:21:37 |  40% ] column  68 / 168, remaining: 0 s.
+ [ 09:21:37 |  50% ] column  85 / 168, remaining: 0 s.
+ [ 09:21:37 |  60% ] column 101 / 168, remaining: 0 s.
+ [ 09:21:37 |  70% ] column 118 / 168, remaining: 0 s.
+ [ 09:21:37 |  80% ] column 135 / 168, remaining: 0 s.
+ [ 09:21:37 |  90% ] column 152 / 168, remaining: 0 s.
+ Finished writing matrix at 09:21:37.
  Elapsed time: 0 s.
 
  Ok
 
 ================================================================================
- 13:59:56   Dealing with q =  0.000000  0.500000  0.500000                 3 / 3
+ 09:21:37   Dealing with q =  0.000000  0.500000  0.500000                 3 / 3
 ================================================================================
 
  This is a regular non-zero q-point.
@@ -312,27 +304,27 @@
 
  Number of k-points in the irreducible BZ(q) (nrk): 6
 
- Started calculation of matrix elements with 24 transition(s) at 13:59:56.
- [ 13:59:56 |   0% ] transition  1 / 24.
- [ 13:59:56 |   8% ] transition  3 / 24, remaining: 0 s.
- [ 13:59:56 |  17% ] transition  5 / 24, remaining: 0 s.
- [ 13:59:56 |  29% ] transition  8 / 24, remaining: 0 s.
- [ 13:59:56 |  38% ] transition 10 / 24, remaining: 0 s.
- [ 13:59:56 |  46% ] transition 12 / 24, remaining: 0 s.
- [ 13:59:56 |  58% ] transition 15 / 24, remaining: 0 s.
- [ 13:59:56 |  67% ] transition 17 / 24, remaining: 0 s.
- [ 13:59:56 |  79% ] transition 20 / 24, remaining: 0 s.
- [ 13:59:56 |  88% ] transition 22 / 24, remaining: 0 s.
- [ 13:59:56 |  96% ] transition 24 / 24, remaining: 0 s.
- Finished calculation of matrix elements at 13:59:56.
+ Started calculation of matrix elements with 24 transition(s) at 09:21:37.
+ [ 09:21:37 |   0% ] transition  1 / 24.
+ [ 09:21:37 |   8% ] transition  3 / 24, remaining: 0 s.
+ [ 09:21:37 |  17% ] transition  5 / 24, remaining: 0 s.
+ [ 09:21:37 |  29% ] transition  8 / 24, remaining: 0 s.
+ [ 09:21:37 |  38% ] transition 10 / 24, remaining: 0 s.
+ [ 09:21:37 |  46% ] transition 12 / 24, remaining: 0 s.
+ [ 09:21:37 |  58% ] transition 15 / 24, remaining: 0 s.
+ [ 09:21:37 |  67% ] transition 17 / 24, remaining: 0 s.
+ [ 09:21:37 |  79% ] transition 20 / 24, remaining: 0 s.
+ [ 09:21:37 |  88% ] transition 22 / 24, remaining: 0 s.
+ [ 09:21:37 |  96% ] transition 24 / 24, remaining: 0 s.
+ Finished calculation of matrix elements at 09:21:37.
  Elapsed time: 0 s.
 
  Allocating Convergence Arrays of Dim           4
 
- Started building polarizability matrix with 2 processor(s) at 13:59:56.
- [ 13:59:56 |   0% ] processor 1 / 2.
- [ 13:59:56 |  50% ] processor 2 / 2.
- Finished building polarizability matrix at 13:59:56.
+ Started building polarizability matrix with 2 processor(s) at 09:21:37.
+ [ 09:21:37 |   0% ] processor 1 / 2.
+ [ 09:21:37 |  50% ] processor 2 / 2.
+ Finished building polarizability matrix at 09:21:37.
  Elapsed time: 0 s.
 
  q-pt      3: Head of Epsilon         =    2.393935415798889E+000   3.939063041199248E-018
@@ -342,20 +334,20 @@
 
  Writing dielectric matrix to file
 
- Started writing matrix with 150 column(s) at 13:59:56.
- [ 13:59:56 |   0% ] column   1 / 150.
- [ 13:59:56 |   1% ] column   3 / 150, remaining: 0 s.
- [ 13:59:56 |   9% ] column  15 / 150, remaining: 0 s.
- [ 13:59:56 |  19% ] column  30 / 150, remaining: 0 s.
- [ 13:59:56 |  29% ] column  45 / 150, remaining: 0 s.
- [ 13:59:56 |  39% ] column  60 / 150, remaining: 0 s.
- [ 13:59:56 |  49% ] column  75 / 150, remaining: 0 s.
- [ 13:59:56 |  59% ] column  90 / 150, remaining: 0 s.
- [ 13:59:56 |  69% ] column 105 / 150, remaining: 0 s.
- [ 13:59:56 |  79% ] column 120 / 150, remaining: 0 s.
- [ 13:59:56 |  89% ] column 135 / 150, remaining: 0 s.
- [ 13:59:56 |  99% ] column 150 / 150, remaining: 0 s.
- Finished writing matrix at 13:59:56.
+ Started writing matrix with 150 column(s) at 09:21:37.
+ [ 09:21:37 |   0% ] column   1 / 150.
+ [ 09:21:37 |   1% ] column   3 / 150, remaining: 0 s.
+ [ 09:21:37 |   9% ] column  15 / 150, remaining: 0 s.
+ [ 09:21:37 |  19% ] column  30 / 150, remaining: 0 s.
+ [ 09:21:37 |  29% ] column  45 / 150, remaining: 0 s.
+ [ 09:21:37 |  39% ] column  60 / 150, remaining: 0 s.
+ [ 09:21:37 |  49% ] column  75 / 150, remaining: 0 s.
+ [ 09:21:37 |  59% ] column  90 / 150, remaining: 0 s.
+ [ 09:21:37 |  69% ] column 105 / 150, remaining: 0 s.
+ [ 09:21:37 |  79% ] column 120 / 150, remaining: 0 s.
+ [ 09:21:37 |  89% ] column 135 / 150, remaining: 0 s.
+ [ 09:21:37 |  99% ] column 150 / 150, remaining: 0 s.
+ Finished writing matrix at 09:21:37.
  Elapsed time: 0 s.
 
  Ok
@@ -367,30 +359,30 @@ FULLBZ:                         0.000           0.000           1
 IRRBZ:                          0.000           0.000           3
 SUBGRP:                         0.000           0.000           3
 RQSTAR:                         0.000           0.000          26
-GMAP:                           0.001           0.001          26
-GVEC:                           0.000           0.001           3
+GMAP:                           0.001           0.002          26
+GVEC:                           0.000           0.000           3
 INPUT:                          0.006           0.010           1
 INPUT_Q:                        0.001           0.001           1
-INPUT(Q) I/O                    0.001           0.000         142
-INPUT(Q) COMM                   0.001           0.001         142
-GENWF:                          0.006           0.004         104
-GENWF (VAL):                    0.003           0.002         104
-GENWF (COND):                   0.002           0.001          26
-GENWF (C-Ekin):                 0.000           0.000          26
+INPUT(Q) I/O                    0.001           0.000          92
+INPUT(Q) COMM                   0.001           0.001          92
+GENWF:                          0.006           0.008         104
+GENWF (VAL):                    0.003           0.006         104
+GENWF (COND):                   0.002           0.002          26
+GENWF (C-Ekin):                 0.000           0.001          26
 GENWF (C-Sort):                 0.002           0.000          26
 JOB SETUP:                      0.000           0.000           1
 Q LOOP SETUP:                   0.000           0.000           3
 INIT CUTOFF:                    0.000           0.000           3
-INIT SCALAPACK:                 0.001           0.000           3
-INIT ARRAYS:                    0.000           0.001           3
-MTXEL:                          0.036           0.038         104
+INIT SCALAPACK:                 0.001           0.001           3
+INIT ARRAYS:                    0.000           0.000           3
+MTXEL:                          0.037           0.035         104
 MTXEL (DENOM):                  0.000           0.000         208
-MTXEL (FFT):                    0.036           0.038         104
+MTXEL (FFT):                    0.036           0.035         104
 MTXEL EXP(DENOM):               0.000           0.000           0
 MTXEL EXP (FFT):                0.000           0.000           0
 CHI SUM (TOTAL):                0.024           0.009           3
-CHI SUM (COMM):                 0.000           0.000           6
-CHI SUM (PREP):                 0.002           0.001           6
+CHI SUM (COMM):                 0.001           0.000           6
+CHI SUM (PREP):                 0.002           0.002           6
 CHI SUM (ARRAY ALLOC):          0.000           0.000           0
 CHI SUM (ROW):                  0.000           0.000           0
 CHI SUM (COLUMN):               0.000           0.000           0
@@ -398,21 +390,21 @@ CHI SUM (zGEMM):                0.021           0.007           6
 CHI SUM (HT):                   0.000           0.000           0
 EPSINV (TOTAL):                 0.024           0.021           3
 EPSINV (VCOUL):                 0.000           0.000           3
-EPSINV (I/O)                    0.004           0.004           3
-EPSINV (INVERT)                 0.017           0.013           3
+EPSINV (I/O)                    0.005           0.004           3
+EPSINV (INVERT)                 0.017           0.014           3
 EPS (I/O) COMM                  0.000           0.000           0
 EPS (I/O) IO                    0.000           0.000           0
-CONVERGE TESTS:                 0.000           0.001           3
+CONVERGE TESTS:                 0.000           0.000           3
 OPT FFT:                        0.000           0.000           0
 OPT FFT (INIT):                 0.000           0.000           0
 OPT FFT (COMM_FFT):             0.000           0.000           0
 OPT FFT (FFT):                  0.000           0.000           0
-FFT ZERO                        0.001           0.003         312
-FFT PUT                         0.002           0.002         312
-FFT PLAN                        0.018           0.019         520
-FFT EXEC                        0.009           0.009         520
+FFT ZERO                        0.001           0.000         312
+FFT PUT                         0.002           0.003         312
+FFT PLAN                        0.018           0.017         520
+FFT EXEC                        0.009           0.005         520
 FFT MLTPLY                      0.001           0.001         208
 
-TOTAL:                          0.104           0.089
+TOTAL:                          0.104           0.090
 
 

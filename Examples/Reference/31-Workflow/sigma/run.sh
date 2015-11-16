@@ -1,5 +1,7 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
+
+# This is a test
 MPIRUN='mpirun -n 1 --npernode 1'
 SIGMA='sigma.cplx.x'
 SIGMAOUT='sigma.out'
@@ -11,3 +13,5 @@ ln -nfs ../epsilon/eps0mat eps0mat
 ln -nfs ../epsilon/epsmat epsmat
 
 $MPIRUN $SIGMA &> $SIGMAOUT
+
+# This is another test

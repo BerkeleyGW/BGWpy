@@ -1,5 +1,7 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
+
+# This is a test
 
 cd density
 bash run.sh
@@ -28,3 +30,5 @@ cd ..
 cd sigma
 bash run.sh
 cd ..
+
+# This is another test
