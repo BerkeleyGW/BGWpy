@@ -9,7 +9,9 @@ class PWscfInput(Writable):
     _structure = None 
     _pseudos = list()
 
-    def __init__(self):
+    def __init__(self, **kwargs):
+
+        super(PWscfInput, self).__init__(**kwargs)
 
         self.control = Namelist('control')
         self.system = Namelist('system')
