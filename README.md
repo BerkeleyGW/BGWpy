@@ -1,6 +1,5 @@
 
-BGWpy
-=====
+<a href="url"><img src="https://github.com/BerkeleyGW/BGWpy/blob/master/dev/logo/BGWpy.png" height="300" ></a><br clear="all" />
 
 A python module to operate BerkeleyGW
 
