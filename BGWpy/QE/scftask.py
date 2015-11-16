@@ -71,7 +71,7 @@ class ScfTask(QETask):
 
         super(ScfTask, self).__init__(dirname, **kwargs)
 
-        kpts, wtks = self.get_kpts(kwargs)
+        kpts, wtks = self.get_kpts(**kwargs)
 
         # Input file
         self.input = get_scf_input(
@@ -87,7 +87,6 @@ class ScfTask(QETask):
         self.input.fname = self._input_fname
 
         # Run script
-        self.runscript['PW'] = 'pw.x'
         self.runscript.append('$MPIRUN $PW $PWFLAGS -in {} &> {}'.format(
                               self._input_fname, self._output_fname))
 

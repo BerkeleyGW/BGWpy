@@ -1,10 +1,14 @@
+tmp
 TODO
+
+# Files produced by the setup script
 *.pyc
 BGWpy.egg-info
 build
 build/*
 dist/*/
 dist/*.egg
+
 # Files produced by the tests not referenced
 Examples/[0-9]*
 

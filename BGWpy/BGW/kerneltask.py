@@ -13,7 +13,6 @@ class KernelTask(BGWTask):
     """Kernel calculation for BSE."""
 
     _TASK_NAME = 'Kernel task'
-
     _input_fname  = 'kernel.inp'
     _output_fname = 'kernel.out'
 
