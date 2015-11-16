@@ -72,7 +72,7 @@ class WfnTask(QETask):
 
         super(WfnTask, self).__init__(dirname, **kwargs)
 
-        kpts, wtks = self.get_kpts(kwargs)
+        kpts, wtks = self.get_kpts(**kwargs)
 
         self.charge_density_fname = kwargs['charge_density_fname']
         if 'spin_polarization_fname' in kwargs:
@@ -95,7 +95,6 @@ class WfnTask(QETask):
         self.input.fname = self._input_fname
 
         # Run script
-        self.runscript['PW'] = 'pw.x'
         self.runscript.append('$MPIRUN $PW $PWFLAGS -in {} &> {}'.format(
                               self._input_fname, self._output_fname))
 
