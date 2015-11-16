@@ -24,7 +24,7 @@ kwargs = dict(
     kshift = [.5,.5,.5],  # k-points shift
     qshift = [.001,.0,.0],# k-points q-shift
     ecutwfc = 10.0,       # Wavefunctions cutoff energy
-    nbnd = 9,             # Number of bands
+                          # Number of bands not specified (occupied only)
 
 
     # These are the default parameters for the MPI runner.

@@ -1,5 +1,7 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
+
+# This is a test
 MPIRUN='mpirun -n 2 --npernode 2'
 EQP='eqp.py'
 ABSORPTION='absorption.cplx.x'
@@ -16,3 +18,5 @@ ln -nfs ../06-sigma/sigma_hp.log sigma_hp.log
 ln -nfs ../06-sigma/eqp1.dat eqp_co.dat
 
 $MPIRUN $ABSORPTION &> $ABSORPTIONOUT
+
+# This is another test

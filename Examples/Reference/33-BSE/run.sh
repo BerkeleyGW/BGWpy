@@ -1,5 +1,7 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
+
+# This is a test
 
 cd 01-density
 bash run.sh
@@ -46,3 +48,5 @@ cd ..
 cd 10-absorption
 bash run.sh
 cd ..
+
+# This is another test

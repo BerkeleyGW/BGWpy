@@ -1,6 +1,6 @@
 
  BerkeleyGW trunk revision 6898
- BSE/Absorption code, Complex version, run on 13-Nov-2015 at 13:59:26 -0800
+ BSE/Absorption code, Complex version, run on 16-Nov-2015 at 09:21:07 -0800
 
                                                                  ..o.          
                                                                 .oxxo.         
@@ -116,7 +116,7 @@
 
  You are doing a class 1 calculation - npes <= nk
 
- Memory available:    1483.9 MB per PE
+ Memory available:    2459.6 MB per PE
  Memory required for vcoul:  114.4 MB per PE
  Memory needed to store the effective Hamiltonian and intkernel
         arrays:    0.2 MB per PE
@@ -125,16 +125,16 @@
  Distribution of kcv blocks among PE ranks:
    - PEs 0 to 1 : 4 blocks
 
- Started reading wavefunctions (WFN_fi) with 8 k-point(s) at 13:59:26.
- [ 13:59:26 |   0% ] k-point 1 / 8.
- [ 13:59:26 |  13% ] k-point 2 / 8.
- [ 13:59:26 |  25% ] k-point 3 / 8, remaining: 0 s.
- [ 13:59:26 |  38% ] k-point 4 / 8, remaining: 0 s.
- [ 13:59:26 |  50% ] k-point 5 / 8, remaining: 0 s.
- [ 13:59:26 |  63% ] k-point 6 / 8, remaining: 0 s.
- [ 13:59:26 |  75% ] k-point 7 / 8, remaining: 0 s.
- [ 13:59:26 |  88% ] k-point 8 / 8, remaining: 0 s.
- Finished reading wavefunctions (WFN_fi) at 13:59:26.
+ Started reading wavefunctions (WFN_fi) with 8 k-point(s) at 09:21:07.
+ [ 09:21:07 |   0% ] k-point 1 / 8.
+ [ 09:21:07 |  13% ] k-point 2 / 8.
+ [ 09:21:07 |  25% ] k-point 3 / 8, remaining: 0 s.
+ [ 09:21:07 |  38% ] k-point 4 / 8, remaining: 0 s.
+ [ 09:21:07 |  50% ] k-point 5 / 8, remaining: 0 s.
+ [ 09:21:07 |  63% ] k-point 6 / 8, remaining: 0 s.
+ [ 09:21:07 |  75% ] k-point 7 / 8, remaining: 0 s.
+ [ 09:21:07 |  88% ] k-point 8 / 8, remaining: 0 s.
+ Finished reading wavefunctions (WFN_fi) at 09:21:07.
  Elapsed time: 0 s.
 
 
@@ -164,16 +164,16 @@
  No symmetries used in the shifted-grid sampling
 
 
- Started reading wavefunctions (WFNq_fi) with 8 k-point(s) at 13:59:26.
- [ 13:59:26 |   0% ] k-point 1 / 8.
- [ 13:59:26 |  13% ] k-point 2 / 8.
- [ 13:59:26 |  25% ] k-point 3 / 8, remaining: 0 s.
- [ 13:59:26 |  38% ] k-point 4 / 8, remaining: 0 s.
- [ 13:59:26 |  50% ] k-point 5 / 8, remaining: 0 s.
- [ 13:59:26 |  63% ] k-point 6 / 8, remaining: 0 s.
- [ 13:59:26 |  75% ] k-point 7 / 8, remaining: 0 s.
- [ 13:59:26 |  88% ] k-point 8 / 8, remaining: 0 s.
- Finished reading wavefunctions (WFNq_fi) at 13:59:26.
+ Started reading wavefunctions (WFNq_fi) with 8 k-point(s) at 09:21:07.
+ [ 09:21:07 |   0% ] k-point 1 / 8.
+ [ 09:21:07 |  13% ] k-point 2 / 8.
+ [ 09:21:07 |  25% ] k-point 3 / 8, remaining: 0 s.
+ [ 09:21:07 |  38% ] k-point 4 / 8, remaining: 0 s.
+ [ 09:21:07 |  50% ] k-point 5 / 8, remaining: 0 s.
+ [ 09:21:07 |  63% ] k-point 6 / 8, remaining: 0 s.
+ [ 09:21:07 |  75% ] k-point 7 / 8, remaining: 0 s.
+ [ 09:21:07 |  88% ] k-point 8 / 8, remaining: 0 s.
+ Finished reading wavefunctions (WFNq_fi) at 09:21:07.
  Elapsed time: 0 s.
 
 
@@ -189,29 +189,29 @@
          3         1         1        5.55161        6.52160
          4         1         1        5.55161        6.52160
          5         1         1        6.06632        8.13340
-         6         1         1        9.03181       11.00578
-         7         1         1        9.03181       11.00578
-         8         1         1        9.03181       11.00578
-         1         2         1       -5.79940       -5.90698
-         2         2         1       -1.47808       -1.37588
+         6         1         1        9.03181       11.00577
+         7         1         1        9.03181       11.00577
+         8         1         1        9.03181       11.00577
+         1         2         1       -5.79940       -5.90697
+         2         2         1       -1.47808       -1.37587
          3         2         1        4.14498        4.96489
          4         2         1        4.14498        4.96489
-         5         2         1        6.40197        8.25782
-         6         2         1       10.32482       12.31643
-         7         2         1       10.32482       12.31643
-         8         2         1       13.18213       14.78377
+         5         2         1        6.40197        8.25781
+         6         2         1       10.32482       12.31642
+         7         2         1       10.32482       12.31642
+         8         2         1       13.18213       14.78376
          1         3         1       -4.81348       -4.90787
          2         3         1       -1.58423       -1.49606
-         3         3         1        2.48037        3.09105
-         4         3         1        2.48037        3.09105
-         5         3         1        7.23008        8.67014
-         6         3         1        7.30020        8.96454
-         7         3         1       15.97954       18.72778
-         8         3         1       15.97954       18.72778
+         3         3         1        2.48037        3.09106
+         4         3         1        2.48037        3.09106
+         5         3         1        7.23008        8.67013
+         6         3         1        7.30020        8.96453
+         7         3         1       15.97954       18.72777
+         8         3         1       15.97954       18.72777
 
  Highest occupied band (coarse grid) = 4
- Valence max    (coarse grid) = 6.521598 eV
- Conduction min (coarse grid) = 8.133403 eV
+ Valence max    (coarse grid) = 6.521604 eV
+ Conduction min (coarse grid) = 8.133396 eV
  Middle energy  (coarse grid) = 7.327500 eV
  Fermi  energy  (coarse grid) = 7.327500 eV
 
@@ -220,11 +220,11 @@
  Using symmetries to expand the coarse-grid sampling
 
 
- Started reading wavefunctions (WFN_co) with 3 k-point(s) at 13:59:26.
- [ 13:59:26 |   0% ] k-point 1 / 3.
- [ 13:59:26 |  33% ] k-point 2 / 3.
- [ 13:59:26 |  67% ] k-point 3 / 3, remaining: 0 s.
- Finished reading wavefunctions (WFN_co) at 13:59:26.
+ Started reading wavefunctions (WFN_co) with 3 k-point(s) at 09:21:07.
+ [ 09:21:07 |   0% ] k-point 1 / 3.
+ [ 09:21:07 |  33% ] k-point 2 / 3.
+ [ 09:21:07 |  67% ] k-point 3 / 3, remaining: 0 s.
+ Finished reading wavefunctions (WFN_co) at 09:21:07.
  Elapsed time: 0 s.
 
 
@@ -233,12 +233,12 @@
   - Number k-points in full BZ:        8
   - Effective k-point radius:     0.289573 Bohr^-1
 
- Started wavefunction interpolation with 4 k-point(s) at 13:59:26.
- [ 13:59:26 |   0% ] k-point 1 / 4.
- [ 13:59:26 |  25% ] k-point 2 / 4.
- [ 13:59:26 |  50% ] k-point 3 / 4, remaining: 0 s.
- [ 13:59:26 |  75% ] k-point 4 / 4, remaining: 0 s.
- Finished wavefunction interpolation at 13:59:26.
+ Started wavefunction interpolation with 4 k-point(s) at 09:21:07.
+ [ 09:21:07 |   0% ] k-point 1 / 4.
+ [ 09:21:07 |  25% ] k-point 2 / 4.
+ [ 09:21:07 |  50% ] k-point 3 / 4, remaining: 0 s.
+ [ 09:21:07 |  75% ] k-point 4 / 4, remaining: 0 s.
+ Finished wavefunction interpolation at 09:21:07.
  Elapsed time: 0 s.
 
  Max. error in norm of transformation coefficients (1 - \sum_co |d_fi,co|^2):
@@ -258,7 +258,7 @@ To improve convergence, you might want to consider:
 
  Polarizaton:   0.001000  -0.000000  -0.000000
  Sum rule (DFT) :    1.4690931064801351     
- Sum rule (GW)  :    1.8894473659712825     
+ Sum rule (GW)  :    1.8894418349961899     
 
 
  Epsilon matrix for q->0 read from eps0mat
@@ -268,8 +268,8 @@ To improve convergence, you might want to consider:
  nrq = 2  gmax =    10.000000
  nfq = 8  qsz =   0.289573
  ngmax = 1291
- Maximum value of imaginary part of epsinv :    3.0899761915836876E-018
- Dielectric constant :    22.359729
+ Maximum value of imaginary part of epsinv :    1.7449011062336595E-018
+ Dielectric constant :    22.361329
  Dielectric matrix tabulated, nq = 65
  emax =     1.556466  qlen =     1.176234
 
@@ -280,19 +280,19 @@ To improve convergence, you might want to consider:
 
  Performing Kernel Interpolation
 
- Started interpolating BSE kernel with 16 block(s) at 13:59:33.
- [ 13:59:33 |   0% ] block  1 / 16.
- [ 13:59:33 |   6% ] block  2 / 16.
- [ 13:59:33 |  13% ] block  3 / 16, remaining: 0 s.
- [ 13:59:33 |  19% ] block  4 / 16, remaining: 0 s.
- [ 13:59:33 |  25% ] block  5 / 16, remaining: 0 s.
- [ 13:59:33 |  38% ] block  7 / 16, remaining: 0 s.
- [ 13:59:33 |  50% ] block  9 / 16, remaining: 0 s.
- [ 13:59:33 |  56% ] block 10 / 16, remaining: 0 s.
- [ 13:59:33 |  69% ] block 12 / 16, remaining: 0 s.
- [ 13:59:33 |  75% ] block 13 / 16, remaining: 0 s.
- [ 13:59:33 |  88% ] block 15 / 16, remaining: 0 s.
- Finished interpolating BSE kernel at 13:59:33.
+ Started interpolating BSE kernel with 16 block(s) at 09:21:15.
+ [ 09:21:15 |   0% ] block  1 / 16.
+ [ 09:21:15 |   6% ] block  2 / 16.
+ [ 09:21:15 |  13% ] block  3 / 16, remaining: 0 s.
+ [ 09:21:15 |  19% ] block  4 / 16, remaining: 0 s.
+ [ 09:21:15 |  25% ] block  5 / 16, remaining: 0 s.
+ [ 09:21:15 |  38% ] block  7 / 16, remaining: 0 s.
+ [ 09:21:15 |  50% ] block  9 / 16, remaining: 0 s.
+ [ 09:21:15 |  56% ] block 10 / 16, remaining: 0 s.
+ [ 09:21:15 |  69% ] block 12 / 16, remaining: 0 s.
+ [ 09:21:15 |  75% ] block 13 / 16, remaining: 0 s.
+ [ 09:21:15 |  88% ] block 15 / 16, remaining: 0 s.
+ Finished interpolating BSE kernel at 09:21:15.
  Elapsed time: 0 s.
 
 
@@ -310,7 +310,7 @@ To improve convergence, you might want to consider:
  Plasma Frequency :    15.626300472489202       eV
 
  Polarizaton:   0.001000  -0.000000  -0.000000
- Sum rule (BSE) :    1.6150468004154388     
+ Sum rule (BSE) :    1.6150476407255565     
 
 
                             CPU (s)        WALL (s)          #
@@ -324,21 +324,21 @@ To improve convergence, you might want to consider:
  INTWFN:         (min.)        0.013           0.013          1
                  (PE 0)        0.013           0.013
                  (max.)        0.013           0.013
- INTKERNEL:      (min.)        7.611           7.615          1
-                 (PE 0)        7.611           7.615
-                 (max.)        7.636           7.641
- DIAGONALIZE:    (min.)        0.011           0.010          1
-                 (PE 0)        0.011           0.010
-                 (max.)        0.011           0.010
+ INTKERNEL:      (min.)        7.883           7.913          1
+                 (PE 0)        7.883           7.913
+                 (max.)        7.906           7.939
+ DIAGONALIZE:    (min.)        0.012           0.010          1
+                 (PE 0)        0.012           0.010
+                 (max.)        0.012           0.010
  EPSDIAG:        (min.)        0.000           0.000          1
                  (PE 0)        0.003           0.003
                  (max.)        0.003           0.003
  EPS COMM:       (min.)        0.000           0.000          1
                  (PE 0)        0.000           0.000
-                 (max.)        0.029           0.029
+                 (max.)        0.028           0.029
  ABSORP0:        (min.)        0.000           0.000          1
-                 (PE 0)        0.026           0.026
-                 (max.)        0.026           0.026
+                 (PE 0)        0.025           0.026
+                 (max.)        0.025           0.026
  VMTXEL:         (min.)        0.001           0.001          1
                  (PE 0)        0.001           0.001
                  (max.)        0.001           0.001
@@ -346,8 +346,8 @@ To improve convergence, you might want to consider:
                  (PE 0)        0.000           0.000
                  (max.)        0.000           0.000
  ABSORP:         (min.)        0.000           0.000          1
-                 (PE 0)        0.014           0.014
-                 (max.)        0.014           0.014
+                 (PE 0)        0.013           0.013
+                 (max.)        0.013           0.013
  WRITE EIG:      (min.)        0.000           0.000          1
                  (PE 0)        0.000           0.000
                  (max.)        0.000           0.000
@@ -358,21 +358,21 @@ To improve convergence, you might want to consider:
  IW Interp:      (min.)        0.005           0.005          5
                  (PE 0)        0.005           0.005
                  (max.)        0.005           0.005
- IW Genwf:       (min.)        0.001           0.001         16
-                 (PE 0)        0.001           0.001
+ IW Genwf:       (min.)        0.001           0.000         16
+                 (PE 0)        0.001           0.000
                  (max.)        0.001           0.001
- IW Gwnwf_Co:    (min.)        0.003           0.002         16
-                 (PE 0)        0.003           0.002
+ IW Gwnwf_Co:    (min.)        0.004           0.003         16
+                 (PE 0)        0.004           0.003
                  (max.)        0.004           0.004
  IW Mtxel_t:     (min.)        0.001           0.000         16
-                 (PE 0)        0.001           0.002
-                 (max.)        0.001           0.002
- IW Write:       (min.)        0.000           0.000          1
                  (PE 0)        0.001           0.001
                  (max.)        0.001           0.001
- IW Reduce:      (min.)        0.000           0.001          1
-                 (PE 0)        0.000           0.001
-                 (max.)        0.000           0.001
+ IW Write:       (min.)        0.000           0.000          1
+                 (PE 0)        0.001           0.000
+                 (max.)        0.001           0.000
+ IW Reduce:      (min.)        0.000           0.000          1
+                 (PE 0)        0.000           0.000
+                 (max.)        0.000           0.000
 
  IK Setup:       (min.)        0.000           0.000          1
                  (PE 0)        0.000           0.000
@@ -380,25 +380,25 @@ To improve convergence, you might want to consider:
  IK C-Check:     (min.)        0.000           0.000          1
                  (PE 0)        0.000           0.000
                  (max.)        0.000           0.000
- IK Input:       (min.)        0.002           0.004         32
-                 (PE 0)        0.002           0.004
-                 (max.)        0.002           0.004
+ IK Input:       (min.)        0.002           0.000         32
+                 (PE 0)        0.002           0.000
+                 (max.)        0.002           0.000
  IK Inteps:      (min.)        0.000           0.000          1
                  (PE 0)        0.000           0.000
                  (max.)        0.000           0.000
- IK Vcoul:       (min.)        7.598           7.603          1
-                 (PE 0)        7.598           7.603
-                 (max.)        7.598           7.603
+ IK Vcoul:       (min.)        7.869           7.901          1
+                 (PE 0)        7.871           7.901
+                 (max.)        7.871           7.901
  IK Cache:       (min.)        0.000           0.000        128
                  (PE 0)        0.000           0.000
                  (max.)        0.000           0.000
- IK Interp:      (min.)        0.005           0.002        128
-                 (PE 0)        0.005           0.002
-                 (max.)        0.005           0.002
- IK Sum:         (min.)        0.000           0.000        128
-                 (PE 0)        0.000           0.000
-                 (max.)        0.000           0.002
+ IK Interp:      (min.)        0.004           0.005        128
+                 (PE 0)        0.004           0.005
+                 (max.)        0.004           0.006
+ IK Sum:         (min.)        0.000           0.001        128
+                 (PE 0)        0.000           0.001
+                 (max.)        0.000           0.001
 
- TOTAL:          (min.)        7.678           7.685          1
-                 (PE 0)        7.679           7.685
-                 (max.)        7.679           7.685
+ TOTAL:          (min.)        7.949           7.983          1
+                 (PE 0)        7.951           7.983
+                 (max.)        7.951           7.983

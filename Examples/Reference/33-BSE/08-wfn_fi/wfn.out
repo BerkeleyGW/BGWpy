@@ -1,5 +1,5 @@
 
-     Program PWSCF v.5.1.2 starts on 13Nov2015 at 14: 0:16 
+     Program PWSCF v.5.1.2 starts on 16Nov2015 at  9:21:57 
 
      This program is part of the open-source Quantum ESPRESSO suite
      for quantum simulation of materials; please cite
@@ -515,23 +515,23 @@
 
      Writing output data file GaAs.save
 
-     init_run     :      0.02s CPU      0.03s WALL (       1 calls)
-     electrons    :      1.06s CPU      1.11s WALL (       1 calls)
+     init_run     :      0.02s CPU      0.02s WALL (       1 calls)
+     electrons    :      1.05s CPU      1.09s WALL (       1 calls)
 
      Called by init_run:
      wfcinit      :      0.00s CPU      0.00s WALL (       1 calls)
      potinit      :      0.00s CPU      0.00s WALL (       1 calls)
 
      Called by electrons:
-     c_bands      :      1.06s CPU      1.10s WALL (       1 calls)
+     c_bands      :      1.05s CPU      1.09s WALL (       1 calls)
      v_of_rho     :      0.00s CPU      0.00s WALL (       1 calls)
 
      Called by c_bands:
      init_us_2    :      0.00s CPU      0.00s WALL (      64 calls)
-     cegterg      :      0.93s CPU      0.97s WALL (     129 calls)
+     cegterg      :      0.93s CPU      0.96s WALL (     129 calls)
 
      Called by *egterg:
-     h_psi        :      0.45s CPU      0.48s WALL (    2321 calls)
+     h_psi        :      0.44s CPU      0.47s WALL (    2321 calls)
      g_psi        :      0.01s CPU      0.01s WALL (    2128 calls)
      cdiaghg      :      0.41s CPU      0.41s WALL (    2192 calls)
 
@@ -541,16 +541,16 @@
      General routines
      calbec       :      0.05s CPU      0.05s WALL (    2321 calls)
      fft          :      0.00s CPU      0.00s WALL (      10 calls)
-     fftw         :      0.30s CPU      0.31s WALL (   24590 calls)
+     fftw         :      0.29s CPU      0.31s WALL (   24590 calls)
      davcio       :      0.00s CPU      0.00s WALL (      64 calls)
 
      Parallel routines
      fft_scatter  :      0.08s CPU      0.08s WALL (   24600 calls)
 
-     PWSCF        :     1.23s CPU         1.30s WALL
+     PWSCF        :     1.22s CPU         1.28s WALL
 
 
-   This run was terminated on:  14: 0:17  13Nov2015            
+   This run was terminated on:   9:21:58  16Nov2015            
 
 =------------------------------------------------------------------------------=
    JOB DONE.

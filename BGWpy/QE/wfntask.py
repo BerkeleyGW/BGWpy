@@ -40,7 +40,7 @@ class WfnTask(QETask):
             Structure object containing information on the unit cell.
         ecutwfc : float
             Energy cutoff for the wavefunctions
-        nbnd : int
+        nbnd : int, optional
             Number of bands to be computed.
         charge_density_fname : str
             Path to the charge density file produced
@@ -87,9 +87,9 @@ class WfnTask(QETask):
             kwargs['pseudos'],
             kwargs['structure'],
             kwargs['ecutwfc'],
-            kwargs['nbnd'],
             kpts,
             wtks,
+            nbnd = kwargs.get('nbnd'),
             )
 
         self.input.fname = self._input_fname
