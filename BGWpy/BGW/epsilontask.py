@@ -118,17 +118,12 @@ class EpsilonTask(BGWTask):
 
     @property
     def eps0mat_fname(self):
-        return os.path.join(self.dirname, 'eps0mat')
-    
-    @property
-    def eps0mat_h5_fname(self):
-        return os.path.join(self.dirname, 'eps0mat.h5')
+        # Eventually, hdf5 will be mandatory.
+        basename = 'eps0mat.h5' if self._use_hdf5 else 'eps0mat'
+        return os.path.join(self.dirname, basename)
     
     @property
     def epsmat_fname(self):
-        return os.path.join(self.dirname, 'epsmat')
-    
-    @property
-    def epsmat_h5_fname(self):
-        return os.path.join(self.dirname, 'epsmat.h5')
+        basename = 'epsmat.h5' if self._use_hdf5 else 'epsmat'
+        return os.path.join(self.dirname, basename)
     

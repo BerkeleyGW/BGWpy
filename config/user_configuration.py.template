@@ -9,6 +9,8 @@ Within this directory, copy this file as follow:
 Then, edit the file user_configuration.py as desired.
 """
 
+# Note that the parameters below can always be used
+# as keyword arguments for the various tasks and workflows.
 default_mpi = dict(
     nproc = 1,
     nproc_per_node = 1,
@@ -29,3 +31,5 @@ default_runscript = dict(
     footer = [],                # Lines that appear at the end of the scripts.
     )
 
+# Use hdf5 io (this will eventually be mandatory)
+use_hdf5 = True

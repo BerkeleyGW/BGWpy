@@ -129,9 +129,7 @@ class AbsorptionTask(BGWTask):
     @eps0mat_fname.setter
     def eps0mat_fname(self, value):
         self._eps0mat_fname = value
-        dest = 'eps0mat'
-        if value.endswith('.h5'):
-            dest += '.h5'
+        dest = 'eps0mat.h5' if self._use_hdf5 else 'eps0mat'
         self.update_link(value, dest)
 
     @property
@@ -141,9 +139,7 @@ class AbsorptionTask(BGWTask):
     @epsmat_fname.setter
     def epsmat_fname(self, value):
         self._epsmat_fname = value
-        dest = 'epsmat'
-        if value.endswith('.h5'):
-            dest += '.h5'
+        dest = 'epsmat.h5' if self._use_hdf5 else 'epsmat'
         self.update_link(value, dest)
 
     @property
@@ -153,9 +149,7 @@ class AbsorptionTask(BGWTask):
     @bsemat_fname.setter
     def bsemat_fname(self, value):
         self._bsemat_fname = value
-        dest = 'bsemat'
-        if value.endswith('.h5'):
-            dest += '.h5'
+        dest = 'bsemat.h5' if self._use_hdf5 else 'bsemat'
         self.update_link(value, dest)
 
     @property
@@ -165,7 +159,8 @@ class AbsorptionTask(BGWTask):
     @bsedmat_fname.setter
     def bsedmat_fname(self, value):
         self._bsedmat_fname = value
-        self.update_link(value, 'bsedmat')
+        dest = 'bsedmat.h5' if self._use_hdf5 else 'bsedmat'
+        self.update_link(value, dest)
 
     @property
     def bsexmat_fname(self):
@@ -174,7 +169,8 @@ class AbsorptionTask(BGWTask):
     @bsexmat_fname.setter
     def bsexmat_fname(self, value):
         self._bsexmat_fname = value
-        self.update_link(value, 'bsexmat')
+        dest = 'bsexmat.h5' if self._use_hdf5 else 'bsexmat'
+        self.update_link(value, dest)
 
     @property
     def sigma_fname(self):

@@ -16,3 +16,4 @@ default_runscript = dict(
     footer = [],
     )
 
+use_hdf5 = True

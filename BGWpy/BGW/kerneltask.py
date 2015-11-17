@@ -98,9 +98,7 @@ class KernelTask(BGWTask):
     @eps0mat_fname.setter
     def eps0mat_fname(self, value):
         self._eps0mat_fname = value
-        dest = 'eps0mat'
-        if value.endswith('.h5'):
-            dest += '.h5'
+        dest = 'eps0mat.h5' if self._use_hdf5 else 'eps0mat'
         self.update_link(value, dest)
 
     @property
@@ -110,9 +108,7 @@ class KernelTask(BGWTask):
     @epsmat_fname.setter
     def epsmat_fname(self, value):
         self._epsmat_fname = value
-        dest = 'epsmat'
-        if value.endswith('.h5'):
-            dest += '.h5'
+        dest = 'epsmat.h5' if self._use_hdf5 else 'epsmat'
         self.update_link(value, dest)
 
     def write(self):
@@ -122,17 +118,11 @@ class KernelTask(BGWTask):
 
     @property
     def bsedmat_fname(self):
-        return os.path.join(self.dirname, 'bsedmat')
-    
-    @property
-    def bsedmat_h5_fname(self):
-        return os.path.join(self.dirname, 'bsedmat.h5')
+        basename = 'bsedmat.h5' if self._use_hdf5 else 'bsedmat'
+        return os.path.join(self.dirname, basename)
     
     @property
     def bsexmat_fname(self):
-        return os.path.join(self.dirname, 'bsexmat')
-    
-    @property
-    def bsexmat_h5_fname(self):
-        return os.path.join(self.dirname, 'bsexmat.h5')
+        basename = 'bsexmat.h5' if self._use_hdf5 else 'bsexmat'
+        return os.path.join(self.dirname, basename)
     
