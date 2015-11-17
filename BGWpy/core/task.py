@@ -57,7 +57,14 @@ class Task(object):
 
     @property
     def runscript_fname(self):
-        return self.runscript.fname
+        basename = self.runscript.fname
+        return os.path.join(self.dirname, basename)
+
+    @runscript_fname.setter
+    def runscript_fname(self, value):
+        if os.path.basename(value) != value:
+            raise Exception('Cannot use a path for runscript_fname')
+        self.runscript.fname = value
 
     @contextlib.contextmanager
     def exec_from_dirname(self):
