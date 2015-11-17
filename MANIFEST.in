@@ -1,5 +1,7 @@
+include *.md
 include *.rst
 include *.txt
+include INSTALL
 graft Examples
 graft config
 prune Examples/[0-9]*

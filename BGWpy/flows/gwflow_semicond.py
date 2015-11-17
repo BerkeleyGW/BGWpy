@@ -182,8 +182,8 @@ class GWFlowSemicond(Workflow):
             wfn_co_fname = sigma_src_task.wfn_fname,
             rho_fname = sigma_src_task.rho_fname,
             vxc_fname = sigma_src_task.vxc_fname,
-            eps0mat_fname = self.epsilontask.eps0mat_h5_fname,
-            epsmat_fname = self.epsilontask.epsmat_h5_fname,
+            eps0mat_fname = self.epsilontask.eps0mat_fname,
+            epsmat_fname = self.epsilontask.epsmat_fname,
             **kwargs)
 
         # Manually set k-points for Sigma calculation, if requested

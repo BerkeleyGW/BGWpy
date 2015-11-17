@@ -17,6 +17,9 @@ try:
         if 'default_runscript' in dir(user_configuration):
             default_runscript.update(user_configuration.default_runscript)
 
+        if 'use_hdf5' in dir(user_configuration):
+            use_hdf5 = user_configuration.use_hdf5
+
 except Exception as e:
     import warnings
     warnings.warn('Could not process user_configuration.py:\n' + str(e))
