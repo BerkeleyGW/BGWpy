@@ -17,3 +17,4 @@ default_runscript = dict(
     )
 
 use_hdf5 = True
+flavor_complex = True

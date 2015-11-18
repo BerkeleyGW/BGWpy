@@ -247,7 +247,6 @@ class BSEFlow(Workflow):
         # on an finer, q-shifted grid
         self.wfntask_fi_qsh = WfnTask(
             dirname = pjoin(self.dirname, '09-wfnq_fi'),
-            nbnd = self.nbnd_absorption,
             ngkpt = self.ngkpt_fi,
             kshift = self.kshift_fi,
             qshift = self.qshift_fi,
