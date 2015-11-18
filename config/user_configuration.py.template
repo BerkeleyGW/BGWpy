@@ -33,3 +33,6 @@ default_runscript = dict(
 
 # Use hdf5 io (this will eventually be mandatory)
 use_hdf5 = True
+
+# Use Complex flavor of the code
+flavor_complex = True

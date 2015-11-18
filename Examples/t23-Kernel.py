@@ -27,8 +27,8 @@ task = KernelTask(
 
     # Files to be linked
     wfn_co_fname='14-Wfn_co/wfn_co.cplx',
-    eps0mat_fname='21-Epsilon/eps0mat',
-    epsmat_fname='21-Epsilon/epsmat',
+    eps0mat_fname='21-Epsilon/eps0mat',  # Change to 21-Epsilon/eps0mat.h5 if BGW is compiled with HDF5
+    epsmat_fname='21-Epsilon/epsmat',  # Change to 21-Epsilon/epsmat.h5 if BGW is compiled with HDF5
 
     # Parameters for the MPI runner
     nproc = 2,
