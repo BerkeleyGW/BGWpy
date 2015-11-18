@@ -89,10 +89,9 @@ class AbsorptionTask(BGWTask):
         self.sigma_fname = kwargs['sigma_fname']
         self.eqp_fname = kwargs['eqp_fname']
 
-        self.runscript['EQP'] = 'eqp.py'
-        self.runscript['ABSORPTION'] = 'absorption.cplx.x'
+        ex = 'absorption.cplx.x' if self._flavor_complex else 'absorption.real.x'
+        self.runscript['ABSORPTION'] = ex
         self.runscript['ABSORPTIONOUT'] = self._output_fname
-        #self.runscript.append('$EQP eqp1 sigma_hp.log eqp_co.dat')  # Old behavior
         self.runscript.append('$MPIRUN $ABSORPTION &> $ABSORPTIONOUT')
 
     @property

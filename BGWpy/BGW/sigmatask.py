@@ -99,7 +99,8 @@ class SigmaTask(BGWTask):
         self.eps0mat_fname = kwargs['eps0mat_fname']
         self.epsmat_fname = kwargs['epsmat_fname']
 
-        self.runscript['SIGMA'] = 'sigma.cplx.x'
+        ex = 'sigma.cplx.x' if self._flavor_complex else 'sigma.real.x'
+        self.runscript['SIGMA'] = ex
         self.runscript['SIGMAOUT'] = self._output_fname
         self.runscript.append('$MPIRUN $SIGMA &> $SIGMAOUT')
 

@@ -78,7 +78,8 @@ class KernelTask(BGWTask):
         self.eps0mat_fname = kwargs['eps0mat_fname']
         self.epsmat_fname = kwargs['epsmat_fname']
 
-        self.runscript['KERNEL'] = 'kernel.cplx.x'
+        ex = 'kernel.cplx.x' if self._flavor_complex else 'kernel.real.x'
+        self.runscript['KERNEL'] = ex
         self.runscript['KERNELOUT'] = self._output_fname
         self.runscript.append('$MPIRUN $KERNEL &> $KERNELOUT')
 
