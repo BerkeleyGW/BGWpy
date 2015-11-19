@@ -14,7 +14,7 @@ from BGWpy import Structure, SigmaTask
 
 task = SigmaTask(
     dirname='22-Sigma',
-    structure = Structure.from_file('Data/GaAs.json'),
+    structure = Structure.from_file('Structures/GaAs.json'),
 
     ngkpt = [2,2,2],        # k-points grid
     nbnd = 8,               # Number of bands

@@ -7,7 +7,7 @@ from BGWpy import Structure, GWFlow
 flow = GWFlow(
     dirname='32-GW',
 
-    structure = Structure.from_file('Data/GaAs.json'),
+    structure = Structure.from_file('Structures/GaAs.json'),
     prefix = 'GaAs',
     pseudo_dir = 'Pseudos',
     pseudos = ['31-Ga.PBE.UPF', '33-As.PBE.UPF'],

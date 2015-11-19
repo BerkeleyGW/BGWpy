@@ -17,7 +17,7 @@ from BGWpy import Structure, WfnTask, PW2BGWTask
 kwargs = dict(
     dirname = '14-Wfn_co',
 
-    structure = Structure.from_file('Data/GaAs.json'),
+    structure = Structure.from_file('Structures/GaAs.json'),
     prefix = 'GaAs',
     pseudo_dir = 'Pseudos',
     pseudos = ['31-Ga.PBE.UPF', '33-As.PBE.UPF'],

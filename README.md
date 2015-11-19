@@ -15,7 +15,6 @@ from a python interpreter with
     help(BGWpy.<object>)
 
 
-
 or from ipython with
 
     In  [1]: BGWpy.<object>?
@@ -47,8 +46,10 @@ Once you have satisfied the requirements, install the package with
 See the file INSTALL for more information about configuring
 the module's default parameters.
 
+
 License
 -------
 
 This software is free to use under the BSD license.
 See license.txt for more information.
+
