@@ -12,7 +12,7 @@ from BGWpy import Structure, KernelTask
 
 task = KernelTask(
     dirname='23-Kernel',
-    structure = Structure.from_file('Data/GaAs.json'),
+    structure = Structure.from_file('Structures/GaAs.json'),
 
     ngkpt = [2,2,2],        # k-points grid
     nbnd_val = 4,           # Number of valence bands

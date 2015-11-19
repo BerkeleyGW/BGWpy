@@ -14,7 +14,7 @@ from BGWpy import Structure, EpsilonTask
 
 task = EpsilonTask(
     dirname='21-Epsilon',
-    structure = Structure.from_file('Data/GaAs.json'),
+    structure = Structure.from_file('Structures/GaAs.json'),
 
     ngkpt = [2,2,2],        # k-points grid
     qshift = [.001,.0,.0],  # q-shift to treat the Gamma point
