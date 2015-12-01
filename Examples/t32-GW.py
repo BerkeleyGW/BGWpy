@@ -12,7 +12,7 @@ flow = GWFlow(
     pseudo_dir = 'Pseudos',
     pseudos = ['31-Ga.PBE.UPF', '33-As.PBE.UPF'],
 
-    ecutwfc=10.0,
+    ecutwfc = 10.0,
     nbnd = 9,
 
     ngkpt = [2,2,2],
