@@ -14,7 +14,7 @@ from .abinitinput import AbinitInput
 __all__ = ['AbinitTask']
 
 
-class AbinitTask(MPITask, IOTask, DFTTask):
+class AbinitTask(DFTTask, IOTask):
     """Base class for Abinit calculations."""
 
     _TAG_JOB_COMPLETED = 'Calculation completed.'
@@ -25,12 +25,20 @@ class AbinitTask(MPITask, IOTask, DFTTask):
 
         self.prefix = kwargs['prefix']
 
-        #self.input_fname = self.prefix + '.in'
         self.input = AbinitInput(fname=self.prefix + '.in')
 
         self.runscript['ABINIT'] = kwargs.get('ABINIT', 'abinit')
         self.runscript.append('$MPIRUN $ABINIT < {} &> {}'.format(
                               self.filesfile_basename, self.log_basename))
+
+    @property
+    def output_fname(self):
+        first = os.path.join(self.dirname, self.output_basename)
+        for s in reversed('ABCDEFGHIJKLMNOPQRSTUVWXYZ'):
+            last = first + s
+            if os.path.exists(last):
+                return last
+        return first
 
     @property
     def filesfile_basename(self):
@@ -59,17 +67,17 @@ class AbinitTask(MPITask, IOTask, DFTTask):
     @property
     def idat_root(self):
         """The root name for input data files."""
-        return pjoin(self.input_data_dir, 'idat_')
+        return pjoin(self.input_data_dir, 'idat')
 
     @property
     def odat_root(self):
         """The root name for output data files."""
-        return pjoin(self.out_data_dir, 'odat_')
+        return pjoin(self.out_data_dir, 'odat')
 
     @property
     def tmp_root(self):
         """The root name for temporaty data files."""
-        return pjoin(self.tmp_data_dir, 'tmp_')
+        return pjoin(self.tmp_data_dir, 'tmp')
 
     def get_odat(self, datatype, dtset=0):
         """
@@ -122,7 +130,7 @@ class AbinitTask(MPITask, IOTask, DFTTask):
 
         for pseudo in self.pseudos:
             pseudo_path = pjoin(self.pseudo_dir, pseudo)
-            S += os.path.relpath(pseudo_path, self.dirname) + '\n'
+            S += pseudo_path + '\n'  # pseudo_dir is already a relpath
 
         return S
 

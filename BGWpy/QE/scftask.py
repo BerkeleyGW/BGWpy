@@ -77,8 +77,8 @@ class ScfTask(QETask):
         self.input = get_scf_input(
             self.prefix,
             self.pseudo_dir,
-            kwargs['pseudos'],
-            kwargs['structure'],
+            self.pseudos,
+            self.structure,
             kwargs['ecutwfc'],
             kpts,
             wtks,

@@ -115,6 +115,9 @@ class AbinitInput(Writable):
                 newkey = key + str(ds)
                 self.set_variable(newkey, val)
 
+    def set_structure(self, structure):
+        variables = structure_to_abivars(structure)
+        self.set_variables(variables)
 
 
 # =========================================================================== #
@@ -145,4 +148,16 @@ class VariableBlock(list):
                 lines.append(svar)
         return '\n'.join(lines)
 
+
+
+# =========================================================================== #
+
+
+def structure_to_abivars(structure):
+    """Get abinit variables from a pymatgen.Structure object."""
+    d = structure.to_abivars()
+    d['typat'] = d['typat'].tolist()
+    d['xred'] = d['xred'].tolist()
+    d['rprim'] = d['rprim'].tolist()
+    return d
 
