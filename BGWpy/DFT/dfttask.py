@@ -3,17 +3,17 @@ from __future__ import print_function
 import os
 import warnings
 
-from ..core import Task
+from ..core import MPITask
 from ..BGW.kgrid import get_kpt_grid, get_kpt_grid_nosym
 
 # Public
 __all__ = ['DFTTask']
 
 
-class DFTTask(Task):
+class DFTTask(MPITask):
     """
     Base class for DFT calculations.
-    Handles k-points grids and pseudopotentials.
+    Handles structure, pseudopotentials and k-points grids.
     """
 
     def __init__(self, dirname, **kwargs):
@@ -30,6 +30,7 @@ class DFTTask(Task):
 
         self.pseudo_dir = kwargs.get('pseudo_dir', self.dirname)
         self.pseudos = kwargs.get('pseudos', [])
+        self.structure = kwargs.get('structure')
 
     def get_kpts(self, **kwargs):
         """

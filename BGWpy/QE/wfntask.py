@@ -84,8 +84,8 @@ class WfnTask(QETask):
         self.input = get_bands_input(
             self.prefix,
             self.pseudo_dir,
-            kwargs['pseudos'],
-            kwargs['structure'],
+            self.pseudos,
+            self.structure,
             kwargs['ecutwfc'],
             kpts,
             wtks,

@@ -11,6 +11,7 @@ from . import DFT
 from .external import Structure
 from .core import Workflow
 from .QE import *
+from .Abinit import *
 from .BGW import *
 from .flows import *
 
