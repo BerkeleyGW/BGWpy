@@ -91,7 +91,7 @@ class DFTTask(Task):
 
     @pseudo_dir.setter
     def pseudo_dir(self, value):
-        if os.path.realpath(value) == value:
+        if os.path.realpath(value) == value.rstrip(os.path.sep):
             self._pseudo_dir = value
         else:
             self._pseudo_dir = os.path.relpath(value, self.dirname)
