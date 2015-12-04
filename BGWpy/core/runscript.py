@@ -120,6 +120,7 @@ class RunScript(Writable):
         """
         self.variables.update(other.variables)
         self.links.extend(other.links)
+        self.copies.extend(other.copies)
         self.main.extend(['\n'] + other.main)
 
     def __setitem__(self, key, value):
