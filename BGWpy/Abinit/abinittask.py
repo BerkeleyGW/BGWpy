@@ -135,10 +135,13 @@ class AbinitTask(DFTTask, IOTask):
         return S
 
     def write(self):
+
+        # Main directory, etc...
         super(AbinitTask, self).write()
 
         self.check_pseudos()
 
+        # Sub-directories
         for d in (self.input_data_dir, self.out_data_dir, self.tmp_data_dir):
             if not os.path.exists(d):
                 os.mkdir(d)

@@ -42,15 +42,27 @@ class AbinitWfnTask(AbinitTask):
 
     @property
     def wavefunction_fname(self):
-        return os.path.join(self.dirname, self.get_odat('WFK'))
+        return self.get_odat('WFK')
+
+    wfn_fname = wavefunction_fname
+    wfk_fname = wavefunction_fname
 
     @property
     def charge_density_fname(self):
-        return self._charge_density_fname
+        return self.get_odat('DEN')
 
     @charge_density_fname.setter
     def charge_density_fname(self, value):
         self._charge_density_fname = value
         dest = os.path.relpath(self.get_idat('DEN'), self.dirname)
         self.update_link(value, dest)
+
+    rho_fname = charge_density_fname
+
+    @property
+    def exchange_correlation_potential_fname(self):
+        #return os.path.join(self.dirname, self.get_odat('VXC'))
+        return self.get_odat('VXC')
+
+    vxc_fname = exchange_correlation_potential_fname
 

@@ -23,7 +23,9 @@ class BasicFile(Writable):
 
 class BasicInputFile(Writable):
 
-    def __init__(self, variables={}, keywords=[]):
+    def __init__(self, variables={}, keywords=[], **kwargs):
+
+        super(BasicInputFile, self).__init__(**kwargs)
 
         self.variables = OrderedDict(variables)
         self.keywords = list(keywords)
@@ -40,6 +42,9 @@ class BasicInputFile(Writable):
 
     def append(self, line):
         self.keywords.append(line)
+
+    def __getitem__(self, key):
+        return self.variables[key]
 
     def __setitem__(self, key, val):
         self.variables[key] = val
