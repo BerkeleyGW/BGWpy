@@ -9,6 +9,10 @@ class PW2BGWInput(Namelist):
     _kshift = array([.0,.0,.0])
     _qshift = array([.0,.0,.0])
 
+    #_kptgrid_alias =  ['ngkpt']
+    #_kshift_alias =  ['kshift', 'shiftk']
+    #_qshift_alias =  ['qshift', 'shiftq']
+
     def __init__(self, *args, **kwargs):
 
         ngkpt = kwargs.pop('ngkpt', 3*[.0])
@@ -44,6 +48,7 @@ class PW2BGWInput(Namelist):
                 value = self.pop(key)
                 self[key] = value
 
+        # Maybe let these be handled by PW2BGWTask
         self.ngkpt = ngkpt
         self.kshift = kshift
         self.qshift = qshift

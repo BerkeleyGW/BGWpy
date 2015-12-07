@@ -9,3 +9,4 @@ from . import abinittask
 # Public
 from .scftask import *
 from .wfntask import *
+from .abibgw  import *

@@ -71,8 +71,10 @@ class PW2BGWTask(QETask):
         self.kshift = kwargs.get('kshift', 3*[.0])
         self.qshift = kwargs.get('qshift', 3*[.0])
 
+
+        # Maybe let the defaults be handled by PW2BGWInput
+
         # Input file
-        # TODO use OrderedDict or sort them in PW2BGWInput
         defaults = dict(
             ngkpt       = self.ngkpt,
             kshift      = self.kshift,

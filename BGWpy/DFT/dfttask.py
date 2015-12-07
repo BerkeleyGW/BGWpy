@@ -3,12 +3,11 @@ from __future__ import print_function
 import os
 import warnings
 
-from ..core import MPITask
+from ..core import MPITask, Workflow
 from ..BGW.kgrid import get_kpt_grid, get_kpt_grid_nosym
 
 # Public
-__all__ = ['DFTTask']
-
+__all__ = ['DFTTask', 'DFTFlow']
 
 class DFTTask(MPITask):
     """
@@ -21,16 +20,31 @@ class DFTTask(MPITask):
         Keyword Arguments
         -----------------
 
+        flavor : str ['qe', 'abinit']
+            DFT code used for density and wavefunctions.
         pseudo_dir : str
             Path to the directory containing pseudopotential files.
         pseudos : list, str
             List of pseudopotential files.
         """
+
+        # FIXME k-points
+
         super(DFTTask, self).__init__(dirname, **kwargs)
 
+        self.flavor     = kwargs.pop('flavor',  'qe')
         self.pseudo_dir = kwargs.get('pseudo_dir', self.dirname)
-        self.pseudos = kwargs.get('pseudos', [])
-        self.structure = kwargs.get('structure')
+        self.pseudos    = kwargs.get('pseudos', [])
+        self.structure  = kwargs.get('structure')
+
+    @ property
+    def is_flavor_QE(self):
+        return any([tag in self.flavor.lower() for tag in ['qe', 'espresso']])
+
+    @ property
+    def is_flavor_abinit(self):
+        return any([tag in self.flavor.lower() for tag in ['abi', 'abinit']])
+
 
     def get_kpts(self, **kwargs):
         """
@@ -96,4 +110,57 @@ class DFTTask(MPITask):
             self._pseudo_dir = value
         else:
             self._pseudo_dir = os.path.relpath(value, self.dirname)
+
+    @property
+    def ngkpt(self):
+        return self._ngkpt
+
+    @ngkpt.setter
+    def ngkpt(self, ngkpt):
+        self._ngkpt = array(ngkpt)
+
+    @property
+    def kshift(self):
+        return self._kshift
+
+    @kshift.setter
+    def kshift(self, kshift):
+        self._kshift = array(kshift)
+
+    @property
+    def qshift(self):
+        return self._qshift
+
+    @qshift.setter
+    def qshift(self, qshift):
+        self._qshift = array(qshift)
+
+    @property
+    def kqshift(self):
+        return self.kshift + self.qshift * self.ngkpt
+
+
+# =========================================================================== #
+
+
+class DFTFlow(Workflow, DFTTask):
+
+    def __init__(self, dirname, **kwargs):
+        """
+        Keyword Arguments
+        -----------------
+
+        flavor : str ['qe', 'abinit']
+            DFT code used for density and wavefunctions.
+        pseudo_dir : str
+            Path to the directory containing pseudopotential files.
+        pseudos : list, str
+            List of pseudopotential files.
+        """
+        super(DFTFlow, self).__init__(dirname, **kwargs)
+
+        self.flavor     = kwargs.pop('flavor',  'qe')
+        self.pseudo_dir = kwargs.get('pseudo_dir', self.dirname)
+        self.pseudos = kwargs.get('pseudos', [])
+        self.structure = kwargs.get('structure')
 

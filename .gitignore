@@ -15,3 +15,6 @@ Examples/[0-9]*
 # Configuration files
 BGWpy/config/user_configuration.py
 config/user_configuration.py
+
+# ctags
+tags
