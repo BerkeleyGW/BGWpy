@@ -2,6 +2,7 @@ from __future__ import print_function
 
 import os
 import warnings
+from numpy import array
 
 from ..core import MPITask, Workflow
 from ..BGW.kgrid import get_kpt_grid, get_kpt_grid_nosym
