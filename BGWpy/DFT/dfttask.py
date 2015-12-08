@@ -29,7 +29,10 @@ class DFTTask(MPITask):
             List of pseudopotential files.
         """
 
-        # FIXME k-points
+        # too restrictive
+        #self.ngkpt  = kwargs.pop('ngkpt', 3*[1])
+        #self.kshift = kwargs.pop('kshift', 3*[.0])
+        #self.qshift = kwargs.pop('qshift', 3*[.0])
 
         super(DFTTask, self).__init__(dirname, **kwargs)
 
@@ -45,7 +48,6 @@ class DFTTask(MPITask):
     @ property
     def is_flavor_abinit(self):
         return any([tag in self.flavor.lower() for tag in ['abi', 'abinit']])
-
 
     def get_kpts(self, **kwargs):
         """

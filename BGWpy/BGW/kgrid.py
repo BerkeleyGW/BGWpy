@@ -80,7 +80,7 @@ class KgridTask(Task):
                     os.remove(fname)
                 except Exception as E:
                     print(E)
-        if new_dir:
+        if self.new_dir:
             try:
                 os.removedirs(dirname)
             except Exception as E:

@@ -7,6 +7,7 @@ import warnings
 from ..core.util import exec_from_dir
 from ..core import MPITask, IOTask
 from ..DFT import DFTTask
+from ..BGW import KgridTask
 
 from .abinitinput import AbinitInput
 
@@ -20,12 +21,29 @@ class AbinitTask(DFTTask, IOTask):
     _TAG_JOB_COMPLETED = 'Calculation completed.'
 
     def __init__(self, dirname, **kwargs):
+        """
+        """
+        # FIXME Doc
 
         super(AbinitTask, self).__init__(dirname, **kwargs)
+
+        #self.ngkpt  = kwargs.get('ngkpt', 3*[1])
+        #self.kshift = kwargs.get('kshift', 3*[.0])
+        #self.qshift = kwargs.get('qshift', 3*[.0])
 
         self.prefix = kwargs['prefix']
 
         self.input = AbinitInput(fname=self.prefix + '.in')
+        self.input.set_structure(self.structure)
+
+        # Handle k-points and symmetries
+        self.kgrid = KgridTask(**kwargs)
+        #kpt, wtk = self.kgrid.get_kpoints()
+        #symrel, tnons = self.kgrid.get_symmetries()
+        ((kpt, wtk), (symrel, tnons)) = self.kgrid.get_kpoints_and_sym()
+        nsym = len(symrel)
+
+        self.input.set_variables({'symrel':symrel, 'tnons':tnons, 'nsym':nsym})
 
         self.runscript['ABINIT'] = kwargs.get('ABINIT', 'abinit')
         self.runscript.append('$MPIRUN $ABINIT < {} &> {}'.format(
@@ -151,4 +169,13 @@ class AbinitTask(DFTTask, IOTask):
                 f.write(self.get_filesfile_content())
 
             self.input.write()
+
+    def set_kpoints(self, kpt, wtk, **kwargs):
+        """Set kpoint variables."""
+        self.input.set_variables({
+            'kptopt' : 0,
+            'kpt' : kpt,
+            'wtk' : wtk,
+            'nkpt' : len(kpt),
+            })
 

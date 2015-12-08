@@ -1,5 +1,6 @@
 """Abinit to BGW interface."""
 import os
+import subprocess
 from numpy import array
 from ..core import fortran_str
 from ..core import BasicInputFile
@@ -180,6 +181,15 @@ class Abi2BgwTask(AbinitTask):
         self.runscript['ABI2BGW'] = 'abi2bgw.x'
         self.runscript.append('$MPIRUN $ABI2BGW {} >& {}'.format(
                               self._input_fname, self._output_fname))
+
+    def write(self):
+
+        subprocess.call(['mkdir', '-p', self.dirname])
+        with self.exec_from_dirname():
+            self.runscript.write()
+
+        with self.exec_from_dirname():
+            self.input.write()
 
     _wfn_fname = 'wfn.cplx'
     @property

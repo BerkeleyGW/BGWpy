@@ -33,8 +33,8 @@ class AbinitScfTask(AbinitTask):
 
         super(AbinitScfTask, self).__init__(dirname, **kwargs)
 
-        self.input.set_structure(self.structure)
-        self.input.set_variables(get_kpt_variables(**kwargs))
+        #self.input.set_structure(self.structure)
+        #self.input.set_variables(get_kpt_variables(**kwargs))
         self.input.set_variables(get_scf_variables(**kwargs))
         self.input.set_variables(kwargs.get('input_variables', {}))
 
