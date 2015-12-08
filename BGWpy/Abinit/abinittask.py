@@ -43,6 +43,10 @@ class AbinitTask(DFTTask, IOTask):
         ((kpt, wtk), (symrel, tnons)) = self.kgrid.get_kpoints_and_sym()
         nsym = len(symrel)
 
+        # Transpose all symmetry matrices
+        symrel = symrel.reshape((-1,3,3)).transpose((0,2,1))  
+        tnons = self.structure.lattice.get_fractional_coords(tnons)
+
         self.input.set_variables({'symrel':symrel, 'tnons':tnons, 'nsym':nsym})
 
         self.runscript['ABINIT'] = kwargs.get('ABINIT', 'abinit')

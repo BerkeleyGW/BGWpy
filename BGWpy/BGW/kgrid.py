@@ -156,7 +156,7 @@ class KgridTask(Task):
                 try:
                     line = f.next()
 
-                    if 'symmetries of the Bravais lattice' in line:
+                    if 'symmetries of the crystal without FFT grid' in line:
                         line = f.next()
                         nsym = int(line)
 
