@@ -105,6 +105,7 @@ class Abi2BgwTask(AbinitTask):
     """Wavefunctions convertion."""
 
     _TASK_NAME = 'Abinit to BGW task'
+    _TAG_JOB_COMPLETED = ''
 
     _input_fname = 'abi2bgw.in'
     _output_fname = 'abi2bgw.out'
@@ -269,4 +270,8 @@ class Abi2BgwTask(AbinitTask):
 
     def set_rho(self):
         self.input['rhog_flag'] = True
+
+    @property
+    def output_fname(self):
+        return os.path.join(self.dirname, self._output_fname)
 

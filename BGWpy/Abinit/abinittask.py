@@ -4,6 +4,8 @@ import os
 from os.path import join as pjoin
 import warnings
 
+import numpy as np
+
 from ..core.util import exec_from_dir
 from ..core import MPITask, IOTask
 from ..DFT import DFTTask
@@ -48,6 +50,7 @@ class AbinitTask(DFTTask, IOTask):
         tnons = self.structure.lattice.get_fractional_coords(tnons)
 
         self.input.set_variables({'symrel':symrel, 'tnons':tnons, 'nsym':nsym})
+        self.set_kpoints(kpt, wtk)
 
         self.runscript['ABINIT'] = kwargs.get('ABINIT', 'abinit')
         self.runscript.append('$MPIRUN $ABINIT < {} &> {}'.format(
@@ -176,10 +179,26 @@ class AbinitTask(DFTTask, IOTask):
 
     def set_kpoints(self, kpt, wtk, **kwargs):
         """Set kpoint variables."""
+        wtk_normalized = np.array(wtk, dtype=np.float64) / sum(wtk)
         self.input.set_variables({
             'kptopt' : 0,
             'kpt' : kpt,
-            'wtk' : wtk,
             'nkpt' : len(kpt),
+            'ngkpt' : None,
+            'nshiftk' : None,
+            'shiftk' : None,
+            })
+        self.input.set_variable('wtk', wtk_normalized, decimals=16)
+
+    def set_ngkpt(self, ngkpt, shiftk=[3*[.0]], **kwargs):
+        """Set kpoint variables."""
+        self.input.set_variables({
+            'kptopt' : kwargs.get('kptopt', 1),
+            'ngkpt' : ngkpt,
+            'nshiftk' : len(shiftk),
+            'shiftk' : shiftk,
+            'kpt' : None,
+            'wtk' : None,
+            'nkpt' : None,
             })
 
