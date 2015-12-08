@@ -56,7 +56,7 @@ class AbinitInput(Writable):
         for block in self.variables_blocks:
             block.clear()
 
-    def set_variable(self, name, value):  # TODO ndecimal | ndigits 
+    def set_variable(self, name, value):  # TODO ndecimal or ndigits 
         """Set a single variable."""
         self.variables[name] = value
 
