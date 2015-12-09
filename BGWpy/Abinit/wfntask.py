@@ -29,7 +29,7 @@ class AbinitWfnTask(AbinitTask):
         """
         # TODO complete documentation.
 
-        kwargs.setdefault('prefix', 'scf')
+        kwargs.setdefault('prefix', 'wfn')
 
         super(AbinitWfnTask, self).__init__(dirname, **kwargs)
 

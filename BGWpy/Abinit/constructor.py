@@ -31,8 +31,8 @@ def get_kpt_variables(**kwargs):
 def get_scf_variables(**kwargs):
     """Return a dict of variables required for an SCF calculation."""
     variables = dict(
-        tolvrs=kwargs.get('tolvrs', 1e-10),
-        ecut=kwargs.get('ecut'),
+        tolvrs = kwargs.get('tolvrs', 1e-10),
+        ecut = kwargs.get('ecut'),
         )
     return variables
 
@@ -40,11 +40,12 @@ def get_scf_variables(**kwargs):
 def get_wfn_variables(**kwargs):
     """Return a dict of variables required for an SCF calculation."""
     variables = dict(
-        irdden=1,
-        nband=kwargs.get('nband'),
-        ecut=kwargs.get('ecut'),
-        tolwfr=kwargs.get('tolwfr', 1e-14),
-        iscf=kwargs.get('iscf', -2),
+        irdden = 1,
+        nband = kwargs.get('nband'),
+        ecut = kwargs.get('ecut'),
+        tolwfr = kwargs.get('tolwfr', 1e-14),
+        iscf = kwargs.get('iscf', -3),
+        occopt = kwargs.get('occopt', 3),
         )
     return variables
 
