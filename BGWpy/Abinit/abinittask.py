@@ -40,14 +40,15 @@ class AbinitTask(DFTTask, IOTask):
 
         # Handle k-points and symmetries
         self.kgrid = KgridTask(**kwargs)
-        #kpt, wtk = self.kgrid.get_kpoints()
-        #symrel, tnons = self.kgrid.get_symmetries()
         ((kpt, wtk), (symrel, tnons)) = self.kgrid.get_kpoints_and_sym()
         nsym = len(symrel)
 
         # Transpose all symmetry matrices
-        symrel = symrel.reshape((-1,3,3)).transpose((0,2,1))  
-        tnons = self.structure.lattice.get_fractional_coords(tnons)
+        symrel = np.linalg.inv(symrel.reshape((-1,3,3)).transpose((0,2,1)))
+        symrel = np.array(symrel, dtype=np.int)
+
+        # A 2pi factor is added to tnons by kgrid for phase factor calculations
+        tnons = np.round(tnons / (2*np.pi),5)
 
         self.input.set_variables({'symrel':symrel, 'tnons':tnons, 'nsym':nsym})
         self.set_kpoints(kpt, wtk)

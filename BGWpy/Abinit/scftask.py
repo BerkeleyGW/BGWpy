@@ -40,6 +40,7 @@ class AbinitScfTask(AbinitTask):
 
     @property
     def charge_density_fname(self):
-        return os.path.join(self.dirname, self.get_odat('DEN'))
+        #return os.path.join(self.dirname, self.get_odat('DEN'))
+        return self.get_odat('DEN')
 
 
