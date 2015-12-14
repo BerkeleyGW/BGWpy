@@ -108,7 +108,7 @@ class Abi2BgwTask(AbinitTask):
     """Wavefunctions convertion."""
 
     _TASK_NAME = 'Abinit to BGW task'
-    _TAG_JOB_COMPLETED = ''
+    _TAG_JOB_COMPLETED = 'Calculation completed'
 
     _input_fname = 'abi2bgw.in'
     _output_fname = 'abi2bgw.out'

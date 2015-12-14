@@ -20,7 +20,7 @@ __all__ = ['AbinitTask']
 class AbinitTask(DFTTask, IOTask):
     """Base class for Abinit calculations."""
 
-    _TAG_JOB_COMPLETED = 'Calculation completed.'
+    _TAG_JOB_COMPLETED = 'Calculation completed'
 
     def __init__(self, dirname, **kwargs):
         """
