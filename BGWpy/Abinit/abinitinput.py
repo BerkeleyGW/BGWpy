@@ -17,6 +17,7 @@ class AbinitInput(Writable):
 
         self.variables = dict()
         self.variables_blocks = list()
+        self.decimals = dict()
 
         for (name, register) in input_variable_blocks.items():
             self.variables_blocks.append(VariableBlock(name, register))
@@ -32,13 +33,13 @@ class AbinitInput(Writable):
         # Sort variables in blocks
         for name, value in self.variables.items():
             variable = SpecialInputVariable(name, value)
-            placed = False
+            if name in self.decimals:
+                variable.decimals = self.decimals[name]
             for block in self.variables_blocks:
                 if variable.basename in block.register:
                     block.append(variable)
-                    placed = True
                     break
-            if not placed:
+            else:
                 self.variables_blocks[-1].append(variable)
 
         # Make the string
@@ -56,11 +57,16 @@ class AbinitInput(Writable):
         for block in self.variables_blocks:
             block.clear()
 
-    def set_variable(self, name, value):
+    def set_variable(self, name, value, decimals=None):  # TODO ndecimal or ndigits 
         """Set a single variable."""
         self.variables[name] = value
+        if value is None:
+            del self.variables[name]
+            return
+        if decimals is not None:
+            self.decimals[name] = decimals
 
-    def set_variables(self, variables=dict(), dataset=0, **kwargs):
+    def set_variables(self, variables, dataset=0, **kwargs):
         """
         Sets variables by providing a dictionary, or expanding a dictionary,
         and possibly append them by a dataset index.
@@ -105,7 +111,7 @@ class AbinitInput(Writable):
             >> 
             >> f.write('myfile.in')  # The name was not set at initialization.
         """
-        variables.update(kwargs)
+        #variables.update(kwargs)
 
         if not dataset:
             dataset = ['']
@@ -113,8 +119,11 @@ class AbinitInput(Writable):
         for ds in listify(dataset):
             for (key, val) in variables.items():
                 newkey = key + str(ds)
-                self.set_variable(newkey, val)
+                self.set_variable(newkey, val, **kwargs)
 
+    def set_structure(self, structure):
+        variables = structure_to_abivars(structure)
+        self.set_variables(variables)
 
 
 # =========================================================================== #
@@ -145,4 +154,16 @@ class VariableBlock(list):
                 lines.append(svar)
         return '\n'.join(lines)
 
+
+
+# =========================================================================== #
+
+
+def structure_to_abivars(structure):
+    """Get abinit variables from a pymatgen.Structure object."""
+    d = structure.to_abivars()
+    d['typat'] = d['typat'].tolist()
+    d['xred'] = d['xred'].tolist()
+    d['rprim'] = d['rprim'].tolist()
+    return d
 

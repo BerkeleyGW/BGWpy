@@ -12,7 +12,7 @@ input_variable_blocks = OrderedDict((
     nband nbdbuf
     '''),
 ('k-point grid', '''
-    kptopt nkpt kpt ngkpt kptrlatt
+    kptopt nkpt kpt wtk ngkpt kptrlatt
     nshiftk shiftk kptbounds kptns
     '''),
 ('Models', '''
@@ -77,6 +77,9 @@ input_variable_blocks = OrderedDict((
     '''),
 ('Unit cell', '''
     acell angdeg rprim ntypat znucl natom typat xred xcart
+    '''),
+('Symmetries', '''
+    nsym symrel tnons spgroup
     '''),
 ('Printing', '''
     prtvol enunit

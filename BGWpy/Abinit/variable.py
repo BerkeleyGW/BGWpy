@@ -61,11 +61,12 @@ def convert_number(value):
 class InputVariable(object):
     """An Abinit input variable."""
 
-    def __init__(self, name, value, units=''):
+    def __init__(self, name, value, units='', decimals=0):
 
         self._name = name
         self.value = value
         self._units = units
+        self.decimals = decimals
 
         if (is_iter(self.value) and isinstance(self.value[-1], str) and self.value[-1] in _UNITS):
             self.value = list(self.value)
@@ -113,12 +114,12 @@ class InputVariable(object):
         line = ' ' + var
     
         # By default, do not impose a number of decimal points
-        floatdecimal = 0
+        floatdecimal = self.decimals
     
         # For some inputs, impose number of decimal points...
         if any(inp in var for inp in ('xred', 'xcart', 'qpt', 'kpt')):
             #TODO Shouldn't do that
-            floatdecimal = 10
+            floatdecimal = max(floatdecimal, 10)
     
         # ...but not for those
         if any(inp in var for inp in ('ngkpt', 'kptrlatt', 'ngqpt', 'ng2qpt')):
@@ -180,7 +181,7 @@ class InputVariable(object):
             addlen = 8
     
         ndec = max(len(str(fval-int(fval)))-2, floatdecimal)
-        ndec = min(ndec, 10)
+        ndec = min(ndec, 16)
     
         sval = '{v:>{l}.{p}{f}}'.format(v=fval, l=ndec+addlen, p=ndec, f=form)
     
@@ -214,7 +215,7 @@ class InputVariable(object):
     
             # Number of decimal
             maxdec = max(len(str(f-int(f)))-2 for f in lvals)
-            ndec = min(max(maxdec, floatdecimal), 10)
+            ndec = min(max(maxdec, floatdecimal), 16)
     
             if all(f == 0 or (abs(f) > 1e-3 and abs(f) < 1e4) for f in lvals):
                 formatspec = '>{w}.{p}f'.format(w=ndec+5, p=ndec)

@@ -318,6 +318,9 @@ class IOTask(Task):
         if input_creation_time > output_creation_time:
             return self._STATUS_UNSTARTED
 
+        if not self._TAG_JOB_COMPLETED:
+            return self._STATUS_UNKNOWN
+
         if last_lines_contain(self.output_fname, self._TAG_JOB_COMPLETED):
             return self._STATUS_COMPLETED
 
