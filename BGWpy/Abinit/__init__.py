@@ -10,3 +10,4 @@ from . import abinittask
 from .scftask import *
 from .wfntask import *
 from .abibgw  import *
+from .abinitbgwflow import *

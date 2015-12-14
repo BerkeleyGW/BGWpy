@@ -30,9 +30,13 @@ class Workflow(Task):
 
     """
 
-    def __init__(self, dirname='./', runscript_fname='run.sh', tasks=None, *args, **kwargs):
-        super(Workflow, self).__init__(dirname, runscript_fname, *args, **kwargs)
+    #def __init__(self, dirname='./', runscript_fname='run.sh', tasks=None, *args, **kwargs):
+    #    super(Workflow, self).__init__(dirname, runscript_fname, *args, **kwargs)
+    def __init__(self, tasks=None, *args, **kwargs):
+        super(Workflow, self).__init__(*args, **kwargs)
         self.tasks = list()
+        if tasks is not None:
+            self.tasks.extend(tasks)
 
     def add_task(self, task, merge=True):
         """

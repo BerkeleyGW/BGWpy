@@ -43,4 +43,12 @@ class AbinitScfTask(AbinitTask):
         #return os.path.join(self.dirname, self.get_odat('DEN'))
         return self.get_odat('DEN')
 
+    rho_fname = charge_density_fname
+
+    @property
+    def xc_potential_fname(self):
+        #return os.path.join(self.dirname, self.get_odat('DEN'))
+        return self.get_odat('VXC')
+
+    vxc_fname = xc_potential_fname
 

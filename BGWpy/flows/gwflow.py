@@ -65,7 +65,7 @@ class GWFlow(Workflow):
 
         super(GWFlow, self).__init__(**kwargs)
 
-        kwargs.pop('dirname')
+        kwargs.pop('dirname', None)
 
         self.structure = kwargs['structure']
         self.ngkpt = kwargs.pop('ngkpt')

@@ -53,9 +53,12 @@ class Abi2BgwInput(BasicInputFile):
         self['cell_symmetry']    = kwargs.get('cell_symmetry', 0)
 
         # Output files
-        self['wfng_file'] = kwargs.get('wfng_file', 'wfn.cplx')
-        self['rhog_file'] = kwargs.get('rhog_file', 'rho.cplx')
-        self['vxcg_file'] = kwargs.get('vxcg_file', 'vxc.cplx')
+        self._wfn_fname   = kwargs.get('wfng_file', 'wfn.cplx')
+        self['wfng_file'] = self._wfn_fname
+        self._rho_fname   = kwargs.get('rhog_file', 'rho.cplx')
+        self['rhog_file'] = self._rho_fname
+        self._vxc_fname   = kwargs.get('vxcg_file', 'vxc.cplx')
+        self['vxcg_file'] = self._vxc_fname
 
         # Input files
         self['wfng_file_abi'] = kwargs.get('wfng_file_abi')
@@ -202,7 +205,7 @@ class Abi2BgwTask(AbinitTask):
         #self._wfn_fname = value
         self.input['wfng_file_abi'] = os.path.relpath(value, self.dirname)
     
-    _rho_fname = 'rho.real'
+    _rho_fname = 'rho.cplx'
     @property
     def rho_fname(self):
         return os.path.join(self.dirname, self._rho_fname)
@@ -212,7 +215,7 @@ class Abi2BgwTask(AbinitTask):
         #self._rho_fname = value
         self.input['rhog_file_abi'] = os.path.relpath(value, self.dirname)
     
-    _vxc_fname = 'vxc.dat'
+    _vxc_fname = 'vxc.cplx'
     @property
     def vxc_fname(self):
         return os.path.join(self.dirname, self._vxc_fname)
