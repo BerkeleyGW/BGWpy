@@ -1,5 +1,5 @@
 
-This directory contains commented examples using this module.
+This directory contains commented examples using BGWpy.
 It is recommendent to run these examples in numeral order.
 
 The input and output files created can be compared with the corresponding 
@@ -8,6 +8,6 @@ files in Reference/.
 The binary files of Quantum Espresso and BerkeleyGW must be available from
 your PATH environment variable in order for the example to run successfully.
 
-You might have to edit the scripts to set the MPI options
-for your local environment.
+You might have to edit the scripts to adapt the MPI options
+to your local environment.
 

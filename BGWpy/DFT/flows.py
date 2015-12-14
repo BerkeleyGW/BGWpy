@@ -37,3 +37,18 @@ class WfnBgwFlow(DFTFlow):
     def _set_kqshift(self):
         raise NotImplementedError()
 
+    @property
+    def rho_fname(self):
+        raise NotImplementedError()
+
+    @property
+    def wfn_fname(self):
+        raise NotImplementedError()
+
+    @property
+    def vxc_fname(self):
+        raise NotImplementedError()
+
+    @property
+    def vxc_dat_fname(self):
+        raise NotImplementedError()
