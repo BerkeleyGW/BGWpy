@@ -30,11 +30,15 @@ class Workflow(Task):
 
     """
 
-    def __init__(self, dirname='./', runscript_fname='run.sh', tasks=None, *args, **kwargs):
-        super(Workflow, self).__init__(dirname, runscript_fname, *args, **kwargs)
+    #def __init__(self, dirname='./', runscript_fname='run.sh', tasks=None, *args, **kwargs):
+    #    super(Workflow, self).__init__(dirname, runscript_fname, *args, **kwargs)
+    def __init__(self, tasks=None, *args, **kwargs):
+        super(Workflow, self).__init__(*args, **kwargs)
         self.tasks = list()
+        if tasks is not None:
+            self.tasks.extend(tasks)
 
-    def add_task(self, task, merge=True):
+    def add_task(self, task, merge=False):
         """
         Add a task to the workflow.
 
@@ -47,7 +51,7 @@ class Workflow(Task):
         Keyword arguments
         -----------------
 
-        merge (True):
+        merge (False):
             Merge the execution in a single runscript.
 
         """
@@ -97,6 +101,18 @@ class Workflow(Task):
     #    for task in self.tasks:
     #        task.run()
 
+    def get_status(self):
+        """
+        Return the status of the task. Possible status are:
+        Completed, Unstarted, Unfinished, Unknown.
+        """
+        for task in self.tasks:
+            status = task.get_status()
+            if status != self._STATUS_COMPLETED:
+                return status
+        else:
+            return self._STATUS_COMPLETED
+        
     def report(self, *args, **kwargs):
         for task in self.tasks:
             task.report(*args, **kwargs)

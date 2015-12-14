@@ -27,8 +27,8 @@ kwargs = dict(
     nbnd = 9,
 
     # Parameters for the MPI runner
-    nproc = 1,
-    nproc_per_node = 1,
+    nproc = 8,
+    nproc_per_node = 8,
     mpirun = 'mpirun',
     nproc_flag = '-n',
     nproc_per_node_flag = '--npernode',
@@ -116,7 +116,7 @@ sigmatask = SigmaTask(
     #extra_variables = {'number_of_frequencies' : 10},
     wfn_co_fname = pw2bgwtask_ush.wfn_fname,
     rho_fname = pw2bgwtask_ush.rho_fname,
-    vxc_fname = pw2bgwtask_ush.vxc_fname,
+    vxc_dat_fname = pw2bgwtask_ush.vxc_dat_fname,
     eps0mat_fname = epsilontask.eps0mat_fname,
     epsmat_fname = epsilontask.epsmat_fname,
     **kwargs)

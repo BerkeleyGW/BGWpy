@@ -10,7 +10,7 @@ from ..DFT import DFTTask
 __all__ = ['QETask']
 
 
-class QETask(MPITask, IOTask, DFTTask):
+class QETask(DFTTask, IOTask):
     """Base class for Quantum Espresso calculations."""
 
     _TAG_JOB_COMPLETED = 'JOB DONE'
@@ -21,8 +21,6 @@ class QETask(MPITask, IOTask, DFTTask):
 
         self.prefix = kwargs['prefix']
         self.savedir = self.prefix + '.save'
-        self.pseudo_dir = kwargs.get('pseudo_dir', self.dirname)
-        self.pseudos = kwargs.get('pseudos', [])
 
         self.runscript['PW'] = kwargs.get('PW', 'pw.x')
         self.runscript['PWFLAGS'] = kwargs.get('PWFLAGS', '')

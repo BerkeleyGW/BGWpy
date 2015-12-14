@@ -196,7 +196,7 @@ class BSEFlow(Workflow):
             extra_variables = kwargs.pop('sigma_extra_variables', {}),
             wfn_co_fname = self.pw2bgwtask_ush.wfn_fname,
             rho_fname = self.pw2bgwtask_ush.rho_fname,
-            vxc_fname = self.pw2bgwtask_ush.vxc_fname,
+            vxc_dat_fname = self.pw2bgwtask_ush.vxc_dat_fname,
             eps0mat_fname = self.epsilontask.eps0mat_fname,
             epsmat_fname = self.epsilontask.epsmat_fname,
             **kwargs)

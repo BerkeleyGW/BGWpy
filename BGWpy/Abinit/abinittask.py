@@ -4,9 +4,12 @@ import os
 from os.path import join as pjoin
 import warnings
 
+import numpy as np
+
 from ..core.util import exec_from_dir
 from ..core import MPITask, IOTask
 from ..DFT import DFTTask
+from ..BGW import KgridTask
 
 from .abinitinput import AbinitInput
 
@@ -14,23 +17,54 @@ from .abinitinput import AbinitInput
 __all__ = ['AbinitTask']
 
 
-class AbinitTask(MPITask, IOTask, DFTTask):
+class AbinitTask(DFTTask, IOTask):
     """Base class for Abinit calculations."""
 
-    _TAG_JOB_COMPLETED = 'Calculation completed.'
+    _TAG_JOB_COMPLETED = 'Calculation completed'
 
     def __init__(self, dirname, **kwargs):
+        """
+        """
+        # FIXME Doc
 
         super(AbinitTask, self).__init__(dirname, **kwargs)
 
+        #self.ngkpt  = kwargs.get('ngkpt', 3*[1])
+        #self.kshift = kwargs.get('kshift', 3*[.0])
+        #self.qshift = kwargs.get('qshift', 3*[.0])
+
         self.prefix = kwargs['prefix']
 
-        #self.input_fname = self.prefix + '.in'
         self.input = AbinitInput(fname=self.prefix + '.in')
+        self.input.set_structure(self.structure)
+
+        # Handle k-points and symmetries
+        self.kgrid = KgridTask(**kwargs)
+        ((kpt, wtk), (symrel, tnons)) = self.kgrid.get_kpoints_and_sym()
+        nsym = len(symrel)
+
+        # Transpose all symmetry matrices
+        symrel = np.linalg.inv(symrel.reshape((-1,3,3)).transpose((0,2,1)))
+        symrel = np.array(symrel, dtype=np.int)
+
+        # A 2pi factor is added to tnons by kgrid for phase factor calculations
+        tnons = np.round(tnons / (2*np.pi),5)
+
+        self.input.set_variables({'symrel':symrel, 'tnons':tnons, 'nsym':nsym})
+        self.set_kpoints(kpt, wtk)
 
         self.runscript['ABINIT'] = kwargs.get('ABINIT', 'abinit')
         self.runscript.append('$MPIRUN $ABINIT < {} &> {}'.format(
                               self.filesfile_basename, self.log_basename))
+
+    @property
+    def output_fname(self):
+        first = os.path.join(self.dirname, self.output_basename)
+        for s in reversed('ABCDEFGHIJKLMNOPQRSTUVWXYZ'):
+            last = first + s
+            if os.path.exists(last):
+                return last
+        return first
 
     @property
     def filesfile_basename(self):
@@ -59,17 +93,17 @@ class AbinitTask(MPITask, IOTask, DFTTask):
     @property
     def idat_root(self):
         """The root name for input data files."""
-        return pjoin(self.input_data_dir, 'idat_')
+        return pjoin(self.input_data_dir, 'idat')
 
     @property
     def odat_root(self):
         """The root name for output data files."""
-        return pjoin(self.out_data_dir, 'odat_')
+        return pjoin(self.out_data_dir, 'odat')
 
     @property
     def tmp_root(self):
         """The root name for temporaty data files."""
-        return pjoin(self.tmp_data_dir, 'tmp_')
+        return pjoin(self.tmp_data_dir, 'tmp')
 
     def get_odat(self, datatype, dtset=0):
         """
@@ -122,15 +156,18 @@ class AbinitTask(MPITask, IOTask, DFTTask):
 
         for pseudo in self.pseudos:
             pseudo_path = pjoin(self.pseudo_dir, pseudo)
-            S += os.path.relpath(pseudo_path, self.dirname) + '\n'
+            S += pseudo_path + '\n'  # pseudo_dir is already a relpath
 
         return S
 
     def write(self):
+
+        # Main directory, etc...
         super(AbinitTask, self).write()
 
         self.check_pseudos()
 
+        # Sub-directories
         for d in (self.input_data_dir, self.out_data_dir, self.tmp_data_dir):
             if not os.path.exists(d):
                 os.mkdir(d)
@@ -140,4 +177,29 @@ class AbinitTask(MPITask, IOTask, DFTTask):
                 f.write(self.get_filesfile_content())
 
             self.input.write()
+
+    def set_kpoints(self, kpt, wtk, **kwargs):
+        """Set kpoint variables."""
+        wtk_normalized = np.array(wtk, dtype=np.float64) / sum(wtk)
+        self.input.set_variables({
+            'kptopt' : 0,
+            'kpt' : kpt,
+            'nkpt' : len(kpt),
+            'ngkpt' : None,
+            'nshiftk' : None,
+            'shiftk' : None,
+            })
+        self.input.set_variable('wtk', wtk_normalized, decimals=16)
+
+    def set_ngkpt(self, ngkpt, shiftk=[3*[.0]], **kwargs):
+        """Set kpoint variables."""
+        self.input.set_variables({
+            'kptopt' : kwargs.get('kptopt', 1),
+            'ngkpt' : ngkpt,
+            'nshiftk' : len(shiftk),
+            'shiftk' : shiftk,
+            'kpt' : None,
+            'wtk' : None,
+            'nkpt' : None,
+            })
 

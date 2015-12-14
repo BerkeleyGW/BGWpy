@@ -45,7 +45,7 @@ class SigmaTask(BGWTask):
             Path to the wavefunction file produced by pw2bgw.
         rho_fname : str
             Path to the density file produced by pw2bgw.
-        vxc_fname : str
+        vxc_dat_fname : str
             Path to the vxc file produced by pw2bgw.
         eps0mat_fname : str
             Path to the eps0mat file produced by epsilon.
@@ -95,7 +95,16 @@ class SigmaTask(BGWTask):
         # Set up the run script
         self.wfn_co_fname = kwargs['wfn_co_fname']
         self.rho_fname = kwargs['rho_fname']
-        self.vxc_fname = kwargs['vxc_fname']
+
+        if 'vxc_dat_fname' in kwargs:
+            self.vxc_dat_fname = kwargs['vxc_dat_fname']
+        elif 'vxc_fname' in kwargs:
+            self.vxc_fname = kwargs['vxc_fname']
+        else:
+            raise Exception(
+                "Either 'vxc_dat_fname' or 'vxc_fname' must be provided " +
+                "to SigmaTask.")
+
         self.eps0mat_fname = kwargs['eps0mat_fname']
         self.epsmat_fname = kwargs['epsmat_fname']
 
@@ -123,13 +132,22 @@ class SigmaTask(BGWTask):
         self.update_link(value, 'RHO')
 
     @property
+    def vxc_dat_fname(self):
+        return self._vxc_dat_fname
+
+    @vxc_dat_fname.setter
+    def vxc_dat_fname(self, value):
+        self._vxc_dat_fname = value
+        self.update_link(value, 'vxc.dat')
+
+    @property
     def vxc_fname(self):
         return self._vxc_fname
 
     @vxc_fname.setter
     def vxc_fname(self, value):
         self._vxc_fname = value
-        self.update_link(value, 'vxc.dat')
+        self.update_link(value, 'VXC')
 
     @property
     def eps0mat_fname(self):
