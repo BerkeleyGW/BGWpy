@@ -95,7 +95,16 @@ class SigmaTask(BGWTask):
         # Set up the run script
         self.wfn_co_fname = kwargs['wfn_co_fname']
         self.rho_fname = kwargs['rho_fname']
-        self.vxc_dat_fname = kwargs['vxc_dat_fname']
+
+        if 'vxc_dat_fname' in kwargs:
+            self.vxc_dat_fname = kwargs['vxc_dat_fname']
+        elif 'vxc_fname' in kwargs:
+            self.vxc_fname = kwargs['vxc_fname']
+        else:
+            raise Exception(
+                "Either 'vxc_dat_fname' or 'vxc_fname' must be provided " +
+                "to SigmaTask.")
+
         self.eps0mat_fname = kwargs['eps0mat_fname']
         self.epsmat_fname = kwargs['epsmat_fname']
 

@@ -148,7 +148,7 @@ class DFTTask(MPITask):
 
 class DFTFlow(Workflow, DFTTask):
 
-    def __init__(self, dirname, **kwargs):
+    def __init__(self, *args, **kwargs):
         """
         Keyword Arguments
         -----------------
@@ -160,9 +160,9 @@ class DFTFlow(Workflow, DFTTask):
         pseudos : list, str
             List of pseudopotential files.
         """
-        super(DFTFlow, self).__init__(dirname, **kwargs)
+        super(DFTFlow, self).__init__(*args, **kwargs)
 
-        self.flavor     = kwargs.pop('flavor',  'qe')
+        #self.flavor     = kwargs.pop('flavor',  'qe')
         self.pseudo_dir = kwargs.get('pseudo_dir', self.dirname)
         self.pseudos = kwargs.get('pseudos', [])
         self.structure = kwargs.get('structure')
