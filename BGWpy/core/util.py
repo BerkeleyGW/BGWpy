@@ -10,7 +10,7 @@ def exec_from_dir(dirname):
     finally:
         os.chdir(original)
 
-def last_lines_contain(fname, tag, nlines=10):
+def last_lines_contain(fname, tag, nlines=60):
     """True if the last nlines of fname contain tag."""
     nlines = int(nlines)
     with open(fname, 'r') as f:

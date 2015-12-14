@@ -38,7 +38,7 @@ class Workflow(Task):
         if tasks is not None:
             self.tasks.extend(tasks)
 
-    def add_task(self, task, merge=True):
+    def add_task(self, task, merge=False):
         """
         Add a task to the workflow.
 
@@ -51,7 +51,7 @@ class Workflow(Task):
         Keyword arguments
         -----------------
 
-        merge (True):
+        merge (False):
             Merge the execution in a single runscript.
 
         """
