@@ -26,6 +26,16 @@ class AbinitScfTask(AbinitTask):
         input_variables : dict
             Any other input variables for the Abinit input file.
 
+
+        Properties
+        ----------
+
+        charge_density_fname : str
+            The charge density file produced by Abinit.
+
+        vxc_fname : str
+            The xc potential file produced by Abinit.
+
         """
         # TODO complete documentation.
 

@@ -177,9 +177,9 @@ class Abi2BgwTask(AbinitTask):
         if kwargs.get('rhog_fname') or kwargs.get('rhog_file_abi'):
             self.set_rho()
 
-        self.wfn_fname = kwargs.pop('wfn_fname')
-        self.rho_fname = kwargs.pop('rho_fname')
-        self.vxc_fname = kwargs.pop('vxc_fname')
+        self.wfn_fname = kwargs.pop('wfn_fname', 'dummy')
+        self.rho_fname = kwargs.pop('rho_fname', 'dummy')
+        self.vxc_fname = kwargs.pop('vxc_fname', 'dummy')
 
         # Run script
         self.runscript['ABI2BGW'] = 'abi2bgw.x'

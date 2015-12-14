@@ -13,7 +13,7 @@ dist/*/
 dist/*.egg
 
 # Files produced by the tests not referenced
-Examples/[0-9]*
+Examples/*/[0-9]*
 
 # Configuration files
 BGWpy/config/user_configuration.py
