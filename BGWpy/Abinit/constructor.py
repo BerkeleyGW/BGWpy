@@ -47,6 +47,7 @@ def get_wfn_variables(**kwargs):
         ecut = kwargs.get('ecut'),
         tolwfr = kwargs.get('tolwfr', 1e-14),
         iscf = kwargs.get('iscf', -3),
+        istwfk = kwargs.get('istwfk', '*1'),
         )
     return variables
 

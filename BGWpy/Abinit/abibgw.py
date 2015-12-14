@@ -183,7 +183,8 @@ class Abi2BgwTask(AbinitTask):
 
         # Run script
         self.runscript['ABI2BGW'] = 'abi2bgw.x'
-        self.runscript.append('$MPIRUN $ABI2BGW {} >& {}'.format(
+        del self.runscript.main[:]
+        self.runscript.append('$ABI2BGW {} >& {}'.format(
                               self._input_fname, self._output_fname))
 
     def write(self):
