@@ -114,7 +114,7 @@ class TestBGWTasksMaker(TestQETasksMaker):
             dirname = os.path.join(self.tmpdir, 'Sigma'),
             wfn_co_fname = pw2bgwtask_ush.wfn_fname,
             rho_fname = pw2bgwtask_ush.rho_fname,
-            vxc_dat_fname = pw2bgwtask_ush.vxc_fname,
+            vxc_dat_fname = pw2bgwtask_ush.vxc_dat_fname,
             eps0mat_fname = epsilontask.eps0mat_fname,
             epsmat_fname = epsilontask.epsmat_fname,
             **kwargs)

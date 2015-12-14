@@ -101,6 +101,18 @@ class Workflow(Task):
     #    for task in self.tasks:
     #        task.run()
 
+    def get_status(self):
+        """
+        Return the status of the task. Possible status are:
+        Completed, Unstarted, Unfinished, Unknown.
+        """
+        for task in self.tasks:
+            status = task.get_status()
+            if status != self._STATUS_COMPLETED:
+                return status
+        else:
+            return self._STATUS_COMPLETED
+        
     def report(self, *args, **kwargs):
         for task in self.tasks:
             task.report(*args, **kwargs)

@@ -59,7 +59,7 @@ class PW2BGWTask(QETask):
             Path to the wavefunction file produced.
         rho_fname : str
             Path to the density file produced.
-        vxc_fname : str
+        vxc_dat_fname : str
             Path to the vxc file produced.
         """
 
@@ -114,8 +114,8 @@ class PW2BGWTask(QETask):
             self.wfn_fname = kwargs['wfng_file']
         if 'rho_fname' in kwargs:
             self.rho_fname = kwargs['rho_fname']
-        if 'vxc_fname' in kwargs:
-            self.vxc_fname = kwargs['vxc_fname']
+        if 'vxc_dat_fname' in kwargs:
+            self.vxc_dat_fname = kwargs['vxc_dat_fname']
 
         self.input.fname = self._input_fname
 
@@ -144,13 +144,13 @@ class PW2BGWTask(QETask):
         self._rho_fname = value
         self.input['rhog_file'] = value
     
-    _vxc_fname = 'vxc.dat'
+    _vxc_dat_fname = 'vxc.dat'
     @property
-    def vxc_fname(self):
-        return os.path.join(self.dirname, self._vxc_fname)
+    def vxc_dat_fname(self):
+        return os.path.join(self.dirname, self._vxc_dat_fname)
     
-    @vxc_fname.setter
-    def vxc_fname(self, value):
-        self._vxc_fname = value
+    @vxc_dat_fname.setter
+    def vxc_dat_fname(self, value):
+        self._vxc_dat_fname = value
         self.input['vxc_file'] = value
 
