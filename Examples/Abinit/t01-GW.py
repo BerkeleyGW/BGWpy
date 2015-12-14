@@ -17,7 +17,6 @@ common = dict(
     ecut = 5.0,
     nband = 9,
     ecuteps = 10.0,
-    sigma_extra_lines = ['screening_semiconductor'],
     ibnd_min = 1,
     ibnd_max = 8,
 
@@ -62,6 +61,7 @@ sigma = SigmaTask(
     wfn_co_fname = wfnco.wfn_fname,
     rho_fname = wfn.rho_fname,
     vxc_fname = wfn.vxc_fname,
+    extra_lines = ['screening_semiconductor'],
     **common)
 
 
