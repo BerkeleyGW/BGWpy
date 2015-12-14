@@ -16,7 +16,6 @@ common = dict(
     kshift = [.5,.5,.5],
     ecut = 5.0,
     nband = 9,
-    input_variables={'prtvxc': 1, 'istwfk' : '*1'},
     ecuteps = 10.0,
     sigma_extra_lines = ['screening_semiconductor'],
     ibnd_min = 1,
