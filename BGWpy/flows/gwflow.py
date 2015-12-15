@@ -4,7 +4,7 @@ from os.path import join as pjoin
 
 from ..external import Structure
 from ..core import Workflow
-from ..QE import ScfTask, WfnTask, PW2BGWTask
+from ..QE import QeScfTask, QeWfnTask, Qe2BgwTask
 from ..BGW import EpsilonTask, SigmaTask
 
 __all__ = ['GWFlow']
@@ -74,14 +74,14 @@ class GWFlow(Workflow):
         self.nbnd = kwargs.pop('nbnd')
 
         # Ground state density calculation (SCF)
-        self.scftask = ScfTask(
+        self.scftask = QeScfTask(
             dirname = pjoin(self.dirname, '01-density'),
             ngkpt = self.ngkpt,
             kshift = self.kshift,
             **kwargs)
         
         # Wavefunctions and eigenvalues calculation (NSCF) on a k-shifted grid
-        self.wfntask_ksh = WfnTask(
+        self.wfntask_ksh = QeWfnTask(
             dirname = pjoin(self.dirname, '02-wfn'),
             ngkpt = self.ngkpt,
             kshift = self.kshift,
@@ -92,7 +92,7 @@ class GWFlow(Workflow):
         
         
         # Interfacing PW with BerkeleyGW.
-        self.pw2bgwtask_ksh = PW2BGWTask(
+        self.pw2bgwtask_ksh = Qe2BgwTask(
             dirname = self.wfntask_ksh.dirname,
             ngkpt = self.ngkpt,
             kshift = self.kshift,
@@ -101,7 +101,7 @@ class GWFlow(Workflow):
         
         
         # Wavefunctions and eigenvalues calculation (NSCF) on a k+q-shifted grid
-        self.wfntask_qsh = WfnTask(
+        self.wfntask_qsh = QeWfnTask(
             dirname = pjoin(self.dirname, '03-wfnq'),
             ngkpt = self.ngkpt,
             kshift = self.kshift,
@@ -113,7 +113,7 @@ class GWFlow(Workflow):
         
         
         # Interfacing PW with BerkeleyGW.
-        self.pw2bgwtask_qsh = PW2BGWTask(
+        self.pw2bgwtask_qsh = Qe2BgwTask(
             dirname = self.wfntask_qsh.dirname,
             ngkpt = self.ngkpt,
             kshift = self.kshift,
@@ -123,7 +123,7 @@ class GWFlow(Workflow):
         
         
         # Wavefunctions and eigenvalues calculation (NSCF) on an unshifted grid
-        self.wfntask_ush = WfnTask(
+        self.wfntask_ush = QeWfnTask(
             dirname = pjoin(self.dirname, '04-wfn_co'),
             ngkpt = self.ngkpt,
             nbnd = self.nbnd,
@@ -133,7 +133,7 @@ class GWFlow(Workflow):
         
         
         # Interfacing PW with BerkeleyGW.
-        self.pw2bgwtask_ush = PW2BGWTask(
+        self.pw2bgwtask_ush = Qe2BgwTask(
             dirname = self.wfntask_ush.dirname,
             ngkpt = self.ngkpt,
             wfn_fname = 'wfn_co.cplx',

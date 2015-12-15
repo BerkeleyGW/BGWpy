@@ -1,14 +1,14 @@
 from __future__ import print_function
 import os
 
-from .qetask      import QETask
+from .qetask      import QeTask
 from .constructor import get_scf_input
 
 # Public
-__all__ = ['ScfTask']
+__all__ = ['QeScfTask']
 
 
-class ScfTask(QETask):
+class QeScfTask(QeTask):
     """Charge density calculation."""
 
     _TASK_NAME = 'SCF task'
@@ -69,7 +69,7 @@ class ScfTask(QETask):
             Path to the spin polarization file produced ('spin-polarization.dat').
         """
 
-        super(ScfTask, self).__init__(dirname, **kwargs)
+        super(QeScfTask, self).__init__(dirname, **kwargs)
 
         kpts, wtks = self.get_kpts(**kwargs)
 
