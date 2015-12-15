@@ -7,7 +7,7 @@ import pickle
 
 from ..external import Structure
 from ..core import Workflow
-from ..QE import ScfTask, WfnTask, PW2BGWTask
+from ..QE import QeScfTask, QeWfnTask, Qe2BgwTask
 from ..BGW import EpsilonTask, SigmaTask, KernelTask, AbsorptionTask
 
 __all__ = ['BSEFlow']
@@ -108,14 +108,14 @@ class BSEFlow(Workflow):
         self.nbnd = kwargs.pop('nbnd')
 
         # Ground state density calculation (SCF)
-        self.scftask = ScfTask(
+        self.scftask = QeScfTask(
             dirname = pjoin(self.dirname, '01-density'),
             ngkpt = self.ngkpt,
             kshift = self.kshift,
             **kwargs)
         
         # Wavefunctions and eigenvalues calculation (NSCF) on a k-shifted grid
-        self.wfntask_ksh = WfnTask(
+        self.wfntask_ksh = QeWfnTask(
             dirname = pjoin(self.dirname, '02-wfn'),
             ngkpt = self.ngkpt,
             kshift = self.kshift,
@@ -126,7 +126,7 @@ class BSEFlow(Workflow):
         
         
         # Interfacing PW with BerkeleyGW.
-        self.pw2bgwtask_ksh = PW2BGWTask(
+        self.pw2bgwtask_ksh = Qe2BgwTask(
             dirname = self.wfntask_ksh.dirname,
             ngkpt = self.ngkpt,
             kshift = self.kshift,
@@ -135,7 +135,7 @@ class BSEFlow(Workflow):
         
         
         # Wavefunctions and eigenvalues calculation (NSCF) on a k+q-shifted grid
-        self.wfntask_qsh = WfnTask(
+        self.wfntask_qsh = QeWfnTask(
             dirname = pjoin(self.dirname, '03-wfnq'),
             ngkpt = self.ngkpt,
             kshift = self.kshift,
@@ -147,7 +147,7 @@ class BSEFlow(Workflow):
         
         
         # Interfacing PW with BerkeleyGW.
-        self.pw2bgwtask_qsh = PW2BGWTask(
+        self.pw2bgwtask_qsh = Qe2BgwTask(
             dirname = self.wfntask_qsh.dirname,
             ngkpt = self.ngkpt,
             kshift = self.kshift,
@@ -157,7 +157,7 @@ class BSEFlow(Workflow):
         
         
         # Wavefunctions and eigenvalues calculation (NSCF) on an unshifted grid
-        self.wfntask_ush = WfnTask(
+        self.wfntask_ush = QeWfnTask(
             dirname = pjoin(self.dirname, '04-wfn_co'),
             ngkpt = self.ngkpt,
             nbnd = self.nbnd,
@@ -167,7 +167,7 @@ class BSEFlow(Workflow):
         
         
         # Interfacing PW with BerkeleyGW.
-        self.pw2bgwtask_ush = PW2BGWTask(
+        self.pw2bgwtask_ush = Qe2BgwTask(
             dirname = self.wfntask_ush.dirname,
             ngkpt = self.ngkpt,
             wfn_fname = 'wfn_co.cplx',
@@ -222,7 +222,7 @@ class BSEFlow(Workflow):
 
         # Wavefunctions and eigenvalues calculation (NSCF)
         # on an finer, unshifted grid
-        self.wfntask_fi_ush = WfnTask(
+        self.wfntask_fi_ush = QeWfnTask(
             dirname = pjoin(self.dirname, '08-wfn_fi'),
             nbnd = self.nbnd_absorption,
             ngkpt = self.ngkpt_fi,
@@ -235,7 +235,7 @@ class BSEFlow(Workflow):
         
         
         # Interfacing PW with BerkeleyGW.
-        self.pw2bgwtask_fi_ush = PW2BGWTask(
+        self.pw2bgwtask_fi_ush = Qe2BgwTask(
             dirname = self.wfntask_fi_ush.dirname,
             ngkpt = self.ngkpt_fi,
             kshift = self.kshift_fi,
@@ -245,7 +245,7 @@ class BSEFlow(Workflow):
         
         # Wavefunctions and eigenvalues calculation (NSCF)
         # on an finer, q-shifted grid
-        self.wfntask_fi_qsh = WfnTask(
+        self.wfntask_fi_qsh = QeWfnTask(
             dirname = pjoin(self.dirname, '09-wfnq_fi'),
             ngkpt = self.ngkpt_fi,
             kshift = self.kshift_fi,
@@ -257,7 +257,7 @@ class BSEFlow(Workflow):
         
         
         # Interfacing PW with BerkeleyGW.
-        self.pw2bgwtask_fi_qsh = PW2BGWTask(
+        self.pw2bgwtask_fi_qsh = Qe2BgwTask(
             dirname = self.wfntask_fi_qsh.dirname,
             ngkpt = self.ngkpt_fi,
             kshift = self.kshift_fi,

@@ -4,7 +4,7 @@ from os.path import join as pjoin
 
 from ..external import Structure
 from ..core import Workflow
-from ..QE import ScfTask, WfnTask, PW2BGWTask
+from ..QE import QeScfTask, QeWfnTask, Qe2BgwTask
 from ..BGW import EpsilonTask, SigmaTask
 
 __all__ = ['GWFlowSemicond']
@@ -83,14 +83,14 @@ class GWFlowSemicond(Workflow):
         self.sigma_kpts = kwargs.pop('sigma_kpts', None)
 
         # Ground state density calculation (SCF)
-        self.scftask = ScfTask(
+        self.scftask = QeScfTask(
             dirname = pjoin(self.dirname, '1-mf/1-scf'),
             ngkpt = self.ngkpt,
             kshift = self.kshift,
             **kwargs)
         
         # Wavefunctions and eigenvalues calculation (NSCF) on a k-shifted grid
-        self.wfntask_ksh = WfnTask(
+        self.wfntask_ksh = QeWfnTask(
             dirname = pjoin(self.dirname, '1-mf/2.1-wfn'),
             ngkpt = self.ngkpt,
             kshift = self.kshift,
@@ -101,7 +101,7 @@ class GWFlowSemicond(Workflow):
         
         
         # Interfacing PW with BerkeleyGW.
-        self.pw2bgwtask_ksh = PW2BGWTask(
+        self.pw2bgwtask_ksh = Qe2BgwTask(
             dirname = self.wfntask_ksh.dirname,
             ngkpt = self.ngkpt,
             kshift = self.kshift,
@@ -112,7 +112,7 @@ class GWFlowSemicond(Workflow):
         
         
         # Wavefunctions and eigenvalues calculation (NSCF) on a k+q-shifted grid
-        self.wfntask_qsh = WfnTask(
+        self.wfntask_qsh = QeWfnTask(
             dirname = pjoin(self.dirname, '1-mf/2.2-wfnq'),
             ngkpt = self.ngkpt,
             kshift = self.kshift,
@@ -126,7 +126,7 @@ class GWFlowSemicond(Workflow):
         
         
         # Interfacing PW with BerkeleyGW.
-        self.pw2bgwtask_qsh = PW2BGWTask(
+        self.pw2bgwtask_qsh = Qe2BgwTask(
             dirname = self.wfntask_qsh.dirname,
             ngkpt = self.ngkpt,
             kshift = self.kshift,
@@ -137,7 +137,7 @@ class GWFlowSemicond(Workflow):
         # If kshift==[0,0,0], WFN==WFN_co and we can skip these tasks
         if has_kshift:
             # Wavefunctions and eigenvalues calculation (NSCF) on an unshifted grid
-            self.wfntask_ush = WfnTask(
+            self.wfntask_ush = QeWfnTask(
                 dirname = pjoin(self.dirname, '3-wfn_co'),
                 ngkpt = self.ngkpt,
                 nbnd = self.nbnd,
@@ -146,7 +146,7 @@ class GWFlowSemicond(Workflow):
                 **kwargs)
         
             # Interfacing PW with BerkeleyGW.
-            self.pw2bgwtask_ush = PW2BGWTask(
+            self.pw2bgwtask_ush = Qe2BgwTask(
                 dirname = self.wfntask_ush.dirname,
                 ngkpt = self.ngkpt,
                 wfn_fname = 'WFN',

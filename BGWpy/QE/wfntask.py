@@ -1,14 +1,14 @@
 from __future__ import print_function
 import os
 
-from .qetask      import QETask
+from .qetask      import QeTask
 from .constructor import get_bands_input
 
 # Public
-__all__ = ['WfnTask']
+__all__ = ['QeWfnTask']
 
 
-class WfnTask(QETask):
+class QeWfnTask(QeTask):
     """Wavefunctions calculation."""
 
     _TASK_NAME = 'Wavefunction task'
@@ -70,7 +70,7 @@ class WfnTask(QETask):
 
         """
 
-        super(WfnTask, self).__init__(dirname, **kwargs)
+        super(QeWfnTask, self).__init__(dirname, **kwargs)
 
         kpts, wtks = self.get_kpts(**kwargs)
 
