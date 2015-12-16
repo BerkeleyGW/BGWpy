@@ -151,7 +151,7 @@ class Qe2BgwTask(QeTask):
         rho_fname : str
             Path to the density file produced.
         vxc_dat_fname : str
-            Path to the vxc file produced.
+            Path to the vxc.dat file produced.
         """
 
         kwargs.setdefault('runscript_fname', 'run-pw2bgw.sh')
