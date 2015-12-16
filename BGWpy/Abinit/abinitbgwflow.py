@@ -37,14 +37,17 @@ class AbinitBgwFlow(WfnBgwFlow):
         Properties
         ----------
 
+        charge_density_fname : str
+            The charge density file used by Abinit.
+
         rho_fname : str
-            The charge density file name for BerkeleyGW.
+            The charge density file name used by BerkeleyGW.
 
         wfn_fname : str
-            The wavefunctions file name for BerkeleyGW.
+            The wavefunctions file name used by BerkeleyGW.
 
         vxc_fname : str
-            The xc potential file name for BerkeleyGW.
+            The xc potential file name used by BerkeleyGW.
 
         """
         # FIXME doc

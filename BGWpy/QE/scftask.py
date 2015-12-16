@@ -63,8 +63,10 @@ class QeScfTask(QeTask):
 
         charge_density_fname : str
             Path to the charge density file produced ('charge-density.dat').
+
         data_file_fname : str
             Path to the xml data file produced ('data-file.xml').
+
         spin_polarization_fname : str, optional
             Path to the spin polarization file produced ('spin-polarization.dat').
         """
