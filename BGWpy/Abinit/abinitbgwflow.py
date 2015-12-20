@@ -59,7 +59,7 @@ class AbinitBgwFlow(WfnBgwFlow):
 
         # SCF task
         if self.with_density:
-            self.scftask = self.AbinitScfTask(
+            self.scftask = AbinitScfTask(
                 dirname = kwargs.get('density_dirname',
                                      pjoin(self.dirname, '01-Density')),
                                      **kwargs)
@@ -77,7 +77,7 @@ class AbinitBgwFlow(WfnBgwFlow):
         vxc_fname = kwargs.pop('vxc_fname', '')
 
         # Wfn task
-        self.wfntask = self.AbinitWfnTask(
+        self.wfntask = AbinitWfnTask(
             dirname = kwargs.get('wfn_dirname',
                                  pjoin(self.dirname, '02-Wavefunctions')),
                                  **kwargs)
@@ -86,7 +86,7 @@ class AbinitBgwFlow(WfnBgwFlow):
 
 
         # Wfn 2 BGW
-        self.wfbgwntask = self.Abi2BgwTask(
+        self.wfbgwntask = Abi2BgwTask(
             dirname = self.wfntask.dirname,
             rhog_flag = True,
             wfng_flag = True,

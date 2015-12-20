@@ -63,7 +63,7 @@ class QeBgwFlow(WfnBgwFlow):
 
         # SCF task
         if self.with_density:
-            self.scftask = self.QeScfTask(
+            self.scftask = QeScfTask(
                 dirname = kwargs.get('density_dirname',
                                      pjoin(self.dirname, '01-Density')),
                                      **kwargs)
@@ -84,7 +84,7 @@ class QeBgwFlow(WfnBgwFlow):
         self.spin_polarization_fname = kwargs.get('spin_polarization_fname', 'dummy')
 
         # Wfn task
-        self.wfntask = self.QeWfnTask(
+        self.wfntask = QeWfnTask(
             dirname = kwargs.get('wfn_dirname',
                                  pjoin(self.dirname, '02-Wavefunctions')),
                                  **kwargs)
@@ -93,7 +93,7 @@ class QeBgwFlow(WfnBgwFlow):
 
 
         # Wfn 2 BGW
-        self.wfbgwntask = self.Qe2BgwTask(
+        self.wfbgwntask = Qe2BgwTask(
             dirname = self.wfntask.dirname,
             **kwargs)
 
