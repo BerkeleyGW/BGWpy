@@ -8,11 +8,9 @@ __all__ = ['QeBgwFlow']
 
 class QeBgwFlow(WfnBgwFlow):
 
-    _ScfTask = QeScfTask
-    _WfnTask = QeWfnTask
-    _WfnBgwTask = Qe2BgwTask
-
     _charge_density_fname = ''
+    _spin_polarization_fname = ''
+    _data_file_fname = ''
 
     def __init__(self, **kwargs):
         """
@@ -65,7 +63,7 @@ class QeBgwFlow(WfnBgwFlow):
 
         # SCF task
         if self.with_density:
-            self.scftask = self._ScfTask(
+            self.scftask = self.QeScfTask(
                 dirname = kwargs.get('density_dirname',
                                      pjoin(self.dirname, '01-Density')),
                                      **kwargs)
@@ -86,7 +84,7 @@ class QeBgwFlow(WfnBgwFlow):
         self.spin_polarization_fname = kwargs.get('spin_polarization_fname', 'dummy')
 
         # Wfn task
-        self.wfntask = self._WfnTask(
+        self.wfntask = self.QeWfnTask(
             dirname = kwargs.get('wfn_dirname',
                                  pjoin(self.dirname, '02-Wavefunctions')),
                                  **kwargs)
@@ -95,7 +93,7 @@ class QeBgwFlow(WfnBgwFlow):
 
 
         # Wfn 2 BGW
-        self.wfbgwntask = self._WfnBgwTask(
+        self.wfbgwntask = self.Qe2BgwTask(
             dirname = self.wfntask.dirname,
             **kwargs)
 
