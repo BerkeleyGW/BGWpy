@@ -71,6 +71,7 @@ class QeWfnTask(QeTask):
         """
 
         super(QeWfnTask, self).__init__(dirname, **kwargs)
+        self.add_pseudos_copy()
 
         kpts, wtks = self.get_kpts(**kwargs)
 
@@ -127,4 +128,17 @@ class QeWfnTask(QeTask):
         self._data_file_fname = value
         dest = os.path.join(self.savedir, 'data-file.xml')
         self.update_copy(value, dest)
+
+    def add_pseudos_copy(self):
+        """
+        Add instructions in the runscript to copy the pseudopotential files.
+        This is necessary, because otherwise, Quantum Espresso expect that
+        the relative path for the pseudopotential directory be the same
+        for the wavefunction calculation as for the density calculation.
+        """
+        for pseudo in self.pseudos:
+            source = os.path.join(self.dirname, self.pseudo_dir, pseudo)
+            dest = os.path.join(self.savedir, pseudo)
+            self.update_copy(source, dest)
+
 
