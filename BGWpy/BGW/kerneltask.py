@@ -127,3 +127,8 @@ class KernelTask(BGWTask):
         basename = 'bsexmat.h5' if self._use_hdf5 else 'bsexmat'
         return os.path.join(self.dirname, basename)
     
+    @property
+    def bsemat_fname(self):
+        basename = 'bsemat.h5' if self._use_hdf5 else 'bsemat'
+        return os.path.join(self.dirname, basename)
+    
