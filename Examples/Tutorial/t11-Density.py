@@ -8,14 +8,14 @@ Used by:
     15-Wfn_fi
     16-Wfnq_fi
 """
-from BGWpy import Structure, ScfTask
+from BGWpy import Structure, QeScfTask
 
-scftask = ScfTask(
+scftask = QeScfTask(
     dirname = '11-Density',
 
-    structure = Structure.from_file('Structures/GaAs.json'),
+    structure = Structure.from_file('../Data/Structures/GaAs.json'),
     prefix = 'GaAs',
-    pseudo_dir = 'Pseudos',
+    pseudo_dir = '../Data/Pseudos',
     pseudos = ['31-Ga.PBE.UPF', '33-As.PBE.UPF'],
 
     ngkpt = [2,2,2],      # k-points grid
