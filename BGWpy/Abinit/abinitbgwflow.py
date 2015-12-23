@@ -88,9 +88,9 @@ class AbinitBgwFlow(WfnBgwFlow):
         # Wfn 2 BGW
         self.wfbgwntask = Abi2BgwTask(
             dirname = self.wfntask.dirname,
-            rhog_flag = True,
-            wfng_flag = True,
-            vxcg_flag = bool(vxc_fname),
+            wfng_flag = kwargs.pop('wfng_flag', True),
+            rhog_flag = kwargs.pop('rhog_flag', True),
+            vxcg_flag = kwargs.pop('vxcg_flag', bool(vxc_fname)),
             rho_fname = self.charge_density_fname,
             wfn_fname = self.wfntask.wfn_fname,
             vxc_fname = vxc_fname if vxc_fname else 'dummy',

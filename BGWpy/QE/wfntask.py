@@ -136,8 +136,12 @@ class QeWfnTask(QeTask):
         the relative path for the pseudopotential directory be the same
         for the wavefunction calculation as for the density calculation.
         """
+        if os.path.realpath(self.pseudo_dir) == self.pseudo_dir.rstrip(os.path.sep):
+            sourcedir = self.pseudo_dir
+        else:
+            sourcedir = os.path.join(self.dirname, self.pseudo_dir)
         for pseudo in self.pseudos:
-            source = os.path.join(self.dirname, self.pseudo_dir, pseudo)
+            source = os.path.join(sourcedir, pseudo)
             dest = os.path.join(self.savedir, pseudo)
             self.update_copy(source, dest)
 
