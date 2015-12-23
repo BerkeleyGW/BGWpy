@@ -47,6 +47,8 @@ class AbsorptionTask(BGWTask):
             Path to the eps0mat file produced by epsilon.
         epsmat_fname : str
             Path to the epsmat file produced by epsilon.
+        bsemat_fname : str
+            Path to the bsemat file produced by kernel.
         bsedmat_fname : str
             Path to the bsedmat file produced by kernel.
         bsexmat_fname : str
@@ -83,8 +85,11 @@ class AbsorptionTask(BGWTask):
         self.eps0mat_fname = kwargs['eps0mat_fname']
         self.epsmat_fname = kwargs['epsmat_fname']
 
-        self.bsedmat_fname = kwargs['bsedmat_fname']
-        self.bsexmat_fname = kwargs['bsexmat_fname']
+        if 'bsemat_fname' in kwargs:
+            self.bsemat_fname = kwargs['bsemat_fname']
+        else:
+            self.bsedmat_fname = kwargs['bsedmat_fname']
+            self.bsexmat_fname = kwargs['bsexmat_fname']
 
         self.sigma_fname = kwargs['sigma_fname']
         self.eqp_fname = kwargs['eqp_fname']
@@ -169,6 +174,16 @@ class AbsorptionTask(BGWTask):
     def bsexmat_fname(self, value):
         self._bsexmat_fname = value
         dest = 'bsexmat.h5' if self._use_hdf5 else 'bsexmat'
+        self.update_link(value, dest)
+
+    @property
+    def bsemat_fname(self):
+        return self._bsemat_fname
+
+    @bsemat_fname.setter
+    def bsemat_fname(self, value):
+        self._bsemat_fname = value
+        dest = 'bsemat.h5' if self._use_hdf5 else 'bsemat'
         self.update_link(value, dest)
 
     @property
