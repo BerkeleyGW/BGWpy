@@ -56,6 +56,11 @@ class GWFlow(Workflow):
             Minimum band index for GW corrections.
         ibnd_max : int
             Maximum band index for GW corrections.
+        truncation_flag : str, optional
+            Which truncation flag to use in BerkeleyGW, e.g. "cell_slab_truncation".
+        sigma_kpts : list of list(3), optional
+            K-points to evaluate self-energy operator. Defaults to all
+            k-points defined by the Monkhorst-Pack grid ngkpt.
         epsilon_extra_lines : list, optional
             Any other lines that should appear in the epsilon input file.
         epsilon_extra_variables : dict, optional
@@ -83,8 +88,9 @@ class GWFlow(Workflow):
                 self.nbnd = kwargs.pop(key)
                 break
         else:
-            raise Exception('Number of bands must be specified with one of these keywords: {}.'
-                            .format(nband_aliases))
+            raise Exception(
+            'Number of bands must be specified with one of these keywords: {}.'
+            .format(nband_aliases))
 
         self.dft_flavor = check_dft_flavor(kwargs.get('dft_flavor',dft_flavor))
 
@@ -119,6 +125,8 @@ class GWFlow(Workflow):
                 nbnd = None,
                 **kwargs)
 
+            self.add_tasks([self.scftask, self.wfntask_ksh, self.wfntask_qsh])
+
             self.wfntask_ush = QeBgwFlow(
                 dirname = pjoin(self.dirname, '04-Wfn_co'),
                 ngkpt = self.ngkpt,
@@ -126,8 +134,10 @@ class GWFlow(Workflow):
                 rhog_flag = True,
                 **kwargs)
 
-            self.add_tasks([self.scftask, self.wfntask_ksh,
-                            self.wfntask_qsh, self.wfntask_ush], merge=False)
+            if self.has_kshift:
+                self.add_task(self.wfntask_ush)
+            else:
+                self.wfntask_ush = self.wfntask_ksh
 
             kwargs.update(wfn_fname = self.wfntask_ksh.wfn_fname,
                           wfnq_fname = self.wfntask_qsh.wfn_fname,
@@ -163,6 +173,8 @@ class GWFlow(Workflow):
                 nband = None,
                 **kwargs)
             
+            self.add_tasks([self.scftask, self.wfntask_ksh, self.wfntask_qsh])
+
             self.wfntask_ush = AbinitBgwFlow(
                 dirname = pjoin(self.dirname, '04-Wfn_co'),
                 ngkpt = self.ngkpt,
@@ -171,8 +183,10 @@ class GWFlow(Workflow):
                 vxcg_flag = True,
                 **kwargs)
 
-            self.add_tasks([self.scftask, self.wfntask_ksh,
-                            self.wfntask_qsh, self.wfntask_ush], merge=False)
+            if self.has_kshift:
+                self.add_task(self.wfntask_ush)
+            else:
+                self.wfntask_ush = self.wfntask_ksh
 
             kwargs.update(wfn_fname = self.wfntask_ksh.wfn_fname,
                           wfnq_fname = self.wfntask_qsh.wfn_fname,
@@ -182,14 +196,21 @@ class GWFlow(Workflow):
 
 
         # ==== GW calculations ==== #
+
+        # Set some common variables for Epsilon and Sigma
+        self.epsilon_extra_lines = kwargs.pop('epsilon_extra_lines', [])
+        self.epsilon_extra_variables = kwargs.pop('epsilon_extra_variables',{})
+        
+        self.sigma_extra_lines = kwargs.pop('sigma_extra_lines', [])
+        self.sigma_extra_variables = kwargs.pop('sigma_extra_variables', {})
         
         # Dielectric matrix computation and inversion (epsilon)
         self.epsilontask = EpsilonTask(
             dirname = pjoin(self.dirname, '11-epsilon'),
             ngkpt = self.ngkpt,
             qshift = self.qshift,
-            extra_lines = kwargs.pop('epsilon_extra_lines', []),
-            extra_variables = kwargs.pop('epsilon_extra_variables', {}),
+            extra_lines = self.epsilon_extra_lines,
+            extra_variables = self.epsilon_extra_variables,
             **kwargs)
         
         
@@ -197,11 +218,51 @@ class GWFlow(Workflow):
         self.sigmatask = SigmaTask(
             dirname = pjoin(self.dirname, '12-sigma'),
             ngkpt = self.ngkpt,
-            extra_lines = kwargs.pop('sigma_extra_lines', []),
-            extra_variables = kwargs.pop('sigma_extra_variables', {}),
+            extra_lines = self.sigma_extra_lines,
+            extra_variables = self.sigma_extra_variables,
             eps0mat_fname = self.epsilontask.eps0mat_fname,
             epsmat_fname = self.epsilontask.epsmat_fname,
             **kwargs)
         
         self.add_tasks([self.epsilontask, self.sigmatask], merge=False)
+
+        self.truncation_flag = kwargs.get('truncation_flag')
+        self.sigma_kpts = kwargs.get('sigma_kpts')
+        
+    @property
+    def has_kshift(self):
+        return any([i!=0 for i in self.kshift])
+
+    @property
+    def sigma_kpts(self):
+        return self.sigmatask.input.kpts
+
+    @sigma_kpts.setter
+    def sigma_kpts(self, value):
+        if value:
+            self.sigmatask.input.kpts = value
+
+    _truncation_flag = ''
+    @property
+    def truncation_flag(self):
+        return self._truncation_flag
+
+    @truncation_flag.setter
+    def truncation_flag(self, value):
+
+        # Remove old values
+        if self._truncation_flag in self.epsilontask.input.keywords:
+            i = self.epsilontask.input.keywords.index(self._truncation_flag)
+            del self.epsilontask.input.keywords[i]
+
+        if self._truncation_flag in self.sigmatask.input.keywords:
+            i = self.sigmatask.input.keywords.index(self._truncation_flag)
+            del self.sigmatask.input.keywords[i]
+
+        # Add new value
+        if value:
+            self.epsilontask.input.keywords.append(value)
+            self.sigmatask.input.keywords.append(value)
+
+        self._truncation_flag = value
 
