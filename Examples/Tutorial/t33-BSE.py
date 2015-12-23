@@ -8,9 +8,9 @@ from BGWpy import Structure, BSEFlow
 flow = BSEFlow(
     dirname='33-BSE',
 
-    structure = Structure.from_file('Structures/GaAs.json'),
+    structure = Structure.from_file('../Data/Structures/GaAs.json'),
     prefix = 'GaAs',
-    pseudo_dir = 'Pseudos',
+    pseudo_dir = '../Data/Pseudos',
     pseudos = ['31-Ga.PBE.UPF', '33-As.PBE.UPF'],
 
     ecutwfc = 10.0,

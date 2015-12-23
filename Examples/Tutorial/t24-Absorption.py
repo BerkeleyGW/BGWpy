@@ -13,7 +13,7 @@ from BGWpy import Structure, AbsorptionTask
 
 task = AbsorptionTask(
     dirname='24-Absorption',
-    structure = Structure.from_file('Structures/GaAs.cif'),
+    structure = Structure.from_file('../Data/Structures/GaAs.cif'),
 
     ngkpt = [2,2,2],        # k-points grid
     nbnd_val = 4,           # Number of valence bands

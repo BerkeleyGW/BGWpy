@@ -9,15 +9,15 @@ Depends on:
 Used by:
     24-Absorption
 """
-from BGWpy import Structure, WfnTask, PW2BGWTask
+from BGWpy import Structure, QeWfnTask, Qe2BgwTask
 
 # Common arguments for tasks.
 kwargs = dict(
     dirname = '15-Wfn_fi',
 
-    structure = Structure.from_file('Structures/GaAs.json'),
+    structure = Structure.from_file('../Data/Structures/GaAs.json'),
     prefix = 'GaAs',
-    pseudo_dir = 'Pseudos',
+    pseudo_dir = '../Data/Pseudos',
     pseudos = ['31-Ga.PBE.UPF', '33-As.PBE.UPF'],
 
     ngkpt = [2,2,2],      # k-points grid
@@ -36,14 +36,14 @@ kwargs = dict(
     )
 
 # Wavefunctions and eigenvalues calculation (NSCF) on a k-shifted grid
-wfntask_fi = WfnTask(
+wfntask_fi = QeWfnTask(
     charge_density_fname = '11-Density/GaAs.save/charge-density.dat',
     data_file_fname = '11-Density/GaAs.save/data-file.xml',
     **kwargs)
 
 
 # Interfacing PW with BerkeleyGW.
-pw2bgwtask_fi = PW2BGWTask(
+pw2bgwtask_fi = Qe2BgwTask(
     wfn_fname = 'wfn_fi.cplx',
     **kwargs)
 
