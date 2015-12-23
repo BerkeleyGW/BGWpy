@@ -157,12 +157,19 @@ class BSEFlow(Workflow):
                 nbnd = None,
                 **kwargs)
 
+            self.add_tasks([self.scftask, self.wfntask_ksh, self.wfntask_qsh])
+
             self.wfntask_ush = QeBgwFlow(
                 dirname = pjoin(self.dirname, '04-Wfn_co'),
                 ngkpt = self.ngkpt,
                 nbnd = self.nbnd,
                 rhog_flag = True,
                 **kwargs)
+
+            if self.has_kshift:
+                self.add_task(self.wfntask_ush)
+            else:
+                self.wfntask_ush = self.wfntask_ksh
 
             self.wfntask_fi_ush = QeBgwFlow(
                 dirname = pjoin(self.dirname, '05-Wfn_fi'),
@@ -181,9 +188,7 @@ class BSEFlow(Workflow):
                 symkpt=False,
                 **kwargs)
             
-            self.add_tasks([self.scftask, self.wfntask_ksh,
-                            self.wfntask_qsh, self.wfntask_ush,
-                            self.wfntask_fi_ush, self.wfntask_fi_qsh], merge=False)
+            self.add_tasks([self.wfntask_fi_ush, self.wfntask_fi_qsh])
 
             kwargs.update(wfn_fname = self.wfntask_ksh.wfn_fname,
                           wfnq_fname = self.wfntask_qsh.wfn_fname,
@@ -221,6 +226,8 @@ class BSEFlow(Workflow):
                 nband = None,
                 **kwargs)
             
+            self.add_tasks([self.scftask, self.wfntask_ksh, self.wfntask_qsh])
+
             self.wfntask_ush = AbinitBgwFlow(
                 dirname = pjoin(self.dirname, '04-Wfn_co'),
                 ngkpt = self.ngkpt,
@@ -228,6 +235,11 @@ class BSEFlow(Workflow):
                 rhog_flag = True,
                 vxcg_flag = True,
                 **kwargs)
+
+            if self.has_kshift:
+                self.add_task(self.wfntask_ush)
+            else:
+                self.wfntask_ush = self.wfntask_ksh
 
             self.wfntask_fi_ush = AbinitBgwFlow(
                 dirname = pjoin(self.dirname, '05-Wfn_fi'),
@@ -247,8 +259,7 @@ class BSEFlow(Workflow):
                 symkpt=False,
                 **kwargs)
             
-            self.add_tasks([self.scftask, self.wfntask_ksh,
-                            self.wfntask_qsh, self.wfntask_ush], merge=False)
+            self.add_tasks([self.wfntask_fi_ush, self.wfntask_fi_qsh])
 
             kwargs.update(wfn_fname = self.wfntask_ksh.wfn_fname,
                           wfnq_fname = self.wfntask_qsh.wfn_fname,
@@ -281,6 +292,8 @@ class BSEFlow(Workflow):
             epsmat_fname = self.epsilontask.epsmat_fname,
             **kwargs)
 
+        self.truncation_flag = kwargs.get('truncation_flag')
+
         # Kernel calculation (BSE)
         self.kerneltask = KernelTask(
             dirname = pjoin(self.dirname, '13-kernel'),
@@ -307,4 +320,32 @@ class BSEFlow(Workflow):
         # Add all tasks
         self.add_tasks([self.epsilontask, self.sigmatask,
                         self.kerneltask, self.absorptiontask], merge=False)
+
+    @property
+    def has_kshift(self):
+        return any([i!=0 for i in self.kshift])
+
+    _truncation_flag = ''
+    @property
+    def truncation_flag(self):
+        return self._truncation_flag
+
+    @truncation_flag.setter
+    def truncation_flag(self, value):
+
+        # Remove old values
+        if self._truncation_flag in self.epsilontask.input.keywords:
+            i = self.epsilontask.input.keywords.index(self._truncation_flag)
+            del self.epsilontask.input.keywords[i]
+
+        if self._truncation_flag in self.sigmatask.input.keywords:
+            i = self.sigmatask.input.keywords.index(self._truncation_flag)
+            del self.sigmatask.input.keywords[i]
+
+        # Add new value
+        if value:
+            self.epsilontask.input.keywords.append(value)
+            self.sigmatask.input.keywords.append(value)
+
+        self._truncation_flag = value
 
