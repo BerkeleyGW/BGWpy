@@ -1,10 +1,14 @@
+"""Workflow to perform GW calculation."""
 from __future__ import print_function
 
 from os.path import join as pjoin
 
+from ..config import dft_flavor, check_dft_flavor
+from ..config import is_dft_flavor_espresso, is_dft_flavor_abinit
 from ..external import Structure
 from ..core import Workflow
-from ..QE import QeScfTask, QeWfnTask, Qe2BgwTask
+from ..QE import QeScfTask, QeBgwFlow
+from ..Abinit import AbinitScfTask, AbinitBgwFlow
 from ..BGW import EpsilonTask, SigmaTask
 
 __all__ = ['GWFlow']
@@ -62,6 +66,7 @@ class GWFlow(Workflow):
             Any other variables that should be declared in the sigma input file.
 
         """
+        # FIXME doc: dft_flavor
 
         super(GWFlow, self).__init__(**kwargs)
 
@@ -71,108 +76,132 @@ class GWFlow(Workflow):
         self.ngkpt = kwargs.pop('ngkpt')
         self.kshift = kwargs.pop('kshift')
         self.qshift = kwargs.pop('qshift')
-        self.nbnd = kwargs.pop('nbnd')
 
-        # Ground state density calculation (SCF)
-        self.scftask = QeScfTask(
-            dirname = pjoin(self.dirname, '01-density'),
-            ngkpt = self.ngkpt,
-            kshift = self.kshift,
-            **kwargs)
-        
-        # Wavefunctions and eigenvalues calculation (NSCF) on a k-shifted grid
-        self.wfntask_ksh = QeWfnTask(
-            dirname = pjoin(self.dirname, '02-wfn'),
-            ngkpt = self.ngkpt,
-            kshift = self.kshift,
-            nbnd = self.nbnd,
-            charge_density_fname = self.scftask.charge_density_fname,
-            data_file_fname = self.scftask.data_file_fname,
-            **kwargs)
-        
-        
-        # Interfacing PW with BerkeleyGW.
-        self.pw2bgwtask_ksh = Qe2BgwTask(
-            dirname = self.wfntask_ksh.dirname,
-            ngkpt = self.ngkpt,
-            kshift = self.kshift,
-            wfn_fname = 'wfn.cplx',
-            **kwargs)
-        
-        
-        # Wavefunctions and eigenvalues calculation (NSCF) on a k+q-shifted grid
-        self.wfntask_qsh = QeWfnTask(
-            dirname = pjoin(self.dirname, '03-wfnq'),
-            ngkpt = self.ngkpt,
-            kshift = self.kshift,
-            qshift = self.qshift,
-            nbnd = None,
-            charge_density_fname = self.scftask.charge_density_fname,
-            data_file_fname = self.scftask.data_file_fname,
-            **kwargs)
-        
-        
-        # Interfacing PW with BerkeleyGW.
-        self.pw2bgwtask_qsh = Qe2BgwTask(
-            dirname = self.wfntask_qsh.dirname,
-            ngkpt = self.ngkpt,
-            kshift = self.kshift,
-            qshift = self.qshift,
-            wfn_fname = 'wfnq.cplx',
-            **kwargs)
-        
-        
-        # Wavefunctions and eigenvalues calculation (NSCF) on an unshifted grid
-        self.wfntask_ush = QeWfnTask(
-            dirname = pjoin(self.dirname, '04-wfn_co'),
-            ngkpt = self.ngkpt,
-            nbnd = self.nbnd,
-            charge_density_fname = self.scftask.charge_density_fname,
-            data_file_fname = self.scftask.data_file_fname,
-            **kwargs)
-        
-        
-        # Interfacing PW with BerkeleyGW.
-        self.pw2bgwtask_ush = Qe2BgwTask(
-            dirname = self.wfntask_ush.dirname,
-            ngkpt = self.ngkpt,
-            wfn_fname = 'wfn_co.cplx',
-            rho_fname = 'rho.real',
-            vxc_diag_nmax = kwargs.pop('vxc_diag_nmax', self.nbnd-1),
-            **kwargs)
-        
+        nband_aliases = ('nbnd', 'nband')
+        for key in nband_aliases:
+            if key in kwargs:
+                self.nbnd = kwargs.pop(key)
+                break
+        else:
+            raise Exception('Number of bands must be specified with one of these keywords: {}.'
+                            .format(nband_aliases))
+
+        self.dft_flavor = check_dft_flavor(kwargs.get('dft_flavor',dft_flavor))
+
+        # ==== DFT calculations ==== #
+
+        # Quantum Espresso flavor
+        if is_dft_flavor_espresso(self.dft_flavor):
+
+            self.scftask = QeScfTask(
+                dirname = pjoin(self.dirname, '01-Density'),
+                ngkpt = self.ngkpt,
+                kshift = self.kshift,
+                **kwargs)
+
+            kwargs.update(
+                charge_density_fname = self.scftask.charge_density_fname,
+                data_file_fname = self.scftask.data_file_fname,
+                spin_polarization_fname = self.scftask.spin_polarization_fname)
+            
+            self.wfntask_ksh = QeBgwFlow(
+                dirname = pjoin(self.dirname, '02-Wfn'),
+                ngkpt = self.ngkpt,
+                kshift = self.kshift,
+                nbnd = self.nbnd,
+                **kwargs)
+
+            self.wfntask_qsh = QeBgwFlow(
+                dirname = pjoin(self.dirname, '03-Wfnq'),
+                ngkpt = self.ngkpt,
+                kshift = self.kshift,
+                qshift = self.qshift,
+                nbnd = None,
+                **kwargs)
+
+            self.wfntask_ush = QeBgwFlow(
+                dirname = pjoin(self.dirname, '04-Wfn_co'),
+                ngkpt = self.ngkpt,
+                nbnd = self.nbnd,
+                rhog_flag = True,
+                **kwargs)
+
+            self.add_tasks([self.scftask, self.wfntask_ksh,
+                            self.wfntask_qsh, self.wfntask_ush], merge=False)
+
+            kwargs.update(wfn_fname = self.wfntask_ksh.wfn_fname,
+                          wfnq_fname = self.wfntask_qsh.wfn_fname,
+                          wfn_co_fname = self.wfntask_ush.wfn_fname,
+                          rho_fname = self.wfntask_ush.rho_fname,
+                          vxc_dat_fname = self.wfntask_ush.vxc_dat_fname)
+
+        # Abinit flavor
+        elif is_dft_flavor_abinit(self.dft_flavor):
+
+            self.scftask = AbinitScfTask(
+                dirname = pjoin(self.dirname, '01-Density'),
+                ngkpt = self.ngkpt,
+                kshift = self.kshift,
+                **kwargs)
+            
+            kwargs.update(
+                charge_density_fname = self.scftask.charge_density_fname,
+                vxc_fname = self.scftask.vxc_fname)
+
+            self.wfntask_ksh = AbinitBgwFlow(
+                dirname = pjoin(self.dirname, '02-Wfn'),
+                ngkpt = self.ngkpt,
+                kshift = self.kshift,
+                nband = self.nbnd,
+                **kwargs)
+            
+            self.wfntask_qsh = AbinitBgwFlow(
+                dirname = pjoin(self.dirname, '03-Wfnq'),
+                ngkpt = self.ngkpt,
+                kshift = self.kshift,
+                qshift = self.qshift,
+                nband = None,
+                **kwargs)
+            
+            self.wfntask_ush = AbinitBgwFlow(
+                dirname = pjoin(self.dirname, '04-Wfn_co'),
+                ngkpt = self.ngkpt,
+                nband = self.nbnd,
+                rhog_flag = True,
+                vxcg_flag = True,
+                **kwargs)
+
+            self.add_tasks([self.scftask, self.wfntask_ksh,
+                            self.wfntask_qsh, self.wfntask_ush], merge=False)
+
+            kwargs.update(wfn_fname = self.wfntask_ksh.wfn_fname,
+                          wfnq_fname = self.wfntask_qsh.wfn_fname,
+                          wfn_co_fname = self.wfntask_ush.wfn_fname,
+                          rho_fname = self.wfntask_ush.rho_fname,
+                          vxc_fname = self.wfntask_ush.vxc_fname)
+
+
+        # ==== GW calculations ==== #
         
         # Dielectric matrix computation and inversion (epsilon)
         self.epsilontask = EpsilonTask(
-            dirname = pjoin(self.dirname, '05-epsilon'),
+            dirname = pjoin(self.dirname, '11-epsilon'),
             ngkpt = self.ngkpt,
             qshift = self.qshift,
             extra_lines = kwargs.pop('epsilon_extra_lines', []),
             extra_variables = kwargs.pop('epsilon_extra_variables', {}),
-            wfn_fname = self.pw2bgwtask_ksh.wfn_fname,
-            wfnq_fname = self.pw2bgwtask_qsh.wfn_fname,
             **kwargs)
         
         
         # Self-energy calculation (sigma)
         self.sigmatask = SigmaTask(
-            dirname = pjoin(self.dirname, '06-sigma'),
+            dirname = pjoin(self.dirname, '12-sigma'),
             ngkpt = self.ngkpt,
             extra_lines = kwargs.pop('sigma_extra_lines', []),
             extra_variables = kwargs.pop('sigma_extra_variables', {}),
-            wfn_co_fname = self.pw2bgwtask_ush.wfn_fname,
-            rho_fname = self.pw2bgwtask_ush.rho_fname,
-            vxc_dat_fname = self.pw2bgwtask_ush.vxc_dat_fname,
             eps0mat_fname = self.epsilontask.eps0mat_fname,
             epsmat_fname = self.epsilontask.epsmat_fname,
             **kwargs)
         
-        
-        # Add all task without merging (executed from a sub-directory)
-        self.add_tasks([self.scftask,
-                        self.wfntask_ksh, self.pw2bgwtask_ksh,
-                        self.wfntask_qsh, self.pw2bgwtask_qsh,
-                        self.wfntask_ush, self.pw2bgwtask_ush,
-                        self.epsilontask, self.sigmatask],
-                        merge=False)
+        self.add_tasks([self.epsilontask, self.sigmatask], merge=False)
 
