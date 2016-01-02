@@ -9,8 +9,6 @@ from ..config import dft_flavor, check_dft_flavor
 from ..config import is_dft_flavor_espresso, is_dft_flavor_abinit
 from ..external import Structure
 from ..core import Workflow
-from ..QE import QeScfTask, QeBgwFlow
-from ..Abinit import AbinitScfTask, AbinitBgwFlow
 from ..BGW import EpsilonTask, SigmaTask, KernelTask, AbsorptionTask
 
 __all__ = ['BSEFlow']
@@ -130,146 +128,13 @@ class BSEFlow(Workflow):
 
         # Quantum Espresso flavor
         if is_dft_flavor_espresso(self.dft_flavor):
-
-            self.scftask = QeScfTask(
-                dirname = pjoin(self.dirname, '01-Density'),
-                ngkpt = self.ngkpt,
-                kshift = self.kshift,
-                **kwargs)
-
-            kwargs.update(
-                charge_density_fname = self.scftask.charge_density_fname,
-                data_file_fname = self.scftask.data_file_fname,
-                spin_polarization_fname = self.scftask.spin_polarization_fname)
-            
-            self.wfntask_ksh = QeBgwFlow(
-                dirname = pjoin(self.dirname, '02-Wfn'),
-                ngkpt = self.ngkpt,
-                kshift = self.kshift,
-                nbnd = self.nbnd,
-                **kwargs)
-
-            self.wfntask_qsh = QeBgwFlow(
-                dirname = pjoin(self.dirname, '03-Wfnq'),
-                ngkpt = self.ngkpt,
-                kshift = self.kshift,
-                qshift = self.qshift,
-                nbnd = None,
-                **kwargs)
-
-            self.add_tasks([self.scftask, self.wfntask_ksh, self.wfntask_qsh])
-
-            self.wfntask_ush = QeBgwFlow(
-                dirname = pjoin(self.dirname, '04-Wfn_co'),
-                ngkpt = self.ngkpt,
-                nbnd = self.nbnd,
-                rhog_flag = True,
-                **kwargs)
-
-            if self.has_kshift:
-                self.add_task(self.wfntask_ush)
-            else:
-                self.wfntask_ush = self.wfntask_ksh
-
-            self.wfntask_fi_ush = QeBgwFlow(
-                dirname = pjoin(self.dirname, '05-Wfn_fi'),
-                nbnd = self.nbnd_absorption,
-                ngkpt = self.ngkpt_fi,
-                kshift = self.kshift_fi,
-                qshift = 3*[.0],
-                symkpt=False,
-                **kwargs)
-            
-            self.wfntask_fi_qsh = QeBgwFlow(
-                dirname = pjoin(self.dirname, '06-Wfnq_fi'),
-                ngkpt = self.ngkpt_fi,
-                kshift = self.kshift_fi,
-                qshift = self.qshift_fi,
-                symkpt=False,
-                **kwargs)
-            
-            self.add_tasks([self.wfntask_fi_ush, self.wfntask_fi_qsh])
-
-            kwargs.update(wfn_fname = self.wfntask_ksh.wfn_fname,
-                          wfnq_fname = self.wfntask_qsh.wfn_fname,
-                          wfn_co_fname = self.wfntask_ush.wfn_fname,
-                          rho_fname = self.wfntask_ush.rho_fname,
-                          vxc_dat_fname = self.wfntask_ush.vxc_dat_fname,
-                          wfn_fi_fname = self.wfntask_fi_ush.wfn_fname,
-                          wfnq_fi_fname = self.wfntask_fi_qsh.wfn_fname)
+            fnames = self.make_dft_tasks_espresso(**kwargs)
+            kwargs.update(fnames)
 
         # Abinit flavor
         elif is_dft_flavor_abinit(self.dft_flavor):
-
-            self.scftask = AbinitScfTask(
-                dirname = pjoin(self.dirname, '01-Density'),
-                ngkpt = self.ngkpt,
-                kshift = self.kshift,
-                **kwargs)
-            
-            kwargs.update(
-                charge_density_fname = self.scftask.charge_density_fname,
-                vxc_fname = self.scftask.vxc_fname)
-
-            self.wfntask_ksh = AbinitBgwFlow(
-                dirname = pjoin(self.dirname, '02-Wfn'),
-                ngkpt = self.ngkpt,
-                kshift = self.kshift,
-                nband = self.nbnd,
-                **kwargs)
-            
-            self.wfntask_qsh = AbinitBgwFlow(
-                dirname = pjoin(self.dirname, '03-Wfnq'),
-                ngkpt = self.ngkpt,
-                kshift = self.kshift,
-                qshift = self.qshift,
-                nband = None,
-                **kwargs)
-            
-            self.add_tasks([self.scftask, self.wfntask_ksh, self.wfntask_qsh])
-
-            self.wfntask_ush = AbinitBgwFlow(
-                dirname = pjoin(self.dirname, '04-Wfn_co'),
-                ngkpt = self.ngkpt,
-                nband = self.nbnd,
-                rhog_flag = True,
-                vxcg_flag = True,
-                **kwargs)
-
-            if self.has_kshift:
-                self.add_task(self.wfntask_ush)
-            else:
-                self.wfntask_ush = self.wfntask_ksh
-
-            self.wfntask_fi_ush = AbinitBgwFlow(
-                dirname = pjoin(self.dirname, '05-Wfn_fi'),
-                nband = self.nbnd_absorption,
-                ngkpt = self.ngkpt_fi,
-                kshift = self.kshift_fi,
-                qshift = 3*[.0],
-                symkpt=False,
-                **kwargs)
-            
-            self.wfntask_fi_qsh = AbinitBgwFlow(
-                dirname = pjoin(self.dirname, '06-Wfnq_fi'),
-                nband = None,
-                ngkpt = self.ngkpt_fi,
-                kshift = self.kshift_fi,
-                qshift = self.qshift_fi,
-                symkpt=False,
-                **kwargs)
-            
-            self.add_tasks([self.wfntask_fi_ush, self.wfntask_fi_qsh])
-
-            kwargs.update(wfn_fname = self.wfntask_ksh.wfn_fname,
-                          wfnq_fname = self.wfntask_qsh.wfn_fname,
-                          wfn_co_fname = self.wfntask_ush.wfn_fname,
-                          rho_fname = self.wfntask_ush.rho_fname,
-                          vxc_fname = self.wfntask_ush.vxc_fname,
-                          wfn_fi_fname = self.wfntask_fi_ush.wfn_fname,
-                          wfnq_fi_fname = self.wfntask_fi_qsh.wfn_fname)
-
-
+            fnames = self.make_dft_tasks_abinit(**kwargs)
+            kwargs.update(fnames)
         
         # ==== BSE calculations ==== #
 
@@ -349,3 +214,155 @@ class BSEFlow(Workflow):
 
         self._truncation_flag = value
 
+    def make_dft_tasks_espresso(self, **kwargs):
+        """
+        Initialize all DFT tasks using Quantum Espresso.
+        Return a dictionary of file names.
+        """
+        from ..QE import QeScfTask, QeBgwFlow
+
+        self.scftask = QeScfTask(
+            dirname = pjoin(self.dirname, '01-Density'),
+            ngkpt = self.ngkpt,
+            kshift = self.kshift,
+            **kwargs)
+
+        kwargs.update(
+            charge_density_fname = self.scftask.charge_density_fname,
+            data_file_fname = self.scftask.data_file_fname,
+            spin_polarization_fname = self.scftask.spin_polarization_fname)
+        
+        self.wfntask_ksh = QeBgwFlow(
+            dirname = pjoin(self.dirname, '02-Wfn'),
+            ngkpt = self.ngkpt,
+            kshift = self.kshift,
+            nbnd = self.nbnd,
+            **kwargs)
+
+        self.wfntask_qsh = QeBgwFlow(
+            dirname = pjoin(self.dirname, '03-Wfnq'),
+            ngkpt = self.ngkpt,
+            kshift = self.kshift,
+            qshift = self.qshift,
+            nbnd = None,
+            **kwargs)
+
+        self.add_tasks([self.scftask, self.wfntask_ksh, self.wfntask_qsh])
+
+        self.wfntask_ush = QeBgwFlow(
+            dirname = pjoin(self.dirname, '04-Wfn_co'),
+            ngkpt = self.ngkpt,
+            nbnd = self.nbnd,
+            rhog_flag = True,
+            **kwargs)
+
+        if self.has_kshift:
+            self.add_task(self.wfntask_ush)
+        else:
+            self.wfntask_ush = self.wfntask_ksh
+
+        self.wfntask_fi_ush = QeBgwFlow(
+            dirname = pjoin(self.dirname, '05-Wfn_fi'),
+            nbnd = self.nbnd_absorption,
+            ngkpt = self.ngkpt_fi,
+            kshift = self.kshift_fi,
+            qshift = 3*[.0],
+            symkpt=False,
+            **kwargs)
+        
+        self.wfntask_fi_qsh = QeBgwFlow(
+            dirname = pjoin(self.dirname, '06-Wfnq_fi'),
+            ngkpt = self.ngkpt_fi,
+            kshift = self.kshift_fi,
+            qshift = self.qshift_fi,
+            symkpt=False,
+            **kwargs)
+        
+        self.add_tasks([self.wfntask_fi_ush, self.wfntask_fi_qsh])
+
+        fnames = dict(wfn_fname = self.wfntask_ksh.wfn_fname,
+                      wfnq_fname = self.wfntask_qsh.wfn_fname,
+                      wfn_co_fname = self.wfntask_ush.wfn_fname,
+                      rho_fname = self.wfntask_ush.rho_fname,
+                      vxc_dat_fname = self.wfntask_ush.vxc_dat_fname,
+                      wfn_fi_fname = self.wfntask_fi_ush.wfn_fname,
+                      wfnq_fi_fname = self.wfntask_fi_qsh.wfn_fname)
+
+        return fnames
+
+    def make_dft_tasks_abinit(self, **kwargs):
+        """
+        Initialize all DFT tasks using Abinit.
+        Return a dictionary of file names.
+        """
+        from ..Abinit import AbinitScfTask, AbinitBgwFlow
+
+        self.scftask = AbinitScfTask(
+            dirname = pjoin(self.dirname, '01-Density'),
+            ngkpt = self.ngkpt,
+            kshift = self.kshift,
+            **kwargs)
+        
+        kwargs.update(
+            charge_density_fname = self.scftask.charge_density_fname,
+            vxc_fname = self.scftask.vxc_fname)
+
+        self.wfntask_ksh = AbinitBgwFlow(
+            dirname = pjoin(self.dirname, '02-Wfn'),
+            ngkpt = self.ngkpt,
+            kshift = self.kshift,
+            nband = self.nbnd,
+            **kwargs)
+        
+        self.wfntask_qsh = AbinitBgwFlow(
+            dirname = pjoin(self.dirname, '03-Wfnq'),
+            ngkpt = self.ngkpt,
+            kshift = self.kshift,
+            qshift = self.qshift,
+            nband = None,
+            **kwargs)
+        
+        self.add_tasks([self.scftask, self.wfntask_ksh, self.wfntask_qsh])
+
+        self.wfntask_ush = AbinitBgwFlow(
+            dirname = pjoin(self.dirname, '04-Wfn_co'),
+            ngkpt = self.ngkpt,
+            nband = self.nbnd,
+            rhog_flag = True,
+            vxcg_flag = True,
+            **kwargs)
+
+        if self.has_kshift:
+            self.add_task(self.wfntask_ush)
+        else:
+            self.wfntask_ush = self.wfntask_ksh
+
+        self.wfntask_fi_ush = AbinitBgwFlow(
+            dirname = pjoin(self.dirname, '05-Wfn_fi'),
+            nband = self.nbnd_absorption,
+            ngkpt = self.ngkpt_fi,
+            kshift = self.kshift_fi,
+            qshift = 3*[.0],
+            symkpt=False,
+            **kwargs)
+        
+        self.wfntask_fi_qsh = AbinitBgwFlow(
+            dirname = pjoin(self.dirname, '06-Wfnq_fi'),
+            nband = None,
+            ngkpt = self.ngkpt_fi,
+            kshift = self.kshift_fi,
+            qshift = self.qshift_fi,
+            symkpt=False,
+            **kwargs)
+        
+        self.add_tasks([self.wfntask_fi_ush, self.wfntask_fi_qsh])
+
+        fnames = dict(wfn_fname = self.wfntask_ksh.wfn_fname,
+                      wfnq_fname = self.wfntask_qsh.wfn_fname,
+                      wfn_co_fname = self.wfntask_ush.wfn_fname,
+                      rho_fname = self.wfntask_ush.rho_fname,
+                      vxc_fname = self.wfntask_ush.vxc_fname,
+                      wfn_fi_fname = self.wfntask_fi_ush.wfn_fname,
+                      wfnq_fi_fname = self.wfntask_fi_qsh.wfn_fname)
+
+        return fnames
