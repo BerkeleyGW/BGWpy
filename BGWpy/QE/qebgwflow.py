@@ -7,6 +7,11 @@ from ..DFT import WfnBgwFlow
 __all__ = ['QeBgwFlow']
 
 class QeBgwFlow(WfnBgwFlow):
+    """
+    A Workflow to compute wavefunctions with Quantum Espresso
+    and convert them to BGW.
+    The charge density can optionally be computed as a first step.
+    """
 
     _charge_density_fname = ''
     _spin_polarization_fname = ''
@@ -14,10 +19,12 @@ class QeBgwFlow(WfnBgwFlow):
 
     def __init__(self, **kwargs):
         """
-
         Keyword Arguments
         -----------------
 
+        dirname : str
+            Directory in which the files are written and the code is executed.
+            Will be created if needed.
         with_density : bool (True)
             Include an SCF task to compute the ground state density.
         charge_density_fname : str
@@ -29,6 +36,40 @@ class QeBgwFlow(WfnBgwFlow):
         spin_polarization_fname : str, optional
             Spin polarization file produced by a density calculation.
             Giving a file name will set default value of 'with_density' to False.
+        prefix : str
+            Prefix required by QE as a rootname.
+        pseudo_dir : str
+            Directory in which pseudopotential files are found.
+        pseudos : list, str
+            Pseudopotential files.
+        structure : pymatgen.Structure
+            Structure object containing information on the unit cell.
+        ecutwfc : float
+            Energy cutoff for the wavefunctions
+        nbnd : int, optional
+            Number of bands to be computed.
+        ngkpt : list(3), float, optional
+            K-points grid. Number of k-points along each primitive vector
+            of the reciprocal lattice.
+            K-points are either specified using ngkpt or using kpts and wtks.
+        kshift : list(3), float, optional
+            Relative shift of the k-points grid along each direction,
+            as a fraction of the smallest division along that direction.
+        qshift : list(3), float, optional
+            Absolute shift of the k-points grid along each direction.
+        symkpt : bool (True), optional
+            Use symmetries for the k-point grid generation.
+        kpts : 2D list(nkpt,3), float, optional
+            List of k-points.
+            K-points are either specified using ngkpt or using kpts and wtks.
+        wtks : list(nkpt), float, optional
+            Weights of each k-point.
+
+        See also:
+            BGWpy.QE.QeScfTask
+            BGWpy.QE.QeWfnTask
+            BGWpy.QE.Qe2BgwTask
+
 
         Properties
         ----------
@@ -44,11 +85,12 @@ class QeBgwFlow(WfnBgwFlow):
 
         wfn_fname : str
             Path to the wavefunction file used by BerkeleyGW.
+
         rho_fname : str
             Path to the density file used by BerkeleyGW.
+
         vxc_dat_fname : str
             Path to the vxc.dat file used by BerkeleyGW.
-
         """
 
         super(QeBgwFlow, self).__init__(**kwargs)

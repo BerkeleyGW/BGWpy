@@ -12,22 +12,51 @@ class AbinitBgwFlow(WfnBgwFlow):
 
     def __init__(self, **kwargs):
         """
-
         Keyword Arguments
         -----------------
 
+        dirname : str
+            Directory in which the files are written and the code is executed.
+            Will be created if needed.
         with_density : bool (True)
             Include an SCF task to compute the ground state density.
-
         charge_density_fname : str
             Density file provided, so that the SCF task is not included.
             Giving a file name will set default value of 'with_density' to False.
-
         vxc_fname : str
             The xc potential file produced by Abinit,
             if SCF task is not included.
             If none is available, the flag for VXC conversion to BGW
             will be unset.
+        ecut : float
+            Kinetic energy cut-off, in Hartree.
+        nband : int
+            Number of bands to be computed.
+        tolvrs : float (1e-10)
+            Tolerance on residual potential used as a convergence criterion
+            for the SCF cycle.
+        tolwfr : float (1e-16)
+            Tolerance on wavefunctions residual used as a convergence criterion
+            for the NSCF cycle.
+        prefix : str
+            Prefix used as a rootname for abinit calculations.
+        structure : pymatgen.Structure
+            Structure object containing information on the unit cell.
+        ngkpt : list(3), int, optional
+            K-points grid. Number of k-points along each primitive vector
+            of the reciprocal lattice.
+        kshift : list(3), float, optional
+            Relative shift of the k-points grid along each direction,
+            as a fraction of the smallest division along that direction.
+        qshift : list(3), float, optional
+            Absolute shift of the k-points grid along each direction.
+        input_variables : dict
+            Any other input variables for the Abinit input file.
+
+        See also:
+            BGWpy.Abinit.AbinitScfTask
+            BGWpy.Abinit.AbinitWfnTask
+            BGWpy.Abinit.Abi2BgwTask
 
 
         Properties
@@ -46,7 +75,6 @@ class AbinitBgwFlow(WfnBgwFlow):
             The xc potential file name used by BerkeleyGW.
 
         """
-        # FIXME doc
 
         super(AbinitBgwFlow, self).__init__(**kwargs)
 

@@ -3,7 +3,7 @@ import os
 
 pseudo_dir = os.path.join(os.path.dirname(__file__), 'pseudos')
 
-# FIXME
+# TODO
 # Gotta handle the pseudos a bit better.
 
 # GaAs

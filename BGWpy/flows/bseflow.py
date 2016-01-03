@@ -16,11 +16,11 @@ __all__ = ['BSEFlow']
 class BSEFlow(Workflow):
     """
     A Flow of calculations made of the following tasks:
-        DFT charge density, wavefunctions and eigenvalues
-        Dielectric Matrix (Epsilon and Epsilon^-1)
-        Self-energy (Sigma)
-        Kernel
-        Absorption
+        - DFT charge density, wavefunctions and eigenvalues
+        - Dielectric Matrix (Epsilon and Epsilon^-1)
+        - Self-energy (Sigma)
+        - Kernel
+        - Absorption
     
     """
 
@@ -35,6 +35,8 @@ class BSEFlow(Workflow):
             Will be created if needed.
         structure : pymatgen.Structure
             Structure object containing information on the unit cell.
+        dft_flavor : 'espresso' | 'abinit'
+            Choice of DFT code for density and wavefunctions calculations.
         prefix : str
             Prefix required by QE as a rootname.
         pseudo_dir : str
@@ -97,7 +99,6 @@ class BSEFlow(Workflow):
             Any other variables that should be declared in the absorption input file.
 
         """
-
         super(BSEFlow, self).__init__(**kwargs)
 
         kwargs.pop('dirname')
