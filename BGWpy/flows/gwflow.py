@@ -14,9 +14,9 @@ __all__ = ['GWFlow']
 class GWFlow(Workflow):
     """
     A one-shot GW workflow made of the following tasks:
-        DFT charge density, wavefunctions and eigenvalues
-        Dielectric Matrix (Epsilon and Epsilon^-1)
-        Self-energy (Sigma)
+        - DFT charge density, wavefunctions and eigenvalues
+        - Dielectric Matrix (Epsilon and Epsilon^-1)
+        - Self-energy (Sigma)
     """
 
     def __init__(self, **kwargs):
@@ -30,6 +30,8 @@ class GWFlow(Workflow):
             Will be created if needed.
         structure : pymatgen.Structure
             Structure object containing information on the unit cell.
+        dft_flavor : 'espresso' | 'abinit'
+            Choice of DFT code for density and wavefunctions calculations.
         prefix : str
             Prefix required by QE as a rootname.
         pseudo_dir : str
@@ -69,8 +71,6 @@ class GWFlow(Workflow):
             Any other variables that should be declared in the sigma input file.
 
         """
-        # FIXME doc: dft_flavor
-
         super(GWFlow, self).__init__(**kwargs)
 
         kwargs.pop('dirname', None)

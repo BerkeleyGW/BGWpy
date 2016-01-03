@@ -16,6 +16,21 @@ class QeTask(DFTTask, IOTask):
     _TAG_JOB_COMPLETED = 'JOB DONE'
 
     def __init__(self, dirname, **kwargs):
+        """
+        Arguments
+        ---------
+
+        dirname : str
+            Directory in which the files are written and the code is executed.
+            Will be created if needed.
+
+        Keyword arguments
+        -----------------
+
+        See also:
+            BGWpy.DFT.DFTTask
+
+        """
 
         super(QeTask, self).__init__(dirname, **kwargs)
 

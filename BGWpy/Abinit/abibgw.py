@@ -9,12 +9,9 @@ from .abinittask import AbinitTask
 __all__ = ['Abi2BgwInput', 'Abi2BgwTask']
 
 
-# FIXME
-"""
-The implementation of abi2bgw is different from that of pw2bgw.
-Here the kpoint grid is handled by the task rather than the input.
-"""
-# FIXME
+# Note
+# The implementation of abi2bgw is different from that of pw2bgw.
+# Here the kpoint grid is handled by the task rather than the input.
 
 class Abi2BgwInput(BasicInputFile):
 
@@ -22,23 +19,40 @@ class Abi2BgwInput(BasicInputFile):
         """
         Keyword arguments
         -----------------
-        wfng_file_abi : 
-        wfng_flag : 
+        wfng_file_abi : str
+            Name of the wfn file produced by Abinit. (_WFK)
+        wfng_flag : bool
+            Activate the output of the wavefunction for BGW.
         wfng_file : 
-        wfng_nk1 : 
-        wfng_nk2 : 
-        wfng_nk3 : 
-        wfng_dk1 : 
-        wfng_dk2 : 
-        wfng_dk3 : 
-        rhog_file_abi : 
-        rhog_flag : 
-        rhog_file : 
-        cell_symmetry : 
-        symrel_file_flag : 
-        vxcg_file_abi : 
-        vxcg_flag : 
-        vxcg_file : 
+            Name of the wfn file for BGW.
+        rhog_file_abi : str
+            Name of the density file produced by Abinit. (_DEN)
+        rhog_flag : bool
+            Activate the output of the density for BGW.
+        rhog_file : str
+            Name of the density file for BGW.
+        vxcg_file_abi : str
+            Name of the xc potential file produced by Abinit. (_VXC)
+        vxcg_flag : bool
+            Activate the output of the xc potential for BGW.
+        vxcg_file : str
+            Name of the xc potential file for BGW.
+        wfng_nk1 : int
+            Number of k-point division along direction 1.
+        wfng_nk2 : int
+            Number of k-point division along direction 2.
+        wfng_nk3 : int
+            Number of k-point division along direction 3.
+        wfng_dk1 : float
+            k-point shift along direction 1.
+        wfng_dk2 : float
+            k-point shift along direction 2.
+        wfng_dk3 : float
+            k-point shift along direction 3.
+        cell_symmetry : int
+            Cell symmetry. 0 = cubic, 1 = hexagonal.
+        symrel_file_flag : bool
+            Write symmetry matrices in file.
         """
 
         super(Abi2BgwInput, self).__init__(fname = kwargs.get('fname', 'abi2bgw.in'))
@@ -114,7 +128,6 @@ class Abi2BgwTask(AbinitTask):
     _output_fname = 'abi2bgw.out'
 
     def __init__(self, dirname, **kwargs):
-        # FIXME update doc
         """
         Arguments
         ---------
@@ -149,6 +162,7 @@ class Abi2BgwTask(AbinitTask):
             Number of bands for which vxc should be computed.
             Only if output of the density and vxc is active.
 
+        See also: BGWpy.Abinit.Abi2BgwInput
 
         Properties
         ----------
@@ -173,7 +187,6 @@ class Abi2BgwTask(AbinitTask):
         self.kshift = kwargs.get('kshift', 3*[.0])
         self.qshift = kwargs.get('qshift', 3*[.0])
 
-        # FIXME aliases should be handled here
         if kwargs.get('rhog_fname') or kwargs.get('rhog_file_abi'):
             self.set_rho()
 

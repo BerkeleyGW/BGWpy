@@ -40,7 +40,7 @@ class QeScfTask(QeTask):
             Structure object containing information on the unit cell.
         ecutwfc : float
             Energy cutoff for the wavefunctions
-        ngkpt : list(3), float, optional
+        ngkpt : list(3), int, optional
             K-points grid. Number of k-points along each primitive vector
             of the reciprocal lattice.
             K-points are either specified using ngkpt or using kpts and wtks.

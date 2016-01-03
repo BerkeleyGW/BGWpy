@@ -22,6 +22,25 @@ class KgridTask(Task):
                  rootname='tmp.kgrid',
                  clean_after=True,
                  **kwargs):
+        """
+        Arguments
+        ---------
+
+        structure : pymatgen.Structure
+            Structure object containing information on the unit cell.
+        ngkpt : list(3), int, optional
+            K-points grid. Number of k-points along each primitive vector
+            of the reciprocal lattice.
+        kshift : list(3), float, optional
+            Relative shift of the k-points grid along each direction,
+            as a fraction of the smallest division along that direction.
+        qshift : list(3), float, optional
+            Absolute shift of the k-points grid along each direction.
+        fft : list(3), int, optional
+            Number of points along each direction of the fft grid.
+        use_tr : bool
+            Use time reversal symmetry.
+        """
 
         self.dirname = os.path.dirname(rootname)
         self.inputname = rootname + '.in'

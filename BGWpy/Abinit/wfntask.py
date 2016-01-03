@@ -2,7 +2,6 @@ from __future__ import print_function
 import os
 
 from .abinittask import AbinitTask
-from .constructor import get_kpt_variables, get_wfn_variables
 
 __all__ = ['AbinitWfnTask']
 
@@ -23,22 +22,59 @@ class AbinitWfnTask(AbinitTask):
             Directory in which the files are written and the code is executed.
             Will be created if needed.
 
+
+        Keyword Arguments
+        -----------------
+
+        charge_density_fname : str
+            Name of the density file produced by a previous SCF run (_DEN).
+        ecut : float
+            Kinetic energy cut-off, in Hartree.
+        nband : int
+            Number of bands to be computed.
+        tolwfr : float (1e-16)
+            Tolerance on wavefunctions residual used as a convergence criterion
+            for the NSCF cycle.
+        prefix : str
+            Prefix used as a rootname for abinit calculations.
+        structure : pymatgen.Structure
+            Structure object containing information on the unit cell.
+        ngkpt : list(3), int, optional
+            K-points grid. Number of k-points along each primitive vector
+            of the reciprocal lattice.
+        kshift : list(3), float, optional
+            Relative shift of the k-points grid along each direction,
+            as a fraction of the smallest division along that direction.
+        qshift : list(3), float, optional
+            Absolute shift of the k-points grid along each direction.
         input_variables : dict
             Any other input variables for the Abinit input file.
 
+        See also:
+            BGWpy.Abinit.abinittask.AbinitTask
+
         """
-        # TODO complete documentation.
 
         kwargs.setdefault('prefix', 'wfn')
 
         super(AbinitWfnTask, self).__init__(dirname, **kwargs)
 
-        #self.input.set_structure(self.structure)
-        #self.input.set_variables(get_kpt_variables(**kwargs))
-        self.input.set_variables(get_wfn_variables(**kwargs))
-        self.input.set_variables(kwargs.get('input_variables', {}))
+        self.input.set_variables(self.get_wfn_variables(**kwargs))
 
         self.charge_density_fname = kwargs['charge_density_fname']
+
+    @staticmethod
+    def get_wfn_variables(**kwargs):
+        """Return a dict of variables required for an SCF calculation."""
+        variables = dict(
+            irdden = 1,
+            nband = kwargs.get('nband'),
+            ecut = kwargs.get('ecut'),
+            tolwfr = kwargs.get('tolwfr', 1e-16),
+            iscf = kwargs.get('iscf', -3),
+            istwfk = kwargs.get('istwfk', '*1'),
+            )
+        return variables
 
     @property
     def wavefunction_fname(self):
