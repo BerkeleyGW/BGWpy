@@ -36,3 +36,7 @@ use_hdf5 = True
 
 # Use Complex flavor of the code
 flavor_complex = True
+
+# Choice of dft code ('espresso', 'abinit')
+dft_flavor = 'espresso'
+

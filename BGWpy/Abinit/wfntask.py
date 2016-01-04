@@ -66,10 +66,24 @@ class AbinitWfnTask(AbinitTask):
     @staticmethod
     def get_wfn_variables(**kwargs):
         """Return a dict of variables required for an SCF calculation."""
+
+        nband = kwargs.get('nband')
+        if not nband:
+            nband = kwargs.get('nbnd')
+
+        ecut = kwargs.get('ecut')
+        if not ecut:
+            ecut = kwargs.get('ecutwfc')
+            if not ecut:
+                raise Exception("Please specify 'ecut' for Abinit.")
+            else:
+                # Maybe warn the user that ecut is in Hartree?
+                pass
+
         variables = dict(
             irdden = 1,
-            nband = kwargs.get('nband'),
-            ecut = kwargs.get('ecut'),
+            nband = nband,
+            ecut = ecut,
             tolwfr = kwargs.get('tolwfr', 1e-16),
             iscf = kwargs.get('iscf', -3),
             istwfk = kwargs.get('istwfk', '*1'),
