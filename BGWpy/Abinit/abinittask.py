@@ -2,18 +2,14 @@ from __future__ import print_function
 
 import os
 from os.path import join as pjoin
-import warnings
 
 import numpy as np
 
-from ..core.util import exec_from_dir
-from ..core import MPITask, IOTask
+from ..core import IOTask
 from ..DFT import DFTTask
 from ..BGW import KgridTask
-
 from .abinitinput import AbinitInput
 
-# Public
 __all__ = ['AbinitTask']
 
 
@@ -24,8 +20,37 @@ class AbinitTask(DFTTask, IOTask):
 
     def __init__(self, dirname, **kwargs):
         """
+        Arguments
+        ---------
+
+        dirname : str
+            Directory in which the files are written and the code is executed.
+            Will be created if needed.
+
+
+        Keyword arguments
+        -----------------
+
+        prefix : str
+            Prefix used as a rootname for abinit calculations.
+        structure : pymatgen.Structure
+            Structure object containing information on the unit cell.
+        ngkpt : list(3), int, optional
+            K-points grid. Number of k-points along each primitive vector
+            of the reciprocal lattice.
+        kshift : list(3), float, optional
+            Relative shift of the k-points grid along each direction,
+            as a fraction of the smallest division along that direction.
+        qshift : list(3), float, optional
+            Absolute shift of the k-points grid along each direction.
+        input_variables : dict
+            Any other input variables for the Abinit input file.
+
+        See also:
+            BGWpy.DFT.DFTTask
+            BGWpy.BGW.KgridTask
+
         """
-        # FIXME Doc
 
         super(AbinitTask, self).__init__(dirname, **kwargs)
 
@@ -33,15 +58,18 @@ class AbinitTask(DFTTask, IOTask):
         #self.kshift = kwargs.get('kshift', 3*[.0])
         #self.qshift = kwargs.get('qshift', 3*[.0])
 
-        self.prefix = kwargs['prefix']
+        self.prefix = kwargs.get('prefix', 'abinit')
 
         self.input = AbinitInput(fname=self.prefix + '.in')
         self.input.set_structure(self.structure)
 
+        # TODO move this into DFTTask
         # Handle k-points and symmetries
         self.kgrid = KgridTask(**kwargs)
         ((kpt, wtk), (symrel, tnons)) = self.kgrid.get_kpoints_and_sym()
         nsym = len(symrel)
+        if not kwargs.get('symkpt', True):
+            kpt, wtk = self.get_kpts(**kwargs)
 
         # Transpose all symmetry matrices
         symrel = np.linalg.inv(symrel.reshape((-1,3,3)).transpose((0,2,1)))
@@ -53,13 +81,15 @@ class AbinitTask(DFTTask, IOTask):
         self.input.set_variables({'symrel':symrel, 'tnons':tnons, 'nsym':nsym})
         self.set_kpoints(kpt, wtk)
 
+        self.input.set_variables(kwargs.get('input_variables', {}))
+
         self.runscript['ABINIT'] = kwargs.get('ABINIT', 'abinit')
         self.runscript.append('$MPIRUN $ABINIT < {} &> {}'.format(
                               self.filesfile_basename, self.log_basename))
 
     @property
     def output_fname(self):
-        first = os.path.join(self.dirname, self.output_basename)
+        first = pjoin(self.dirname, self.output_basename)
         for s in reversed('ABCDEFGHIJKLMNOPQRSTUVWXYZ'):
             last = first + s
             if os.path.exists(last):
@@ -80,15 +110,15 @@ class AbinitTask(DFTTask, IOTask):
 
     @property
     def input_data_dir(self):
-        return os.path.join(self.dirname, 'input_data')
+        return pjoin(self.dirname, 'input_data')
 
     @property
     def out_data_dir(self):
-        return os.path.join(self.dirname, 'out_data')
+        return pjoin(self.dirname, 'out_data')
 
     @property
     def tmp_data_dir(self):
-        return os.path.join(self.dirname, 'tmp_data')
+        return pjoin(self.dirname, 'tmp_data')
 
     @property
     def idat_root(self):

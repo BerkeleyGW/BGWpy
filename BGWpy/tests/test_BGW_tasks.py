@@ -6,7 +6,7 @@ from . import TestTask
 from .test_QE_tasks import TestQETasksMaker
 
 from .. import data
-from .. import Structure, ScfTask
+from .. import Structure, QeScfTask
 from .. import EpsilonTask, SigmaTask
 from .. import KernelTask, AbsorptionTask
 

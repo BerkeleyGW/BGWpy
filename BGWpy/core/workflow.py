@@ -68,7 +68,8 @@ class Workflow(Task):
                     t.runscript.fname == task.runscript.fname):
                         raise Exception(
                             "Two tasks with the same directory name" +
-                            " and runscript file name are being added." +
+                            " and runscript file name are being added:\n" +
+                            task.dirname + '\n' +
                             " Use the variable 'runscript_fname' to set" +
                             " the task's runscript file name.")
 

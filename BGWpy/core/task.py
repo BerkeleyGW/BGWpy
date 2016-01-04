@@ -115,7 +115,7 @@ class Task(object):
         The source will be expressed relative to the dirname.
         The destination *must* be relative to the dirname.
         """
-        relsource = os.path.relpath(source, self.dirname)
+        relsource = os.path.relpath(source, os.path.realpath(self.dirname))
         for copy in self.runscript.copies:
             if copy[1] == dest:
                 copy[0] = relsource

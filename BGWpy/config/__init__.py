@@ -4,6 +4,7 @@ from .default_configuration import (
     default_runscript,
     use_hdf5,
     flavor_complex,
+    dft_flavor,
     )
 
 # The user configuration file is used
@@ -25,9 +26,14 @@ try:
         if 'flavor_complex' in dir(user_configuration):
             flavor_complex = user_configuration.flavor_complex
 
+        if 'dft_flavor' in dir(user_configuration):
+            dft_flavor = user_configuration.dft_flavor
+
 except Exception as e:
     import warnings
     warnings.warn('Could not process user_configuration.py:\n' + str(e))
     del warnings
 
 del os
+
+from .dft_flavors import *
