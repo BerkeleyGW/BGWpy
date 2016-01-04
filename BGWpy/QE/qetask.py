@@ -7,17 +7,32 @@ from ..core import MPITask, IOTask
 from ..DFT import DFTTask
 
 # Public
-__all__ = ['QETask']
+__all__ = ['QeTask']
 
 
-class QETask(DFTTask, IOTask):
+class QeTask(DFTTask, IOTask):
     """Base class for Quantum Espresso calculations."""
 
     _TAG_JOB_COMPLETED = 'JOB DONE'
 
     def __init__(self, dirname, **kwargs):
+        """
+        Arguments
+        ---------
 
-        super(QETask, self).__init__(dirname, **kwargs)
+        dirname : str
+            Directory in which the files are written and the code is executed.
+            Will be created if needed.
+
+        Keyword arguments
+        -----------------
+
+        See also:
+            BGWpy.DFT.DFTTask
+
+        """
+
+        super(QeTask, self).__init__(dirname, **kwargs)
 
         self.prefix = kwargs['prefix']
         self.savedir = self.prefix + '.save'
@@ -33,7 +48,7 @@ class QETask(DFTTask, IOTask):
 
     def write(self):
         self.check_pseudos()
-        super(QETask, self).write()
+        super(QeTask, self).write()
         with self.exec_from_dirname():
             self.input.write()
             if not os.path.exists(self.savedir):

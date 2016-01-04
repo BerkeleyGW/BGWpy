@@ -1,14 +1,14 @@
 from __future__ import print_function
 import os
 
-from .qetask      import QETask
+from .qetask      import QeTask
 from .constructor import get_scf_input
 
 # Public
-__all__ = ['ScfTask']
+__all__ = ['QeScfTask']
 
 
-class ScfTask(QETask):
+class QeScfTask(QeTask):
     """Charge density calculation."""
 
     _TASK_NAME = 'SCF task'
@@ -40,7 +40,7 @@ class ScfTask(QETask):
             Structure object containing information on the unit cell.
         ecutwfc : float
             Energy cutoff for the wavefunctions
-        ngkpt : list(3), float, optional
+        ngkpt : list(3), int, optional
             K-points grid. Number of k-points along each primitive vector
             of the reciprocal lattice.
             K-points are either specified using ngkpt or using kpts and wtks.
@@ -63,13 +63,15 @@ class ScfTask(QETask):
 
         charge_density_fname : str
             Path to the charge density file produced ('charge-density.dat').
+
         data_file_fname : str
             Path to the xml data file produced ('data-file.xml').
+
         spin_polarization_fname : str, optional
             Path to the spin polarization file produced ('spin-polarization.dat').
         """
 
-        super(ScfTask, self).__init__(dirname, **kwargs)
+        super(QeScfTask, self).__init__(dirname, **kwargs)
 
         kpts, wtks = self.get_kpts(**kwargs)
 
