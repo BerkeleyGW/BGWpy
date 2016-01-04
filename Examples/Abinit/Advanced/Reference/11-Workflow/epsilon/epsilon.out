@@ -1,0 +1,434 @@
+
+ BerkeleyGW trunk revision 6943
+ Epsilon code, Complex version, run on 04-Jan-2016 at 13:21:46 -0800
+
+                                                                 ..o.          
+                                                                .oxxo.         
+                                                               .oxxxxo...      
+                                                               oxxxxxxo.       
+                                                              .oxxxxxxx.       
+                                                              .ooooooxxo..     
+                                                              .oooooooxo..     
+                                                              .oooooxxo...     
+                                                       .........oxooo......    
+                                                 ............................  
+                                             ................................. 
+                                          .................................... 
+           .          ..oo. ....  .................................oooxxxxxxxo.
+     .............oxxxx@ox@@@x@x.....................o...........ooooooooooxx. 
+    .o.........oox@x.oo........xxx@@............ooxxxxo..........ooooxxxxxoxo  
+    .x........x@xxo...............o@xxo........oxxx@@@xoooooooooooooooxxxo...  
+    .o......ox@@o..................oox@o.....ooxxx@xoooxxxxxxxoooooooooooo.... 
+    o..ooooo@@xoooo....ooo...........x@o.....ooxxxxo   .oxxxxxxxxxxooooooo.... 
+    . .oooo@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@....ooooox.     .oxx@@@@@xxoo........ 
+      .ooooxxxxxxxooooooxooooooooooooooxo...oooooxx.        ..ox@xxxoo.........
+      .ooooooxxxx@xoooooooooooooxxoooooooooooxxxxx.            .oxxooooooooxxo.
+     .oooooxxxxx@@@xxxxxxxxxxxxxxxxxxxxxxxxoxxxxo.                .oxxxxxxxxo. 
+   ....oooxxxxx@@@xo..oxxx@@@@@@xxxxoxxoooooooxx.                  .oxxxoo..   
+  .....ooxxxx@@xo.       ........    .ooooooooxxo                              
+  ..oooxxxx@@@o                       .oooooooxoo.                             
+  ....oxooxxxxx.                       .ooo..oooo.                             
+  .....o.ooxxxxxo.                     .oooooooxo.                             
+ ......ooooxxxxxxo.                     .ooooooxoo..                           
+........ooxxxxxxxo..                     .o....oxoo...                         
+.......ooooxxxxxxxo.                     ........oooo.                         
+.ooooooo..ooxxxxoooo.                    .........ooo...                       
+..oxo...ooooxxxoooo..                    .ooo......oooo...                     
+  .ooooo....o.                            .oxxxoo....ooo....                   
+    .oooooo...                              ...ooooo...ooo..                   
+       ...                                     .oo.......                      
+                                               ....ooo...                      
+                      __              __                                       
+ ______              [  |            [  |                 ._____  _          _ 
+|_   _ \              | |  _          | |                /  ___ \| |        | |
+  | |_) | .---.  _. _.| | / |  .---.  | | .---.  _    _ / /    \_|\ \  /\  / / 
+  |  __'./ /__\\[ /`\_| '' <  / /__\\ | |/ /__\\| \  | | |   _____ \ \/  \/ /  
+ _| |__| | \__. | |   | |`\ \ | \___. | || \___. \ \/ / \ \.___| |  \  /\  /   
+|_______/ \.__./[_]  [__|  \_] \.__./[___]\.__./  \  /   \.____./    \/  \/    
+                                                  / /                          
+                                                 /_/                           
+--------------------------------------------------------------------------------
+ Please cite the following papers when using results from BerkeleyGW:
+
+ Jack Deslippe, Georgy Samsonidze, David A. Strubbe, Manish Jain, Marvin L.
+ Cohen, and Steven G. Louie, "BerkeleyGW: A Massively Parallel Computer Package
+ for the Calculation of the Quasiparticle and Optical Properties of Materials
+ and Nanostructures," Comput. Phys. Commun. 183, 1269 (2012)
+
+ Mark S. Hybertsen and Steven G. Louie, "Electron correlation in semiconductors
+ and insulators: Band gaps and quasiparticle energies," Phys. Rev. B 34, 5390
+ (1986)
+
+ Michael Rohlfing and Steven G. Louie, "Electron-hole excitations and optical
+ spectra from first principles," Phys. Rev. B 62, 4927 (2000)
+--------------------------------------------------------------------------------
+
+ Running MPI version (parallel)
+ Running with 8 MPI task(s)
+
+ Compilation flags:
+ - Compiler: GNU
+ - Para. flags: MPI
+ - Math  flags: USESCALAPACK, USEFFTW3
+ - Debug flags: 
+
+ We will start a new calculation from scratch.
+
+ Experimental Features:
+  - FFTs Optimization Level:  0
+  - Frequency groups:     1
+  - Use HDF5 Parallel IO:     F
+
+
+ We`ll perform a uniform sampling of the full BZ.
+
+ Computing the static inverse dielectric matrix
+
+ We are using matrix communication scheme
+
+ We are communicating via MPI
+
+ We are using no truncation
+
+ Reading header of WFN
+ Highest occupied band (unshifted grid) = 4
+ Valence max    (unshifted grid) = -.913392 eV
+ Conduction min (unshifted grid) = 1.193065 eV
+ Middle energy  (unshifted grid) = .139836 eV
+ Fermi  energy  (unshifted grid) = .139836 eV
+
+ Reading header of WFNq
+ Highest occupied band (shifted grid) = 4
+
+ Cutoff of the dielectric matrix (Ry): 10.00
+ Total number of bands in the calculation: 8
+ Number of fully occupied valence bands: 4
+ Number of partially occ. conduction bands: 0
+ Monkhorst-Pack q-grid for epsilon(q): 2 2 2
+
+ Running with 2 valence pools
+ Number of conduction bands per processor: 1
+ Number of valence bands per processor: 2
+
+ Memory available:     769.8 MB per PE
+ Memory required for execution:    0.7 MB per PE
+ Memory required for vcoul:    0.0 MB per PE
+
+ Number of electrons per unit cell (from ifmax) = 8.000000
+ Number of electrons per unit cell (from occupations) = 8.000000
+ Plasma Frequency = 1.148512 Ry
+
+
+ Started reading wavefunctions (WFN) with 32 state(s) at 13:21:46.
+ [ 13:21:46 |   0% ] state  1 / 32.
+ [ 13:21:46 |   6% ] state  3 / 32, remaining: 0 s.
+ [ 13:21:46 |   9% ] state  4 / 32, remaining: 0 s.
+ [ 13:21:46 |  19% ] state  7 / 32, remaining: 0 s.
+ [ 13:21:46 |  28% ] state 10 / 32, remaining: 0 s.
+ [ 13:21:46 |  38% ] state 13 / 32, remaining: 0 s.
+ [ 13:21:46 |  50% ] state 17 / 32, remaining: 0 s.
+ [ 13:21:46 |  59% ] state 20 / 32, remaining: 0 s.
+ [ 13:21:46 |  69% ] state 23 / 32, remaining: 0 s.
+ [ 13:21:46 |  78% ] state 26 / 32, remaining: 0 s.
+ [ 13:21:46 |  88% ] state 29 / 32, remaining: 0 s.
+ Finished reading wavefunctions (WFN) at 13:21:46.
+ Elapsed time: 0 s.
+
+ Screened Coulomb cutoff: 10.000 Ry
+ Total number of bands: 8
+ Number of q-points: 3
+
+ Scissors parameters
+ Valence:    es =   0.0000 eV, e0 =   0.0000 eV, edel =   0.0000
+ Conduction: es =   0.0000 eV, e0 =   0.0000 eV, edel =   0.0000
+ Q0 and |Q0| =  0.001000  0.000000  0.000000  0.001019
+ Q  and |Q|  =  0.000000  0.000000  0.500000  0.509324
+ Q  and |Q|  =  0.000000  0.500000  0.500000  0.588117
+
+ You have a slightly shifted q0 vector and a semiconductor.
+ So reading from WFNq.
+ Reading header of WFNq
+ Highest occupied band (shifted grid) = 4
+
+ Started reading wavefunctions (WFNq) with 40 state(s) at 13:21:46.
+ [ 13:21:46 |   0% ] state  1 / 40.
+ [ 13:21:46 |   5% ] state  3 / 40, remaining: 0 s.
+ [ 13:21:46 |   8% ] state  4 / 40, remaining: 0 s.
+ [ 13:21:46 |  18% ] state  8 / 40, remaining: 0 s.
+ [ 13:21:46 |  28% ] state 12 / 40, remaining: 0 s.
+ [ 13:21:46 |  38% ] state 16 / 40, remaining: 0 s.
+ [ 13:21:46 |  48% ] state 20 / 40, remaining: 0 s.
+ [ 13:21:46 |  57% ] state 24 / 40, remaining: 0 s.
+ [ 13:21:46 |  68% ] state 28 / 40, remaining: 0 s.
+ [ 13:21:46 |  78% ] state 32 / 40, remaining: 0 s.
+ [ 13:21:46 |  88% ] state 36 / 40, remaining: 0 s.
+ [ 13:21:46 |  98% ] state 40 / 40, remaining: 0 s.
+ Finished reading wavefunctions (WFNq) at 13:21:46.
+ Elapsed time: 0 s.
+
+
+ Crystal k+q WFs read from WFNq
+ Number of k-points in the full BZ of WFN (nfk): 32
+
+================================================================================
+ 13:21:46   Dealing with q =  0.001000  0.000000  0.000000                 1 / 3
+================================================================================
+
+ This is the special q->0 point.
+ Rank of the polarizability matrix (nmtx): 169
+
+ BLACS processor grid:   2 x   4; BLOCKSIZE =   32
+
+ WARNING: ScaLAPACK layout is not well load-balanced.
+ Max number of elements owned by one task is:       6144.
+ Number of k-points in the irreducible BZ(q) (nrk): 10
+
+ Started calculation of matrix elements with 20 transition(s) at 13:21:46.
+ [ 13:21:46 |   0% ] transition  1 / 20.
+ [ 13:21:46 |   5% ] transition  2 / 20.
+ [ 13:21:46 |  10% ] transition  3 / 20, remaining: 0 s.
+ [ 13:21:46 |  15% ] transition  4 / 20, remaining: 0 s.
+ [ 13:21:46 |  25% ] transition  6 / 20, remaining: 0 s.
+ [ 13:21:46 |  35% ] transition  8 / 20, remaining: 0 s.
+ [ 13:21:46 |  45% ] transition 10 / 20, remaining: 0 s.
+ [ 13:21:46 |  55% ] transition 12 / 20, remaining: 0 s.
+ [ 13:21:46 |  65% ] transition 14 / 20, remaining: 0 s.
+ [ 13:21:46 |  75% ] transition 16 / 20, remaining: 0 s.
+ [ 13:21:46 |  85% ] transition 18 / 20, remaining: 0 s.
+ [ 13:21:46 |  95% ] transition 20 / 20, remaining: 0 s.
+ Finished calculation of matrix elements at 13:21:46.
+ Elapsed time: 0 s.
+
+ Allocating Convergence Arrays of Dim           4
+
+ Started building polarizability matrix with 8 processor(s) at 13:21:46.
+ [ 13:21:46 |   0% ] processor 1 / 8.
+ [ 13:21:46 |  13% ] processor 2 / 8.
+ [ 13:21:46 |  25% ] processor 3 / 8, remaining: 0 s.
+ [ 13:21:46 |  38% ] processor 4 / 8, remaining: 0 s.
+ [ 13:21:46 |  50% ] processor 5 / 8, remaining: 0 s.
+ [ 13:21:46 |  63% ] processor 6 / 8, remaining: 0 s.
+ [ 13:21:46 |  75% ] processor 7 / 8, remaining: 0 s.
+ [ 13:21:46 |  88% ] processor 8 / 8, remaining: 0 s.
+ Finished building polarizability matrix at 13:21:46.
+ Elapsed time: 0 s.
+
+ q-pt      1: Head of Epsilon         =    2.943615485281095E+001   3.824084362617401E-017
+ q-pt      1: Epsilon(2,2)            =    1.328224434105603E+000  -1.149658677735539E-018
+ q-pt      1: Head of Epsilon Inverse =    3.818728704569563E-002  -5.336307567702092E-020
+ q-pt      1: Epsilon Inverse(2,2)    =    7.757261390627543E-001  -4.878909776184770E-019
+
+ For q0 points, you should check the symmetry (eps(G,G') = eps*(-G,-G')) by
+ using the eps0sym code. Wavefunction convergence, as well as a finite q-shift
+ may cause this property of eps(G,G') to be broken.
+
+ Writing dielectric matrix to file
+
+ Started writing matrix with 169 column(s) at 13:21:46.
+ [ 13:21:46 |   0% ] column   1 / 169.
+ [ 13:21:46 |   1% ] column   3 / 169, remaining: 0 s.
+ [ 13:21:46 |   9% ] column  17 / 169, remaining: 0 s.
+ [ 13:21:46 |  20% ] column  34 / 169, remaining: 0 s.
+ [ 13:21:46 |  30% ] column  51 / 169, remaining: 0 s.
+ [ 13:21:46 |  40% ] column  68 / 169, remaining: 0 s.
+ [ 13:21:46 |  50% ] column  85 / 169, remaining: 0 s.
+ [ 13:21:46 |  60% ] column 102 / 169, remaining: 0 s.
+ [ 13:21:46 |  70% ] column 119 / 169, remaining: 0 s.
+ [ 13:21:46 |  80% ] column 136 / 169, remaining: 0 s.
+ [ 13:21:46 |  90% ] column 153 / 169, remaining: 0 s.
+ [ 13:21:46 |  99% ] column 169 / 169, remaining: 0 s.
+ Finished writing matrix at 13:21:46.
+ Elapsed time: 0 s.
+
+ Ok
+
+================================================================================
+ 13:21:46   Dealing with q =  0.000000  0.000000  0.500000                 2 / 3
+================================================================================
+
+ This is a regular non-zero q-point.
+ Rank of the polarizability matrix (nmtx): 168
+
+ BLACS processor grid:   2 x   4; BLOCKSIZE =   32
+
+ WARNING: ScaLAPACK layout is not well load-balanced.
+ Max number of elements owned by one task is:       6144.
+ Number of k-points in the irreducible BZ(q) (nrk): 10
+
+ Started calculation of matrix elements with 20 transition(s) at 13:21:46.
+ [ 13:21:46 |   0% ] transition  1 / 20.
+ [ 13:21:46 |   5% ] transition  2 / 20.
+ [ 13:21:46 |  10% ] transition  3 / 20, remaining: 0 s.
+ [ 13:21:46 |  15% ] transition  4 / 20, remaining: 0 s.
+ [ 13:21:46 |  25% ] transition  6 / 20, remaining: 0 s.
+ [ 13:21:46 |  35% ] transition  8 / 20, remaining: 0 s.
+ [ 13:21:46 |  45% ] transition 10 / 20, remaining: 0 s.
+ [ 13:21:46 |  55% ] transition 12 / 20, remaining: 0 s.
+ [ 13:21:46 |  65% ] transition 14 / 20, remaining: 0 s.
+ [ 13:21:46 |  75% ] transition 16 / 20, remaining: 0 s.
+ [ 13:21:46 |  85% ] transition 18 / 20, remaining: 0 s.
+ [ 13:21:46 |  95% ] transition 20 / 20, remaining: 0 s.
+ Finished calculation of matrix elements at 13:21:46.
+ Elapsed time: 0 s.
+
+ Allocating Convergence Arrays of Dim           4
+
+ Started building polarizability matrix with 8 processor(s) at 13:21:46.
+ [ 13:21:46 |   0% ] processor 1 / 8.
+ [ 13:21:46 |  13% ] processor 2 / 8.
+ [ 13:21:46 |  25% ] processor 3 / 8, remaining: 0 s.
+ [ 13:21:46 |  38% ] processor 4 / 8, remaining: 0 s.
+ [ 13:21:46 |  50% ] processor 5 / 8, remaining: 0 s.
+ [ 13:21:46 |  63% ] processor 6 / 8, remaining: 0 s.
+ [ 13:21:46 |  75% ] processor 7 / 8, remaining: 0 s.
+ [ 13:21:46 |  88% ] processor 8 / 8, remaining: 0 s.
+ Finished building polarizability matrix at 13:21:46.
+ Elapsed time: 0 s.
+
+ q-pt      2: Head of Epsilon         =    2.659338121362304E+000  -4.464271451585677E-017
+ q-pt      2: Epsilon(2,2)            =    2.659338142215870E+000  -7.878126091033548E-018
+ q-pt      2: Head of Epsilon Inverse =    4.254011889699800E-001   6.071532165918825E-018
+ q-pt      2: Epsilon Inverse(2,2)    =    4.254011859545789E-001   4.011548038196366E-018
+
+ Writing dielectric matrix to file
+
+ Started writing matrix with 168 column(s) at 13:21:46.
+ [ 13:21:46 |   0% ] column   1 / 168.
+ [ 13:21:46 |   1% ] column   3 / 168, remaining: 0 s.
+ [ 13:21:46 |  10% ] column  17 / 168, remaining: 0 s.
+ [ 13:21:46 |  20% ] column  34 / 168, remaining: 0 s.
+ [ 13:21:46 |  30% ] column  51 / 168, remaining: 0 s.
+ [ 13:21:46 |  40% ] column  68 / 168, remaining: 0 s.
+ [ 13:21:46 |  50% ] column  85 / 168, remaining: 0 s.
+ [ 13:21:46 |  60% ] column 101 / 168, remaining: 0 s.
+ [ 13:21:46 |  70% ] column 118 / 168, remaining: 0 s.
+ [ 13:21:46 |  80% ] column 135 / 168, remaining: 0 s.
+ [ 13:21:46 |  90% ] column 152 / 168, remaining: 0 s.
+ Finished writing matrix at 13:21:46.
+ Elapsed time: 0 s.
+
+ Ok
+
+================================================================================
+ 13:21:46   Dealing with q =  0.000000  0.500000  0.500000                 3 / 3
+================================================================================
+
+ This is a regular non-zero q-point.
+ Rank of the polarizability matrix (nmtx): 150
+
+ BLACS processor grid:   2 x   4; BLOCKSIZE =   32
+
+ WARNING: ScaLAPACK layout is not well load-balanced.
+ Max number of elements owned by one task is:       4644.
+ Number of k-points in the irreducible BZ(q) (nrk): 6
+
+ Started calculation of matrix elements with 12 transition(s) at 13:21:46.
+ [ 13:21:46 |   0% ] transition  1 / 12.
+ [ 13:21:46 |   8% ] transition  2 / 12.
+ [ 13:21:46 |  17% ] transition  3 / 12, remaining: 0 s.
+ [ 13:21:46 |  25% ] transition  4 / 12, remaining: 0 s.
+ [ 13:21:46 |  33% ] transition  5 / 12, remaining: 0 s.
+ [ 13:21:46 |  42% ] transition  6 / 12, remaining: 0 s.
+ [ 13:21:46 |  58% ] transition  8 / 12, remaining: 0 s.
+ [ 13:21:46 |  67% ] transition  9 / 12, remaining: 0 s.
+ [ 13:21:46 |  75% ] transition 10 / 12, remaining: 0 s.
+ [ 13:21:46 |  83% ] transition 11 / 12, remaining: 0 s.
+ [ 13:21:46 |  92% ] transition 12 / 12, remaining: 0 s.
+ Finished calculation of matrix elements at 13:21:46.
+ Elapsed time: 0 s.
+
+ Allocating Convergence Arrays of Dim           4
+
+ Started building polarizability matrix with 8 processor(s) at 13:21:46.
+ [ 13:21:46 |   0% ] processor 1 / 8.
+ [ 13:21:46 |  13% ] processor 2 / 8.
+ [ 13:21:46 |  25% ] processor 3 / 8, remaining: 0 s.
+ [ 13:21:46 |  38% ] processor 4 / 8, remaining: 0 s.
+ [ 13:21:46 |  50% ] processor 5 / 8, remaining: 0 s.
+ [ 13:21:46 |  63% ] processor 6 / 8, remaining: 0 s.
+ [ 13:21:46 |  75% ] processor 7 / 8, remaining: 0 s.
+ [ 13:21:46 |  88% ] processor 8 / 8, remaining: 0 s.
+ Finished building polarizability matrix at 13:21:46.
+ Elapsed time: 0 s.
+
+ q-pt      3: Head of Epsilon         =    2.508924780834283E+000   3.077393004309980E-020
+ q-pt      3: Epsilon(2,2)            =    2.508924780834283E+000  -5.108472387154566E-018
+ q-pt      3: Head of Epsilon Inverse =    4.338806656312481E-001  -8.502703803066423E-019
+ q-pt      3: Epsilon Inverse(2,2)    =    4.338806656312482E-001   3.203863833574318E-019
+
+ Writing dielectric matrix to file
+
+ Started writing matrix with 150 column(s) at 13:21:46.
+ [ 13:21:46 |   0% ] column   1 / 150.
+ [ 13:21:46 |   1% ] column   3 / 150, remaining: 0 s.
+ [ 13:21:46 |   9% ] column  15 / 150, remaining: 0 s.
+ [ 13:21:46 |  19% ] column  30 / 150, remaining: 0 s.
+ [ 13:21:46 |  29% ] column  45 / 150, remaining: 0 s.
+ [ 13:21:46 |  39% ] column  60 / 150, remaining: 0 s.
+ [ 13:21:46 |  49% ] column  75 / 150, remaining: 0 s.
+ [ 13:21:46 |  59% ] column  90 / 150, remaining: 0 s.
+ [ 13:21:46 |  69% ] column 105 / 150, remaining: 0 s.
+ [ 13:21:46 |  79% ] column 120 / 150, remaining: 0 s.
+ [ 13:21:46 |  89% ] column 135 / 150, remaining: 0 s.
+ [ 13:21:46 |  99% ] column 150 / 150, remaining: 0 s.
+ Finished writing matrix at 13:21:46.
+ Elapsed time: 0 s.
+
+ Ok
+
+
+                              CPU (s)        WALL (s)           #
+
+FULLBZ:                         0.000           0.000           1
+IRRBZ:                          0.000           0.000           3
+SUBGRP:                         0.000           0.000           3
+RQSTAR:                         0.000           0.000          26
+GMAP:                           0.003           0.003          26
+GVEC:                           0.000           0.000           3
+INPUT:                          0.009           0.018           1
+INPUT_Q:                        0.002           0.002           1
+INPUT(Q) I/O                    0.001           0.002         142
+INPUT(Q) COMM                   0.001           0.002         142
+GENWF:                          0.010           0.011          52
+GENWF (VAL):                    0.005           0.007          52
+GENWF (COND):                   0.005           0.004          26
+GENWF (C-Ekin):                 0.000           0.001          26
+GENWF (C-Sort):                 0.003           0.003          26
+JOB SETUP:                      0.001           0.001           1
+Q LOOP SETUP:                   0.000           0.000           3
+INIT CUTOFF:                    0.000           0.000           3
+INIT SCALAPACK:                 0.002           0.003           3
+INIT ARRAYS:                    0.000           0.000           3
+MTXEL:                          0.023           0.024          52
+MTXEL (DENOM):                  0.000           0.000          52
+MTXEL (FFT):                    0.023           0.024          52
+MTXEL EXP(DENOM):               0.000           0.000           0
+MTXEL EXP (FFT):                0.000           0.000           0
+CHI SUM (TOTAL):                0.016           0.016           3
+CHI SUM (COMM):                 0.003           0.007          24
+CHI SUM (PREP):                 0.002           0.000          24
+CHI SUM (ARRAY ALLOC):          0.000           0.000           0
+CHI SUM (ROW):                  0.000           0.000           0
+CHI SUM (COLUMN):               0.000           0.000           0
+CHI SUM (zGEMM):                0.010           0.007          24
+CHI SUM (HT):                   0.000           0.000           0
+EPSINV (TOTAL):                 0.054           0.073           3
+EPSINV (VCOUL):                 0.000           0.000           3
+EPSINV (I/O)                    0.027           0.036           3
+EPSINV (INVERT)                 0.024           0.036           3
+EPS (I/O) COMM                  0.000           0.000           0
+EPS (I/O) IO                    0.000           0.000           0
+CONVERGE TESTS:                 0.000           0.000           3
+OPT FFT:                        0.000           0.000           0
+OPT FFT (INIT):                 0.000           0.000           0
+OPT FFT (COMM_FFT):             0.000           0.000           0
+OPT FFT (FFT):                  0.000           0.000           0
+FFT ZERO                        0.001           0.000         104
+FFT PUT                         0.001           0.001         104
+FFT PLAN                        0.013           0.019         156
+FFT EXEC                        0.005           0.003         156
+FFT MLTPLY                      0.001           0.000          52
+
+TOTAL:                          0.125           0.155
+
+

@@ -1,6 +1,6 @@
 
 # These are the original defaults.
-# Do not modify these by hand.
+# Do not modify these by hand. Use the user_configuration file instead.
 
 default_mpi = dict(
             nproc = 1,
@@ -18,3 +18,5 @@ default_runscript = dict(
 
 use_hdf5 = True
 flavor_complex = True
+
+dft_flavor = 'espresso'

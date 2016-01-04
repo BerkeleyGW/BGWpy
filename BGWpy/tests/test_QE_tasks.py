@@ -3,10 +3,10 @@ import os
 from . import TestTask
 
 from .. import data
-from .. import Structure, ScfTask
-from .. import WfnTask, PW2BGWTask
+from .. import Structure, QeScfTask
+from .. import QeWfnTask, Qe2BgwTask
 
-# Note: The tests are redundant. The issue being that
+# Note: The tests are redundant, because
 # tests cannot be interdependent.
 
 class TestQETasksMaker(TestTask):
@@ -26,22 +26,22 @@ class TestQETasksMaker(TestTask):
         )
 
     def get_scftask(self, **kwargs):
-        """Construct a ScfTask."""
+        """Construct a QeScfTask."""
         for key, val in self.common_kwargs.iteritems():
             kwargs.setdefault(key, val)
 
         kwargs.setdefault('dirname', os.path.join(self.tmpdir, 'Density'))
-        scftask = ScfTask(**kwargs)
+        scftask = QeScfTask(**kwargs)
         return scftask
         
     def get_wfntask(self, scftask, **kwargs):
-        """Construct a WfnTask."""
+        """Construct a QeWfnTask."""
         for key, val in self.common_kwargs.iteritems():
             kwargs.setdefault(key, val)
 
         kwargs.setdefault('dirname', os.path.join(self.tmpdir, 'Wfn'))
 
-        wfntask = WfnTask(
+        wfntask = QeWfnTask(
             charge_density_fname = scftask.charge_density_fname,
             data_file_fname = scftask.data_file_fname,
             **kwargs)
@@ -49,13 +49,13 @@ class TestQETasksMaker(TestTask):
         return wfntask
         
     def get_pw2bgwtask(self, wfntask, **kwargs):
-        """Construct a PW2BGWTask."""
+        """Construct a Qe2BgwTask."""
         for key, val in self.common_kwargs.iteritems():
             kwargs.setdefault(key, val)
 
         kwargs.setdefault('wfn_fname', 'wfn.cplx')
 
-        pw2bgwtask = PW2BGWTask(
+        pw2bgwtask = Qe2BgwTask(
             dirname = wfntask.dirname,
             **kwargs)
 
