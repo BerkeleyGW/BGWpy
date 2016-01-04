@@ -1,0 +1,193 @@
+
+     Program PWSCF v.5.1.2 starts on  4Jan2016 at 12:52:22 
+
+     This program is part of the open-source Quantum ESPRESSO suite
+     for quantum simulation of materials; please cite
+         "P. Giannozzi et al., J. Phys.:Condens. Matter 21 395502 (2009);
+          URL http://www.quantum-espresso.org", 
+     in publications or presentations arising from this work. More details at
+     http://www.quantum-espresso.org/quote
+
+     Parallel version (MPI), running on     8 processors
+     R & G space division:  proc/nbgrp/npool/nimage =       8
+     Reading input from wfn.in
+
+     Current dimensions of program PWSCF are:
+     Max number of different atomic species (ntypx) = 10
+     Max number of k-points (npk) =  40000
+     Max angular momentum in pseudopotentials (lmaxx) =  3
+
+     Atomic positions and unit cell read from directory:
+     ./GaAs.save/
+
+               file 31-Ga.PBE.UPF: wavefunction(s)  4d 4f renormalized
+               file 33-As.PBE.UPF: wavefunction(s)  4f renormalized
+
+     Subspace diagonalization in iterative solution of the eigenvalue problem:
+     scalapack distributed-memory algorithm (size of sub-group:  2*  2 procs)
+
+
+     Parallelization info
+     --------------------
+     sticks:   dense  smooth     PW     G-vecs:    dense   smooth      PW
+     Min          19      19      7                  161      161      40
+     Max          21      21      8                  162      162      42
+     Sum         163     163     61                 1291     1291     331
+
+
+
+     bravais-lattice index     =            0
+     lattice parameter (alat)  =       7.5544  a.u.
+     unit-cell volume          =     304.8518 (a.u.)^3
+     number of atoms/cell      =            2
+     number of atomic types    =            2
+     number of electrons       =         8.00
+     number of Kohn-Sham states=            9
+     kinetic-energy cutoff     =      10.0000  Ry
+     charge density cutoff     =      40.0000  Ry
+     Exchange-correlation      = PBE ( 1  4  3  4 0 0)
+
+     celldm(1)=   7.554422  celldm(2)=   0.000000  celldm(3)=   0.000000
+     celldm(4)=   0.000000  celldm(5)=   0.000000  celldm(6)=   0.000000
+
+     crystal axes: (cart. coord. in units of alat)
+               a(1) = (   0.000000   0.707107   0.707107 )  
+               a(2) = (   0.707107   0.000000   0.707107 )  
+               a(3) = (   0.707107   0.707107   0.000000 )  
+
+     reciprocal axes: (cart. coord. in units 2 pi/alat)
+               b(1) = ( -0.707107  0.707107  0.707107 )  
+               b(2) = (  0.707107 -0.707107  0.707107 )  
+               b(3) = (  0.707107  0.707107 -0.707107 )  
+
+
+     PseudoPot. # 1 for Ga read from file:
+     ../../../../Data/Pseudos/31-Ga.PBE.UPF
+     MD5 check sum: d2addd91d8bcf9a88adfbbdfd2637de8
+     Pseudo is Norm-conserving, Zval =  3.0
+     Generated using FHI98PP, converted with fhi2upf.x v.5.0.2
+     Using radial grid of  529 points,  3 beta functions with: 
+                l(1) =   1
+                l(2) =   2
+                l(3) =   3
+
+     PseudoPot. # 2 for As read from file:
+     ../../../../Data/Pseudos/33-As.PBE.UPF
+     MD5 check sum: 9c0f5dd9d369d21dd57660ed5a27ee1c
+     Pseudo is Norm-conserving, Zval =  5.0
+     Generated using FHI98PP, converted with fhi2upf.x v.5.0.2
+     Using radial grid of  531 points,  3 beta functions with: 
+                l(1) =   0
+                l(2) =   1
+                l(3) =   3
+
+     atomic species   valence    mass     pseudopotential
+        Ga             3.00    69.72300     Ga( 1.00)
+        As             5.00    74.92160     As( 1.00)
+
+     24 Sym. Ops. (no inversion) found
+
+
+
+   Cartesian axes
+
+     site n.     atom                  positions (alat units)
+         1           Ga  tau(   1) = (   0.0000000   0.0000000   0.0000000  )
+         2           As  tau(   2) = (   0.3535534   0.3535534   0.3535534  )
+
+     number of k points=     4
+                       cart. coord. in units 2pi/alat
+        k(    1) = (   0.1767767   0.1767767   0.1767767), wk =   0.2500000
+        k(    2) = (   0.5303301   0.5303301  -0.1767767), wk =   0.7500000
+        k(    3) = (   0.8838835   0.1767767   0.1767767), wk =   0.7500000
+        k(    4) = (   0.5303301   0.5303301   0.5303301), wk =   0.2500000
+
+     Dense  grid:     1291 G-vectors     FFT dimensions: (  15,  15,  15)
+
+     Largest allocated arrays     est. size (Mb)     dimensions
+        Kohn-Sham Wavefunctions         0.00 Mb     (      26,    9)
+        NL pseudopotentials             0.01 Mb     (      26,   26)
+        Each V/rho on FFT grid          0.01 Mb     (     450)
+        Each G-vector array             0.00 Mb     (     162)
+        G-vector shells                 0.00 Mb     (      37)
+     Largest temporary arrays     est. size (Mb)     dimensions
+        Auxiliary wavefunctions         0.01 Mb     (      26,   36)
+        Each subspace H/S matrix        0.00 Mb     (      18,   18)
+        Each <psi_i|beta_j> matrix      0.00 Mb     (      26,    9)
+
+     The potential is recalculated from file :
+     ./GaAs.save/charge-density.dat
+
+     Starting wfc are   32 randomized atomic wfcs
+
+     Band Structure Calculation
+     Davidson diagonalization with overlap
+
+     ethr =  1.25E-12,  avg # of iterations = 39.5
+
+     total cpu time spent up to now is        0.7 secs
+
+     End of band structure calculation
+
+          k = 0.1768 0.1768 0.1768 (   162 PWs)   bands (ev):
+
+    -6.8219   1.2135   4.6924   4.6924   6.9637  10.1004  10.1004  11.5732
+    14.3104
+
+          k = 0.5303 0.5303-0.1768 (   164 PWs)   bands (ev):
+
+    -5.4539  -1.0505   1.9701   3.1561   7.7476  10.2201  11.9957  12.7213
+    16.2363
+
+          k = 0.8839 0.1768 0.1768 (   164 PWs)   bands (ev):
+
+    -5.4539  -1.0505   1.9701   3.1561   7.7476  10.2201  11.9957  12.7213
+    16.2363
+
+          k = 0.5303 0.5303 0.5303 (   162 PWs)   bands (ev):
+
+    -6.8219   1.2135   4.6924   4.6924   6.9637  10.1004  10.1004  11.5732
+    14.3104
+
+     Writing output data file GaAs.save
+
+     init_run     :      0.01s CPU      0.02s WALL (       1 calls)
+     electrons    :      0.26s CPU      0.59s WALL (       1 calls)
+
+     Called by init_run:
+     wfcinit      :      0.00s CPU      0.00s WALL (       1 calls)
+     potinit      :      0.00s CPU      0.00s WALL (       1 calls)
+
+     Called by electrons:
+     c_bands      :      0.26s CPU      0.59s WALL (       1 calls)
+     v_of_rho     :      0.00s CPU      0.00s WALL (       1 calls)
+
+     Called by c_bands:
+     init_us_2    :      0.00s CPU      0.00s WALL (       4 calls)
+     cegterg      :      0.25s CPU      0.56s WALL (      10 calls)
+
+     Called by *egterg:
+     h_psi        :      0.03s CPU      0.05s WALL (     172 calls)
+     g_psi        :      0.00s CPU      0.00s WALL (     158 calls)
+     cdiaghg      :      0.19s CPU      0.45s WALL (     162 calls)
+
+     Called by h_psi:
+     add_vuspsi   :      0.00s CPU      0.00s WALL (     172 calls)
+
+     General routines
+     calbec       :      0.00s CPU      0.01s WALL (     172 calls)
+     fft          :      0.00s CPU      0.00s WALL (      10 calls)
+     fftw         :      0.02s CPU      0.03s WALL (    1678 calls)
+     davcio       :      0.00s CPU      0.00s WALL (       4 calls)
+
+     Parallel routines
+     fft_scatter  :      0.01s CPU      0.02s WALL (    1688 calls)
+
+     PWSCF        :     0.40s CPU         0.77s WALL
+
+
+   This run was terminated on:  12:52:23   4Jan2016            
+
+=------------------------------------------------------------------------------=
+   JOB DONE.
+=------------------------------------------------------------------------------=

@@ -1,0 +1,19 @@
+ Opening abi2bgw.in
+ Summary of input variables
+ wfng_file_abi out_data/odat_WFK
+ wfng_flag      T
+ wfng_file     wfn.cplx
+ wfng_nk1                 2
+ wfng_nk2                 2
+ wfng_nk3                 2
+ wfng_dk1        0.50000000000000000     
+ wfng_dk2        0.50000000000000000     
+ wfng_dk3        0.50000000000000000     
+ cell_symmetry              0
+ symrel_file_flag F
+ #Generated list of g-vectors for density\/potential writen in file: gsphere_bgw.out
+ spin            1 kpt            1 /           4
+ spin            1 kpt            2 /           4
+ spin            1 kpt            3 /           4
+ spin            1 kpt            4 /           4
+ Calculation completed

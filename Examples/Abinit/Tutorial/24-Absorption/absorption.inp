@@ -1,0 +1,12 @@
+number_val_bands_coarse 4
+number_val_bands_fine 4
+number_cond_bands_coarse 4
+number_cond_bands_fine 4
+energy_resolution 0.15
+use_symmetries_coarse_grid
+no_symmetries_fine_grid
+no_symmetries_shifted_grid
+screening_semiconductor
+use_velocity
+gaussian_broadening
+eqp_co_corrections

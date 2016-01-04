@@ -1,0 +1,26 @@
+  dtset%nelect=   8.0000000000000000     
+
+================================================================================
+== DATASET  1 ==================================================================
+-   nproc =    2
+
+ wfconv:     5 bands initialized randomly with npw=   168, for ikpt=    33
+ wfconv:     5 bands initialized randomly with npw=   164, for ikpt=    34
+ wfconv:     5 bands initialized randomly with npw=   150, for ikpt=    35
+ wfconv:     5 bands initialized randomly with npw=   164, for ikpt=    36
+ wfconv:     5 bands initialized randomly with npw=   164, for ikpt=    37
+ wfconv:     5 bands initialized randomly with npw=   164, for ikpt=    38
+ wfconv:     5 bands initialized randomly with npw=   164, for ikpt=    39
+ wfconv:     5 bands initialized randomly with npw=   156, for ikpt=    40
+ wfconv:     5 bands initialized randomly with npw=   150, for ikpt=    41
+ wfconv:     5 bands initialized randomly with npw=   164, for ikpt=    42
+ wfconv:     5 bands initialized randomly with npw=   168, for ikpt=    43
+ wfconv:     5 bands initialized randomly with npw=   164, for ikpt=    44
+ wfconv:     5 bands initialized randomly with npw=   164, for ikpt=    45
+ wfconv:     5 bands initialized randomly with npw=   156, for ikpt=    46
+ wfconv:     5 bands initialized randomly with npw=   164, for ikpt=    47
+ wfconv:     5 bands initialized randomly with npw=   164, for ikpt=    48
+ wfconv:     5 bands initialized randomly with npw=   162, for ikpt=    49
+ wfconv:     5 bands initialized randomly with npw=   164, for ikpt=    50
+ outwf with iomode: -1, cpu:     0.01, wall:     0.01
+ Proc.   1 individual time (sec): cpu=          0.8  wall=          0.8
