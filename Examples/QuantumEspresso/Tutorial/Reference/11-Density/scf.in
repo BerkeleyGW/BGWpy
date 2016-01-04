@@ -1,0 +1,37 @@
+&control
+   calculation = 'scf'
+   prefix = 'GaAs'
+   pseudo_dir = '../../../Data/Pseudos'
+/
+&system
+   ecutwfc = 10.0
+   ibrav = 0
+   nat = 2
+   ntyp = 2
+/
+&electrons
+   electron_maxstep = 100
+   conv_thr = 1e-10
+   diago_full_acc = .true.
+   diago_david_ndim = 4
+   mixing_ndim = 8
+   mixing_mode = 'plain'
+   diagonalization = 'david'
+   mixing_beta = 0.7
+/
+CELL_PARAMETERS angstrom
+   0.0 2.82675 2.82675
+   2.82675 0.0 2.82675
+   2.82675 2.82675 0.0
+ATOMIC_SPECIES 
+   Ga 69.723 '31-Ga.PBE.UPF'
+   As 74.9216 '33-As.PBE.UPF'
+ATOMIC_POSITIONS crystal
+   Ga 0.0 0.0 0.0
+   As 0.25 0.25 0.25
+K_POINTS crystal
+   4
+   0.25 0.25 0.25 1.0
+   0.25 0.25 0.75 3.0
+   0.25 0.75 0.75 3.0
+   0.75 0.75 0.75 1.0
