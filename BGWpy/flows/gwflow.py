@@ -239,15 +239,28 @@ class GWFlow(Workflow):
         """
         from ..Abinit import AbinitScfTask, AbinitBgwFlow
 
-        self.scftask = AbinitScfTask(
-            dirname = pjoin(self.dirname, '01-Density'),
-            ngkpt = self.ngkpt,
-            kshift = self.kshift,
-            **kwargs)
-        
-        kwargs.update(
-            charge_density_fname = self.scftask.charge_density_fname,
-            vxc_fname = self.scftask.vxc_fname)
+        if kwargs.get('charge_density_fname'):
+            kwargs.setdefault('with_density', False)
+            charge_density_fname=kwargs.get('charge_density_fname','')
+        self.with_density = kwargs.get('with_density', True)
+
+        if kwargs.get('vxc_fname'):
+            vxc_fname=kwargs.get('vxc_fname','')
+        elif not self.with_density:
+	    raise Exception("Error, when providing charge_density_fname, vxc_fname is required")  
+
+
+#       DO SCF only if required:
+        if self.with_density:
+            self.scftask = AbinitScfTask(
+                dirname = pjoin(self.dirname, '01-Density'),
+                ngkpt = self.ngkpt,
+                kshift = self.kshift,
+                **kwargs)
+            
+            kwargs.update(
+                charge_density_fname = self.scftask.charge_density_fname,
+                vxc_fname = self.scftask.vxc_fname)
 
         self.wfntask_ksh = AbinitBgwFlow(
             dirname = pjoin(self.dirname, '02-Wfn'),
@@ -263,8 +276,12 @@ class GWFlow(Workflow):
             qshift = self.qshift,
             nband = None,
             **kwargs)
-        
-        self.add_tasks([self.scftask, self.wfntask_ksh, self.wfntask_qsh])
+
+#       If the density is provided, don't add the SCF task:
+        if self.with_density: 
+            self.add_tasks([self.scftask, self.wfntask_ksh, self.wfntask_qsh])
+        else: 
+            self.add_tasks([self.wfntask_ksh, self.wfntask_qsh])
 
         self.wfntask_ush = AbinitBgwFlow(
             dirname = pjoin(self.dirname, '04-Wfn_co'),
