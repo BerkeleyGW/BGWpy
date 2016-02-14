@@ -379,7 +379,7 @@ def get_kqshift(ngkpt, kshift, qshift):
 
 def get_kpt_grid_nosym(ngkpt, kshift=[.0,.0,.0], qshift=[.0,.0,.0]):
     """
-    Return a list of kpoints generated with out any symmetry,
+    Return a list of kpoints generated without any symmetry,
     along with their weights.
     """
     ngkpt = np.array(ngkpt)
