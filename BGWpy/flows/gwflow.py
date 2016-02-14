@@ -247,7 +247,7 @@ class GWFlow(Workflow):
         if kwargs.get('vxc_fname'):
             vxc_fname=kwargs.get('vxc_fname','')
         elif not self.with_density:
-	    raise Exception("Error, when providing charge_density_fname, vxc_fname is required")  
+            raise Exception("Error, when providing charge_density_fname, vxc_fname is required")
 
 
 #       DO SCF only if required:
