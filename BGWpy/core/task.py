@@ -25,6 +25,14 @@ class Task(object):
     _STATUS_UNFINISHED = 'Unfinished'
     _STATUS_UNKNOWN = 'Unknown'
 
+    _report_colors = {
+        _STATUS_COMPLETED : '\033[92m',
+        _STATUS_UNSTARTED : '\033[94m',
+        _STATUS_UNFINISHED : '\033[91m',
+        _STATUS_UNKNOWN : '\033[95m',
+        }
+    _end_color = '\033[0m'
+
     def __init__(self, dirname='./', runscript_fname='run.sh', store_variables=True, *args, **kwargs):
         """
         Keyword arguments
@@ -142,7 +150,9 @@ class Task(object):
             Consider a task as unstarted if output is older than input.
         """
         status = self.get_status(**kwargs)
-        s = '   {:<20}  -  Status :  {}'.format(self._TASK_NAME, status)
+        color = self._report_colors[status]
+        s = '   {:<20}  -  Status :  {}{}{}'.format(
+             self._TASK_NAME, color, status, self._end_color)
         print(s, file=file)
 
 
