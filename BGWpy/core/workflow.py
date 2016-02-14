@@ -30,8 +30,6 @@ class Workflow(Task):
 
     """
 
-    #def __init__(self, dirname='./', runscript_fname='run.sh', tasks=None, *args, **kwargs):
-    #    super(Workflow, self).__init__(dirname, runscript_fname, *args, **kwargs)
     def __init__(self, tasks=None, *args, **kwargs):
         super(Workflow, self).__init__(*args, **kwargs)
         self.tasks = list()
@@ -73,8 +71,15 @@ class Workflow(Task):
                             " Use the variable 'runscript_fname' to set" +
                             " the task's runscript file name.")
 
-            # Adding some safety would makes the script less readable...
-            # There must be a better way.
+            # FIXME
+            # This script is unsafe, because if it fails to change directory,
+            # the script ends up calling itself repeatedly.
+            # One could add some safety to the commands,
+            # but that would make the script less readable and harder to modify.
+            # The user is expected to modify the runscript (e.g. to restart
+            # the calculation and skip the first steps that completed normally).
+            # Therefore, the syntax must remain as simple as possible...
+
             #self.runscript.append('if [ -d {} ]'.format(task.dirname))
             #self.runscript.append('then')
             self.runscript.append('cd {}'.format(os.path.relpath(task.dirname, self.dirname)))
