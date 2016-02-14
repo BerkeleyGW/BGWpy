@@ -1,9 +1,6 @@
 """Workflow to perform BSE calculation."""
-import os
 from os.path import join as pjoin
-import subprocess
-import pickle
-
+import warnings
 
 from ..config import dft_flavor, check_dft_flavor
 from ..config import is_dft_flavor_espresso, is_dft_flavor_abinit
@@ -121,11 +118,17 @@ class BSEFlow(Workflow):
         self.ngkpt_fi = kwargs.pop('ngkpt_fine', self.ngkpt)
         self.kshift_fi = kwargs.pop('kshift_fine', self.kshift)
         self.qshift_fi = kwargs.pop('qshift_fine', self.qshift)
+
+        if 'nbnd_absorption' not in kwargs:
+            warnings.warn("'nbnd_absorption' was not specified.\n" + 
+                          "Thus, number of band computed on the fine grid will default to 'nbnd' (coarse grid).\n" +
+                          "This is usually a waste and you might want to choose 'nbnd_absorption' according to\n" +
+                          "   nbnd_absorption = nbnd_occupied + nbnd_cond_fi + 1.")
         self.nbnd_absorption = kwargs.pop('nbnd_absorption', self.nbnd)
 
-        self.dft_flavor = check_dft_flavor(kwargs.get('dft_flavor',dft_flavor))
-
         # ==== DFT calculations ==== #
+
+        self.dft_flavor = check_dft_flavor(kwargs.get('dft_flavor',dft_flavor))
 
         # Quantum Espresso flavor
         if is_dft_flavor_espresso(self.dft_flavor):
