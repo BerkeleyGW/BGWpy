@@ -184,17 +184,26 @@ class GWFlow(Workflow):
         """
         from ..QE import QeScfTask, QeBgwFlow
 
-        self.scftask = QeScfTask(
-            dirname = pjoin(self.dirname, '01-Density'),
-            ngkpt = self.ngkpt,
-            kshift = self.kshift,
-            **kwargs)
+        if 'charge_density_fname' in kwargs:
+            if 'data_file_fname' not in kwargs:
+                raise Exception("Error, when providing charge_density_fname, data_file_fname is required.")
 
-        kwargs.update(
-            charge_density_fname = self.scftask.charge_density_fname,
-            data_file_fname = self.scftask.data_file_fname,
-            spin_polarization_fname = self.scftask.spin_polarization_fname)
+        else:
+
+            self.scftask = QeScfTask(
+                dirname = pjoin(self.dirname, '01-Density'),
+                ngkpt = self.ngkpt,
+                kshift = self.kshift,
+                **kwargs)
+
+            self.add_task(self.scftask)
+            
+            kwargs.update(
+                charge_density_fname = self.scftask.charge_density_fname,
+                data_file_fname = self.scftask.data_file_fname,
+                spin_polarization_fname = self.scftask.spin_polarization_fname)
         
+        # Wavefunction tasks for Epsilon
         self.wfntask_ksh = QeBgwFlow(
             dirname = pjoin(self.dirname, '02-Wfn'),
             ngkpt = self.ngkpt,
@@ -210,17 +219,21 @@ class GWFlow(Workflow):
             nbnd = None,
             **kwargs)
 
-        self.add_tasks([self.scftask, self.wfntask_ksh, self.wfntask_qsh])
+        self.add_tasks([self.wfntask_ksh, self.wfntask_qsh])
 
-        self.wfntask_ush = QeBgwFlow(
-            dirname = pjoin(self.dirname, '04-Wfn_co'),
-            ngkpt = self.ngkpt,
-            nbnd = self.nbnd,
-            rhog_flag = True,
-            **kwargs)
-
+        # Unshifted wavefunction tasks for Sigma
+        # only if not already computed for Epsilon.
         if self.has_kshift:
+
+            self.wfntask_ush = QeBgwFlow(
+                dirname = pjoin(self.dirname, '04-Wfn_co'),
+                ngkpt = self.ngkpt,
+                nbnd = self.nbnd,
+                rhog_flag = True,
+                **kwargs)
+
             self.add_task(self.wfntask_ush)
+
         else:
             self.wfntask_ush = self.wfntask_ksh
 
@@ -239,29 +252,25 @@ class GWFlow(Workflow):
         """
         from ..Abinit import AbinitScfTask, AbinitBgwFlow
 
-        if kwargs.get('charge_density_fname'):
-            kwargs.setdefault('with_density', False)
-            charge_density_fname=kwargs.get('charge_density_fname','')
-        self.with_density = kwargs.get('with_density', True)
+        # Either charge density is provided or an SCF task is initialized.
+        if 'charge_density_fname' in kwargs:
+            if 'vxc_fname' not in kwargs:
+                raise Exception("Error, when providing charge_density_fname, vxc_fname is required")
 
-        if kwargs.get('vxc_fname'):
-            vxc_fname=kwargs.get('vxc_fname','')
-        elif not self.with_density:
-            raise Exception("Error, when providing charge_density_fname, vxc_fname is required")
-
-
-#       DO SCF only if required:
-        if self.with_density:
+        else:
             self.scftask = AbinitScfTask(
                 dirname = pjoin(self.dirname, '01-Density'),
                 ngkpt = self.ngkpt,
                 kshift = self.kshift,
                 **kwargs)
+
+            self.add_task(self.scftask)
             
             kwargs.update(
                 charge_density_fname = self.scftask.charge_density_fname,
                 vxc_fname = self.scftask.vxc_fname)
 
+        # Wavefunction tasks for Epsilon
         self.wfntask_ksh = AbinitBgwFlow(
             dirname = pjoin(self.dirname, '02-Wfn'),
             ngkpt = self.ngkpt,
@@ -277,22 +286,22 @@ class GWFlow(Workflow):
             nband = None,
             **kwargs)
 
-#       If the density is provided, don't add the SCF task:
-        if self.with_density: 
-            self.add_tasks([self.scftask, self.wfntask_ksh, self.wfntask_qsh])
-        else: 
-            self.add_tasks([self.wfntask_ksh, self.wfntask_qsh])
+        self.add_tasks([self.wfntask_ksh, self.wfntask_qsh])
 
-        self.wfntask_ush = AbinitBgwFlow(
-            dirname = pjoin(self.dirname, '04-Wfn_co'),
-            ngkpt = self.ngkpt,
-            nband = self.nbnd,
-            rhog_flag = True,
-            vxcg_flag = True,
-            **kwargs)
-
+        # Unshifted wavefunction tasks for Sigma
+        # only if not already computed for Epsilon.
         if self.has_kshift:
+
+            self.wfntask_ush = AbinitBgwFlow(
+                dirname = pjoin(self.dirname, '04-Wfn_co'),
+                ngkpt = self.ngkpt,
+                nband = self.nbnd,
+                rhog_flag = True,
+                vxcg_flag = True,
+                **kwargs)
+
             self.add_task(self.wfntask_ush)
+
         else:
             self.wfntask_ush = self.wfntask_ksh
 
