@@ -138,7 +138,7 @@ class Task(object):
         """
         return self._STATUS_UNKNOWN
         
-    def report(self, file=sys.stdout, **kwargs):
+    def report(self, file=None, color=True, **kwargs):
         """
         Report whether the task completed normally.
 
@@ -148,11 +148,20 @@ class Task(object):
             Write the task status in an open file.
         check_time: bool (False)
             Consider a task as unstarted if output is older than input.
+        color: bool (True)
+            Color the output. Use this flag to disable the colors
+            e.g. if you want to pipe the output to a file.
+            No color are used whenever a 'file' argument is given.
         """
         status = self.get_status(**kwargs)
-        color = self._report_colors[status]
-        s = '   {:<20}  -  Status :  {}{}{}'.format(
-             self._TASK_NAME, color, status, self._end_color)
+
+        if file is None and color:
+            col = self._report_colors[status]
+            status = col + str(status) + self._end_color
+
+        s = '   {:<20}  -  Status :  {}'.format(self._TASK_NAME, status)
+
+        file = file if file is not None else sys.stdout
         print(s, file=file)
 
 
