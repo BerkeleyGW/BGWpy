@@ -1,6 +1,7 @@
 
 from collections import OrderedDict
-from ..core import MPITask, IOTask, BasicInputFile
+from ..core import BasicInputFile
+from .bgwtask import BGWTask
 
 __all__ = ['IneqpInput', 'IneqpTask']
 
@@ -20,11 +21,11 @@ class IneqpInput(BasicInputFile):
         super(IneqpInput, self).__init__(all_variables, keywords)
 
 
-class IneqpTask(MPITask, IOTask):
+class IneqpTask(BGWTask):
 
+    _TASK_NAME = 'Inteqp task'
     _input_fname = 'inteqp.inp'
     _output_fname = 'inteqp.log'
-    _TAG_JOB_COMPLETED = 'TOTAL:'
 
     def __init__(self, dirname, **kwargs):
 
