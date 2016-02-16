@@ -1,13 +1,12 @@
 
 from collections import OrderedDict
-from BGWpy.core import MPITask, IOTask, BasicInputFile
+from ..core import MPITask, IOTask, BasicInputFile
 
 __all__ = ['IneqpInput', 'IneqpTask']
 
 class IneqpInput(BasicInputFile):
 
     def __init__(self, *keywords, **variables):
-
 
         all_variables = OrderedDict([
             ('number_val_bands_coarse', 1),
@@ -23,7 +22,9 @@ class IneqpInput(BasicInputFile):
 
 class IneqpTask(MPITask, IOTask):
 
+    _input_fname = 'inteqp.inp'
     _output_fname = 'inteqp.log'
+    _TAG_JOB_COMPLETED = 'TOTAL:'
 
     def __init__(self, dirname, **kwargs):
 
@@ -41,9 +42,9 @@ class IneqpTask(MPITask, IOTask):
             *kwargs.get('extra_lines',[]),
             **kwargs.get('extra_variables',{}))
 
-        self.input.fname = 'inteqp.inp'
+        self.input.fname = self._input_fname
 
-        ex = 'inteqp.cplx.x' #if self._flavor_complex else 'inteqp.real.x'
+        ex = 'inteqp.cplx.x' if self._flavor_complex else 'inteqp.real.x'
         self.runscript['EXEC'] = ex
         self.runscript['STDOUT'] = self._output_fname
         self.runscript.append('$MPIRUN $EXEC &> $STDOUT')
