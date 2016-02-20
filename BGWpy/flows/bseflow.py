@@ -202,19 +202,16 @@ class BSEFlow(Workflow):
     @truncation_flag.setter
     def truncation_flag(self, value):
 
-        # Remove old values
-        if self._truncation_flag in self.epsilontask.input.keywords:
-            i = self.epsilontask.input.keywords.index(self._truncation_flag)
-            del self.epsilontask.input.keywords[i]
+        for task in (self.epsilontask, self.sigmatask,
+                     self.kerneltask, self.absorptiontask):
 
-        if self._truncation_flag in self.sigmatask.input.keywords:
-            i = self.sigmatask.input.keywords.index(self._truncation_flag)
-            del self.sigmatask.input.keywords[i]
+            # Remove old value
+            if self._truncation_flag in task.input.keywords:
+                i = task.input.keywords.index(self._truncation_flag)
+                del task.input.keywords[i]
 
-        # Add new value
-        if value:
-            self.epsilontask.input.keywords.append(value)
-            self.sigmatask.input.keywords.append(value)
+            # Add new value
+            task.input.keywords.append(value)
 
         self._truncation_flag = value
 
