@@ -168,7 +168,8 @@ class GWFlow(Workflow):
                 del task.input.keywords[i]
 
             # Add new value
-            task.input.keywords.append(value)
+            if value:
+                task.input.keywords.append(value)
 
         self._truncation_flag = value
 

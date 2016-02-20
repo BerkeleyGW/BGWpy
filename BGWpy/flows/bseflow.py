@@ -161,8 +161,6 @@ class BSEFlow(Workflow):
             epsmat_fname = self.epsilontask.epsmat_fname,
             **kwargs)
 
-        self.truncation_flag = kwargs.get('truncation_flag')
-
         # Kernel calculation (BSE)
         self.kerneltask = KernelTask(
             dirname = pjoin(self.dirname, '13-kernel'),
@@ -185,6 +183,8 @@ class BSEFlow(Workflow):
             sigma_fname = self.sigmatask.sigma_fname,
             eqp_fname = self.sigmatask.eqp1_fname,
             **kwargs)
+
+        self.truncation_flag = kwargs.get('truncation_flag')
 
         # Add all tasks
         self.add_tasks([self.epsilontask, self.sigmatask,
@@ -211,7 +211,8 @@ class BSEFlow(Workflow):
                 del task.input.keywords[i]
 
             # Add new value
-            task.input.keywords.append(value)
+            if value:
+                task.input.keywords.append(value)
 
         self._truncation_flag = value
 
