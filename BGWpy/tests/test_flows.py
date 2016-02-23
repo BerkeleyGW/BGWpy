@@ -12,8 +12,7 @@ class TestFlows(TestBGWTasksMaker):
     common_kwargs = copy(TestBGWTasksMaker.common_kwargs)
     common_kwargs.update(
         dft_flavor='espresso',
-        nbnd_epsilon=8,
-        nbnd_sigma=8,
+        nbnd_fine=9,
         kshift=[.5,.5,.5],
         qshift = [.001,.0,.0],
         sigma_extra_lines = ['screening_semiconductor'],
