@@ -51,6 +51,8 @@ class SigmaTask(BGWTask):
             Path to the eps0mat file produced by epsilon.
         epsmat_fname : str
             Path to the epsmat file produced by epsilon.
+        sigma_k_points : list, optional
+            Specific list of k-points to compute corrections.
         extra_lines : list, optional
             Any other lines that should appear in the input file.
         extra_variables : dict, optional
@@ -73,11 +75,15 @@ class SigmaTask(BGWTask):
 
         super(SigmaTask, self).__init__(dirname, **kwargs)
 
-        # Compute k-points grids
-        # Maybe I should make these properties...
-        structure = kwargs.pop('structure')
-        ngkpt = kwargs['ngkpt']
-        kpts_ush, wtks_ush = get_kpt_grid(structure, ngkpt)
+        kpts_ush = kwargs.get('sigma_k_points',[])
+        n_kpts_ush = len(kpts_ush)
+
+        if  n_kpts_ush == 0 :
+            # Compute k-points grids
+            # Maybe I should make these properties...
+            structure = kwargs.pop('structure')
+            ngkpt = kwargs['ngkpt']
+            kpts_ush, wtks_ush = get_kpt_grid(structure, ngkpt)
 
         extra_lines = kwargs.get('extra_lines',[])
         extra_variables = kwargs.get('extra_variables',{})
