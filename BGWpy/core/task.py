@@ -25,6 +25,14 @@ class Task(object):
     _STATUS_UNFINISHED = 'Unfinished'
     _STATUS_UNKNOWN = 'Unknown'
 
+    _report_colors = {
+        _STATUS_COMPLETED : '\033[92m',
+        _STATUS_UNSTARTED : '\033[94m',
+        _STATUS_UNFINISHED : '\033[91m',
+        _STATUS_UNKNOWN : '\033[95m',
+        }
+    _end_color = '\033[0m'
+
     def __init__(self, dirname='./', runscript_fname='run.sh', store_variables=True, *args, **kwargs):
         """
         Keyword arguments
@@ -130,10 +138,30 @@ class Task(object):
         """
         return self._STATUS_UNKNOWN
         
-    def report(self, file=sys.stdout):
-        status = self.get_status()
-        s = 'Status     :   {}'.format(status)
-        s = '{:<20}  -  Status :  {}'.format(self._TASK_NAME, status)
+    def report(self, file=None, color=True, **kwargs):
+        """
+        Report whether the task completed normally.
+
+        Keyword arguments
+        -----------------
+        file: (sys.stdout)
+            Write the task status in an open file.
+        check_time: bool (False)
+            Consider a task as unstarted if output is older than input.
+        color: bool (True)
+            Color the output. Use this flag to disable the colors
+            e.g. if you want to pipe the output to a file.
+            No color are used whenever a 'file' argument is given.
+        """
+        status = self.get_status(**kwargs)
+
+        if file is None and color:
+            col = self._report_colors[status]
+            status = col + str(status) + self._end_color
+
+        s = '   {:<20}  -  Status :  {}'.format(self._TASK_NAME, status)
+
+        file = file if file is not None else sys.stdout
         print(s, file=file)
 
 
@@ -144,10 +172,12 @@ class MPITask(Task):
     """Task whose run script defines MPI variables for the main execution."""
 
     _mpirun = default_mpi['mpirun']
-    _nproc_flag = default_mpi['nproc_flag']
-    _nproc_per_node_flag = default_mpi['nproc_per_node_flag']
     _nproc = default_mpi['nproc']
+    _nproc_flag = default_mpi['nproc_flag']
     _nproc_per_node = default_mpi['nproc_per_node']
+    _nproc_per_node_flag = default_mpi['nproc_per_node_flag']
+    _nodes = default_mpi['nodes']
+    _nodes_flag = default_mpi['nodes_flag']
 
     def __init__(self, *args, **kwargs):
         """
@@ -158,19 +188,20 @@ class MPITask(Task):
             Main directory from which the scripts are executed.
         runscript_fname : str ('run.sh')
             Name of the main execution script.
+        mpirun : str ('mpirun')
+            Command to call the mpi runner.
         nproc : int (1)
-            The number of processors per node,
-            that is, the number of parallel executions.
+            Number of processors or number of parallel executions.
+        nproc_flag: str ('-n')
+            Flag to specify nproc to the mpi runner.
         nproc_per_node : int (nproc)
             Number of processors (parallel executions) per node.
-        mpirun : str ('mpirun')
-            The command to call the mpi runner,
-            with the flag to specify the number of processors.
-        nproc_flag: str ('-n')
-            The number of processors per node,
-            that is, the number of parallel executions.
         nproc_per_node_flag : str ('--npernode')
-            The flag to specify the number of processors per node.
+            Flag to specify the number of processors per node.
+        nodes : int (1)
+            Number of nodes.
+        nodes_flag: str ('-n')
+            Flag to specify the number of nodes to the mpi runner.
 
         """
 
@@ -182,14 +213,12 @@ class MPITask(Task):
         self.nproc = default_mpi['nproc']
         self.nproc_per_node = default_mpi['nproc_per_node']
 
-        for key in ('mpirun', 'nproc_flag', 'nproc_per_node_flag',
-                    'nproc', 'nproc_per_node'):
+        for key in ('mpirun', 'nproc', 'nproc_flag',
+                    'nproc_per_node', 'nproc_per_node_flag',
+                    'nodes', 'nodes_flag'):
+                   
             if key in kwargs:
                 setattr(self, key, kwargs[key])
-
-        # If nproc is specified but not nproc_per_node, set nproc_per_node = nproc.
-        #if 'nproc' in kwargs:
-        #    self.nproc_per_node = kwargs.get('nproc_per_node', self.nproc)
 
         # This is mostly for backward compatibility
         if 'mpirun_n' in kwargs:
@@ -198,21 +227,23 @@ class MPITask(Task):
     def _declare_mpirun(self):
         self.runscript['MPIRUN'] = self.mpirun_variable
 
-    def _nullify_mpirun(self):
-        self.runscript['MPIRUN'] = ''
-
-    def _declare_if_mpirun(self):
-        if self.mpirun:
-            self._declare_mpirun()
-        else:
-            self._nullify_mpirun()
-
     @property
     def mpirun_variable(self):
-        return '{} {} {} {} {}'.format(
-                                 self.mpirun,
-                                 self.nproc_flag, self.nproc,
-                                 self.nproc_per_node_flag, self.nproc_per_node)
+        if not self.mpirun:
+            return ''
+
+        variable = str(self.mpirun)
+
+        if self.nproc_flag and self.nproc:
+            variable += ' {} {}'.format(self.nproc_flag, self.nproc)
+
+        if self.nproc_per_node_flag and self.nproc_per_node:
+            variable += ' {} {}'.format(self.nproc_per_node_flag, self.nproc_per_node)
+
+        if self.nodes_flag and self.nodes:
+            variable += ' {} {}'.format(self.nodes_flag, self.nodes)
+
+        return variable
 
     @property
     def mpirun(self):
@@ -221,7 +252,7 @@ class MPITask(Task):
     @mpirun.setter
     def mpirun(self, value):
         self._mpirun = value
-        self._declare_if_mpirun()
+        self._declare_mpirun()
 
     @property
     def nproc(self):
@@ -230,16 +261,7 @@ class MPITask(Task):
     @nproc.setter
     def nproc(self, value):
         self._nproc = value
-        self._declare_if_mpirun()
-
-    @property
-    def nproc_per_node(self):
-        return self._nproc_per_node
-
-    @nproc_per_node.setter
-    def nproc_per_node(self, value):
-        self._nproc_per_node = value
-        self._declare_if_mpirun()
+        self._declare_mpirun()
 
     @property
     def nproc_flag(self):
@@ -248,7 +270,16 @@ class MPITask(Task):
     @nproc_flag.setter
     def nproc_flag(self, value):
         self._nproc_flag = value
-        self._declare_if_mpirun()
+        self._declare_mpirun()
+
+    @property
+    def nproc_per_node(self):
+        return self._nproc_per_node
+
+    @nproc_per_node.setter
+    def nproc_per_node(self, value):
+        self._nproc_per_node = value
+        self._declare_mpirun()
 
     @property
     def nproc_per_node_flag(self):
@@ -257,7 +288,25 @@ class MPITask(Task):
     @nproc_per_node_flag.setter
     def nproc_per_node_flag(self, value):
         self._nproc_per_node_flag = value
-        self._declare_if_mpirun()
+        self._declare_mpirun()
+
+    @property
+    def nodes(self):
+        return self._nodes
+
+    @nodes.setter
+    def nodes(self, value):
+        self._nodes = value
+        self._declare_mpirun()
+
+    @property
+    def nodes_flag(self):
+        return self._nodes_flag
+
+    @nodes_flag.setter
+    def nodes_flag(self, value):
+        self._nodes_flag = value
+        self._declare_mpirun()
 
     @property
     def mpirun_n(self):
@@ -301,7 +350,10 @@ class IOTask(Task):
     _output_fname = ''
     _TAG_JOB_COMPLETED = 'JOB COMPLETED'
 
-    def get_status(self):
+    # It is important that this task has no __init__ function,
+    # because it is mostly used with multiple-inheritance classes.
+
+    def get_status(self, check_time=False):
 
         if not self.input_fname or not self.output_fname:
             return self._STATUS_UNKNOWN
@@ -315,7 +367,7 @@ class IOTask(Task):
         input_creation_time = os.path.getmtime(self.input_fname)
         output_creation_time = os.path.getmtime(self.output_fname)
 
-        if input_creation_time > output_creation_time:
+        if check_time and input_creation_time > output_creation_time:
             return self._STATUS_UNSTARTED
 
         if not self._TAG_JOB_COMPLETED:

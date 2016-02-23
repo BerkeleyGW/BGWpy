@@ -15,7 +15,8 @@ flow = BSEFlow(
     pseudos = ['31-Ga.PBE.UPF', '33-As.PBE.UPF'],
 
     ecutwfc = 10.0,
-    nbnd = 9,
+    nbnd = 12,
+    nbnd_fine = 9,
 
     ngkpt = [2,2,2],
     kshift = [.5,.5,.5],
