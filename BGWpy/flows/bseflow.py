@@ -1,9 +1,6 @@
 """Workflow to perform BSE calculation."""
-import os
 from os.path import join as pjoin
-import subprocess
-import pickle
-
+import warnings
 
 from ..config import dft_flavor, check_dft_flavor
 from ..config import is_dft_flavor_espresso, is_dft_flavor_abinit
@@ -79,8 +76,8 @@ class BSEFlow(Workflow):
             Number of valence bands on the fine grid.
         nbnd_cond_fi : int
             Number of conduction bands on the fine grid.
-        nbnd_absorption : int
-            Number of bands to be computed for absorption.
+        nbnd_fine : int
+            Number of bands to be computed on the fine grid for absorption.
         epsilon_extra_lines : list, optional
             Any other lines that should appear in the epsilon input file.
         epsilon_extra_variables : dict, optional
@@ -121,11 +118,17 @@ class BSEFlow(Workflow):
         self.ngkpt_fi = kwargs.pop('ngkpt_fine', self.ngkpt)
         self.kshift_fi = kwargs.pop('kshift_fine', self.kshift)
         self.qshift_fi = kwargs.pop('qshift_fine', self.qshift)
-        self.nbnd_absorption = kwargs.pop('nbnd_absorption', self.nbnd)
 
-        self.dft_flavor = check_dft_flavor(kwargs.get('dft_flavor',dft_flavor))
+        if 'nbnd_fine' not in kwargs:
+            warnings.warn("'nbnd_fine' was not specified.\n" + 
+                          "Thus, number of band computed on the fine grid will default to 'nbnd' (coarse grid).\n" +
+                          "This is usually a waste and you might want to choose 'nbnd_fine' according to\n" +
+                          "   nbnd_fine = nbnd_occupied + nbnd_cond_fi + 1.")
+        self.nbnd_fine = kwargs.pop('nbnd_fine', self.nbnd)
 
         # ==== DFT calculations ==== #
+
+        self.dft_flavor = check_dft_flavor(kwargs.get('dft_flavor',dft_flavor))
 
         # Quantum Espresso flavor
         if is_dft_flavor_espresso(self.dft_flavor):
@@ -158,8 +161,6 @@ class BSEFlow(Workflow):
             epsmat_fname = self.epsilontask.epsmat_fname,
             **kwargs)
 
-        self.truncation_flag = kwargs.get('truncation_flag')
-
         # Kernel calculation (BSE)
         self.kerneltask = KernelTask(
             dirname = pjoin(self.dirname, '13-kernel'),
@@ -183,6 +184,8 @@ class BSEFlow(Workflow):
             eqp_fname = self.sigmatask.eqp1_fname,
             **kwargs)
 
+        self.truncation_flag = kwargs.get('truncation_flag')
+
         # Add all tasks
         self.add_tasks([self.epsilontask, self.sigmatask,
                         self.kerneltask, self.absorptiontask], merge=False)
@@ -199,19 +202,17 @@ class BSEFlow(Workflow):
     @truncation_flag.setter
     def truncation_flag(self, value):
 
-        # Remove old values
-        if self._truncation_flag in self.epsilontask.input.keywords:
-            i = self.epsilontask.input.keywords.index(self._truncation_flag)
-            del self.epsilontask.input.keywords[i]
+        for task in (self.epsilontask, self.sigmatask,
+                     self.kerneltask, self.absorptiontask):
 
-        if self._truncation_flag in self.sigmatask.input.keywords:
-            i = self.sigmatask.input.keywords.index(self._truncation_flag)
-            del self.sigmatask.input.keywords[i]
+            # Remove old value
+            if self._truncation_flag in task.input.keywords:
+                i = task.input.keywords.index(self._truncation_flag)
+                del task.input.keywords[i]
 
-        # Add new value
-        if value:
-            self.epsilontask.input.keywords.append(value)
-            self.sigmatask.input.keywords.append(value)
+            # Add new value
+            if value:
+                task.input.keywords.append(value)
 
         self._truncation_flag = value
 
@@ -222,17 +223,32 @@ class BSEFlow(Workflow):
         """
         from ..QE import QeScfTask, QeBgwFlow
 
-        self.scftask = QeScfTask(
-            dirname = pjoin(self.dirname, '01-Density'),
-            ngkpt = self.ngkpt,
-            kshift = self.kshift,
-            **kwargs)
+        if 'charge_density_fname' in kwargs:
+            if 'data_file_fname' not in kwargs:
+                raise Exception("Error, when providing charge_density_fname, data_file_fname is required.")
+
+        else:
+
+            self.scftask = QeScfTask(
+                dirname = pjoin(self.dirname, '01-Density'),
+                ngkpt = self.ngkpt,
+                kshift = self.kshift,
+                **kwargs)
+
+            self.add_task(self.scftask)
+            
+            kwargs.update(
+                charge_density_fname = self.scftask.charge_density_fname,
+                data_file_fname = self.scftask.data_file_fname,
+                spin_polarization_fname = self.scftask.spin_polarization_fname)
+        
 
         kwargs.update(
             charge_density_fname = self.scftask.charge_density_fname,
             data_file_fname = self.scftask.data_file_fname,
             spin_polarization_fname = self.scftask.spin_polarization_fname)
         
+        # Wavefunction tasks for Epsilon
         self.wfntask_ksh = QeBgwFlow(
             dirname = pjoin(self.dirname, '02-Wfn'),
             ngkpt = self.ngkpt,
@@ -248,23 +264,28 @@ class BSEFlow(Workflow):
             nbnd = None,
             **kwargs)
 
-        self.add_tasks([self.scftask, self.wfntask_ksh, self.wfntask_qsh])
+        self.add_tasks([self.wfntask_ksh, self.wfntask_qsh])
 
-        self.wfntask_ush = QeBgwFlow(
-            dirname = pjoin(self.dirname, '04-Wfn_co'),
-            ngkpt = self.ngkpt,
-            nbnd = self.nbnd,
-            rhog_flag = True,
-            **kwargs)
-
+        # Unshifted wavefunction tasks for Sigma
+        # only if not already computed for Epsilon.
         if self.has_kshift:
+
+            self.wfntask_ush = QeBgwFlow(
+                dirname = pjoin(self.dirname, '04-Wfn_co'),
+                ngkpt = self.ngkpt,
+                nbnd = self.nbnd,
+                rhog_flag = True,
+                **kwargs)
+
             self.add_task(self.wfntask_ush)
+
         else:
             self.wfntask_ush = self.wfntask_ksh
 
+        # Wavefunctions on fine k-point grids
         self.wfntask_fi_ush = QeBgwFlow(
             dirname = pjoin(self.dirname, '05-Wfn_fi'),
-            nbnd = self.nbnd_absorption,
+            nbnd = self.nbnd_fine,
             ngkpt = self.ngkpt_fi,
             kshift = self.kshift_fi,
             qshift = 3*[.0],
@@ -298,16 +319,25 @@ class BSEFlow(Workflow):
         """
         from ..Abinit import AbinitScfTask, AbinitBgwFlow
 
-        self.scftask = AbinitScfTask(
-            dirname = pjoin(self.dirname, '01-Density'),
-            ngkpt = self.ngkpt,
-            kshift = self.kshift,
-            **kwargs)
-        
-        kwargs.update(
-            charge_density_fname = self.scftask.charge_density_fname,
-            vxc_fname = self.scftask.vxc_fname)
+        # Either charge density is provided or an SCF task is initialized.
+        if 'charge_density_fname' in kwargs:
+            if 'vxc_fname' not in kwargs:
+                raise Exception("Error, when providing charge_density_fname, vxc_fname is required")
 
+        else:
+            self.scftask = AbinitScfTask(
+                dirname = pjoin(self.dirname, '01-Density'),
+                ngkpt = self.ngkpt,
+                kshift = self.kshift,
+                **kwargs)
+
+            self.add_task(self.scftask)
+            
+            kwargs.update(
+                charge_density_fname = self.scftask.charge_density_fname,
+                vxc_fname = self.scftask.vxc_fname)
+
+        # Wavefunction tasks for Epsilon
         self.wfntask_ksh = AbinitBgwFlow(
             dirname = pjoin(self.dirname, '02-Wfn'),
             ngkpt = self.ngkpt,
@@ -323,24 +353,29 @@ class BSEFlow(Workflow):
             nband = None,
             **kwargs)
         
-        self.add_tasks([self.scftask, self.wfntask_ksh, self.wfntask_qsh])
+        self.add_tasks([self.wfntask_ksh, self.wfntask_qsh])
 
-        self.wfntask_ush = AbinitBgwFlow(
-            dirname = pjoin(self.dirname, '04-Wfn_co'),
-            ngkpt = self.ngkpt,
-            nband = self.nbnd,
-            rhog_flag = True,
-            vxcg_flag = True,
-            **kwargs)
-
+        # Unshifted wavefunction tasks for Sigma
+        # only if not already computed for Epsilon.
         if self.has_kshift:
+
+            self.wfntask_ush = AbinitBgwFlow(
+                dirname = pjoin(self.dirname, '04-Wfn_co'),
+                ngkpt = self.ngkpt,
+                nband = self.nbnd,
+                rhog_flag = True,
+                vxcg_flag = True,
+                **kwargs)
+
             self.add_task(self.wfntask_ush)
+
         else:
             self.wfntask_ush = self.wfntask_ksh
 
+        # Wavefunctions on fine k-point grids
         self.wfntask_fi_ush = AbinitBgwFlow(
             dirname = pjoin(self.dirname, '05-Wfn_fi'),
-            nband = self.nbnd_absorption,
+            nband = self.nbnd_fine,
             ngkpt = self.ngkpt_fi,
             kshift = self.kshift_fi,
             qshift = 3*[.0],

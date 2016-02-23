@@ -7,17 +7,25 @@ Within this directory, copy this file as follow:
     cp  user_configuration.py.template  user_configuration.py
 
 Then, edit the file user_configuration.py as desired.
+This should be done before installing the module with the setup script.
 """
 
-# Note that the parameters below can always be used
+# MPI parameters
+# Some mpi runners specify the number of processors and number of proc. per node,
+# while other specify the number of nodes and the number of proc. per node.
+# To disable a feature, set the value or the flag to None.
+# Note that these parameters can always be used
 # as keyword arguments for the various tasks and workflows.
 default_mpi = dict(
-    nproc = 1,
-    nproc_per_node = 1,
     mpirun = 'mpirun',
+    nproc = 1,
     nproc_flag = '-n',
+    nproc_per_node = 1,
     nproc_per_node_flag = '--npernode',
+    nodes = None,
+    nodes_flag = None,
     )
+
 
 # BGWpy generate several bash script, essentially to run BerkeleyGW.
 default_runscript = dict(
@@ -31,12 +39,16 @@ default_runscript = dict(
     footer = [],                # Lines that appear at the end of the scripts.
     )
 
-# Use hdf5 io (this will eventually be mandatory)
+
+# BerkeleyGW can be compiled with or without HDF5 io.
+# Set this flag accordingly.
 use_hdf5 = True
 
-# Use Complex flavor of the code
+# BerkeleyGW can be compiled in complex or real flavor.
+# Set this flag accordingly.
 flavor_complex = True
 
 # Choice of dft code ('espresso', 'abinit')
+# for the premade workflows.
 dft_flavor = 'espresso'
 
