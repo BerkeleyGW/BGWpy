@@ -120,7 +120,7 @@ class AbinitWfnTask(AbinitTask):
     @input_wavefunction_fname.setter
     def input_wavefunction_fname(self, value):
         self._input_wavefunction_fname = value
-        dest = os.path.relpath(self.get_idat('WFN'), self.dirname)
+        dest = os.path.relpath(self.get_idat('WFK'), self.dirname)
         self.update_link(value, dest)
 
     @property
