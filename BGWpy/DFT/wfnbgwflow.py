@@ -18,7 +18,7 @@ class WfnBgwFlow(Workflow):
             kwargs.setdefault('charge_density_fname', self.rhotask.charge_density_fname)
 
         self.wfntask = self._WfnTask(**kwargs)
-        self.wfbgwntask = self._WfnBgwTask(**kwargs)
+        self.wfnbgwntask = self._WfnBgwTask(**kwargs)
 
     # @abstractproperty
     def rho_fname(self):
