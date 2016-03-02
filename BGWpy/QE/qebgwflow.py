@@ -135,11 +135,11 @@ class QeBgwFlow(WfnBgwFlow):
 
 
         # Wfn 2 BGW
-        self.wfbgwntask = Qe2BgwTask(
+        self.wfnbgwntask = Qe2BgwTask(
             dirname = self.wfntask.dirname,
             **kwargs)
 
-        self.add_task(self.wfbgwntask, merge=False)
+        self.add_task(self.wfnbgwntask, merge=False)
 
     @property
     def charge_density_fname(self):
@@ -172,12 +172,12 @@ class QeBgwFlow(WfnBgwFlow):
     @property
     def rho_fname(self):
         """The charge density file name for BerkeleyGW."""
-        return self.wfbgwntask.rho_fname
+        return self.wfnbgwntask.rho_fname
 
     @property
     def wfn_fname(self):
         """The wavefunctions file name for BerkeleyGW."""
-        return self.wfbgwntask.wfn_fname
+        return self.wfnbgwntask.wfn_fname
 
     @property
     def vxc_fname(self):
@@ -187,5 +187,5 @@ class QeBgwFlow(WfnBgwFlow):
     @property
     def vxc_dat_fname(self):
         """The xc potential file name for BerkeleyGW."""
-        return self.wfbgwntask.vxc_dat_fname
+        return self.wfnbgwntask.vxc_dat_fname
 

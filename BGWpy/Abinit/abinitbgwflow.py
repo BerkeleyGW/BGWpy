@@ -112,9 +112,10 @@ class AbinitBgwFlow(WfnBgwFlow):
 
         self.add_task(self.wfntask, merge=False)
 
+        wfn_fname = kwargs.pop('wfn_fname',None)
 
         # Wfn 2 BGW
-        self.wfbgwntask = Abi2BgwTask(
+        self.wfnbgwntask = Abi2BgwTask(
             dirname = self.wfntask.dirname,
             wfng_flag = kwargs.pop('wfng_flag', True),
             rhog_flag = kwargs.pop('rhog_flag', True),
@@ -124,7 +125,7 @@ class AbinitBgwFlow(WfnBgwFlow):
             vxc_fname = vxc_fname if vxc_fname else 'dummy',
             **kwargs)
 
-        self.add_task(self.wfbgwntask, merge=False)
+        self.add_task(self.wfnbgwntask, merge=False)
 
     @property
     def charge_density_fname(self):
@@ -139,17 +140,17 @@ class AbinitBgwFlow(WfnBgwFlow):
     @property
     def rho_fname(self):
         """The charge density file name for BerkeleyGW."""
-        return self.wfbgwntask.rho_fname
+        return self.wfnbgwntask.rho_fname
 
     @property
     def wfn_fname(self):
         """The wavefunctions file name for BerkeleyGW."""
-        return self.wfbgwntask.wfn_fname
+        return self.wfnbgwntask.wfn_fname
 
     @property
     def vxc_fname(self):
         """The xc potential file name for BerkeleyGW."""
-        return self.wfbgwntask.vxc_fname
+        return self.wfnbgwntask.vxc_fname
 
     @property
     def vxc_dat_fname(self):
