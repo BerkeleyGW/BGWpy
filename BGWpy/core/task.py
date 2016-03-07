@@ -106,15 +106,28 @@ class Task(object):
         If dest is already defined in a link, then the target is replaced.
         The target will be expressed relative to the dirname.
         The destination *must* be relative to the dirname.
+        If target is empty or None, the link is suppressed.
         """
-        reltarget = os.path.relpath(target,
-                        os.path.join(self.dirname, os.path.dirname(dest)))
+        if not target:
+            self.remove_link(dest)
+            return
+
+        reltarget = os.path.relpath(
+            target, os.path.join(self.dirname, os.path.dirname(dest)))
+
         for link in self.runscript.links:
             if link[1] == dest:
                 link[0] = reltarget
                 break
         else:
             self.runscript.add_link(reltarget, dest)
+
+    def remove_link(self, dest):
+        """Remove a link from the name of the destination."""
+        for i, link in enumerate(self.runscript.links):
+            if link[1] == dest:
+                del self.runscript.links[i]
+                break
         
     def update_copy(self, source, dest):
         """
