@@ -63,6 +63,10 @@ class AbinitWfnTask(AbinitTask):
 
         self.charge_density_fname = kwargs['charge_density_fname']
 
+        flag_input_wavefunction_fname =  kwargs.get('input_wavefunction_fname',0)
+        if flag_input_wavefunction_fname != 0 :
+            self.input_wavefunction_fname = kwargs['input_wavefunction_fname']
+
     @staticmethod
     def get_wfn_variables(**kwargs):
         """Return a dict of variables required for an SCF calculation."""
@@ -108,6 +112,16 @@ class AbinitWfnTask(AbinitTask):
         self.update_link(value, dest)
 
     rho_fname = charge_density_fname
+
+    @property
+    def input_wavefunction_fname(self):
+        return ""
+    
+    @input_wavefunction_fname.setter
+    def input_wavefunction_fname(self, value):
+        self._input_wavefunction_fname = value
+        dest = os.path.relpath(self.get_idat('WFK'), self.dirname)
+        self.update_link(value, dest)
 
     @property
     def exchange_correlation_potential_fname(self):

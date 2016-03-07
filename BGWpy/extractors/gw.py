@@ -78,7 +78,9 @@ def parse_sigma_output(f):
     # Initialize the results dict
     results = dict(nspin=nspin, nkpt=nkpt, nband=nband)
 
-    keys = ['elda','ecor','x','sx-x','ch','sig','vxc','eqp0','eqp1','Znk']
+#    keys = ['elda','ecor','x','sx-x','ch','sig','vxc','eqp0','eqp1','Znk']
+    keys=['Emf','Eo','Vxc','X','Cor','Eqp0','Eqp1','Znk']
+
     for key in keys:
         results[key] = np.zeros((nspin, nkpt, nband), dtype=np.float)
 
@@ -219,8 +221,12 @@ def parse_sigma_output_block(S):
     results['ik'] = int(kpt_line.split()[7])
     results['spin'] = int(kpt_line.split()[10])
 
-    keys = ['n','elda','ecor','x','sx-x','ch','sig','vxc','eqp0','eqp1','Znk']
-    types = [int] + 10 * [float]
+#    keys = ['n','elda','ecor','x','sx-x','ch','sig','vxc','eqp0','eqp1','Znk']
+#    types = [int] + 10 * [float]
+
+    keys=['n','Emf','Eo','Vxc','X','Cor','Eqp0','Eqp1','Znk']
+    types = [int] + 8 * [float]
+
 
     for key in keys:
         results[key] = list()
