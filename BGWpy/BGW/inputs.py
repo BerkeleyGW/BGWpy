@@ -1,5 +1,7 @@
-
+from __future__ import print_function
 from collections import OrderedDict
+
+import numpy as np
 
 from ..core import BasicInputFile
 
@@ -44,6 +46,17 @@ class SigmaInput(BasicInputFile):
             ('band_index_max' , ibnd_max),
             ])
 
+        # Handle q-points
+        self.qpts = variables.pop('qpts', [])
+        for key in ('ngqpt', 'qgrid'):
+            if key in variables:
+                self.ngqpt = variables.pop(key)
+                break
+        else:
+            if self.qpts:
+                raise Exception("When qpts is specified, the qpoint grid must also be specified " +
+                                "through 'ngqpt' or 'qgrid'.")
+
         all_variables.update(variables)
 
         super(SigmaInput, self).__init__(all_variables, keywords)
@@ -52,6 +65,8 @@ class SigmaInput(BasicInputFile):
 
     def __str__(self):
 
+        S = super(SigmaInput, self).__str__()
+
         kpt_block = '\nbegin kpoints\n'
         for k in self.kpts:
             for ki in k:
@@ -59,7 +74,24 @@ class SigmaInput(BasicInputFile):
             kpt_block += ' 1.0\n'
         kpt_block += 'end\n'
 
-        return super(SigmaInput, self).__str__() + kpt_block
+        S += kpt_block
+
+        if self.qpts:
+            qpt_block = '\nbegin qpoints\n'
+            for q in self.qpts:
+                for qi in q:
+                    qpt_block += ' {:11.8f}'.format(qi)
+
+                if all(np.isclose(q, .0)):
+                    qpt_block += ' 1.0 1\n'
+                else:
+                    qpt_block += ' 1.0 0\n'
+            qpt_block += 'end\n'
+            qpt_block += 'qgrid {} {} {}\n'.format(*self.ngqpt)
+
+            S += qpt_block
+
+        return S
 
 
 class KernelInput(BasicInputFile):

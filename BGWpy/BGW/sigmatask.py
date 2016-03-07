@@ -42,6 +42,10 @@ class SigmaTask(BGWTask):
             Minimum band index for GW corrections.
         ibnd_max : int
             Maximum band index for GW corrections.
+        ngqpt : list(3), float, optional
+            Q-points grid, for HF or hybrid functionals.
+        qpts : 2D list(nqpt,3), float, optional
+            List of q-points, for HF or hybrid functionals.
         wfn_co_fname : str
             Path to the wavefunction file produced by pw2bgw.
         rho_fname : str
@@ -74,7 +78,11 @@ class SigmaTask(BGWTask):
 
         super(SigmaTask, self).__init__(dirname, **kwargs)
 
-        # Find kpoints
+        extra_lines = kwargs.get('extra_lines',[])
+        extra_variables = kwargs.get('extra_variables',{})
+
+
+        # Use specified kpoints or compute them from grid.
         kpt_aliases = ('kpts', 'kpoints', 'sigma_kpts', 'sigma_k_points', 'sigma_kpoints')
         for key in kpt_aliases:
             if key in kwargs:
@@ -82,12 +90,24 @@ class SigmaTask(BGWTask):
                 break
         else:
             # Compute k-points grids
-            structure = kwargs.pop('structure')
+            structure = kwargs['structure']
             ngkpt = kwargs['ngkpt']
             kpts, wtks = get_kpt_grid(structure, ngkpt)
 
-        extra_lines = kwargs.get('extra_lines',[])
-        extra_variables = kwargs.get('extra_variables',{})
+
+        # Use specified qpoints or compute them from grid (HF).
+        if 'qpts' in kwargs:
+            qpts = kwargs['qpts']
+        elif 'ngqpt' in kwargs:
+            structure = kwargs['structure']
+            ngqpt = kwargs['ngqpt']
+            qpts, wtqs = get_kpt_grid(structure, ngqpt)
+        else:
+            qpts = []
+        if 'ngqpt' in kwargs:
+            extra_variables['qpts'] = qpts
+            extra_variables['ngqpt'] = kwargs['ngqpt']
+
 
         # Input file
         self.input = SigmaInput(
@@ -99,7 +119,8 @@ class SigmaTask(BGWTask):
 
         self.input.fname = self._input_fname
 
-        # Set up the run script
+
+        # Prepare links
         self.wfn_co_fname = kwargs['wfn_co_fname']
         self.rho_fname = kwargs['rho_fname']
 
@@ -112,13 +133,19 @@ class SigmaTask(BGWTask):
                 "Either 'vxc_dat_fname' or 'vxc_fname' must be provided " +
                 "to SigmaTask.")
 
-        self.eps0mat_fname = kwargs['eps0mat_fname']
-        self.epsmat_fname = kwargs['epsmat_fname']
+        # It might be useful to issue a warning if those
+        # files are not specified, but one would have to check the value
+        # of frequency_dependence... 
+        self.eps0mat_fname = kwargs.get('eps0mat_fname')
+        self.epsmat_fname = kwargs.get('epsmat_fname')
 
+
+        # Set up the run script
         ex = 'sigma.cplx.x' if self._flavor_complex else 'sigma.real.x'
         self.runscript['SIGMA'] = ex
         self.runscript['SIGMAOUT'] = self._output_fname
         self.runscript.append('$MPIRUN $SIGMA &> $SIGMAOUT')
+
 
     @property
     def wfn_co_fname(self):
