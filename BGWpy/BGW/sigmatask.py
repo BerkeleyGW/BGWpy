@@ -35,8 +35,9 @@ class SigmaTask(BGWTask):
         ngkpt : list(3), float
             K-points grid. Number of k-points along each primitive vector
             of the reciprocal lattice.
-        qshift : list(3), float
-            Q-point used to treat the Gamma point.
+        kpts : 2D list(nkpt,3), float, optional
+            List of k-points.
+            K-points are either specified using ngkpt or using kpts.
         ibnd_min : int
             Minimum band index for GW corrections.
         ibnd_max : int
@@ -51,8 +52,6 @@ class SigmaTask(BGWTask):
             Path to the eps0mat file produced by epsilon.
         epsmat_fname : str
             Path to the epsmat file produced by epsilon.
-        sigma_k_points : list, optional
-            Specific list of k-points to compute corrections.
         extra_lines : list, optional
             Any other lines that should appear in the input file.
         extra_variables : dict, optional
@@ -75,15 +74,17 @@ class SigmaTask(BGWTask):
 
         super(SigmaTask, self).__init__(dirname, **kwargs)
 
-        kpts_ush = kwargs.get('sigma_k_points',[])
-        n_kpts_ush = len(kpts_ush)
-
-        if  n_kpts_ush == 0 :
+        # Find kpoints
+        kpt_aliases = ('kpts', 'kpoints', 'sigma_kpts', 'sigma_k_points', 'sigma_kpoints')
+        for key in kpt_aliases:
+            if key in kwargs:
+                kpts = kwargs[key]
+                break
+        else:
             # Compute k-points grids
-            # Maybe I should make these properties...
             structure = kwargs.pop('structure')
             ngkpt = kwargs['ngkpt']
-            kpts_ush, wtks_ush = get_kpt_grid(structure, ngkpt)
+            kpts, wtks = get_kpt_grid(structure, ngkpt)
 
         extra_lines = kwargs.get('extra_lines',[])
         extra_variables = kwargs.get('extra_variables',{})
@@ -92,7 +93,7 @@ class SigmaTask(BGWTask):
         self.input = SigmaInput(
             kwargs['ibnd_min'],
             kwargs['ibnd_max'],
-            kpts_ush,
+            kpts,
             *extra_lines,
             **extra_variables)
 
