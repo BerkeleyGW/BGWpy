@@ -337,8 +337,7 @@ class GWFlow(Workflow):
                     nbdbuf = nbdbuf,
                     tolwfr = "1.d-05",
                     irdwfk = 1,
-                    input_wavefunction_fname=self.wfntask_ksh.wfn_fname,
-
+                    input_wavefunction_fname=self.wfntask_ksh.wfnbgwntask.get_odat('WFK'),
                     **kwargs)
 
 
