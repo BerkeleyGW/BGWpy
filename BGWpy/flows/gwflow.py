@@ -79,6 +79,8 @@ class GWFlow(Workflow):
         self.ngkpt = kwargs.pop('ngkpt')
         self.kshift = kwargs.pop('kshift')
         self.qshift = kwargs.pop('qshift')
+        self.split_wfn = kwargs.pop('split_wfn')
+        self.nbnd1 =  kwargs.pop('nband1')  #useful when splitting WFN calculation
 
         nband_aliases = ('nbnd', 'nband')
         for key in nband_aliases:
@@ -267,45 +269,114 @@ class GWFlow(Workflow):
                 charge_density_fname = self.scftask.charge_density_fname,
                 vxc_fname = self.scftask.vxc_fname)
 
-        # Wavefunction tasks for Epsilon
-        self.wfntask_ksh = AbinitBgwFlow(
-            dirname = pjoin(self.dirname, '02-Wfn'),
-            ngkpt = self.ngkpt,
-            kshift = self.kshift,
-            nband = self.nbnd,
-            **kwargs)
-        
-        self.wfntask_qsh = AbinitBgwFlow(
-            dirname = pjoin(self.dirname, '03-Wfnq'),
-            ngkpt = self.ngkpt,
-            kshift = self.kshift,
-            qshift = self.qshift,
-            nband = None,
-            **kwargs)
+#       Sometimes the WFN quantities were already calculated
+        if kwargs.get('wfn_fname'):
+            kwargs.setdefault('with_wfn', False)
+            wfn_fname=kwargs.get('wfn_fname','')
+        self.with_wfn = kwargs.get('with_wfn', True)
 
-        self.add_tasks([self.wfntask_ksh, self.wfntask_qsh])
+        if kwargs.get('wfnq_fname'):
+            wfnq_fname=kwargs.get('wfnq_fname','')
+        elif not self.with_wfn:
+            raise Exception("Error, when providing wfn_fname, wfnq_fname is required")
 
-        # Unshifted wavefunction tasks for Sigma
-        # only if not already computed for Epsilon.
-        if self.has_kshift:
+        if kwargs.get('wfn_co_fname'):
+            wfn_co_fname=kwargs.get('wfn_co_fname','')
+        elif not self.with_wfn:
+            raise Exception("Error, when providing wfn_fname, wfn_co_fname is required")
 
-            self.wfntask_ush = AbinitBgwFlow(
-                dirname = pjoin(self.dirname, '04-Wfn_co'),
+        if kwargs.get('rho_fname'):
+            rho_fname=kwargs.get('rho_fname','')
+        elif not self.with_wfn:
+            raise Exception("Error, when providing wfn_fname, rho_fname is required")
+
+        if kwargs.get('vxc_fname'):
+            vxc_fname=kwargs.get('vxc_fname','')
+        elif not self.with_wfn:
+            raise Exception("Error, when providing wfn_fname, vxc_fname is required")
+
+#       Set number of bands and bands in the buffer, specially for cases in which calculation is split into two parts.
+        nbnd=self.nbnd
+        if self.split_wfn :
+            nbnd=self.nbnd1
+        if nbnd > 30:
+           nbdbuf = 5
+        else: 
+           nbdbuf = 0
+
+#       DO WFN only if required:
+        if self.with_wfn:
+            # Wavefunction tasks for Epsilon
+            self.wfntask_ksh = AbinitBgwFlow(
+                dirname = pjoin(self.dirname, '02-Wfn'),
                 ngkpt = self.ngkpt,
-                nband = self.nbnd,
-                rhog_flag = True,
-                vxcg_flag = True,
+                kshift = self.kshift,
+                nband = nbnd,
+                nbdbuf = nbdbuf, #lucky number
+                **kwargs)
+            
+            self.wfntask_qsh = AbinitBgwFlow(
+                dirname = pjoin(self.dirname, '03-Wfnq'),
+                ngkpt = self.ngkpt,
+                kshift = self.kshift,
+                qshift = self.qshift,
+                nband = None,
                 **kwargs)
 
-            self.add_task(self.wfntask_ush)
+            self.add_tasks([self.wfntask_ksh, self.wfntask_qsh])
 
-        else:
-            self.wfntask_ush = self.wfntask_ksh
+#           Add additional WFN task if required
+            if self.split_wfn:
+                nbdbuf=self.nbnd*0.2 #20% of bands are in buffer
+                self.wfntask_large = AbinitBgwFlow(
+                    dirname = pjoin(self.dirname, '02-Wfn-large'),
+                    ngkpt = self.ngkpt,
+                    kshift = self.kshift,
+                    qshift = self.qshift,
+                    nband = self.nbnd,
+                    nbdbuf = nbdbuf,
+                    tolwfr = "1.d-05",
+                    irdwfk = 1,
+                    input_wavefunction_fname=self.wfntask_ksh.wfn_fname,
 
-        fnames = dict(wfn_fname = self.wfntask_ksh.wfn_fname,
-                      wfnq_fname = self.wfntask_qsh.wfn_fname,
-                      wfn_co_fname = self.wfntask_ush.wfn_fname,
-                      rho_fname = self.wfntask_ush.rho_fname,
-                      vxc_fname = self.wfntask_ush.vxc_fname)
+                    **kwargs)
+
+
+            # Unshifted wavefunction tasks for Sigma
+            # only if not already computed for Epsilon.
+            if self.has_kshift:
+
+                self.wfntask_ush = AbinitBgwFlow(
+                    dirname = pjoin(self.dirname, '04-Wfn_co'),
+                    ngkpt = self.ngkpt,
+                    nband = self.nbnd,
+                    rhog_flag = True,
+                    vxcg_flag = True,
+                    **kwargs)
+
+                self.add_task(self.wfntask_ush)
+
+            else:
+                self.wfntask_ush = self.wfntask_ksh
+
+            if self.split_wfn:
+                fnames = dict(wfn_fname = self.wfntask_large.wfn_fname,
+                              wfnq_fname = self.wfntask_qsh.wfn_fname,
+                              wfn_co_fname = self.wfntask_large.wfn_fname,
+                              rho_fname = self.wfntask_large.rho_fname,
+                              vxc_fname = self.wfntask_large.vxc_fname)
+            else:
+                fnames = dict(wfn_fname = self.wfntask_ksh.wfn_fname,
+                              wfnq_fname = self.wfntask_qsh.wfn_fname,
+                              wfn_co_fname = self.wfntask_ush.wfn_fname,
+                              rho_fname = self.wfntask_ush.rho_fname,
+                              vxc_fname = self.wfntask_ush.vxc_fname)
+
+        else: #wfn already available
+            fnames = dict(wfn_fname = wfn_fname,
+                          wfnq_fname = wfnq_fname,
+                          wfn_co_fname = wfn_co_fname,
+                          rho_fname = rho_fname,
+                          vxc_fname = vxc_fname)
 
         return fnames
