@@ -32,6 +32,8 @@ class AbinitWfnTask(AbinitTask):
             Kinetic energy cut-off, in Hartree.
         nband : int
             Number of bands to be computed.
+        nbdbuf : int
+            Number of bands in the buffer, useful for NSCF calculations in lots of bands.
         tolwfr : float (1e-16)
             Tolerance on wavefunctions residual used as a convergence criterion
             for the NSCF cycle.
@@ -75,6 +77,14 @@ class AbinitWfnTask(AbinitTask):
         if not nband:
             nband = kwargs.get('nbnd')
 
+        nbdbuf = kwargs.get('nbdbuf')
+        if not nbdbuf:
+            nbdbuf = 0
+
+        irdwfk = kwargs.get('irdwfk')
+        if not irdwfk:
+            irdwfk = 0
+
         ecut = kwargs.get('ecut')
         if not ecut:
             ecut = kwargs.get('ecutwfc')
@@ -86,7 +96,9 @@ class AbinitWfnTask(AbinitTask):
 
         variables = dict(
             irdden = 1,
+            irdwfk = irdwfk,
             nband = nband,
+            nbdbuf = nbdbuf,
             ecut = ecut,
             tolwfr = kwargs.get('tolwfr', 1e-16),
             iscf = kwargs.get('iscf', -3),
