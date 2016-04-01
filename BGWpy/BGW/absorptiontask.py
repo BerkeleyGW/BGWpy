@@ -96,8 +96,7 @@ class AbsorptionTask(BGWTask):
 
         ex = 'absorption.cplx.x' if self._flavor_complex else 'absorption.real.x'
         self.runscript['ABSORPTION'] = ex
-        self.runscript['ABSORPTIONOUT'] = self._output_fname
-        self.runscript.append('$MPIRUN $ABSORPTION &> $ABSORPTIONOUT')
+        self.runscript.append('$MPIRUN $ABSORPTION &> {}'.format(self._output_fname))
 
     @property
     def wfn_co_fname(self):

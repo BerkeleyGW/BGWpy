@@ -80,8 +80,7 @@ class KernelTask(BGWTask):
 
         ex = 'kernel.cplx.x' if self._flavor_complex else 'kernel.real.x'
         self.runscript['KERNEL'] = ex
-        self.runscript['KERNELOUT'] = self._output_fname
-        self.runscript.append('$MPIRUN $KERNEL &> $KERNELOUT')
+        self.runscript.append('$MPIRUN $KERNEL &> {}'.format(self._output_fname))
 
     @property
     def wfn_co_fname(self):

@@ -171,6 +171,9 @@ class BSEFlow(Workflow):
             **kwargs)
 
         # Absorption calculation (BSE)
+        if AbsorptionTask._use_hdf5:
+            kwargs['bsemat_fname'] = self.kerneltask.bsemat_fname
+
         self.absorptiontask = AbsorptionTask(
             dirname = pjoin(self.dirname, '14-absorption'),
             extra_lines = kwargs.get('absorption_extra_lines', []),

@@ -143,8 +143,7 @@ class SigmaTask(BGWTask):
         # Set up the run script
         ex = 'sigma.cplx.x' if self._flavor_complex else 'sigma.real.x'
         self.runscript['SIGMA'] = ex
-        self.runscript['SIGMAOUT'] = self._output_fname
-        self.runscript.append('$MPIRUN $SIGMA &> $SIGMAOUT')
+        self.runscript.append('$MPIRUN $SIGMA &> {}'.format(self._output_fname))
 
 
     @property
