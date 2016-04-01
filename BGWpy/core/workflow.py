@@ -71,23 +71,28 @@ class Workflow(Task):
                             " Use the variable 'runscript_fname' to set" +
                             " the task's runscript file name.")
 
-            # FIXME
-            # This script is unsafe, because if it fails to change directory,
-            # the script ends up calling itself repeatedly.
-            # One could add some safety to the commands,
-            # but that would make the script less readable and harder to modify.
-            # The user is expected to modify the runscript (e.g. to restart
-            # the calculation and skip the first steps that completed normally).
-            # Therefore, the syntax must remain as simple as possible...
+            if task.dirname != self.dirname:
 
-            #self.runscript.append('if [ -d {} ]'.format(task.dirname))
-            #self.runscript.append('then')
-            self.runscript.append('cd {}'.format(os.path.relpath(task.dirname, self.dirname)))
-            self.runscript.append('bash {}'.format(task.runscript.fname))
-            self.runscript.append('cd {}'.format(os.path.relpath(self.dirname, task.dirname, )))
-            #self.runscript.append('else')
-            #self.runscript.append('exit 1')
-            #self.runscript.append('fi')
+                # FIXME
+                # This script is unsafe, because if it fails to change directory,
+                # the script ends up calling itself repeatedly.
+                # One could add some safety to the commands,
+                # but that would make the script less readable and harder to modify.
+                # The user is expected to modify the runscript (e.g. to restart
+                # the calculation and skip the first steps that completed normally).
+                # Therefore, the syntax must remain as simple as possible...
+
+                #self.runscript.append('if [ -d {} ]'.format(task.dirname))
+                #self.runscript.append('then')
+                self.runscript.append('cd {}'.format(os.path.relpath(task.dirname, self.dirname)))
+                self.runscript.append('bash {}'.format(task.runscript.fname))
+                self.runscript.append('cd {}'.format(os.path.relpath(self.dirname, task.dirname, )))
+                #self.runscript.append('else')
+                #self.runscript.append('exit 1')
+                #self.runscript.append('fi')
+
+            else:
+                self.runscript.append('bash {}'.format(task.runscript.fname))
 
         self.tasks.append(task)
 

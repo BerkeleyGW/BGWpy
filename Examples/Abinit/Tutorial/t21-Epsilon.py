@@ -22,8 +22,8 @@ task = EpsilonTask(
     ecuteps = 10.0,         # Energy cutoff for the epsilon matrix
 
     # Files to be linked
-    wfn_fname='12-Wfn/Wavefunctions/wfn.cplx',
-    wfnq_fname='13-Wfnq/Wavefunctions/wfn.cplx',
+    wfn_fname='12-Wfn/wfn.cplx',
+    wfnq_fname='13-Wfnq/wfn.cplx',
 
     # Parameters for the MPI runner
     nproc = 2,
