@@ -49,6 +49,9 @@ class AbinitWfnTask(AbinitTask):
             as a fraction of the smallest division along that direction.
         qshift : list(3), float, optional
             Absolute shift of the k-points grid along each direction.
+        input_wavefunction_fname: str, optional
+            Name of previously compute wavefunction file, in case you want
+            to restart from there.
         input_variables : dict
             Any other input variables for the Abinit input file.
 
@@ -61,29 +64,19 @@ class AbinitWfnTask(AbinitTask):
 
         super(AbinitWfnTask, self).__init__(dirname, **kwargs)
 
-        self.input.set_variables(self.get_wfn_variables(**kwargs))
-
         self.charge_density_fname = kwargs['charge_density_fname']
 
-        flag_input_wavefunction_fname =  kwargs.get('input_wavefunction_fname',0)
-        if flag_input_wavefunction_fname != 0 :
+        if 'input_wavefunction_fname' in kwargs:
             self.input_wavefunction_fname = kwargs['input_wavefunction_fname']
 
-    @staticmethod
-    def get_wfn_variables(**kwargs):
+        self.input.set_variables(self.get_wfn_variables(**kwargs))
+
+    def get_wfn_variables(self, **kwargs):
         """Return a dict of variables required for an SCF calculation."""
 
         nband = kwargs.get('nband')
         if not nband:
             nband = kwargs.get('nbnd')
-
-        nbdbuf = kwargs.get('nbdbuf')
-        if not nbdbuf:
-            nbdbuf = 0
-
-        irdwfk = kwargs.get('irdwfk')
-        if not irdwfk:
-            irdwfk = 0
 
         ecut = kwargs.get('ecut')
         if not ecut:
@@ -95,11 +88,11 @@ class AbinitWfnTask(AbinitTask):
                 pass
 
         variables = dict(
-            irdden = 1,
-            irdwfk = irdwfk,
-            nband = nband,
-            nbdbuf = nbdbuf,
             ecut = ecut,
+            nband = nband,
+            irdden = 1,
+            nbdbuf = kwargs.get('nbdbuf', 0),
+            irdwfk = 1 if self.input_wavefunction_fname else 0,
             tolwfr = kwargs.get('tolwfr', 1e-16),
             iscf = kwargs.get('iscf', -3),
             istwfk = kwargs.get('istwfk', '*1'),
@@ -125,9 +118,10 @@ class AbinitWfnTask(AbinitTask):
 
     rho_fname = charge_density_fname
 
+    _input_wavefunction_fname = ''
     @property
     def input_wavefunction_fname(self):
-        return ""
+        return self._input_wavefunction_fname
     
     @input_wavefunction_fname.setter
     def input_wavefunction_fname(self, value):
@@ -137,7 +131,6 @@ class AbinitWfnTask(AbinitTask):
 
     @property
     def exchange_correlation_potential_fname(self):
-        #return os.path.join(self.dirname, self.get_odat('VXC'))
         return self.get_odat('VXC')
 
     vxc_fname = exchange_correlation_potential_fname
