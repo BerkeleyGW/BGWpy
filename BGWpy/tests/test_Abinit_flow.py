@@ -27,9 +27,10 @@ class TestAbinitTaskMaker(TestTask):
         with_density=True,
         )
 
-    def get_bgwflow(self, **kwargs):
+    def get_wfnbgwflow(self, scftask, **kwargs):
         """Construct a AbinitBgwFlow."""
         kwargs.setdefault('dirname', os.path.join(self.tmpdir, 'DFT'))
+        kwargs.update(charge_density_fname = scftask.charge_density_fname)
         for key, val in self.common.iteritems():
             kwargs.setdefault(key, val)
 
@@ -102,11 +103,13 @@ class TestAbinitTasks(TestAbinitTaskMaker):
             task.report()
             self.assertCompleted(task)
 
-    def test_bgwflow(self):
+    def test_wfnbgwflow(self):
         """Test density calculation."""
-        task = self.get_bgwflow()
-        task.write()
-        task.run()
-        task.report()
-        #self.assertCompleted(task)
+        scftask = self.get_scftask()
+        wfnbgwflow = self.get_wfnbgwflow(scftask)
+        for task in (scftask, wfnbgwflow):
+            task.write()
+            task.run()
+            task.report()
+            self.assertCompleted(task)
 

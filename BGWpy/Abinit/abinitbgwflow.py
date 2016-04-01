@@ -8,8 +8,6 @@ __all__ = ['AbinitBgwFlow']
 
 class AbinitBgwFlow(WfnBgwFlow):
 
-    _charge_density_fname = ''
-
     def __init__(self, **kwargs):
         """
         Keyword Arguments
@@ -18,16 +16,11 @@ class AbinitBgwFlow(WfnBgwFlow):
         dirname : str
             Directory in which the files are written and the code is executed.
             Will be created if needed.
-        with_density : bool (True)
-            Include an SCF task to compute the ground state density.
         charge_density_fname : str
-            Density file provided, so that the SCF task is not included.
-            Giving a file name will set default value of 'with_density' to False.
+            Charge density file produced by Abinit in a previous SCF task.
         vxc_fname : str
-            The xc potential file produced by Abinit,
-            if SCF task is not included.
-            If none is available, the flag for VXC conversion to BGW
-            will be unset.
+            The xc potential file produced by Abinit, in a previous SCF task.
+            If none is available, the flag for VXC conversion to BGW will be unset.
         ecut : float
             Kinetic energy cut-off, in Hartree.
         nband : int
@@ -80,36 +73,31 @@ class AbinitBgwFlow(WfnBgwFlow):
 
         kwargs.pop('dirname', None)
 
-        if kwargs.get('charge_density_fname'):
-            kwargs.setdefault('with_density', False)
+        #if kwargs.get('charge_density_fname'):
+        #    kwargs.setdefault('with_density', False)
 
-        self.with_density = kwargs.get('with_density', True)
+        ## SCF task
+        #if self.with_density:
+        #    self.scftask = AbinitScfTask(
+        #        dirname = kwargs.get('density_dirname',
+        #                             pjoin(self.dirname, 'Density')),
+        #                             **kwargs)
 
-        # SCF task
-        if self.with_density:
-            self.scftask = AbinitScfTask(
-                dirname = kwargs.get('density_dirname',
-                                     pjoin(self.dirname, 'Density')),
-                                     **kwargs)
+        #    kwargs.setdefault('charge_density_fname',
+        #                      self.scftask.charge_density_fname)
 
-            kwargs.setdefault('charge_density_fname',
-                              self.scftask.charge_density_fname)
+        #    kwargs.setdefault('vxc_fname',
+        #                      self.scftask.vxc_fname)
 
-            kwargs.setdefault('vxc_fname',
-                              self.scftask.vxc_fname)
-
-            self.add_task(self.scftask, merge=False)
+        #    self.add_task(self.scftask, merge=False)
 
         self.charge_density_fname = kwargs['charge_density_fname']
 
         vxc_fname = kwargs.pop('vxc_fname', '')
 
         # Wfn task
-        self.wfntask = AbinitWfnTask(
-            dirname = kwargs.get('wfn_dirname',
-                                 pjoin(self.dirname, 'Wavefunctions')),
-                                 **kwargs)
-
+        self.wfntask = AbinitWfnTask(dirname=self.dirname, **kwargs)
+        self.wfntask.runscript.fname = 'wfn.run.sh'
         self.add_task(self.wfntask, merge=False)
 
         wfn_fname = kwargs.pop('wfn_fname',None)
@@ -126,6 +114,9 @@ class AbinitBgwFlow(WfnBgwFlow):
             **kwargs)
 
         self.add_task(self.wfnbgwntask, merge=False)
+
+
+    _charge_density_fname = ''
 
     @property
     def charge_density_fname(self):

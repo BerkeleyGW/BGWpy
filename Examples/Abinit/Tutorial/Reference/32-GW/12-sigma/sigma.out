@@ -1,6 +1,6 @@
 
  BerkeleyGW trunk revision 6943
- Sigma code, Complex version, run on 04-Jan-2016 at 13:03:42 -0800
+ Sigma code, Complex version, run on 01-Apr-2016 at 15:11:26 -0700
 
                                                                  ..o.          
                                                                 .oxxo.         
@@ -86,7 +86,7 @@
 
  Treating W within the Hybertsen-Louie Generalized Plasmon Pole model
 
- Memory available: 3066.8 MB per PE
+ Memory available: 1741.3 MB per PE
  Reading header of WFN_inner
  Highest occupied band (unshifted grid) = 4
  Valence max    (unshifted grid) = -.354893 eV
@@ -120,19 +120,19 @@
  - Each processor is holding 4 band(s).
 
 
- Started reading wavefunctions (WFN_inner) with 24 state(s) at 13:03:42.
- [ 13:03:42 |   0% ] state  1 / 24.
- [ 13:03:42 |   8% ] state  3 / 24, remaining: 0 s.
- [ 13:03:42 |  17% ] state  5 / 24, remaining: 0 s.
- [ 13:03:42 |  29% ] state  8 / 24, remaining: 0 s.
- [ 13:03:42 |  38% ] state 10 / 24, remaining: 0 s.
- [ 13:03:42 |  46% ] state 12 / 24, remaining: 0 s.
- [ 13:03:42 |  58% ] state 15 / 24, remaining: 0 s.
- [ 13:03:42 |  67% ] state 17 / 24, remaining: 0 s.
- [ 13:03:42 |  79% ] state 20 / 24, remaining: 0 s.
- [ 13:03:42 |  88% ] state 22 / 24, remaining: 0 s.
- [ 13:03:42 |  96% ] state 24 / 24, remaining: 0 s.
- Finished reading wavefunctions (WFN_inner) at 13:03:42.
+ Started reading wavefunctions (WFN_inner) with 24 state(s) at 15:11:26.
+ [ 15:11:26 |   0% ] state  1 / 24.
+ [ 15:11:26 |   8% ] state  3 / 24, remaining: 0 s.
+ [ 15:11:26 |  17% ] state  5 / 24, remaining: 0 s.
+ [ 15:11:26 |  29% ] state  8 / 24, remaining: 0 s.
+ [ 15:11:26 |  38% ] state 10 / 24, remaining: 0 s.
+ [ 15:11:26 |  46% ] state 12 / 24, remaining: 0 s.
+ [ 15:11:26 |  58% ] state 15 / 24, remaining: 0 s.
+ [ 15:11:26 |  67% ] state 17 / 24, remaining: 0 s.
+ [ 15:11:26 |  79% ] state 20 / 24, remaining: 0 s.
+ [ 15:11:26 |  88% ] state 22 / 24, remaining: 0 s.
+ [ 15:11:26 |  96% ] state 24 / 24, remaining: 0 s.
+ Finished reading wavefunctions (WFN_inner) at 15:11:26.
  Elapsed time: 0 s.
 
 
@@ -147,7 +147,7 @@
 
  Data for sum rule:
  - rho(0,1) = 8.000000 electrons
- - wp = 15.626300 eV
+ - wp = 15.626301 eV
 
  Number of bands to compute diagonal self-energy matrix elements: 8
  Bands:
@@ -166,22 +166,22 @@
  Number of imag. frequencies in the dielectric matrix: 0
 
 
- Started reading eps0mat with 1 q-point(s) at 13:03:42.
- [ 13:03:42 |   0% ] q-point 1 / 1.
- Finished reading eps0mat at 13:03:42.
+ Started reading eps0mat with 1 q-point(s) at 15:11:26.
+ [ 15:11:26 |   0% ] q-point 1 / 1.
+ Finished reading eps0mat at 15:11:26.
  Elapsed time: 0 s.
 
 
- Started reading epsmat with 2 q-point(s) at 13:03:42.
- [ 13:03:42 |   0% ] q-point 1 / 2.
- [ 13:03:42 |  50% ] q-point 2 / 2.
- Finished reading epsmat at 13:03:42.
+ Started reading epsmat with 2 q-point(s) at 15:11:26.
+ [ 15:11:26 |   0% ] q-point 1 / 2.
+ [ 15:11:26 |  50% ] q-point 2 / 2.
+ Finished reading epsmat at 15:11:26.
  Elapsed time: 0 s.
 
  k+G sampling:   0.081061  0.076425  0.071489 (reciprocal lattice units)
 
 ================================================================================
- 13:03:42   Dealing with k =  0.000000  0.000000  0.000000                 1 / 3
+ 15:11:26   Dealing with k =  0.000000  0.000000  0.000000                 1 / 3
 ================================================================================
 
  Number of k-points in the irreducible BZ(q) (nrq): 3
@@ -192,19 +192,19 @@
    0.00000   0.00000   0.50000        4        2       19        0   0   0
    0.00000   0.50000   0.50000        3        3       23        0   1   1
 
- Started calculating Sigma with 24 block(s) at 13:03:42.
- [ 13:03:50 |   0% ] block  1 / 24.
- [ 13:03:50 |   8% ] block  3 / 24, remaining: 0 s.
- [ 13:03:50 |  17% ] block  5 / 24, remaining: 0 s.
- [ 13:03:50 |  29% ] block  8 / 24, remaining: 0 s.
- [ 13:03:50 |  38% ] block 10 / 24, remaining: 0 s.
- [ 13:03:50 |  46% ] block 12 / 24, remaining: 0 s.
- [ 13:03:50 |  58% ] block 15 / 24, remaining: 0 s.
- [ 13:03:50 |  67% ] block 17 / 24, remaining: 0 s.
- [ 13:03:50 |  79% ] block 20 / 24, remaining: 0 s.
- [ 13:03:50 |  88% ] block 22 / 24, remaining: 0 s.
- [ 13:03:50 |  96% ] block 24 / 24, remaining: 0 s.
- Finished calculating Sigma at 13:03:50.
+ Started calculating Sigma with 24 block(s) at 15:11:26.
+ [ 15:11:34 |   0% ] block  1 / 24.
+ [ 15:11:34 |   8% ] block  3 / 24, remaining: 0 s.
+ [ 15:11:34 |  17% ] block  5 / 24, remaining: 0 s.
+ [ 15:11:34 |  29% ] block  8 / 24, remaining: 0 s.
+ [ 15:11:34 |  38% ] block 10 / 24, remaining: 0 s.
+ [ 15:11:34 |  46% ] block 12 / 24, remaining: 0 s.
+ [ 15:11:34 |  58% ] block 15 / 24, remaining: 0 s.
+ [ 15:11:34 |  67% ] block 17 / 24, remaining: 0 s.
+ [ 15:11:34 |  79% ] block 20 / 24, remaining: 0 s.
+ [ 15:11:34 |  88% ] block 22 / 24, remaining: 0 s.
+ [ 15:11:34 |  96% ] block 24 / 24, remaining: 0 s.
+ Finished calculating Sigma at 15:11:34.
  Elapsed time: 8 s.
 
  Unsymmetrized values for ik =   1 spin = 1
@@ -234,7 +234,7 @@
      8    3.415    3.415  -10.514   -4.335   -2.554    7.040    6.381    0.818
 
 ================================================================================
- 13:03:50   Dealing with k =  0.000000  0.000000  0.500000                 2 / 3
+ 15:11:34   Dealing with k =  0.000000  0.000000  0.500000                 2 / 3
 ================================================================================
 
  Number of k-points in the irreducible BZ(q) (nrq): 4
@@ -246,19 +246,19 @@
    0.50000   0.50000   0.50000        3        2       23        1   1   1
    0.00000   0.50000   0.50000        3        3       23        0   1   1
 
- Started calculating Sigma with 32 block(s) at 13:03:50.
- [ 13:03:50 |   0% ] block  1 / 32.
- [ 13:03:50 |   6% ] block  3 / 32, remaining: 0 s.
- [ 13:03:50 |   9% ] block  4 / 32, remaining: 0 s.
- [ 13:03:50 |  19% ] block  7 / 32, remaining: 0 s.
- [ 13:03:50 |  28% ] block 10 / 32, remaining: 0 s.
- [ 13:03:50 |  38% ] block 13 / 32, remaining: 0 s.
- [ 13:03:50 |  50% ] block 17 / 32, remaining: 0 s.
- [ 13:03:50 |  59% ] block 20 / 32, remaining: 0 s.
- [ 13:03:50 |  69% ] block 23 / 32, remaining: 0 s.
- [ 13:03:50 |  78% ] block 26 / 32, remaining: 0 s.
- [ 13:03:50 |  88% ] block 29 / 32, remaining: 0 s.
- Finished calculating Sigma at 13:03:50.
+ Started calculating Sigma with 32 block(s) at 15:11:34.
+ [ 15:11:34 |   0% ] block  1 / 32.
+ [ 15:11:34 |   6% ] block  3 / 32, remaining: 0 s.
+ [ 15:11:34 |   9% ] block  4 / 32, remaining: 0 s.
+ [ 15:11:34 |  19% ] block  7 / 32, remaining: 0 s.
+ [ 15:11:34 |  28% ] block 10 / 32, remaining: 0 s.
+ [ 15:11:34 |  38% ] block 13 / 32, remaining: 0 s.
+ [ 15:11:34 |  50% ] block 17 / 32, remaining: 0 s.
+ [ 15:11:34 |  59% ] block 20 / 32, remaining: 0 s.
+ [ 15:11:34 |  69% ] block 23 / 32, remaining: 0 s.
+ [ 15:11:34 |  78% ] block 26 / 32, remaining: 0 s.
+ [ 15:11:34 |  88% ] block 29 / 32, remaining: 0 s.
+ Finished calculating Sigma at 15:11:34.
  Elapsed time: 0 s.
 
  Unsymmetrized values for ik =   2 spin = 1
@@ -288,7 +288,7 @@
      8    7.342    7.342   -8.299   -2.102   -3.309   10.230    9.680    0.809
 
 ================================================================================
- 13:03:50   Dealing with k =  0.000000  0.500000  0.500000                 3 / 3
+ 15:11:34   Dealing with k =  0.000000  0.500000  0.500000                 3 / 3
 ================================================================================
 
  Number of k-points in the irreducible BZ(q) (nrq): 4
@@ -300,19 +300,19 @@
    0.00000   0.50000   0.50000        1        3       23        0   1   1
    0.50000   0.00000   0.50000        2        3       19        0   0   0
 
- Started calculating Sigma with 32 block(s) at 13:03:50.
- [ 13:03:50 |   0% ] block  1 / 32.
- [ 13:03:50 |   6% ] block  3 / 32, remaining: 0 s.
- [ 13:03:50 |   9% ] block  4 / 32, remaining: 0 s.
- [ 13:03:50 |  19% ] block  7 / 32, remaining: 0 s.
- [ 13:03:50 |  28% ] block 10 / 32, remaining: 0 s.
- [ 13:03:50 |  38% ] block 13 / 32, remaining: 0 s.
- [ 13:03:50 |  50% ] block 17 / 32, remaining: 0 s.
- [ 13:03:50 |  59% ] block 20 / 32, remaining: 0 s.
- [ 13:03:50 |  69% ] block 23 / 32, remaining: 0 s.
- [ 13:03:50 |  78% ] block 26 / 32, remaining: 0 s.
- [ 13:03:50 |  88% ] block 29 / 32, remaining: 0 s.
- Finished calculating Sigma at 13:03:50.
+ Started calculating Sigma with 32 block(s) at 15:11:34.
+ [ 15:11:34 |   0% ] block  1 / 32.
+ [ 15:11:34 |   6% ] block  3 / 32, remaining: 0 s.
+ [ 15:11:34 |   9% ] block  4 / 32, remaining: 0 s.
+ [ 15:11:34 |  19% ] block  7 / 32, remaining: 0 s.
+ [ 15:11:34 |  28% ] block 10 / 32, remaining: 0 s.
+ [ 15:11:34 |  38% ] block 13 / 32, remaining: 0 s.
+ [ 15:11:34 |  50% ] block 17 / 32, remaining: 0 s.
+ [ 15:11:34 |  59% ] block 20 / 32, remaining: 0 s.
+ [ 15:11:34 |  69% ] block 23 / 32, remaining: 0 s.
+ [ 15:11:34 |  78% ] block 26 / 32, remaining: 0 s.
+ [ 15:11:34 |  88% ] block 29 / 32, remaining: 0 s.
+ Finished calculating Sigma at 15:11:34.
  Elapsed time: 0 s.
 
  Unsymmetrized values for ik =   3 spin = 1
@@ -392,33 +392,33 @@ WFN_inner, if you were not already using WFN_outer.
 FULLBZ:                 0.000           0.000           2
 IRRBZ:                  0.000           0.000           3
 SUBGRP:                 0.000           0.000           3
-GMAP:                   0.000           0.001          11
-INPUT:                  0.009           0.012           1
+GMAP:                   0.000           0.000          11
+INPUT:                  0.014           0.017           1
 INPUT I/O               0.000           0.000          35
 INPUT COMM              0.000           0.001          35
-INPUT (READ):           0.001           0.000          31
+INPUT (READ):           0.001           0.001          31
 INPUT (WRITE):          0.000           0.000          27
 INPUT_OUTER:            0.000           0.000           1
-GENWF:                  0.001           0.001          11
-WF COMM:                0.000           0.001           3
+GENWF:                  0.001           0.002          11
+WF COMM:                0.000           0.000           3
 WF_CH COMM:             0.000           0.000           0
-EPSCOPY:                0.007           0.006           1
+EPSCOPY:                0.008           0.008           1
 EPSCOPY IO:             0.002           0.003         487
-EPSCOPY COMM:           0.003           0.002        1461
-READ NEPS:              0.000           0.001           1
-EPSREAD:                0.000           0.002          11
-MTXEL:                  0.065           0.071          88
+EPSCOPY COMM:           0.003           0.001        1461
+READ NEPS:              0.000           0.000           1
+EPSREAD:                0.001           0.000          11
+MTXEL:                  0.063           0.066          88
 MTXEL_CH:               0.000           0.000           0
 MTXEL COMM:             0.000           0.000          11
-VCOUL:                  8.041           8.044          11
-VXC:                    0.004           0.003           6
+VCOUL:                  8.285           8.296          11
+VXC:                    0.004           0.004           6
 BARE X:                 0.000           0.000          91
-MTXEL_COR TOT:          0.530           0.523          88
-M.COR INIT:             0.002           0.000          88
-M.COR EPSINIT:          0.190           0.187          88
-M.COR COMM:             0.001           0.003         176
-M.COR PP PREP:          0.116           0.116        7128
-M.COR SX+CH:            0.336           0.332         704
+MTXEL_COR TOT:          0.514           0.513          88
+M.COR INIT:             0.002           0.001          88
+M.COR EPSINIT:          0.184           0.188          88
+M.COR COMM:             0.001           0.000         176
+M.COR PP PREP:          0.113           0.124        7128
+M.COR SX+CH:            0.325           0.323         704
 M.COR RA SX:            0.000           0.000           0
 M.COR RA CH:            0.000           0.000           0
 M.COR RA CH2:           0.000           0.000           0
@@ -427,11 +427,11 @@ M.COR CD RES:           0.000           0.000           0
 M.COR CD INT:           0.000           0.000           0
 M.COR CD SUM:           0.000           0.000           0
 M.COR REMAIN:           0.000           0.000           0
-FFT ZERO                0.003           0.005         467
-FFT PUT                 0.002           0.003         467
-FFT PLAN                0.031           0.024         819
-FFT EXEC                0.021           0.033         819
-FFT MLTPLY              0.003           0.003         352
+FFT ZERO                0.003           0.003         467
+FFT PUT                 0.002           0.007         467
+FFT PLAN                0.030           0.031         819
+FFT EXEC                0.021           0.020         819
+FFT MLTPLY              0.003           0.001         352
 
-TOTAL:                  8.665           8.672
+TOTAL:                  8.900           8.915
 

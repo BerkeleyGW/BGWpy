@@ -25,11 +25,8 @@ class QeBgwFlow(WfnBgwFlow):
         dirname : str
             Directory in which the files are written and the code is executed.
             Will be created if needed.
-        with_density : bool (True)
-            Include an SCF task to compute the ground state density.
         charge_density_fname : str
-            Density file provided, so that the SCF task is not included.
-            Giving a file name will set default value of 'with_density' to False.
+            Charge density file produced by a previous PW task.
         data_file_fname : str
             XML data file produced by a density calculation.
             Giving a file name will set default value of 'with_density' to False.
@@ -66,7 +63,6 @@ class QeBgwFlow(WfnBgwFlow):
             Weights of each k-point.
 
         See also:
-            BGWpy.QE.QeScfTask
             BGWpy.QE.QeWfnTask
             BGWpy.QE.Qe2BgwTask
 
@@ -97,42 +93,14 @@ class QeBgwFlow(WfnBgwFlow):
 
         kwargs.pop('dirname', None)
 
-        scf_keys = ['charge_density_fname', 'data_file_fname', 'spin_polarization_fname']
-        if any([key in kwargs for key in scf_keys]):
-            kwargs.setdefault('with_density', False)
-
-        self.with_density = kwargs.get('with_density', True)
-
-        # SCF task
-        if self.with_density:
-            self.scftask = QeScfTask(
-                dirname = kwargs.get('density_dirname',
-                                     pjoin(self.dirname, 'Density')),
-                                     **kwargs)
-
-            kwargs.setdefault('charge_density_fname',
-                              self.scftask.charge_density_fname)
-
-            kwargs.setdefault('data_file_fname',
-                              self.scftask.data_file_fname)
-
-            kwargs.setdefault('spin_polarization_fname',
-                              self.scftask.spin_polarization_fname)
-
-            self.add_task(self.scftask, merge=False)
-
         self.charge_density_fname = kwargs['charge_density_fname']
         self.data_file_fname = kwargs['data_file_fname']
         self.spin_polarization_fname = kwargs.get('spin_polarization_fname', 'dummy')
 
         # Wfn task
-        self.wfntask = QeWfnTask(
-            dirname = kwargs.get('wfn_dirname',
-                                 pjoin(self.dirname, 'Wavefunctions')),
-                                 **kwargs)
-
+        self.wfntask = QeWfnTask(dirname = self.dirname, **kwargs)
+        self.wfntask.runscript.fname = 'wfn.run.sh'
         self.add_task(self.wfntask, merge=False)
-
 
         # Wfn 2 BGW
         self.wfnbgwntask = Qe2BgwTask(

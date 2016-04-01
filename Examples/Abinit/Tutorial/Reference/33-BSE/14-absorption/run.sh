@@ -5,9 +5,9 @@ MPIRUN='mpirun -n 2 --npernode 2'
 ABSORPTION='absorption.cplx.x'
 ABSORPTIONOUT='absorption.out'
 
-ln -nfs ../04-Wfn_co/Wavefunctions/wfn.cplx WFN_co
-ln -nfs ../05-Wfn_fi/Wavefunctions/wfn.cplx WFN_fi
-ln -nfs ../06-Wfnq_fi/Wavefunctions/wfn.cplx WFNq_fi
+ln -nfs ../04-Wfn_co/wfn.cplx WFN_co
+ln -nfs ../05-Wfn_fi/wfn.cplx WFN_fi
+ln -nfs ../06-Wfnq_fi/wfn.cplx WFNq_fi
 ln -nfs ../11-epsilon/eps0mat eps0mat
 ln -nfs ../11-epsilon/epsmat epsmat
 ln -nfs ../13-kernel/bsedmat bsedmat

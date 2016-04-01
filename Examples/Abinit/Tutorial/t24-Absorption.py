@@ -41,9 +41,9 @@ task = AbsorptionTask(
         },
 
     # Files to be linked
-    wfn_co_fname='14-Wfn_co/Wavefunctions/wfn.cplx',
-    wfn_fi_fname='15-Wfn_fi/Wavefunctions/wfn.cplx',
-    wfnq_fi_fname='16-Wfnq_fi/Wavefunctions/wfn.cplx',
+    wfn_co_fname='14-Wfn_co/wfn.cplx',
+    wfn_fi_fname='15-Wfn_fi/wfn.cplx',
+    wfnq_fi_fname='16-Wfnq_fi/wfn.cplx',
     eps0mat_fname='21-Epsilon/eps0mat',  # Change to 21-Epsilon/eps0mat.h5 if BGW is compiled with HDF5
     epsmat_fname='21-Epsilon/epsmat',  # Change to 21-Epsilon/epsmat.h5 if BGW is compiled with HDF5
 

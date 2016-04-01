@@ -1,0 +1,17 @@
+wfng_file_abi 'out_data/odat_WFK'
+wfng_flag .true.
+wfng_file 'wfn.cplx'
+wfng_nk1 4
+wfng_nk2 4
+wfng_nk3 4
+wfng_dk1 0.0
+wfng_dk2 0.0
+wfng_dk3 0.0
+rhog_file_abi '../01-Density/out_data/odat_DEN'
+rhog_flag .true.
+rhog_file 'rho.cplx'
+cell_symmetry 0
+symrel_file_flag .false.
+vxcg_file_abi '../01-Density/out_data/odat_VXC'
+vxcg_flag .true.
+vxcg_file 'vxc.cplx'
