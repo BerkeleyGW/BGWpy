@@ -50,9 +50,9 @@ class KgridTask(Task):
         self.clean_after = clean_after
 
         self.structure = structure
-        self.ngkpt = ngkpt
-        self.kshift = kshift
-        self.qshift = qshift
+        self.ngkpt = np.array(ngkpt)
+        self.kshift = np.array(kshift)
+        self.qshift = np.array(qshift)
         self.fft = fft
         self.use_tr = use_tr
 
@@ -144,15 +144,14 @@ class KgridTask(Task):
         kqshiftk = [ kshift[i] + qshift[i] * ngkpt[i] for i in range(3) ]
         return kqshiftk
 
-    @staticmethod
-    def get_kpt_grid_nosym(ngkpt, kshift=[.0,.0,.0], qshift=[.0,.0,.0]):
+    def get_kpt_grid_nosym(self):
         """
         Return a list of kpoints generated with out any symmetry,
         along with their weights.
         """
-        ngkpt = np.array(ngkpt)
-        kshift = np.array(kshift)
-        qshift = np.array(qshift)
+        ngkpt = self.ngkpt
+        kshift = self.kshift
+        qshift = self.qshift
         nkx, nky, nkz = ngkpt
     
         kpoints = list()
@@ -202,7 +201,7 @@ class KgridTask(Task):
         return syms, taus
 
     def get_kpoints(self):
-        """Write, run and extract kpoints."""
+        """Write, run and extract kpoints. Return kpt, wtk."""
         try:
             self.write()
             self.run()

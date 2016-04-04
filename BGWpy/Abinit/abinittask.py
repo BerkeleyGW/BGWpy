@@ -63,13 +63,11 @@ class AbinitTask(DFTTask, IOTask):
         self.input = AbinitInput(fname=self.prefix + '.in')
         self.input.set_structure(self.structure)
 
-        # TODO move this into DFTTask
         # Handle k-points and symmetries
-        self.kgrid = KgridTask(**kwargs)
-        ((kpt, wtk), (symrel, tnons)) = self.kgrid.get_kpoints_and_sym()
+        ((kpt, wtk), (symrel, tnons)) = self.kgridtask.get_kpoints_and_sym()
         nsym = len(symrel)
         if not kwargs.get('symkpt', True):
-            kpt, wtk = self.get_kpts(**kwargs)
+            kpt, wtk = self.kgridtask.get_kpt_grid_nosym()
 
         # Transpose all symmetry matrices
         symrel = np.linalg.inv(symrel.reshape((-1,3,3)).transpose((0,2,1)))

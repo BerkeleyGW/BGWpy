@@ -5,7 +5,7 @@ import warnings
 from numpy import array
 
 from ..core import MPITask, Workflow
-from ..BGW.kgrid import get_kpt_grid, get_kpt_grid_nosym
+from ..BGW import KgridTask
 
 # Public
 __all__ = ['DFTTask', 'DFTFlow']
@@ -40,6 +40,10 @@ class DFTTask(MPITask):
         self.pseudo_dir = kwargs.get('pseudo_dir', self.dirname)
         self.pseudos    = kwargs.get('pseudos', [])
         self.structure  = kwargs.get('structure')
+
+        # This task is not part of a workflow.
+        # It is executed on-the-fly and leaves no trace (clean_after=True). 
+        self.kgridtask = KgridTask(**kwargs)
 
     @ property
     def is_flavor_QE(self):
@@ -76,21 +80,11 @@ class DFTTask(MPITask):
 
         if 'ngkpt' in kwargs:
             if symkpt:
-                kpts, wtks = get_kpt_grid(
-                            kwargs['structure'],
-                            kwargs['ngkpt'],
-                            kshift=kwargs.get('kshift',[0,0,0]),
-                            qshift=kwargs.get('qshift',[0,0,0]),
-                            )
+                kpts, wtks = self.kgridtask.get_kpoints()
             else:
-                kpts, wtks = get_kpt_grid_nosym(
-                            kwargs['ngkpt'],
-                            kshift=kwargs.get('kshift',[0,0,0]),
-                            qshift=kwargs.get('qshift',[0,0,0]),
-                            )
+                kpts, wtks = self.kgridtask.get_kpt_grid_nosym()
         else:
-            kpts = kwargs['kpts']
-            wtks = kwargs['wtks']
+            kpts, wtks = kwargs['kpts'], kwargs['wtks']
 
         return kpts, wtks
 
