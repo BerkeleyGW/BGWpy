@@ -46,9 +46,8 @@ class IneqpTask(BGWTask):
         self.input.fname = self._input_fname
 
         ex = 'inteqp.cplx.x' if self._flavor_complex else 'inteqp.real.x'
-        self.runscript['EXEC'] = ex
-        self.runscript['STDOUT'] = self._output_fname
-        self.runscript.append('$MPIRUN $EXEC &> $STDOUT')
+        self.runscript['INTEQP'] = ex
+        self.runscript.append('$MPIRUN $INTEQP &> {}'.format(self._output_fname))
 
 
     def write(self):
