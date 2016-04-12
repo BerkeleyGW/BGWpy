@@ -145,4 +145,19 @@ class QeWfnTask(QeTask):
             dest = os.path.join(self.savedir, pseudo)
             self.update_copy(source, dest)
 
+    # Yikes! I have to recopy the property. python3 would be so much better...
+    @property
+    def pseudo_dir(self):
+        return self._pseudo_dir
 
+    @pseudo_dir.setter
+    def pseudo_dir(self, value):
+        if os.path.realpath(value) == value.rstrip(os.path.sep):
+            self._pseudo_dir = value
+        else:
+            self._pseudo_dir = os.path.relpath(value, self.dirname)
+        if 'input' in dir(self):
+            if 'control' in dir(self.input):
+                self.input.control['pseudo_dir'] = self._pseudo_dir
+        if 'pseudos' in dir(self):
+            self.add_pseudos_copy()

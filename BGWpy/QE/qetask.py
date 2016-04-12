@@ -54,3 +54,18 @@ class QeTask(DFTTask, IOTask):
             if not os.path.exists(self.savedir):
                 os.mkdir(self.savedir)
 
+    # Yikes! I have to recopy the property. python3 would be so much better...
+    @property
+    def pseudo_dir(self):
+        return self._pseudo_dir
+
+    @pseudo_dir.setter
+    def pseudo_dir(self, value):
+        if os.path.realpath(value) == value.rstrip(os.path.sep):
+            self._pseudo_dir = value
+        else:
+            self._pseudo_dir = os.path.relpath(value, self.dirname)
+        if 'input' in dir(self):
+            if 'control' in dir(self.input):
+                self.input.control['pseudo_dir'] = self._pseudo_dir
+
