@@ -1,4 +1,5 @@
 from __future__ import print_function, division
+import numpy as np
 
 from ..core import Writable
 from .data import input_variable_blocks
@@ -161,9 +162,40 @@ class VariableBlock(list):
 
 def structure_to_abivars(structure):
     """Get abinit variables from a pymatgen.Structure object."""
-    d = structure.to_abivars()
-    d['typat'] = d['typat'].tolist()
-    d['xred'] = d['xred'].tolist()
-    d['rprim'] = d['rprim'].tolist()
-    return d
 
+    rprim = structure.lattice.matrix
+    acell = np.ones(3, dtype=float)
+
+    rpriminv = np.linalg.inv(rprim)
+    xcart = structure.cart_coords
+    xred = np.dot(rpriminv, xcart.transpose()).transpose()
+    xred = np.round(xred, 12)
+
+    natom = structure.num_sites
+    ntypat = structure.ntypesp
+
+    znucl_atom = structure.atomic_numbers
+
+    itypat = 0
+    typat = list()
+    znucl = list()
+    for z in znucl_atom:
+        if z not in znucl:
+            itypat += 1
+            znucl.append(z)
+            typat.append(itypat)
+        else:
+            i = znucl.index(z)
+            typat.append(i+1)
+
+    d = dict(
+        rprim=rprim.tolist(),
+        acell=np.ones(3, dtype=float).tolist(),
+        natom=natom,
+        ntypat=ntypat,
+        znucl=znucl,
+        typat=typat,
+        xred=xred.tolist(),
+        )
+
+    return d

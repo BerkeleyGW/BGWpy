@@ -116,7 +116,8 @@ class PWscfInput(Writable):
 
         # Set cell parameters
         self.cell_parameters.option = 'angstrom'
-        for vec in structure.lattice_vectors():
+        #for vec in structure.lattice_vectors():
+        for vec in structure.lattice.matrix:
             self.cell_parameters.append(np.round(vec, 8))
 
         # Set atomic species

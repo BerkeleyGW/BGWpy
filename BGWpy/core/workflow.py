@@ -60,6 +60,8 @@ class Workflow(Task):
 
         else:
 
+            # FIXME: I should also check that there is no clash between
+            #        the task's runscript fname and the workflow's runscript fname.
             # Check that there is no clash in runscript file names.
             for t in self.tasks:
                 if (t.dirname == task.dirname and

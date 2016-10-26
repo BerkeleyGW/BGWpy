@@ -26,13 +26,13 @@ description = 'Interface BerkeleyGW flows in python.'
 author = 'Gabriel Antonius'
 author_email = 'antonius@civet.berkeley.edu'
 license = 'BSD'
-__version__ = '2.1.2'
+__version__ = '2.1.3'
 
 
 # Requirements
 install_requires = [
     'numpy >=1.6',
-    'pymatgen >=3.0',
+    'pymatgen >=4.0',
     ]
 
 # --------------------------------------------------------------------------- #
