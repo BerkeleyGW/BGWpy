@@ -163,7 +163,7 @@ class VariableBlock(list):
 def structure_to_abivars(structure):
     """Get abinit variables from a pymatgen.Structure object."""
 
-    rprim = structure.lattice.matrix
+    rprim = structure.lattice.matrix / pymatgen.units.bohr_to_ang
     acell = np.ones(3, dtype=float)
 
     rpriminv = np.linalg.inv(rprim)
