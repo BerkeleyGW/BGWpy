@@ -152,6 +152,12 @@ class TestBGWTasksMaker(TestQETasksMaker):
 
             )
 
+        if AbsorptionTask._use_hdf5:
+            kwargs['bsemat_fname'] = kerneltask.bsemat_fname
+        else:
+            kwargs['bsedmat_fname'] = kerneltask.bsedmat_fname
+            kwargs['bsexmat_fname'] = kerneltask.bsexmat_fname
+
         return AbsorptionTask(
             dirname = os.path.join(self.tmpdir, 'Absorption'),
             wfn_co_fname = pw2bgwtask_ush.wfn_fname,
@@ -159,8 +165,6 @@ class TestBGWTasksMaker(TestQETasksMaker):
             epsmat_fname = epsilontask.epsmat_fname,
             wfn_fi_fname = pw2bgwtask_fi.wfn_fname,
             wfnq_fi_fname = pw2bgwtask_fiq.wfn_fname,
-            bsedmat_fname = kerneltask.bsedmat_fname,
-            bsexmat_fname = kerneltask.bsexmat_fname,
             sigma_fname = sigmatask.sigma_fname,
             eqp_fname = sigmatask.eqp1_fname,
             **kwargs)

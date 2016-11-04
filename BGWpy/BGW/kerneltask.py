@@ -50,13 +50,11 @@ class KernelTask(BGWTask):
         ----------
 
         bsedmat_fname : str
-            Path to the bsedmat file produced.
-        bsedmat_h5_fname : str
             Path to the bsedmat.h5 file produced.
+        bsedmat_fname : str
+            Path to the bsedmat file produced.
         bsexmat_fname : str
             Path to the bsexmat file produced.
-        bsexmat_h5_fname : str
-            Path to the bsexmat.h5 file produced.
 
         """
 

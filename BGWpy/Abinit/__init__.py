@@ -1,4 +1,4 @@
-from . import utils, data
+from . import utils, abidata
 from . import abinitinput
 from . import variable
 from . import constructor

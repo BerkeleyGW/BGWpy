@@ -1,8 +1,10 @@
 from __future__ import print_function, division
 import numpy as np
 
+import pymatgen
+
 from ..core import Writable
-from .data import input_variable_blocks
+from .abidata import input_variable_blocks
 from .utils import listify
 from .variable import InputVariable, SpecialInputVariable
 

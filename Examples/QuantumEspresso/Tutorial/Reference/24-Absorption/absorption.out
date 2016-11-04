@@ -1,6 +1,6 @@
 
- BerkeleyGW trunk revision 6943
- BSE/Absorption code, Complex version, run on 01-Apr-2016 at 15:16:07 -0700
+ BerkeleyGW branch 1.2.x revision 7090
+ BSE/Absorption code, Complex version, run on 04-Nov-2016 at 14:20:07 -0700
 
                                                                  ..o.          
                                                                 .oxxo.         
@@ -50,6 +50,10 @@
 --------------------------------------------------------------------------------
  Please cite the following papers when using results from BerkeleyGW:
 
+ F. H. da Jornada, J. Deslippe, D. Vigil-Fowler, J. I. Mustafa, T. Rangel,
+ F. Bruneval, F. Liu, D. Y. Qiu, D. A. Strubbe, G. Samsonidze, J. Lischner,
+ C. Yang, J. B. Neaton, and S. G. Louie, In preparation. (2016)
+
  Jack Deslippe, Georgy Samsonidze, David A. Strubbe, Manish Jain, Marvin L.
  Cohen, and Steven G. Louie, "BerkeleyGW: A Massively Parallel Computer Package
  for the Calculation of the Quasiparticle and Optical Properties of Materials
@@ -69,19 +73,15 @@
  Compilation flags:
  - Compiler: GNU
  - Para. flags: MPI
- - Math  flags: USESCALAPACK, USEFFTW3
+ - Math  flags: USESCALAPACK, USEFFTW3, HDF5
  - Debug flags: 
 
+ Running with verbosity level 1 (default).
+
  Kernel was calculated only for (v,c)->(v',c') transitions.
- This may not be a good idea for metals and narrow-bandgap semiconductors.
- Consider calculating the extended BSE kernel with the 'extended_kernel' flag.
+ This may not be a good idea for metals!
 
- Bethe-Salpeter Calculation
  The restricted fi/co WFN transformation dvv',dcc' will be calculated.
- This is not a good idea for metals and narrow-bandgap semiconductors.
- Consider using the 'unrestricted_transformation' flag.
-
- Using the Tamm-Dancoff approximation.
 
  Using the velocity operator
 
@@ -93,12 +93,13 @@
 
  We are using no truncation
 
+ Cutoff for Monte-Carlo average of Coulomb potential: 1.000E+012 Ry
+
 
  Number of k-points in the coarse k-grid: 8
  A 3-D interpolation algorithm will be employed.
  No symmetries used in the fine grid-sampling
-
- kgrid:   2   2   2
+ K-grid: 2 2 2
  Highest occupied band (fine grid) = 4
  Valence max    (fine grid) = 4.692343 eV
  Conduction min (fine grid) = 6.963706 eV
@@ -110,147 +111,122 @@
  Plasma Frequency = 1.148512 Ry
 
 
- Scissors parameters
- Valence:    es =   0.0000 eV, e0 =   0.0000 eV, edel =   0.0000
- Conduction: es =   0.0000 eV, e0 =   0.0000 eV, edel =   0.0000
+ Scissors parameters:
+ - Valence:    es =   0.0000 eV, e0 =   0.0000 eV, edel =   0.0000
+ - Conduction: es =   0.0000 eV, e0 =   0.0000 eV, edel =   0.0000
 
  You are doing a class 1 calculation - npes <= nk
 
- Memory available:    1854.2 MB per PE
- Memory required for vcoul:  114.4 MB per PE
- Memory needed to store the effective Hamiltonian and intkernel
-        arrays:    0.2 MB per PE
- Additional memory needed for eigenvectors and diagonalization:    0.7 MB per PE
+ Memory available: 976.0 MB per PE
+ Memory required for vcoul: 114.4 MB per PE
+ Memory needed to store the effective Ham. and intkernel arrays: .2 MB per PE
+ Additional memory needed for evecs and diagonalization: .7 MB per PE
 
  Distribution of kcv blocks among PE ranks:
    - PEs 0 to 1 : 4 blocks
 
- Started reading wavefunctions (WFN_fi) with 8 k-point(s) at 15:16:07.
- [ 15:16:07 |   0% ] k-point 1 / 8.
- [ 15:16:07 |  13% ] k-point 2 / 8.
- [ 15:16:07 |  25% ] k-point 3 / 8, remaining: 0 s.
- [ 15:16:07 |  38% ] k-point 4 / 8, remaining: 0 s.
- [ 15:16:07 |  50% ] k-point 5 / 8, remaining: 0 s.
- [ 15:16:07 |  63% ] k-point 6 / 8, remaining: 0 s.
- [ 15:16:07 |  75% ] k-point 7 / 8, remaining: 0 s.
- [ 15:16:07 |  88% ] k-point 8 / 8, remaining: 0 s.
- Finished reading wavefunctions (WFN_fi) at 15:16:07.
+ Started reading wavefunctions (WFN_fi) with 8 k-point(s) at 14:20:07.
+ [ 14:20:07 |   0% ] k-point 1 / 8.
+ [ 14:20:07 |  13% ] k-point 2 / 8.
+ [ 14:20:07 |  25% ] k-point 3 / 8, remaining: 0 s.
+ [ 14:20:07 |  38% ] k-point 4 / 8, remaining: 0 s.
+ [ 14:20:07 |  50% ] k-point 5 / 8, remaining: 0 s.
+ [ 14:20:07 |  63% ] k-point 6 / 8, remaining: 0 s.
+ [ 14:20:07 |  75% ] k-point 7 / 8, remaining: 0 s.
+ [ 14:20:07 |  88% ] k-point 8 / 8, remaining: 0 s.
+ Finished reading wavefunctions (WFN_fi) at 14:20:07.
  Elapsed time: 0 s.
 
 
- Conduction wavefunctions read from file WFN_fi
-  - Number k-points in irreducible BZ:        8
-  - Number k-points in full BZ:        8
-  - Effective k-point radius:     0.289573 Bohr^-1
+ Conduction wavefunctions read from file WFN_fi:
+ - Number of k-points in irreducible BZ: 8
+ - Number of k-points in full BZ: 8
 
-  Lowest energy transitions (eV):
-   (  0.250 ,  0.250 ,    0.250 )    1   1   1   2.271363
-   (  0.250 ,  0.250 ,    0.250 )    1   1   2   2.271363
-   ( -0.250 , -0.250 ,   -0.250 )    8   1   1   2.271363
-   ( -0.250 , -0.250 ,   -0.250 )    8   1   2   2.271363
-   ( -0.250 ,  0.250 ,    0.250 )    5   1   1   4.591457
-  
- More Job Parameters: 
- Crystal volume =              2438.81463215282020 a.u.
- Number of valence bands =            4
- Number of cond. bands   =            4
- Number of spins   =            1
- Broadening:  0.1500 eV
- Number of eigenvalues to be computed =          128
-  
+ Lowest-energy independent-particle transitions:
+
+                k-point                 ik     ic     iv     energy (eV)
+   -------------------------------- ------ ------ ------ ---------------
+     0.250000   0.250000   0.250000      1      1      1        2.271363
+     0.250000   0.250000   0.250000      1      1      2        2.271363
+    -0.250000  -0.250000  -0.250000      8      1      1        2.271363
+    -0.250000  -0.250000  -0.250000      8      1      2        2.271363
+    -0.250000   0.250000   0.250000      5      1      1        4.591457
+
+ More job parameters:
+ - Crystal volume (bohr): 2.439E+03
+ - Broadening (eV): .150
+ - Number of valence bands: 4
+ - Number of cond. bands: 4
+ - Number of spins: 1
+ - Number of eigenvalues to be computed: 128
+
  Highest occupied band (shifted fine grid) = 4
  Shift vector :   0.00100 -0.00000 -0.00000  Length = 0.00102
 
  No symmetries used in the shifted-grid sampling
 
-
- Started reading wavefunctions (WFNq_fi) with 8 k-point(s) at 15:16:07.
- [ 15:16:07 |   0% ] k-point 1 / 8.
- [ 15:16:07 |  13% ] k-point 2 / 8.
- [ 15:16:07 |  25% ] k-point 3 / 8, remaining: 0 s.
- [ 15:16:07 |  38% ] k-point 4 / 8, remaining: 0 s.
- [ 15:16:07 |  50% ] k-point 5 / 8, remaining: 0 s.
- [ 15:16:07 |  63% ] k-point 6 / 8, remaining: 0 s.
- [ 15:16:07 |  75% ] k-point 7 / 8, remaining: 0 s.
- [ 15:16:07 |  88% ] k-point 8 / 8, remaining: 0 s.
- Finished reading wavefunctions (WFNq_fi) at 15:16:07.
+ Started reading wavefunctions (WFNq_fi) with 8 k-point(s) at 14:20:07.
+ [ 14:20:07 |   0% ] k-point 1 / 8.
+ [ 14:20:07 |  13% ] k-point 2 / 8.
+ [ 14:20:07 |  25% ] k-point 3 / 8, remaining: 0 s.
+ [ 14:20:07 |  38% ] k-point 4 / 8, remaining: 0 s.
+ [ 14:20:07 |  50% ] k-point 5 / 8, remaining: 0 s.
+ [ 14:20:07 |  63% ] k-point 6 / 8, remaining: 0 s.
+ [ 14:20:07 |  75% ] k-point 7 / 8, remaining: 0 s.
+ [ 14:20:07 |  88% ] k-point 8 / 8, remaining: 0 s.
+ Finished reading wavefunctions (WFNq_fi) at 14:20:07.
  Elapsed time: 0 s.
 
 
- Valence wavefunctions read from file WFNq_fi
-  - Number k-points in irreducible BZ:        8
-  - Number k-points in full BZ:        8
+ Valence wavefunctions read from file WFNq_fi:
+ - Number of k-points in irreducible BZ: 8
+ - Number of k-points in full BZ: 8
 
  Reading quasiparticle energy corrections from eqp_co.dat
-
-      band   k-point      spin      Elda (eV)       Eqp (eV)
-         1         1         1       -7.52841       -7.93410
-         2         1         1        5.55161        6.52160
-         3         1         1        5.55161        6.52160
-         4         1         1        5.55161        6.52160
-         5         1         1        6.06632        8.13340
-         6         1         1        9.03181       11.00577
-         7         1         1        9.03181       11.00577
-         8         1         1        9.03181       11.00577
-         1         2         1       -5.79940       -5.90697
-         2         2         1       -1.47808       -1.37587
-         3         2         1        4.14498        4.96489
-         4         2         1        4.14498        4.96489
-         5         2         1        6.40197        8.25781
-         6         2         1       10.32482       12.31642
-         7         2         1       10.32482       12.31642
-         8         2         1       13.18213       14.78376
-         1         3         1       -4.81348       -4.90787
-         2         3         1       -1.58423       -1.49606
-         3         3         1        2.48037        3.09106
-         4         3         1        2.48037        3.09106
-         5         3         1        7.23008        8.67013
-         6         3         1        7.30020        8.96453
-         7         3         1       15.97954       18.72777
-         8         3         1       15.97954       18.72777
-
  Highest occupied band (coarse grid) = 4
- Valence max    (coarse grid) = 6.521604 eV
- Conduction min (coarse grid) = 8.133396 eV
- Middle energy  (coarse grid) = 7.327500 eV
- Fermi  energy  (coarse grid) = 7.327500 eV
+ Valence max    (coarse grid) = 6.308562 eV
+ Conduction min (coarse grid) = 7.999779 eV
+ Middle energy  (coarse grid) = 7.154171 eV
+ Fermi  energy  (coarse grid) = 7.154171 eV
 
 
  Reading quasiparticle energy corrections from eqp_co.dat
  Using symmetries to expand the coarse-grid sampling
 
-
- Started reading wavefunctions (WFN_co) with 3 k-point(s) at 15:16:07.
- [ 15:16:07 |   0% ] k-point 1 / 3.
- [ 15:16:07 |  33% ] k-point 2 / 3.
- [ 15:16:07 |  67% ] k-point 3 / 3, remaining: 0 s.
- Finished reading wavefunctions (WFN_co) at 15:16:07.
+ Started reading wavefunctions (WFN_co) with 3 k-point(s) at 14:20:07.
+ [ 14:20:07 |   0% ] k-point 1 / 3.
+ [ 14:20:07 |  33% ] k-point 2 / 3.
+ [ 14:20:07 |  67% ] k-point 3 / 3, remaining: 0 s.
+ Finished reading wavefunctions (WFN_co) at 14:20:07.
  Elapsed time: 0 s.
 
 
- Coarse-grid wavefunctions read from file WFN_co
-  - Number k-points in irreducible BZ:        3
-  - Number k-points in full BZ:        8
-  - Effective k-point radius:     0.289573 Bohr^-1
+ Coarse-grid wavefunctions read from file WFN_co:
+ - Number of k-points in irreducible BZ: 3
+ - Number of k-points in full BZ: 8
 
- Started wavefunction interpolation with 4 k-point(s) at 15:16:07.
- [ 15:16:07 |   0% ] k-point 1 / 4.
- [ 15:16:07 |  25% ] k-point 2 / 4.
- [ 15:16:07 |  50% ] k-point 3 / 4, remaining: 0 s.
- [ 15:16:07 |  75% ] k-point 4 / 4, remaining: 0 s.
- Finished wavefunction interpolation at 15:16:07.
+ Started wavefunction interpolation with 4 k-point(s) at 14:20:08.
+ [ 14:20:08 |   0% ] k-point 1 / 4.
+ [ 14:20:08 |  25% ] k-point 2 / 4.
+ [ 14:20:08 |  50% ] k-point 3 / 4, remaining: 0 s.
+ [ 14:20:08 |  75% ] k-point 4 / 4, remaining: 0 s.
+ Finished wavefunction interpolation at 14:20:08.
  Elapsed time: 0 s.
 
  Max. error in norm of transformation coefficients (1 - \sum_co |d_fi,co|^2):
   - For valence states: 4.712E-01
   - For conduction states: 8.018E-01
 
-WARNING: there are fine/coarse transformation coefficients with 2-norm < 95%.
+WARNING: there are fine/coarse transformation coefficients with 2-norm < 50%.
+Most likely, you are including the same number of bands in the coarse grid
+as in the fine grid, or your coarse k-grid is too coarse. You should always
+include more bands in the coarse grid to capture, for instance, band crossings.
 To improve convergence, you might want to consider:
-- recalculating the kernel using the "extended_kernel" flag
-- using the "unrestricted_transformation" flag in the input file
 - including more bands from the coarse WFN_co file (number_*_bands_coarse)
+- decreasing the number of bands from the fine WFN_fi file (number_*_bands_fine)
 - using a coarse WFN_co file with a denser k-mesh
+- recalculating the kernel using the "extended_kernel" flag (if metal)
+- using the "unrestricted_transformation" flag in the input file (if metal)
 
  Writing matrix elements into vmtxel
 
@@ -258,41 +234,41 @@ To improve convergence, you might want to consider:
 
  Polarization:   0.001000  -0.000000  -0.000000
  Sum rule (DFT) :    1.4690931064650785     
- Sum rule (GW)  :    1.8894418347750832     
+ Sum rule (GW)  :    1.9243303075854234     
 
 
- Epsilon matrix for q->0 read from eps0mat
- nrq0 = 1  gmax =    10.000000
+ Epsilon matrix for q->0 read from eps0mat.h5:
+ - Number of q-points: 1
+ - Dielectric cutoff (Ry): 10.00
 
- Epsilon matrix for q/=0 read from epsmat
- nrq = 2  gmax =    10.000000
- nfq = 8  qsz =   0.289573
- ngmax = 1291
- Maximum value of imaginary part of epsinv :    5.4210108624275222E-018
- Dielectric constant :    22.361329
- Dielectric matrix tabulated, nq = 65
- emax =     1.556466  qlen =     1.176234
+ Epsilon matrix for q/=0 read from epsmat.h5:
+ - Number of q-points: 2
+ - Number of q-points in the full BZ: 8
+ - Dielectric cutoff (Ry): 10.00
+ - Number of G-vectors for interpolation of epsinv_00(q+G): 1291
+ - Maximum value of imaginary part of epsinv: .000000
+ - Dielectric constant: 22.361329
+ - Max. |q+G|^2 to interp. epsinv (Ry): 1.56
+ - Number of q+G points to interp. epsinv: 65
 
- Spin Singlet Kernel
-
- Calculating v(q) with      8 k-points
+ Assembling spin-singlet kernel.
+ Calculating Coulomb potential v(q) for 8 q-points.
  k+G sampling:   0.612372  0.577350  0.540062 (reciprocal lattice units)
+ Performing kernel interpolation.
 
- Performing Kernel Interpolation
-
- Started interpolating BSE kernel with 16 block(s) at 15:16:15.
- [ 15:16:15 |   0% ] block  1 / 16.
- [ 15:16:15 |   6% ] block  2 / 16.
- [ 15:16:15 |  13% ] block  3 / 16, remaining: 0 s.
- [ 15:16:15 |  19% ] block  4 / 16, remaining: 0 s.
- [ 15:16:15 |  25% ] block  5 / 16, remaining: 0 s.
- [ 15:16:15 |  38% ] block  7 / 16, remaining: 0 s.
- [ 15:16:15 |  50% ] block  9 / 16, remaining: 0 s.
- [ 15:16:15 |  56% ] block 10 / 16, remaining: 0 s.
- [ 15:16:15 |  69% ] block 12 / 16, remaining: 0 s.
- [ 15:16:15 |  75% ] block 13 / 16, remaining: 0 s.
- [ 15:16:15 |  88% ] block 15 / 16, remaining: 0 s.
- Finished interpolating BSE kernel at 15:16:15.
+ Started interpolating BSE kernel with 16 block(s) at 14:20:09.
+ [ 14:20:09 |   0% ] block  1 / 16.
+ [ 14:20:09 |   6% ] block  2 / 16.
+ [ 14:20:09 |  13% ] block  3 / 16, remaining: 0 s.
+ [ 14:20:09 |  19% ] block  4 / 16, remaining: 0 s.
+ [ 14:20:09 |  25% ] block  5 / 16, remaining: 0 s.
+ [ 14:20:09 |  38% ] block  7 / 16, remaining: 0 s.
+ [ 14:20:09 |  50% ] block  9 / 16, remaining: 0 s.
+ [ 14:20:09 |  56% ] block 10 / 16, remaining: 0 s.
+ [ 14:20:09 |  69% ] block 12 / 16, remaining: 0 s.
+ [ 14:20:09 |  75% ] block 13 / 16, remaining: 0 s.
+ [ 14:20:09 |  88% ] block 15 / 16, remaining: 0 s.
+ Finished interpolating BSE kernel at 14:20:09.
  Elapsed time: 0 s.
 
 
@@ -310,44 +286,43 @@ To improve convergence, you might want to consider:
  Plasma Frequency :    15.626300472489202       eV
 
  Polarization:   0.001000  -0.000000  -0.000000
- Sum rule (BSE) :    1.6263104719924104     
+ Sum rule (BSE) :    1.6413187347736931     
 
+                             CPU (s)        WALL (s)          #
 
-                            CPU (s)        WALL (s)          #
-
- INPUT:          (min.)        0.002           0.006          1
-                 (PE 0)        0.002           0.006
+ INPUT:          (min.)        0.002           0.005          1
+                 (PE 0)        0.002           0.005
                  (max.)        0.002           0.006
  INPUT_Q:        (min.)        0.001           0.001          1
                  (PE 0)        0.001           0.001
                  (max.)        0.001           0.001
- INTWFN:         (min.)        0.017           0.017          1
-                 (PE 0)        0.018           0.018
-                 (max.)        0.018           0.018
- INTKERNEL:      (min.)        8.094           8.102          1
-                 (PE 0)        8.094           8.102
-                 (max.)        8.118           8.126
- DIAGONALIZE:    (min.)        0.010           0.009          1
-                 (PE 0)        0.010           0.009
-                 (max.)        0.010           0.009
+ INTWFN:         (min.)        0.013           0.013          1
+                 (PE 0)        0.013           0.013
+                 (max.)        0.013           0.013
+ INTKERNEL:      (min.)        1.256           1.259          1
+                 (PE 0)        1.256           1.259
+                 (max.)        1.256           1.259
+ DIAGONALIZE:    (min.)        0.012           0.012          1
+                 (PE 0)        0.012           0.012
+                 (max.)        0.012           0.012
  EPSDIAG:        (min.)        0.000           0.000          1
-                 (PE 0)        0.003           0.003
-                 (max.)        0.003           0.003
+                 (PE 0)        0.005           0.005
+                 (max.)        0.005           0.005
  EPS COMM:       (min.)        0.000           0.000          1
                  (PE 0)        0.000           0.000
-                 (max.)        0.028           0.027
+                 (max.)        0.005           0.005
  ABSORP0:        (min.)        0.000           0.000          1
                  (PE 0)        0.024           0.024
                  (max.)        0.024           0.024
  VMTXEL:         (min.)        0.001           0.001          1
                  (PE 0)        0.001           0.001
                  (max.)        0.001           0.001
- TRANS MTXEL:    (min.)        0.000           0.000          1
-                 (PE 0)        0.000           0.000
-                 (max.)        0.000           0.000
+ TRANS MTXEL:    (min.)        0.000           0.001          1
+                 (PE 0)        0.000           0.001
+                 (max.)        0.000           0.001
  ABSORP:         (min.)        0.000           0.000          1
-                 (PE 0)        0.013           0.012
-                 (max.)        0.013           0.012
+                 (PE 0)        0.013           0.013
+                 (max.)        0.013           0.013
  WRITE EIG:      (min.)        0.000           0.000          1
                  (PE 0)        0.000           0.000
                  (max.)        0.000           0.000
@@ -359,14 +334,14 @@ To improve convergence, you might want to consider:
                  (PE 0)        0.005           0.005
                  (max.)        0.005           0.005
  IW Genwf:       (min.)        0.001           0.000         16
-                 (PE 0)        0.001           0.000
-                 (max.)        0.001           0.001
- IW Gwnwf_Co:    (min.)        0.003           0.004         16
-                 (PE 0)        0.003           0.004
-                 (max.)        0.008           0.009
- IW Mtxel_t:     (min.)        0.000           0.000         16
                  (PE 0)        0.001           0.001
                  (max.)        0.001           0.001
+ IW Gwnwf_Co:    (min.)        0.003           0.002         16
+                 (PE 0)        0.003           0.002
+                 (max.)        0.004           0.005
+ IW Mtxel_t:     (min.)        0.000           0.000         16
+                 (PE 0)        0.000           0.002
+                 (max.)        0.000           0.002
  IW Write:       (min.)        0.000           0.000          1
                  (PE 0)        0.001           0.001
                  (max.)        0.001           0.001
@@ -377,28 +352,28 @@ To improve convergence, you might want to consider:
  IK Setup:       (min.)        0.000           0.000          1
                  (PE 0)        0.000           0.000
                  (max.)        0.000           0.000
- IK C-Check:     (min.)        0.000           0.001          1
-                 (PE 0)        0.000           0.001
-                 (max.)        0.000           0.001
+ IK C-Check:     (min.)        0.002           0.003          1
+                 (PE 0)        0.002           0.003
+                 (max.)        0.002           0.003
  IK Input:       (min.)        0.002           0.002         32
                  (PE 0)        0.002           0.002
-                 (max.)        0.002           0.002
+                 (max.)        0.002           0.003
  IK Inteps:      (min.)        0.000           0.000          1
                  (PE 0)        0.000           0.000
                  (max.)        0.000           0.000
- IK Vcoul:       (min.)        8.081           8.089          1
-                 (PE 0)        8.081           8.089
-                 (max.)        8.081           8.089
+ IK Vcoul:       (min.)        1.240           1.242          1
+                 (PE 0)        1.240           1.242
+                 (max.)        1.240           1.242
  IK Cache:       (min.)        0.000           0.000        128
                  (PE 0)        0.000           0.000
                  (max.)        0.000           0.000
  IK Interp:      (min.)        0.004           0.003        128
-                 (PE 0)        0.004           0.004
-                 (max.)        0.004           0.004
+                 (PE 0)        0.005           0.005
+                 (max.)        0.005           0.005
  IK Sum:         (min.)        0.000           0.000        128
                  (PE 0)        0.000           0.000
                  (max.)        0.000           0.000
 
- TOTAL:          (min.)        8.163           8.175          1
-                 (PE 0)        8.163           8.175
-                 (max.)        8.163           8.175
+ TOTAL:          (min.)        1.323           1.329          1
+                 (PE 0)        1.323           1.329
+                 (max.)        1.323           1.330

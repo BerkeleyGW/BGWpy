@@ -1,6 +1,6 @@
 
 .Version 8.0.0 of ABINIT 
-.(MPI version, prepared for a x86_64_darwin15.0.0_gnu5.2 computer) 
+.(MPI version, prepared for a x86_64_darwin15.6.0_gnu6.1 computer) 
 
 .Copyright (C) 1998-2015 ABINIT group . 
  ABINIT comes with ABSOLUTELY NO WARRANTY.
@@ -14,8 +14,8 @@
  acknowledgments of the ABINIT effort.
  For more information, see http://www.abinit.org .
 
-.Starting date : Fri  1 Apr 2016.
-- ( at 15h11 )
+.Starting date : Fri  4 Nov 2016.
+- ( at 14h20 )
   
 - input  file    -> GaAs.in
 - output file    -> GaAs.out
@@ -73,9 +73,9 @@ P           mkmem           8
            ntypat           2
               occ      2.000000  2.000000  2.000000  2.000000  0.000000  0.000000
                        0.000000  0.000000  0.000000
-            rprim      0.0000000000E+00  5.3417833226E+00  5.3417833226E+00
-                       5.3417833226E+00  0.0000000000E+00  5.3417833226E+00
-                       5.3417833226E+00  5.3417833226E+00  0.0000000000E+00
+            rprim      0.0000000000E+00  5.3417833251E+00  5.3417833251E+00
+                       5.3417833251E+00  0.0000000000E+00  5.3417833251E+00
+                       5.3417833251E+00  5.3417833251E+00  0.0000000000E+00
           spgroup         216
            symrel      1  0  0   0  1  0   0  0  1       1  0 -1   0  1 -1   0  0 -1
                        0  1 -1   0  0 -1   1  0 -1      -1  1  0  -1  0  0  -1  0  1
@@ -94,9 +94,9 @@ P           mkmem           8
               wtk        0.12500    0.12500    0.12500    0.12500    0.12500    0.12500
                          0.12500    0.12500
            xangst      0.0000000000E+00  0.0000000000E+00  0.0000000000E+00
-                       1.4133749938E+00  1.4133749938E+00  1.4133749938E+00
+                       1.4133749944E+00  1.4133749944E+00  1.4133749944E+00
             xcart      0.0000000000E+00  0.0000000000E+00  0.0000000000E+00
-                       2.6708916613E+00  2.6708916613E+00  2.6708916613E+00
+                       2.6708916626E+00  2.6708916626E+00  2.6708916626E+00
              xred      0.0000000000E+00  0.0000000000E+00  0.0000000000E+00
                        2.5000000000E-01  2.5000000000E-01  2.5000000000E-01
             znucl       31.00000   33.00000
@@ -118,7 +118,7 @@ P           mkmem           8
  R(1)=  0.0000000  5.3417833  5.3417833  G(1)= -0.0936017  0.0936017  0.0936017
  R(2)=  5.3417833  0.0000000  5.3417833  G(2)=  0.0936017 -0.0936017  0.0936017
  R(3)=  5.3417833  5.3417833  0.0000000  G(3)=  0.0936017  0.0936017 -0.0936017
- Unit cell volume ucvol=  3.0485182E+02 bohr^3
+ Unit cell volume ucvol=  3.0485183E+02 bohr^3
  Angles (23,13,12)=  6.00000000E+01  6.00000000E+01  6.00000000E+01 degrees
 
  getcut: wavevector=  0.0000  0.0000  0.0000  ngfft=  16  16  16
@@ -216,7 +216,7 @@ P newkpt: treating      9 bands with npw=     162 for ikpt=   8 by node    0
  ----iterations are completed or convergence reached----
 
  Mean square residual over all n,k,spin=   4.1611E-17; max=  9.5651E-17
-   0.2500  0.2500  0.2500    1  9.11207E-17 kpt; spin; max resid(k); each band:
+   0.2500  0.2500  0.2500    1  9.11204E-17 kpt; spin; max resid(k); each band:
   2.36E-17 4.04E-18 1.78E-18 9.11E-17 5.92E-17 3.14E-17 7.38E-17 8.23E-17
   7.48E-17
    0.2500  0.2500  0.7500    1  8.00633E-17 kpt; spin; max resid(k); each band:
@@ -237,7 +237,7 @@ P newkpt: treating      9 bands with npw=     162 for ikpt=   8 by node    0
    0.7500  0.7500  0.2500    1  7.09737E-17 kpt; spin; max resid(k); each band:
   2.05E-17 2.43E-17 1.01E-17 1.49E-17 3.62E-17 6.84E-17 1.06E-17 4.87E-17
   7.10E-17
-   0.7500  0.7500  0.7500    1  7.99165E-17 kpt; spin; max resid(k); each band:
+   0.7500  0.7500  0.7500    1  7.99164E-17 kpt; spin; max resid(k); each band:
   3.28E-17 7.99E-17 4.60E-17 5.08E-18 1.01E-17 7.04E-17 2.89E-17 4.70E-17
   7.82E-17
  reduced coordinates (array xred) for    2 atoms
@@ -246,7 +246,7 @@ P newkpt: treating      9 bands with npw=     162 for ikpt=   8 by node    0
 
  cartesian coordinates (angstrom) at end:
     1      0.00000000000000     0.00000000000000     0.00000000000000
-    2      1.41337499377675     1.41337499377675     1.41337499377675
+    2      1.41337499444457     1.41337499444457     1.41337499444457
  length scales=  1.000000000000  1.000000000000  1.000000000000 bohr
               =  0.529177208590  0.529177208590  0.529177208590 angstroms
  prteigrs : about to open file out_data/odat_EIG
@@ -285,21 +285,21 @@ P newkpt: treating      9 bands with npw=     162 for ikpt=   8 by node    0
 --------------------------------------------------------------------------------
  Components of total free energy (in Hartree) :
 
-    Kinetic energy  =  2.96030885897340E+00
-    Hartree energy  =  8.08215406928196E-01
-    XC energy       = -4.87103788643766E+00
-    Ewald energy    = -8.42150358565345E+00
-    PspCore energy  =  1.42411879192231E+00
-    Loc. psp. energy= -2.76084254472913E+00
-    NL   psp  energy=  1.40539879522171E-01
-    >>>>>>>>> Etotal= -1.07202010794742E+01
+    Kinetic energy  =  2.96030885753750E+00
+    Hartree energy  =  8.08215407839589E-01
+    XC energy       = -4.87103788555651E+00
+    Ewald energy    = -8.42150358167426E+00
+    PspCore energy  =  1.42411878990362E+00
+    Loc. psp. energy= -2.76084254690923E+00
+    NL   psp  energy=  1.40539879538847E-01
+    >>>>>>>>> Etotal= -1.07202010793205E+01
 
  "Double-counting" decomposition of free energy:
-    Band energy     = -1.58539675351509E+00
-    Ewald energy    = -8.42150358565345E+00
-    PspCore energy  =  1.42411879192231E+00
-    Dble-C XC-energy= -2.13741971155177E+00
-    >>>> Etotal (DC)= -1.07202012587980E+01
+    Band energy     = -1.58539675433010E+00
+    Ewald energy    = -8.42150358167426E+00
+    PspCore energy  =  1.42411878990362E+00
+    Dble-C XC-energy= -2.13741971254353E+00
+    >>>> Etotal (DC)= -1.07202012586443E+01
 --------------------------------------------------------------------------------
 
 == END DATASET(S) ==============================================================
@@ -331,9 +331,9 @@ P           mkmem           8
            ntypat           2
               occ      2.000000  2.000000  2.000000  2.000000  0.000000  0.000000
                        0.000000  0.000000  0.000000
-            rprim      0.0000000000E+00  5.3417833226E+00  5.3417833226E+00
-                       5.3417833226E+00  0.0000000000E+00  5.3417833226E+00
-                       5.3417833226E+00  5.3417833226E+00  0.0000000000E+00
+            rprim      0.0000000000E+00  5.3417833251E+00  5.3417833251E+00
+                       5.3417833251E+00  0.0000000000E+00  5.3417833251E+00
+                       5.3417833251E+00  5.3417833251E+00  0.0000000000E+00
           spgroup         216
            symrel      1  0  0   0  1  0   0  0  1       1  0 -1   0  1 -1   0  0 -1
                        0  1 -1   0  0 -1   1  0 -1      -1  1  0  -1  0  0  -1  0  1
@@ -352,9 +352,9 @@ P           mkmem           8
               wtk        0.12500    0.12500    0.12500    0.12500    0.12500    0.12500
                          0.12500    0.12500
            xangst      0.0000000000E+00  0.0000000000E+00  0.0000000000E+00
-                       1.4133749938E+00  1.4133749938E+00  1.4133749938E+00
+                       1.4133749944E+00  1.4133749944E+00  1.4133749944E+00
             xcart      0.0000000000E+00  0.0000000000E+00  0.0000000000E+00
-                       2.6708916613E+00  2.6708916613E+00  2.6708916613E+00
+                       2.6708916626E+00  2.6708916626E+00  2.6708916626E+00
              xred      0.0000000000E+00  0.0000000000E+00  0.0000000000E+00
                        2.5000000000E-01  2.5000000000E-01  2.5000000000E-01
             znucl       31.00000   33.00000
@@ -417,10 +417,10 @@ P           mkmem           8
 - on computers with overlapping multiply-add instructions.
 - S. Goedecker, SIAM J. on Scientific Computing 18, 1605 (1997).
 -
-- Proc.   0 individual time (sec): cpu=          0.6  wall=          0.6
+- Proc.   0 individual time (sec): cpu=          0.7  wall=          0.7
 
 ================================================================================
 
  Calculation completed.
 .Delivered   0 WARNINGs and   0 COMMENTs to log file.
-+Overall time at end (sec) : cpu=          0.6  wall=          0.6
++Overall time at end (sec) : cpu=          0.7  wall=          0.7

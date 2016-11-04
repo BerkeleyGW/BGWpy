@@ -17,7 +17,7 @@ class TestTask(unittest.TestCase):
         """Debug tool to copy the execution directory locally."""
         if not os.path.exists(self.local_testdir):
             os.mkdir(self.local_testdir)
-        shutil.copytree(self.tmpdir, self.local_tmpdir)
+        shutil.copytree(self.tmpdir, self.local_tmpdir, symlinks=True)
 
     def assertCompleted(self, task):
         completed = task.get_status() == task._STATUS_COMPLETED

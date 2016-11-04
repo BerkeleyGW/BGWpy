@@ -1,5 +1,5 @@
 
-     Program PWSCF v.5.1.2 starts on  1Apr2016 at 15:15:49 
+     Program PWSCF v.5.1.2 starts on  4Nov2016 at 14:19:53 
 
      This program is part of the open-source Quantum ESPRESSO suite
      for quantum simulation of materials; please cite
@@ -148,15 +148,15 @@
 
      Writing output data file GaAs.save
 
-     init_run     :      0.05s CPU      0.05s WALL (       1 calls)
-     electrons    :      0.10s CPU      0.10s WALL (       1 calls)
+     init_run     :      0.04s CPU      0.04s WALL (       1 calls)
+     electrons    :      0.10s CPU      0.11s WALL (       1 calls)
 
      Called by init_run:
      wfcinit      :      0.00s CPU      0.00s WALL (       1 calls)
      potinit      :      0.00s CPU      0.00s WALL (       1 calls)
 
      Called by electrons:
-     c_bands      :      0.10s CPU      0.10s WALL (       1 calls)
+     c_bands      :      0.10s CPU      0.11s WALL (       1 calls)
      v_of_rho     :      0.00s CPU      0.00s WALL (       1 calls)
 
      Called by c_bands:
@@ -180,10 +180,10 @@
      Parallel routines
      fft_scatter  :      0.00s CPU      0.00s WALL (    1660 calls)
 
-     PWSCF        :     0.24s CPU         0.25s WALL
+     PWSCF        :     0.23s CPU         0.24s WALL
 
 
-   This run was terminated on:  15:15:49   1Apr2016            
+   This run was terminated on:  14:19:54   4Nov2016            
 
 =------------------------------------------------------------------------------=
    JOB DONE.

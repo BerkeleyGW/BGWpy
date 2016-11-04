@@ -1,6 +1,6 @@
 
 .Version 8.0.0 of ABINIT 
-.(MPI version, prepared for a x86_64_darwin15.0.0_gnu5.2 computer) 
+.(MPI version, prepared for a x86_64_darwin15.6.0_gnu6.1 computer) 
 
 .Copyright (C) 1998-2015 ABINIT group . 
  ABINIT comes with ABSOLUTELY NO WARRANTY.
@@ -14,8 +14,8 @@
  acknowledgments of the ABINIT effort.
  For more information, see http://www.abinit.org .
 
-.Starting date : Fri  1 Apr 2016.
-- ( at 15h11 )
+.Starting date : Fri  4 Nov 2016.
+- ( at 14h20 )
   
 - input  file    -> GaAs.in
 - output file    -> GaAs.out
@@ -122,9 +122,9 @@ P           mkmem          32
            ntypat           2
               occ      2.000000  2.000000  2.000000  2.000000  0.000000  0.000000
                        0.000000  0.000000  0.000000
-            rprim      0.0000000000E+00  5.3417833226E+00  5.3417833226E+00
-                       5.3417833226E+00  0.0000000000E+00  5.3417833226E+00
-                       5.3417833226E+00  5.3417833226E+00  0.0000000000E+00
+            rprim      0.0000000000E+00  5.3417833251E+00  5.3417833251E+00
+                       5.3417833251E+00  0.0000000000E+00  5.3417833251E+00
+                       5.3417833251E+00  5.3417833251E+00  0.0000000000E+00
           spgroup         216
            symrel      1  0  0   0  1  0   0  0  1       1  0 -1   0  1 -1   0  0 -1
                        0  1 -1   0  0 -1   1  0 -1      -1  1  0  -1  0  0  -1  0  1
@@ -151,9 +151,9 @@ P           mkmem          32
                          0.01563    0.01563
                        outvars : Printing only first  50 k-points.
            xangst      0.0000000000E+00  0.0000000000E+00  0.0000000000E+00
-                       1.4133749938E+00  1.4133749938E+00  1.4133749938E+00
+                       1.4133749944E+00  1.4133749944E+00  1.4133749944E+00
             xcart      0.0000000000E+00  0.0000000000E+00  0.0000000000E+00
-                       2.6708916613E+00  2.6708916613E+00  2.6708916613E+00
+                       2.6708916626E+00  2.6708916626E+00  2.6708916626E+00
              xred      0.0000000000E+00  0.0000000000E+00  0.0000000000E+00
                        2.5000000000E-01  2.5000000000E-01  2.5000000000E-01
             znucl       31.00000   33.00000
@@ -175,7 +175,7 @@ P           mkmem          32
  R(1)=  0.0000000  5.3417833  5.3417833  G(1)= -0.0936017  0.0936017  0.0936017
  R(2)=  5.3417833  0.0000000  5.3417833  G(2)=  0.0936017 -0.0936017  0.0936017
  R(3)=  5.3417833  5.3417833  0.0000000  G(3)=  0.0936017  0.0936017 -0.0936017
- Unit cell volume ucvol=  3.0485182E+02 bohr^3
+ Unit cell volume ucvol=  3.0485183E+02 bohr^3
  Angles (23,13,12)=  6.00000000E+01  6.00000000E+01  6.00000000E+01 degrees
 
  getcut: wavevector=  0.0000  0.0000  0.0000  ngfft=  16  16  16
@@ -287,8 +287,8 @@ P newkpt: treating      9 bands with npw=     164 for ikpt=  50 by node    1
  -4.0957E-01 -2.4531E-01 -4.7593E-02 -4.7593E-02  2.3832E-02  1.4851E-01
   1.4851E-01  2.6980E-01  3.7178E-01
  Non-SCF case, kpt    4 (  0.00000  0.00000  0.75000), residuals and eigenvalues=
-  1.80E-17  2.86E-17  2.73E-17  1.90E-17  8.04E-17  5.90E-17  4.75E-17  4.17E-17
-  1.86E-17
+  1.80E-17  2.86E-17  2.73E-17  1.90E-17  8.04E-17  5.91E-17  4.75E-17  4.17E-17
+  1.87E-17
  -4.4472E-01 -1.5837E-01 -3.3567E-02 -3.3567E-02  4.3844E-02  1.5318E-01
   1.5318E-01  2.0587E-01  2.9572E-01
  Non-SCF case, kpt    5 (  0.00000  0.25000  0.00000), residuals and eigenvalues=
@@ -333,7 +333,7 @@ P newkpt: treating      9 bands with npw=     164 for ikpt=  50 by node    1
   2.0803E-01  2.3445E-01  3.6184E-01
  Non-SCF case, kpt   13 (  0.00000  0.75000  0.00000), residuals and eigenvalues=
   1.97E-17  5.22E-17  1.64E-17  3.53E-17  1.48E-17  3.64E-17  6.65E-17  5.14E-17
-  7.41E-17
+  7.42E-17
  -4.4472E-01 -1.5837E-01 -3.3567E-02 -3.3567E-02  4.3844E-02  1.5318E-01
   1.5318E-01  2.0587E-01  2.9572E-01
  Non-SCF case, kpt   14 (  0.00000  0.75000  0.25000), residuals and eigenvalues=
@@ -382,7 +382,7 @@ P newkpt: treating      9 bands with npw=     164 for ikpt=  50 by node    1
  -4.4472E-01 -1.5837E-01 -3.3567E-02 -3.3567E-02  4.3844E-02  1.5318E-01
   1.5318E-01  2.0587E-01  2.9572E-01
  Non-SCF case, kpt   23 (  0.25000  0.25000  0.50000), residuals and eigenvalues=
-  1.15E-17  7.87E-17  1.40E-18  6.51E-17  3.93E-17  9.47E-17  8.39E-17  5.21E-17
+  1.15E-17  7.87E-17  1.40E-18  6.50E-17  3.93E-17  9.47E-17  8.39E-17  5.21E-17
   7.07E-17
  -4.1290E-01 -2.1125E-01 -1.2812E-01 -5.0650E-02  8.5970E-02  1.9130E-01
   1.9224E-01  1.9537E-01  2.7083E-01
@@ -512,7 +512,7 @@ P newkpt: treating      9 bands with npw=     164 for ikpt=  50 by node    1
  -4.1290E-01 -2.1125E-01 -1.2812E-01 -5.0650E-02  8.5970E-02  1.9130E-01
   1.9224E-01  1.9537E-01  2.7083E-01
  Non-SCF case, kpt   49 (  0.75000  0.00000  0.00000), residuals and eigenvalues=
-  3.26E-17  4.84E-18  5.89E-17  9.02E-18  3.58E-17  3.20E-17  3.87E-17  4.18E-17
+  3.26E-17  4.84E-18  5.89E-17  9.02E-18  3.58E-17  3.20E-17  3.86E-17  4.18E-17
   4.91E-17
  -4.4472E-01 -1.5837E-01 -3.3567E-02 -3.3567E-02  4.3844E-02  1.5318E-01
   1.5318E-01  2.0587E-01  2.9572E-01
@@ -528,31 +528,31 @@ P newkpt: treating      9 bands with npw=     164 for ikpt=  50 by node    1
  ----iterations are completed or convergence reached----
 
  Mean square residual over all n,k,spin=   4.0539E-17; max=  9.9958E-17
-   0.0000  0.0000  0.0000    1  8.80690E-17 kpt; spin; max resid(k); each band:
+   0.0000  0.0000  0.0000    1  8.80691E-17 kpt; spin; max resid(k); each band:
   5.34E-17 8.34E-17 8.81E-17 1.96E-17 6.60E-17 3.78E-17 2.45E-17 8.65E-18
   3.65E-17
-   0.0000  0.0000  0.2500    1  9.35010E-17 kpt; spin; max resid(k); each band:
+   0.0000  0.0000  0.2500    1  9.35007E-17 kpt; spin; max resid(k); each band:
   3.42E-17 3.10E-17 1.14E-17 1.26E-17 2.43E-17 4.64E-17 5.24E-17 7.15E-17
   9.35E-17
-   0.0000  0.0000  0.5000    1  9.69444E-17 kpt; spin; max resid(k); each band:
+   0.0000  0.0000  0.5000    1  9.69436E-17 kpt; spin; max resid(k); each band:
   4.83E-17 9.69E-17 8.08E-18 9.64E-17 1.55E-17 6.27E-17 1.50E-17 2.43E-17
   2.52E-17
    0.0000  0.0000  0.7500    1  8.04348E-17 kpt; spin; max resid(k); each band:
-  1.80E-17 2.86E-17 2.73E-17 1.90E-17 8.04E-17 5.90E-17 4.75E-17 4.17E-17
-  1.86E-17
+  1.80E-17 2.86E-17 2.73E-17 1.90E-17 8.04E-17 5.91E-17 4.75E-17 4.17E-17
+  1.87E-17
    0.0000  0.2500  0.0000    1  6.95357E-17 kpt; spin; max resid(k); each band:
   6.02E-17 3.97E-17 2.19E-17 3.29E-17 1.40E-17 3.97E-17 4.05E-17 5.67E-17
   6.95E-17
-   0.0000  0.2500  0.2500    1  8.42716E-17 kpt; spin; max resid(k); each band:
+   0.0000  0.2500  0.2500    1  8.42719E-17 kpt; spin; max resid(k); each band:
   3.52E-17 2.51E-17 3.07E-17 5.22E-18 3.26E-17 2.53E-17 8.43E-17 7.19E-17
   7.11E-17
-   0.0000  0.2500  0.5000    1  7.90088E-17 kpt; spin; max resid(k); each band:
+   0.0000  0.2500  0.5000    1  7.90081E-17 kpt; spin; max resid(k); each band:
   1.56E-17 7.53E-18 7.90E-17 3.27E-17 2.35E-17 2.59E-17 2.14E-17 4.62E-17
   2.79E-17
-   0.0000  0.2500  0.7500    1  9.06782E-17 kpt; spin; max resid(k); each band:
+   0.0000  0.2500  0.7500    1  9.06780E-17 kpt; spin; max resid(k); each band:
   1.47E-17 9.24E-18 6.67E-17 9.07E-17 3.84E-17 1.56E-17 7.35E-17 4.48E-17
   4.70E-17
-   0.0000  0.5000  0.0000    1  8.42205E-17 kpt; spin; max resid(k); each band:
+   0.0000  0.5000  0.0000    1  8.42203E-17 kpt; spin; max resid(k); each band:
   1.41E-17 9.95E-18 1.99E-17 1.67E-17 1.15E-17 4.97E-17 8.33E-17 6.53E-17
   8.42E-17
    0.0000  0.5000  0.2500    1  9.94228E-17 kpt; spin; max resid(k); each band:
@@ -561,22 +561,22 @@ P newkpt: treating      9 bands with npw=     164 for ikpt=  50 by node    1
    0.0000  0.5000  0.5000    1  9.73477E-17 kpt; spin; max resid(k); each band:
   5.12E-17 9.73E-17 6.17E-17 1.02E-17 1.36E-17 1.49E-17 8.80E-17 3.43E-17
   7.38E-17
-   0.0000  0.5000  0.7500    1  8.59921E-17 kpt; spin; max resid(k); each band:
+   0.0000  0.5000  0.7500    1  8.59918E-17 kpt; spin; max resid(k); each band:
   2.10E-17 3.13E-17 2.56E-17 3.03E-17 5.95E-17 8.44E-17 8.60E-17 8.08E-17
   7.00E-17
-   0.0000  0.7500  0.0000    1  7.41472E-17 kpt; spin; max resid(k); each band:
+   0.0000  0.7500  0.0000    1  7.41534E-17 kpt; spin; max resid(k); each band:
   1.97E-17 5.22E-17 1.64E-17 3.53E-17 1.48E-17 3.64E-17 6.65E-17 5.14E-17
-  7.41E-17
+  7.42E-17
    0.0000  0.7500  0.2500    1  9.00007E-17 kpt; spin; max resid(k); each band:
   9.00E-17 1.08E-17 3.82E-17 3.19E-17 1.94E-17 3.80E-17 1.70E-17 2.77E-17
   7.27E-17
    0.0000  0.7500  0.5000    1  5.90393E-17 kpt; spin; max resid(k); each band:
   5.90E-17 3.65E-17 2.93E-18 4.56E-17 2.97E-17 2.81E-17 9.93E-18 3.79E-17
   2.71E-17
-   0.0000  0.7500  0.7500    1  9.13216E-17 kpt; spin; max resid(k); each band:
+   0.0000  0.7500  0.7500    1  9.13219E-17 kpt; spin; max resid(k); each band:
   3.63E-17 2.36E-17 6.53E-17 4.96E-17 1.08E-17 8.60E-17 8.96E-17 9.13E-17
   3.26E-17
-   0.2500  0.0000  0.0000    1  8.70166E-17 kpt; spin; max resid(k); each band:
+   0.2500  0.0000  0.0000    1  8.70158E-17 kpt; spin; max resid(k); each band:
   7.51E-17 4.69E-17 1.03E-17 7.66E-17 1.89E-17 3.72E-17 8.70E-17 7.50E-17
   8.21E-17
    0.2500  0.0000  0.2500    1  8.34426E-17 kpt; spin; max resid(k); each band:
@@ -585,17 +585,17 @@ P newkpt: treating      9 bands with npw=     164 for ikpt=  50 by node    1
    0.2500  0.0000  0.5000    1  7.44400E-17 kpt; spin; max resid(k); each band:
   3.32E-17 2.32E-18 2.78E-17 3.52E-17 1.03E-17 4.58E-17 7.44E-17 5.56E-17
   5.51E-17
-   0.2500  0.0000  0.7500    1  9.31051E-17 kpt; spin; max resid(k); each band:
+   0.2500  0.0000  0.7500    1  9.31053E-17 kpt; spin; max resid(k); each band:
   1.31E-17 7.99E-17 4.24E-17 5.03E-18 2.63E-17 9.31E-17 4.37E-17 6.24E-17
   8.02E-17
    0.2500  0.2500  0.0000    1  9.99576E-17 kpt; spin; max resid(k); each band:
   1.46E-17 5.93E-17 3.01E-17 1.98E-17 2.42E-17 1.00E-16 5.60E-17 4.53E-17
   3.08E-17
-   0.2500  0.2500  0.2500    1  9.11208E-17 kpt; spin; max resid(k); each band:
+   0.2500  0.2500  0.2500    1  9.11197E-17 kpt; spin; max resid(k); each band:
   2.36E-17 4.04E-18 1.78E-18 9.11E-17 5.92E-17 3.14E-17 7.38E-17 8.23E-17
   7.48E-17
    0.2500  0.2500  0.5000    1  9.47120E-17 kpt; spin; max resid(k); each band:
-  1.15E-17 7.87E-17 1.40E-18 6.51E-17 3.93E-17 9.47E-17 8.39E-17 5.21E-17
+  1.15E-17 7.87E-17 1.40E-18 6.50E-17 3.93E-17 9.47E-17 8.39E-17 5.21E-17
   7.07E-17
    0.2500  0.2500  0.7500    1  8.00633E-17 kpt; spin; max resid(k); each band:
   1.88E-17 1.75E-17 2.50E-17 2.22E-17 7.30E-18 2.26E-17 8.01E-17 4.56E-17
@@ -603,10 +603,10 @@ P newkpt: treating      9 bands with npw=     164 for ikpt=  50 by node    1
    0.2500  0.5000  0.0000    1  9.82133E-17 kpt; spin; max resid(k); each band:
   1.05E-17 4.93E-18 4.51E-17 5.87E-17 1.13E-17 9.82E-17 3.80E-17 4.15E-17
   8.71E-17
-   0.2500  0.5000  0.2500    1  9.57694E-17 kpt; spin; max resid(k); each band:
+   0.2500  0.5000  0.2500    1  9.57693E-17 kpt; spin; max resid(k); each band:
   2.52E-17 2.43E-17 4.04E-17 4.76E-18 3.09E-17 1.93E-17 1.69E-17 9.58E-17
   5.44E-17
-   0.2500  0.5000  0.5000    1  8.02418E-17 kpt; spin; max resid(k); each band:
+   0.2500  0.5000  0.5000    1  8.02415E-17 kpt; spin; max resid(k); each band:
   3.52E-17 1.49E-18 1.15E-17 8.02E-17 5.25E-17 2.12E-17 4.74E-17 2.86E-17
   3.86E-17
    0.2500  0.5000  0.7500    1  6.02353E-17 kpt; spin; max resid(k); each band:
@@ -618,13 +618,13 @@ P newkpt: treating      9 bands with npw=     164 for ikpt=  50 by node    1
    0.2500  0.7500  0.2500    1  9.50401E-17 kpt; spin; max resid(k); each band:
   1.77E-17 9.50E-17 3.70E-18 5.28E-18 4.06E-17 9.42E-17 7.02E-17 7.74E-17
   2.76E-17
-   0.2500  0.7500  0.5000    1  8.60298E-17 kpt; spin; max resid(k); each band:
+   0.2500  0.7500  0.5000    1  8.60413E-17 kpt; spin; max resid(k); each band:
   7.14E-17 1.61E-17 7.55E-17 6.17E-17 1.70E-17 1.92E-17 3.99E-17 1.19E-17
   8.60E-17
    0.2500  0.7500  0.7500    1  9.25822E-17 kpt; spin; max resid(k); each band:
   9.26E-17 9.16E-17 6.94E-18 1.13E-17 5.46E-17 1.42E-17 2.13E-17 3.81E-17
   5.81E-17
-   0.5000  0.0000  0.0000    1  7.72651E-17 kpt; spin; max resid(k); each band:
+   0.5000  0.0000  0.0000    1  7.72655E-17 kpt; spin; max resid(k); each band:
   4.92E-17 1.31E-17 2.11E-18 4.10E-18 9.51E-18 6.09E-17 6.26E-17 7.73E-17
   3.33E-17
    0.5000  0.0000  0.2500    1  7.73736E-17 kpt; spin; max resid(k); each band:
@@ -633,10 +633,10 @@ P newkpt: treating      9 bands with npw=     164 for ikpt=  50 by node    1
    0.5000  0.0000  0.5000    1  8.94860E-17 kpt; spin; max resid(k); each band:
   1.05E-17 7.74E-18 5.62E-17 9.00E-18 1.12E-17 4.04E-18 3.04E-17 6.57E-17
   8.95E-17
-   0.5000  0.0000  0.7500    1  9.36004E-17 kpt; spin; max resid(k); each band:
+   0.5000  0.0000  0.7500    1  9.36003E-17 kpt; spin; max resid(k); each band:
   2.87E-17 3.18E-18 3.99E-18 9.09E-17 7.10E-17 3.17E-17 2.00E-17 8.81E-18
   9.36E-17
-   0.5000  0.2500  0.0000    1  7.07225E-17 kpt; spin; max resid(k); each band:
+   0.5000  0.2500  0.0000    1  7.07224E-17 kpt; spin; max resid(k); each band:
   1.52E-17 1.55E-17 3.16E-17 7.04E-18 3.08E-17 1.35E-17 1.81E-17 6.14E-17
   7.07E-17
    0.5000  0.2500  0.2500    1  8.01274E-17 kpt; spin; max resid(k); each band:
@@ -648,32 +648,32 @@ P newkpt: treating      9 bands with npw=     164 for ikpt=  50 by node    1
    0.5000  0.2500  0.7500    1  7.56536E-17 kpt; spin; max resid(k); each band:
   1.93E-17 4.72E-18 1.21E-17 2.05E-17 7.57E-17 5.78E-17 1.27E-17 1.55E-17
   5.57E-17
-   0.5000  0.5000  0.0000    1  9.52782E-17 kpt; spin; max resid(k); each band:
+   0.5000  0.5000  0.0000    1  9.52775E-17 kpt; spin; max resid(k); each band:
   3.10E-18 3.71E-17 2.96E-17 1.79E-17 9.53E-17 5.45E-17 8.35E-17 4.79E-17
   8.33E-17
    0.5000  0.5000  0.2500    1  8.83566E-17 kpt; spin; max resid(k); each band:
   4.75E-17 3.98E-17 8.84E-17 2.18E-17 5.97E-17 5.76E-17 1.22E-17 4.68E-17
   3.03E-17
-   0.5000  0.5000  0.5000    1  7.17302E-17 kpt; spin; max resid(k); each band:
+   0.5000  0.5000  0.5000    1  7.17117E-17 kpt; spin; max resid(k); each band:
   2.85E-17 3.93E-17 7.17E-17 6.92E-18 4.90E-17 2.26E-17 4.55E-17 3.28E-17
   6.70E-17
    0.5000  0.5000  0.7500    1  9.65855E-17 kpt; spin; max resid(k); each band:
   2.32E-18 2.44E-18 7.93E-18 3.04E-18 9.66E-17 1.42E-17 2.25E-17 7.41E-17
   7.54E-17
-   0.5000  0.7500  0.0000    1  7.58156E-17 kpt; spin; max resid(k); each band:
+   0.5000  0.7500  0.0000    1  7.58183E-17 kpt; spin; max resid(k); each band:
   1.49E-17 6.25E-17 7.15E-17 7.58E-17 2.59E-17 5.73E-17 2.78E-17 1.04E-17
   6.83E-17
-   0.5000  0.7500  0.2500    1  7.43646E-17 kpt; spin; max resid(k); each band:
+   0.5000  0.7500  0.2500    1  7.43645E-17 kpt; spin; max resid(k); each band:
   5.48E-17 3.67E-17 3.22E-17 1.52E-17 4.04E-17 3.37E-17 3.27E-17 1.12E-17
   7.44E-17
    0.5000  0.7500  0.5000    1  8.82703E-17 kpt; spin; max resid(k); each band:
   7.83E-17 1.38E-18 3.62E-17 1.96E-17 2.09E-17 2.67E-17 1.73E-17 8.83E-17
   6.63E-17
-   0.5000  0.7500  0.7500    1  8.13764E-17 kpt; spin; max resid(k); each band:
+   0.5000  0.7500  0.7500    1  8.13753E-17 kpt; spin; max resid(k); each band:
   2.42E-17 7.46E-17 8.14E-17 1.43E-17 3.41E-17 5.23E-17 3.28E-17 6.55E-17
   3.98E-17
-   0.7500  0.0000  0.0000    1  5.88932E-17 kpt; spin; max resid(k); each band:
-  3.26E-17 4.84E-18 5.89E-17 9.02E-18 3.58E-17 3.20E-17 3.87E-17 4.18E-17
+   0.7500  0.0000  0.0000    1  5.88935E-17 kpt; spin; max resid(k); each band:
+  3.26E-17 4.84E-18 5.89E-17 9.02E-18 3.58E-17 3.20E-17 3.86E-17 4.18E-17
   4.91E-17
    0.7500  0.0000  0.2500    1  7.53385E-17 kpt; spin; max resid(k); each band:
   3.46E-17 2.08E-17 7.06E-17 6.25E-17 2.65E-17 4.15E-17 3.49E-17 7.53E-17
@@ -686,7 +686,7 @@ P newkpt: treating      9 bands with npw=     164 for ikpt=  50 by node    1
 
  cartesian coordinates (angstrom) at end:
     1      0.00000000000000     0.00000000000000     0.00000000000000
-    2      1.41337499377675     1.41337499377675     1.41337499377675
+    2      1.41337499444457     1.41337499444457     1.41337499444457
  length scales=  1.000000000000  1.000000000000  1.000000000000 bohr
               =  0.529177208590  0.529177208590  0.529177208590 angstroms
  prteigrs : about to open file out_data/odat_EIG
@@ -853,21 +853,21 @@ P newkpt: treating      9 bands with npw=     164 for ikpt=  50 by node    1
 --------------------------------------------------------------------------------
  Components of total free energy (in Hartree) :
 
-    Kinetic energy  =  2.96241055237577E+00
-    Hartree energy  =  8.08215406928166E-01
-    XC energy       = -4.87103788643766E+00
-    Ewald energy    = -8.42150358565345E+00
-    PspCore energy  =  1.42411879192231E+00
-    Loc. psp. energy= -2.76084254472911E+00
-    NL   psp  energy=  1.40153918481908E-01
-    >>>>>>>>> Etotal= -1.07184853471121E+01
+    Kinetic energy  =  2.96241055093608E+00
+    Hartree energy  =  8.08215407839560E-01
+    XC energy       = -4.87103788555652E+00
+    Ewald energy    = -8.42150358167426E+00
+    PspCore energy  =  1.42411878990362E+00
+    Loc. psp. energy= -2.76084254690915E+00
+    NL   psp  energy=  1.40153918496261E-01
+    >>>>>>>>> Etotal= -1.07184853469644E+01
 
  "Double-counting" decomposition of free energy:
-    Band energy     = -1.58447519633834E+00
-    Ewald energy    = -8.42150358565345E+00
-    PspCore energy  =  1.42411879192231E+00
-    Dble-C XC-energy= -2.13741971155176E+00
-    >>>> Etotal (DC)= -1.07192797016212E+01
+    Band energy     = -1.58447519715165E+00
+    Ewald energy    = -8.42150358167426E+00
+    PspCore energy  =  1.42411878990362E+00
+    Dble-C XC-energy= -2.13741971254351E+00
+    >>>> Etotal (DC)= -1.07192797014658E+01
 --------------------------------------------------------------------------------
 
 == END DATASET(S) ==============================================================
@@ -948,9 +948,9 @@ P           mkmem          32
            ntypat           2
               occ      2.000000  2.000000  2.000000  2.000000  0.000000  0.000000
                        0.000000  0.000000  0.000000
-            rprim      0.0000000000E+00  5.3417833226E+00  5.3417833226E+00
-                       5.3417833226E+00  0.0000000000E+00  5.3417833226E+00
-                       5.3417833226E+00  5.3417833226E+00  0.0000000000E+00
+            rprim      0.0000000000E+00  5.3417833251E+00  5.3417833251E+00
+                       5.3417833251E+00  0.0000000000E+00  5.3417833251E+00
+                       5.3417833251E+00  5.3417833251E+00  0.0000000000E+00
           spgroup         216
            symrel      1  0  0   0  1  0   0  0  1       1  0 -1   0  1 -1   0  0 -1
                        0  1 -1   0  0 -1   1  0 -1      -1  1  0  -1  0  0  -1  0  1
@@ -977,9 +977,9 @@ P           mkmem          32
                          0.01563    0.01563
                        outvars : Printing only first  50 k-points.
            xangst      0.0000000000E+00  0.0000000000E+00  0.0000000000E+00
-                       1.4133749938E+00  1.4133749938E+00  1.4133749938E+00
+                       1.4133749944E+00  1.4133749944E+00  1.4133749944E+00
             xcart      0.0000000000E+00  0.0000000000E+00  0.0000000000E+00
-                       2.6708916613E+00  2.6708916613E+00  2.6708916613E+00
+                       2.6708916626E+00  2.6708916626E+00  2.6708916626E+00
              xred      0.0000000000E+00  0.0000000000E+00  0.0000000000E+00
                        2.5000000000E-01  2.5000000000E-01  2.5000000000E-01
             znucl       31.00000   33.00000
@@ -1048,4 +1048,4 @@ P           mkmem          32
 
  Calculation completed.
 .Delivered   0 WARNINGs and   0 COMMENTs to log file.
-+Overall time at end (sec) : cpu=          2.7  wall=          2.8
++Overall time at end (sec) : cpu=          2.8  wall=          2.8

@@ -53,8 +53,6 @@ class AbsorptionTask(BGWTask):
             Path to the bsedmat file produced by kernel.
         bsexmat_fname : str
             Path to the bsexmat file produced by kernel.
-        sigma_fname : str
-            Path to the sigma_hp.log file produced by sigma.
         eqp_fname : str
             Path to either eqp0.dat or eqp1.dat file produced by sigma.
         extra_lines : list, optional
@@ -91,7 +89,6 @@ class AbsorptionTask(BGWTask):
             self.bsedmat_fname = kwargs['bsedmat_fname']
             self.bsexmat_fname = kwargs['bsexmat_fname']
 
-        self.sigma_fname = kwargs['sigma_fname']
         self.eqp_fname = kwargs['eqp_fname']
 
         ex = 'absorption.cplx.x' if self._flavor_complex else 'absorption.real.x'

@@ -173,6 +173,9 @@ class BSEFlow(Workflow):
         # Absorption calculation (BSE)
         if AbsorptionTask._use_hdf5:
             kwargs['bsemat_fname'] = self.kerneltask.bsemat_fname
+        else:
+            kwargs['bsedmat_fname'] = self.kerneltask.bsedmat_fname
+            kwargs['bsexmat_fname'] = self.kerneltask.bsexmat_fname
 
         self.absorptiontask = AbsorptionTask(
             dirname = pjoin(self.dirname, '14-absorption'),
@@ -181,9 +184,6 @@ class BSEFlow(Workflow):
 
             eps0mat_fname = self.epsilontask.eps0mat_fname,
             epsmat_fname = self.epsilontask.epsmat_fname,
-            bsedmat_fname = self.kerneltask.bsedmat_fname,
-            bsexmat_fname = self.kerneltask.bsexmat_fname,
-            sigma_fname = self.sigmatask.sigma_fname,
             eqp_fname = self.sigmatask.eqp1_fname,
             **kwargs)
 

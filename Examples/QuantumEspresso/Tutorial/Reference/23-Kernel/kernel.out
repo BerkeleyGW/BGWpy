@@ -1,6 +1,6 @@
 
- BerkeleyGW trunk revision 6943
- BSE/Kernel code, Complex version, run on 01-Apr-2016 at 15:16:06 -0700
+ BerkeleyGW branch 1.2.x revision 7090
+ BSE/Kernel code, Complex version, run on 04-Nov-2016 at 14:20:06 -0700
 
                                                                  ..o.          
                                                                 .oxxo.         
@@ -50,6 +50,10 @@
 --------------------------------------------------------------------------------
  Please cite the following papers when using results from BerkeleyGW:
 
+ F. H. da Jornada, J. Deslippe, D. Vigil-Fowler, J. I. Mustafa, T. Rangel,
+ F. Bruneval, F. Liu, D. Y. Qiu, D. A. Strubbe, G. Samsonidze, J. Lischner,
+ C. Yang, J. B. Neaton, and S. G. Louie, In preparation. (2016)
+
  Jack Deslippe, Georgy Samsonidze, David A. Strubbe, Manish Jain, Marvin L.
  Cohen, and Steven G. Louie, "BerkeleyGW: A Massively Parallel Computer Package
  for the Calculation of the Quasiparticle and Optical Properties of Materials
@@ -69,10 +73,12 @@
  Compilation flags:
  - Compiler: GNU
  - Para. flags: MPI
- - Math  flags: USESCALAPACK, USEFFTW3
+ - Math  flags: USESCALAPACK, USEFFTW3, HDF5
  - Debug flags: 
 
  Calculating the kernel only for (v,c)->(v',c') transitions.
+
+ Running with verbosity level 1 (default).
 
  Running with Semiconductor Screening
 
@@ -91,47 +97,40 @@
  Parallelizing over (k)^2
  We will not reuse wavefunction FFTs.
  Using pools:  nproc = 2  npool = 1  nown = 8  npown = 4                                                                         
- Memory available: 1850.6 MB per PE
- Memory required for execution: 1.6 MB per PE
- Extra memory required for vcoul: 0.0 MB per PE
+ Memory available: 974.8 MB per PE
+ Memory required for execution: 1.2 MB per PE
+ Extra memory required for vcoul: .0 MB per PE
         8192  elements per PE
           24  wavefunctions stored per PE
          169  G-vectors per wavefunction
- Crystal wavefunctions read from unit WFN_co
 
- nrk = 3
+ Crystal wavefunctions read from file WFN_co:
+ - Number of k-points in WFN_co: 3
+ - Number of k-points in the full BZ of WFN_co: 8
 
- nfk = 8  ksz =   0.289573
+ Calculation parameters:
+ - This is a Bethe-Salpeter-equation calculation.
+ - Cutoff of the bare Coulomb interaction (Ry): 10.00
+ - Cutoff of the screened Coulomb interaction (Ry): 10.00
+ - Number of G-vectors up to the bare int. cutoff: 169
+ - Number of G-vectors up to the screened int. cutoff: 169
+ - Number of valence bands: 4
+ - Number of conduction bands: 4
+ - Number of spins: 1
 
- Bethe-Salpeter Calculation
+ Epsilon matrix for q->0 read from eps0mat.h5:
+ - Number of q-points: 1
+ - Dielectric cutoff (Ry): 10.00
 
- Cutoff of the bare Coulomb interaction (Ry): 10.00
- Cutoff of the screened Coulomb interaction (Ry): 10.00
- Number of G-vectors up to the bare int. cutoff: 169
- Number of G-vectors up to the screened int. cutoff: 169
- Number of valence bands: 4
- Number of conduction bands: 4
- Number of spins: 1
+ Epsilon matrix for q/=0 read from epsmat.h5:
+ - Number of q-points: 2
+ - Dielectric cutoff (Ry): 10.00
 
+ Calculating Coulomb potential.
+ Note: for G=0: setting q0 =  0.001000  0.000000  0.000000
 
- Epsilon matrix for q->0 read from eps0mat
- nrq0 = 1  gmax =    10.000000
-
- Head of epsilon inverse :  (  4.4720061764477140E-002,  2.1091120386632078E-019)
-
-
- Epsilon matrix for q/=0 read from epsmat
- nrq = 2  gmax =    10.000000
- nfq = 8  qsz =   0.289573
-
-
- Calculating Vcoul
-
- For G=0: setting q0 =  0.001000  0.000000  0.000000
-
-
- Started calculation of matrix elements with 32 block(s) at 15:16:06.
- [ 15:16:06 |   0% ] block  1 / 32.
+ Started calculation of matrix elements with 32 block(s) at 14:20:06.
+ [ 14:20:06 |   0% ] block  1 / 32.
 
 WARNING: at least one vector from the epsilon G-space could not be mapped to 
  the WFN G-space. This means that either:
@@ -139,38 +138,21 @@ WARNING: at least one vector from the epsilon G-space could not be mapped to
  (2) The cutoff of the dielectric matrix is simply huge.
  Consider using the gsphere.py utility to figure out the cause of this warning.
 
- [ 15:16:06 |   6% ] block  3 / 32, remaining: 0 s.
- [ 15:16:06 |   9% ] block  4 / 32, remaining: 0 s.
- [ 15:16:06 |  19% ] block  7 / 32, remaining: 0 s.
- [ 15:16:06 |  28% ] block 10 / 32, remaining: 0 s.
- [ 15:16:06 |  38% ] block 13 / 32, remaining: 0 s.
- [ 15:16:06 |  50% ] block 17 / 32, remaining: 0 s.
- [ 15:16:06 |  59% ] block 20 / 32, remaining: 0 s.
- [ 15:16:06 |  69% ] block 23 / 32, remaining: 0 s.
- [ 15:16:06 |  78% ] block 26 / 32, remaining: 0 s.
- [ 15:16:06 |  88% ] block 29 / 32, remaining: 0 s.
- Finished calculation of matrix elements at 15:16:06.
+ [ 14:20:06 |   6% ] block  3 / 32, remaining: 0 s.
+ [ 14:20:06 |   9% ] block  4 / 32, remaining: 0 s.
+ [ 14:20:06 |  19% ] block  7 / 32, remaining: 0 s.
+ [ 14:20:06 |  28% ] block 10 / 32, remaining: 0 s.
+ [ 14:20:06 |  38% ] block 13 / 32, remaining: 0 s.
+ [ 14:20:06 |  50% ] block 17 / 32, remaining: 0 s.
+ [ 14:20:06 |  59% ] block 20 / 32, remaining: 0 s.
+ [ 14:20:06 |  69% ] block 23 / 32, remaining: 0 s.
+ [ 14:20:06 |  78% ] block 26 / 32, remaining: 0 s.
+ [ 14:20:06 |  88% ] block 29 / 32, remaining: 0 s.
+ Finished calculation of matrix elements at 14:20:06.
  Elapsed time: 0 s.
 
  Expected size of the BSE matrices:
-   bsexmat:           0.282 MB
-   bsedmat:           0.847 MB
-
-
- Started writing out BSE matrices with 512 records(s) at 15:16:06.
- [ 15:16:06 |   0% ] records   1 / 512.
- [ 15:16:06 |   0% ] records   3 / 512, remaining: 0 s.
- [ 15:16:06 |  10% ] records  52 / 512, remaining: 0 s.
- [ 15:16:06 |  20% ] records 103 / 512, remaining: 0 s.
- [ 15:16:06 |  30% ] records 154 / 512, remaining: 0 s.
- [ 15:16:06 |  40% ] records 205 / 512, remaining: 0 s.
- [ 15:16:06 |  50% ] records 257 / 512, remaining: 0 s.
- [ 15:16:06 |  60% ] records 308 / 512, remaining: 0 s.
- [ 15:16:06 |  70% ] records 359 / 512, remaining: 0 s.
- [ 15:16:06 |  80% ] records 410 / 512, remaining: 0 s.
- [ 15:16:06 |  90% ] records 461 / 512, remaining: 0 s.
- Finished writing out BSE matrices at 15:16:06.
- Elapsed time: 0 s.
+   bsemat.h5: 1.129 MB
 
 
  Frobenius norm of the matrices per spin:
@@ -180,83 +162,83 @@ WARNING: at least one vector from the epsilon G-space could not be mapped to
  - X    :  2.455416191711E+0001
 
 
-                            CPU (s)        WALL (s)          #
+                             CPU (s)        WALL (s)          #
 
- INPUT:          (min.)        0.002           0.006          1
-                 (PE 0)        0.002           0.006
-                 (max.)        0.002           0.006
- EPSCOPY:        (min.)        0.003           0.003          1
-                 (PE 0)        0.003           0.003
-                 (max.)        0.003           0.003
- GENWF:          (min.)        0.006           0.005         32
-                 (PE 0)        0.006           0.005
-                 (max.)        0.007           0.007
+ INPUT:          (min.)        0.003           0.006          1
+                 (PE 0)        0.003           0.006
+                 (max.)        0.003           0.006
+ EPSCOPY:        (min.)        0.022           0.022          1
+                 (PE 0)        0.022           0.022
+                 (max.)        0.022           0.022
+ GENWF:          (min.)        0.006           0.004         32
+                 (PE 0)        0.006           0.004
+                 (max.)        0.007           0.006
  EXCWF:          (min.)        0.000           0.000          0
                  (PE 0)        0.000           0.000
                  (max.)        0.000           0.000
- MTXEL:          (min.)        0.358           0.360         32
-                 (PE 0)        0.359           0.362
-                 (max.)        0.359           0.362
+ MTXEL:          (min.)        0.362           0.363         32
+                 (PE 0)        0.362           0.364
+                 (max.)        0.362           0.364
  FULLBZ:         (min.)        0.000           0.000          2
                  (PE 0)        0.000           0.000
                  (max.)        0.000           0.000
- BSEWRITE:       (min.)        0.007           0.007          1
-                 (PE 0)        0.007           0.007
-                 (max.)        0.007           0.008
+ BSEWRITE:       (min.)        0.008           0.009          1
+                 (PE 0)        0.008           0.009
+                 (max.)        0.009           0.009
  MTXEL Setup:    (min.)        0.000           0.000         64
                  (PE 0)        0.000           0.000
-                 (max.)        0.014           0.016
+                 (max.)        0.014           0.014
  MTXEL Vcoul:    (min.)        0.000           0.000         64
                  (PE 0)        0.000           0.000
                  (max.)        0.000           0.000
- MTXEL W:        (min.)        0.007           0.007       4720
-                 (PE 0)        0.007           0.011
-                 (max.)        0.007           0.011
- MTXEL W-Sum:    (min.)        0.023           0.022       4752
-                 (PE 0)        0.023           0.022
-                 (max.)        0.023           0.029
- MTXEL FFT Dir:  (min.)        0.136           0.142         32
-                 (PE 0)        0.150           0.150
-                 (max.)        0.150           0.150
+ MTXEL W:        (min.)        0.006           0.006       4720
+                 (PE 0)        0.006           0.006
+                 (max.)        0.007           0.007
+ MTXEL W-Sum:    (min.)        0.024           0.019       4752
+                 (PE 0)        0.025           0.022
+                 (max.)        0.025           0.022
+ MTXEL FFT Dir:  (min.)        0.133           0.132         32
+                 (PE 0)        0.147           0.150
+                 (max.)        0.147           0.150
  MTXEL High G:   (min.)        0.000           0.000         32
                  (PE 0)        0.000           0.000
                  (max.)        0.000           0.000
- MTXEL FFT X:    (min.)        0.128           0.129         32
-                 (PE 0)        0.142           0.146
-                 (max.)        0.142           0.146
- MTXEL BSEX:     (min.)        0.001           0.001         32
-                 (PE 0)        0.001           0.001
-                 (max.)        0.001           0.001
+ MTXEL FFT X:    (min.)        0.132           0.130         32
+                 (PE 0)        0.146           0.147
+                 (max.)        0.146           0.147
+ MTXEL BSEX:     (min.)        0.002           0.003         32
+                 (PE 0)        0.002           0.003
+                 (max.)        0.002           0.005
  MTXEL INDEX:    (min.)        0.000           0.000         32
                  (PE 0)        0.000           0.000
                  (max.)        0.000           0.000
  MTXEL EPSHEAD:  (min.)        0.000           0.000         32
                  (PE 0)        0.000           0.000
                  (max.)        0.000           0.000
- MTXEL EPSREAD:  (min.)        0.005           0.003       5408
+ MTXEL EPSREAD:  (min.)        0.005           0.002       5408
                  (PE 0)        0.005           0.006
                  (max.)        0.005           0.006
  MTXEL EPSOPEN:  (min.)        0.000           0.000          0
                  (PE 0)        0.000           0.000
                  (max.)        0.000           0.000
- MTXEL G SUM:    (min.)        0.002           0.000         32
-                 (PE 0)        0.002           0.002
-                 (max.)        0.002           0.002
- MTXEL COMM:     (min.)        0.015           0.015         64
-                 (PE 0)        0.015           0.015
-                 (max.)        0.028           0.023
- BSEWRITE COMM:  (min.)        0.001           0.001        512
-                 (PE 0)        0.001           0.001
-                 (max.)        0.004           0.002
- BSEWRITE I/O:   (min.)        0.000           0.001        512
-                 (PE 0)        0.002           0.001
-                 (max.)        0.002           0.001
- MTXEL FFT CC:   (min.)        0.069           0.071         32
-                 (PE 0)        0.076           0.077
-                 (max.)        0.076           0.077
- MTXEL FFT VV:   (min.)        0.067           0.071         32
-                 (PE 0)        0.074           0.073
-                 (max.)        0.074           0.073
+ MTXEL G SUM:    (min.)        0.004           0.003         32
+                 (PE 0)        0.004           0.003
+                 (max.)        0.004           0.003
+ MTXEL COMM:     (min.)        0.016           0.018         64
+                 (PE 0)        0.016           0.018
+                 (max.)        0.030           0.034
+ BSEWRITE COMM:  (min.)        0.003           0.005          1
+                 (PE 0)        0.003           0.005
+                 (max.)        0.004           0.005
+ BSEWRITE I/O:   (min.)        0.004           0.004          1
+                 (PE 0)        0.004           0.004
+                 (max.)        0.004           0.004
+ MTXEL FFT CC:   (min.)        0.068           0.068         32
+                 (PE 0)        0.075           0.079
+                 (max.)        0.075           0.079
+ MTXEL FFT VV:   (min.)        0.064           0.064         32
+                 (PE 0)        0.071           0.071
+                 (max.)        0.071           0.071
  MTXEL FIND:     (min.)        0.000           0.000         32
                  (PE 0)        0.000           0.000
                  (max.)        0.000           0.000
@@ -266,11 +248,11 @@ WARNING: at least one vector from the epsilon G-space could not be mapped to
  MTXEL FFTBOX:   (min.)        0.000           0.000         32
                  (PE 0)        0.000           0.000
                  (max.)        0.000           0.000
- MTXEL FFT VC:   (min.)        0.128           0.129         32
-                 (PE 0)        0.142           0.146
-                 (max.)        0.142           0.146
+ MTXEL FFT VC:   (min.)        0.132           0.130         32
+                 (PE 0)        0.146           0.147
+                 (max.)        0.146           0.147
 
- TOTAL:          (min.)        0.379           0.385
-                 (PE 0)        0.379           0.385
-                 (max.)        0.379           0.385
+ TOTAL:          (min.)        0.403           0.409
+                 (PE 0)        0.403           0.409
+                 (max.)        0.404           0.409
 
