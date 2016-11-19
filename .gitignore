@@ -9,6 +9,7 @@ TODO
 BGWpy.egg-info
 build
 build/*
+dist
 dist/*/
 dist/*.egg
 

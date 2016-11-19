@@ -165,14 +165,11 @@ class VariableBlock(list):
 def structure_to_abivars(structure):
     """Get abinit variables from a pymatgen.Structure object."""
 
-    rprim = structure.lattice.matrix
-    acell = np.ones(3, dtype=float)
-
-    rpriminv = np.linalg.inv(rprim)
-    xcart = structure.cart_coords
-    xred = np.dot(rpriminv, xcart.transpose()).transpose()
-    xred = np.round(xred, 12)
-    rprim = rprim / pymatgen.units.bohr_to_ang
+    rprim = structure.lattice.matrix / pymatgen.units.bohr_to_ang
+    
+    xred = list()
+    for site in structure.sites:
+        xred.append(site.frac_coords.round(12).tolist())
 
     natom = structure.num_sites
     ntypat = structure.ntypesp
@@ -198,7 +195,7 @@ def structure_to_abivars(structure):
         ntypat=ntypat,
         znucl=znucl,
         typat=typat,
-        xred=xred.tolist(),
+        xred=xred,
         )
 
     return d
