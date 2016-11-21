@@ -169,7 +169,7 @@ def structure_to_abivars(structure):
     
     xred = list()
     for site in structure.sites:
-        xred.append(site.frac_coords.round(12).tolist())
+        xred.append(site.frac_coords.round(14).tolist())
 
     natom = structure.num_sites
     ntypat = structure.ntypesp
