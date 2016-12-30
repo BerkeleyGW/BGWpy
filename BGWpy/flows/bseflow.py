@@ -257,6 +257,7 @@ class BSEFlow(Workflow):
             ngkpt = self.ngkpt,
             kshift = self.kshift,
             nbnd = self.nbnd,
+            rhog_flag = True,
             **kwargs)
 
         self.wfntask_qsh = QeBgwFlow(
@@ -346,6 +347,7 @@ class BSEFlow(Workflow):
             ngkpt = self.ngkpt,
             kshift = self.kshift,
             nband = self.nbnd,
+            rhog_flag = True,
             **kwargs)
         
         self.wfntask_qsh = AbinitBgwFlow(

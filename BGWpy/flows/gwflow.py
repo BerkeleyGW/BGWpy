@@ -77,8 +77,8 @@ class GWFlow(Workflow):
 
         self.structure = kwargs['structure']
         self.ngkpt = kwargs.pop('ngkpt')
-        self.kshift = kwargs.pop('kshift')
-        self.qshift = kwargs.pop('qshift')
+        self.kshift = kwargs.pop('kshift', [.0,.0,.0])
+        self.qshift = kwargs.pop('qshift', [.0,.0,.0])
 
         nband_aliases = ('nbnd', 'nband')
         for key in nband_aliases:
@@ -206,6 +206,7 @@ class GWFlow(Workflow):
             ngkpt = self.ngkpt,
             kshift = self.kshift,
             nbnd = self.nbnd,
+            rhog_flag = True,
             **kwargs)
 
         self.wfntask_qsh = QeBgwFlow(
@@ -325,6 +326,7 @@ class GWFlow(Workflow):
             kshift = self.kshift,
             nband = nbnd,
             #nbdbuf = nbdbuf, #lucky number
+            rhog_flag = True,
             **kwargs)
         
         self.wfntask_qsh = AbinitBgwFlow(
