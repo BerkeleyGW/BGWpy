@@ -12,7 +12,7 @@ __all__ = ['EpsilonTask']
 class EpsilonTask(BGWTask):
     """Inverse dielectric function calculation."""
 
-    _TASK_NAME = 'Epsilon task'
+    _TASK_NAME = 'Epsilon'
     _input_fname  = 'epsilon.inp'
     _output_fname = 'epsilon.out'
 

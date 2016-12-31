@@ -8,7 +8,7 @@ __all__ = ['AbinitWfnTask']
 class AbinitWfnTask(AbinitTask):
     """Charge density calculation."""
 
-    _TASK_NAME = 'Wavefunction task'
+    _TASK_NAME = 'Wfn'
 
     _input_fname = 'wfn.in'
     _output_fname = 'wfn.out'

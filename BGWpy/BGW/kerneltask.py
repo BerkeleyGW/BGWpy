@@ -12,7 +12,7 @@ __all__ = ['KernelTask']
 class KernelTask(BGWTask):
     """Kernel calculation for BSE."""
 
-    _TASK_NAME = 'Kernel task'
+    _TASK_NAME = 'Kernel'
     _input_fname  = 'kernel.inp'
     _output_fname = 'kernel.out'
 

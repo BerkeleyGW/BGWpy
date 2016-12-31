@@ -102,7 +102,7 @@ class Qe2BgwInput(Namelist):
 class Qe2BgwTask(QeTask):
     """Wavefunctions convertion."""
 
-    _TASK_NAME = 'PW to BGW task'
+    _TASK_NAME = 'PW2BGW'
 
     _input_fname = 'wfn.pp.in'
     _output_fname = 'wfn.pp.out'
@@ -154,7 +154,7 @@ class Qe2BgwTask(QeTask):
             Path to the vxc.dat file produced.
         """
 
-        kwargs.setdefault('runscript_fname', 'run-pw2bgw.sh')
+        kwargs.setdefault('runscript_fname', 'pw2bgw.run.sh')
 
         super(Qe2BgwTask, self).__init__(dirname, **kwargs)
 

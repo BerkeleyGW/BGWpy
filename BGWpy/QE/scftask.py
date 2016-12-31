@@ -11,7 +11,7 @@ __all__ = ['QeScfTask']
 class QeScfTask(QeTask):
     """Charge density calculation."""
 
-    _TASK_NAME = 'SCF task'
+    _TASK_NAME = 'SCF'
 
     _input_fname = 'scf.in'
     _output_fname = 'scf.out'

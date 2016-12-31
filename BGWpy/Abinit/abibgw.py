@@ -121,7 +121,7 @@ class Abi2BgwInput(BasicInputFile):
 class Abi2BgwTask(AbinitTask):
     """Wavefunctions convertion."""
 
-    _TASK_NAME = 'Abinit to BGW task'
+    _TASK_NAME = 'Abi2BGW'
     _TAG_JOB_COMPLETED = 'Calculation completed'
 
     _input_fname = 'abi2bgw.in'

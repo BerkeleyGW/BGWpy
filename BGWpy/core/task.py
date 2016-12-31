@@ -33,7 +33,7 @@ class Task(object):
         }
     _end_color = '\033[0m'
 
-    def __init__(self, dirname='./', runscript_fname='run.sh', store_variables=True, *args, **kwargs):
+    def __init__(self, dirname='./', runscript_fname='run.sh', store_variables=False, *args, **kwargs):
         """
         Keyword arguments
         -----------------
@@ -53,6 +53,8 @@ class Task(object):
         self.runscript = RunScript()
         self.runscript.fname = runscript_fname
         self.variables = kwargs if store_variables else dict()
+
+        self._TASK_NAME = '{:<10} : {}'.format(self._TASK_NAME, self.dirname)
 
     @property
     def dirname(self):
@@ -172,7 +174,7 @@ class Task(object):
             col = self._report_colors[status]
             status = col + str(status) + self._end_color
 
-        s = '   {:<20}  -  Status :  {}'.format(self._TASK_NAME, status)
+        s = '   {:<50}  -  Status :  {}'.format(self._TASK_NAME, status)
 
         file = file if file is not None else sys.stdout
         print(s, file=file)

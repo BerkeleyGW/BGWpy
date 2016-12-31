@@ -12,7 +12,7 @@ __all__ = ['SigmaTask']
 class SigmaTask(BGWTask):
     """Self-energy calculation."""
 
-    _TASK_NAME = 'Sigma task'
+    _TASK_NAME = 'Sigma'
     _input_fname  = 'sigma.inp'
     _output_fname = 'sigma.out'
 

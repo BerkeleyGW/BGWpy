@@ -106,6 +106,7 @@ class QeBgwFlow(WfnBgwFlow):
         self.wfnbgwntask = Qe2BgwTask(
             dirname = self.wfntask.dirname,
             **kwargs)
+        self.wfnbgwntask.runscript.fname = 'pw2bgw.run.sh'
 
         self.add_task(self.wfnbgwntask, merge=False)
 
