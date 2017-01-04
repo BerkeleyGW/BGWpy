@@ -17,7 +17,6 @@ task = SigmaTask(
     structure = Structure.from_file('../../Data/Structures/GaAs.json'),
 
     ngkpt = [2,2,2],        # k-points grid
-    nbnd = 8,               # Number of bands
     ibnd_min = 1,           # Minimum band for GW corrections
     ibnd_max = 8,           # Maximum band for GW corrections
     ecuteps = 10.0,         # Energy cutoff for the epsilon matrix
