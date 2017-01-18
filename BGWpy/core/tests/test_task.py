@@ -24,7 +24,7 @@ class TestBasicTask(TestTask):
     def test_variable_storage(self):
         """Test storage of keyword arguments."""
         variables = dict(a=1,b=2,c=3)
-        task = self.get_task(**variables)
+        task = self.get_task(store_variables=True, **variables)
         assert task.variables == variables
         task.write()
         fname = os.path.join(task.dirname, 'variables.pkl')
