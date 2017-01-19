@@ -1,6 +1,6 @@
 import numpy as np
 
-def extract_inteqp_bands(fname):
+def extract_inteqp_bandstructure(fname):
     """
     Extract the data in the 'bandstructure.dat' file produced by inteqp.x.
 
@@ -69,6 +69,105 @@ def extract_inteqp_bands(fname):
         nkpt=nkpt,
         nband=nband,
         kpts=kpt[:nkpt],
+        ib_min=ib_min,
+        ib_max=ib_max,
+        eigs_dft_eV=eigs_dft_eV,
+        eigs_gw_eV=eigs_gw_eV,
+        delta_eigs_eV=delta_eigs_eV,
+        )
+
+    return results
+
+
+def extract_inteqp_eqp(fname):
+    """
+    Extract the data in the 'eqp.dat' file produced by inteqp.x.
+
+    Returns
+    -------
+    dict:
+        nspin: int
+            Number of spin components.
+        nkpt: int
+            Number of k-points.
+        nband: int
+            Number of bands.
+        kpts: numpy.array(nkpt, 3), float
+            k-points in cartesian coordinates.
+        ib_min: int
+            Index of minimum band (starting at 1 for the first occupied band).
+        ib_max
+            Index of maximum band.
+        eigs_dft_eV: numpy.array(nspin, nkpt, nband), float
+            DFT eigenvalues, in eV.
+        eigs_gw_eV: numpy.array(nspin, nkpt, nband), float
+            GW eigenvalues, in eV.
+        delta_eigs_eV: numpy.array(nspin, nkpt, nband), float
+            Difference between GW and DFT eigenvalues, in eV.
+    """
+
+    with open(fname, 'r') as f:
+
+        # Read the first block to compute the dimensions
+        line = f.next()
+        parts = line.split()
+        nstates = int(parts[3])
+        spins = list()
+        bands = list()
+        for i in range(nstates):
+            line = f.next()
+            parts = line.split()
+            spins.append(int(parts[0]))
+            bands.append(int(parts[1]))
+
+        ib_min = min(bands)
+        ib_max = max(bands)
+        nspin = max(spins)
+        nband = nstates // nspin
+
+        # Count the remaining lines
+        nlines = nstates + 1
+        while True:
+            try:
+                line = f.next()
+                nlines += 1
+            except StopIteration:
+                break
+
+        nkpt = nlines // (nstates + 1)
+
+        kpts = np.zeros((nkpt, 3), dtype=np.ndarray)
+        eigs_dft_eV = np.zeros((nspin,nkpt,nband), dtype=np.ndarray)
+        eigs_gw_eV = np.zeros((nspin,nkpt,nband), dtype=np.ndarray)
+
+        # Rewind file to start
+        f.seek(0)
+
+        for ikpt in range(nkpt):
+
+            line = f.next()
+            parts = line.split()
+
+            kpts[ikpt,:] = map(float, parts[:3])
+
+            for i in range(nstates):
+
+                line = f.next()
+                parts = line.split()
+
+                ispin = i // nband
+                iband = i % nband
+
+                eigs_dft_eV[ispin,ikpt,iband] = float(parts[2])
+                eigs_gw_eV[ispin,ikpt,iband] = float(parts[3])
+
+    delta_eigs_eV = eigs_gw_eV - eigs_dft_eV
+
+    results = dict(
+        nspin=nspin,
+        nkpt=nkpt,
+        nband=nband,
+        kpts=kpts,
         ib_min=ib_min,
         ib_max=ib_max,
         eigs_dft_eV=eigs_dft_eV,
