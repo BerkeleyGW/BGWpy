@@ -21,6 +21,7 @@ class KgridTask(Task):
                  executable='kgrid.x',  # TODO remove executable and make bindir a global option
                  rootname='tmp.kgrid',
                  clean_after=True,
+                 dirname='',
                  **kwargs):
         """
         Arguments
@@ -42,6 +43,7 @@ class KgridTask(Task):
             Use time reversal symmetry.
         """
 
+        rootname = os.path.join(dirname, rootname)
         self.dirname = os.path.dirname(rootname)
         self.inputname = rootname + '.in'
         self.outputname = rootname + '.out'
@@ -77,7 +79,7 @@ class KgridTask(Task):
 
     def write(self):
         if self.new_dir:
-            subprocess.call(['mkdir', '-p', dirname])
+            subprocess.call(['mkdir', '-p', self.dirname])
 
         with open(self.inputname, 'write') as f:
             f.write(self.get_kgrid_input())
@@ -328,7 +330,8 @@ def get_kpt_grid(structure, ngkpt,
     return get_kpoints(outputcontent)
 
 
-def get_kgrid_input(structure, ngkpt, kshift=[.0,.0,.0], qshift=[.0,.0,.0], fft=[0,0,0], use_tr=False):
+def get_kgrid_input(structure, ngkpt, kshift=[.0,.0,.0], qshift=[.0,.0,.0],
+                    fft=[0,0,0], use_tr=False, **kwargs):
     """Make a kgrid.x input, using pymatgen.Structure object."""
 
     abc = np.array(structure.lattice.abc)

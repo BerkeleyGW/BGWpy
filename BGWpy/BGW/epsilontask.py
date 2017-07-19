@@ -2,7 +2,7 @@ from __future__ import print_function
 import os
 
 from .bgwtask import BGWTask
-from .kgrid   import get_kpt_grid
+from .kgrid   import KgridTask, get_kpt_grid
 from .inputs  import EpsilonInput
 
 # Public
@@ -68,9 +68,15 @@ class EpsilonTask(BGWTask):
 
         # Compute k-points grids
         # TODO maybe make these properties
-        structure = kwargs['structure']
-        ngkpt = kwargs['ngkpt']
-        kpts_ush, wtks_ush = get_kpt_grid(structure, ngkpt)
+        #structure = kwargs['structure']
+        #ngkpt = kwargs['ngkpt']
+        #kpts_ush, wtks_ush = get_kpt_grid(structure, ngkpt)
+        kgrid_kwargs = dict()
+        for key in ('structure', 'ngkpt', 'fft', 'use_tr', 'clean_after'):
+            if key in kwargs:
+                kgrid_kwargs[key] = kwargs[key]
+        self.kgridtask = KgridTask(dirname=dirname, **kgrid_kwargs)
+        kpts_ush, wtks_ush = self.kgridtask.get_kpoints()
 
         extra_lines = kwargs.get('extra_lines',[])
         extra_variables = kwargs.get('extra_variables',{})

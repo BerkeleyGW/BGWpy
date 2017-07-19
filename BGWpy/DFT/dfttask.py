@@ -43,7 +43,7 @@ class DFTTask(MPITask):
 
         # This task is not part of a workflow.
         # It is executed on-the-fly and leaves no trace (clean_after=True). 
-        self.kgridtask = KgridTask(**kwargs)
+        self.kgridtask = KgridTask(dirname=dirname, **kwargs)
 
     @ property
     def is_flavor_QE(self):

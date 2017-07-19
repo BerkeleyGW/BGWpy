@@ -2,7 +2,7 @@ from __future__ import print_function
 import os
 
 from .bgwtask  import BGWTask
-from .kgrid    import get_kpt_grid
+from .kgrid    import KgridTask, get_kpt_grid
 from .inputs   import SigmaInput
 
 # Public
@@ -90,18 +90,31 @@ class SigmaTask(BGWTask):
                 break
         else:
             # Compute k-points grids
-            structure = kwargs['structure']
-            ngkpt = kwargs['ngkpt']
-            kpts, wtks = get_kpt_grid(structure, ngkpt)
+            #structure = kwargs['structure']
+            #ngkpt = kwargs['ngkpt']
+            #kpts, wtks = get_kpt_grid(structure, ngkpt)
+            kgrid_kwargs = dict()
+            for key in ('structure', 'ngkpt', 'fft', 'use_tr', 'clean_after'):
+                if key in kwargs:
+                    kgrid_kwargs[key] = kwargs[key]
+            self.kgridtask = KgridTask(dirname=dirname, **kgrid_kwargs)
+            kpts, wtks = self.kgridtask.get_kpoints()
 
 
         # Use specified qpoints or compute them from grid (HF).
         if 'qpts' in kwargs:
             qpts = kwargs['qpts']
         elif 'ngqpt' in kwargs:
-            structure = kwargs['structure']
-            ngqpt = kwargs['ngqpt']
-            qpts, wtqs = get_kpt_grid(structure, ngqpt)
+            #structure = kwargs['structure']
+            #ngqpt = kwargs['ngqpt']
+            #qpts, wtqs = get_kpt_grid(structure, ngqpt)
+            kgrid_kwargs = dict(ngkpt=kwargs['ngqpt'])
+            for key in ('structure', 'fft', 'use_tr', 'clean_after'):
+                if key in kwargs:
+                    kgrid_kwargs[key] = kwargs[key]
+            self.kgridtask = KgridTask(dirname=dirname, **kgrid_kwargs)
+            qpts, wtqs = self.kgridtask.get_kpoints()
+            
         else:
             qpts = []
         if 'ngqpt' in kwargs:

@@ -6,6 +6,7 @@ TODO
 
 # Files produced by the setup script
 *.pyc
+*.swp
 BGWpy.egg-info
 build
 build/*
