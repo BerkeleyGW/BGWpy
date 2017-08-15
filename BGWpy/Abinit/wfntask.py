@@ -114,6 +114,8 @@ class AbinitWfnTask(AbinitTask):
     def charge_density_fname(self, value):
         self._charge_density_fname = value
         dest = os.path.relpath(self.get_idat('DEN'), self.dirname)
+        if value.endswith('.nc'):
+            dest += '.nc'
         self.update_link(value, dest)
 
     rho_fname = charge_density_fname
