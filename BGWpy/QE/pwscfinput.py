@@ -26,6 +26,9 @@ class PWscfInput(Writable):
         self.occupations = Card('OCCUPATIONS', '')
         self.atomic_forces = Card('ATOMIC_FORCES', '')
 
+        if 'variables' in kwargs:
+            self.set_variables(kwargs['variables'])
+
     def _isrelax(self):
         """True if this is a relaxation calculation."""
         calculation = str(self.control.get('calculation')).lower()
@@ -50,6 +53,54 @@ class PWscfInput(Writable):
     def _is_manual_occ(self):
         """True if the occupation is specified manually."""
         return str(self.system.get('occupations','')).lower() == 'from_input'
+
+    def set_variables(self, variables):
+        """
+        Use a nested dictionary to set variables.
+        The items in the variables dictionary should
+        be dictionaries for namelist input variables,
+        and lists for card input variables.
+        In case of card input variables, the first item of the list
+        must correspond to the option.
+
+        Example:
+
+        pwscfinput.set_variables({
+            'control' : {
+                'verbosity' : 'high',
+                'nstep' : 1,
+                },
+            'system' : {
+                'nbnd' : 10,
+                },
+            'electrons' : {
+                'conv_thr' : 1e-6,
+                },
+            'cell_parameters' : ['angstrom',
+                1., 0., 0.,
+                0., 1., 0.,
+                0., 0., 1.,
+                ],
+            'atomic_species' : ['',
+                'Ga', 69.723, 'path/to/Ga/pseudo',
+                'As', 74.921, 'path/to/As/pseudo',
+                ],
+            })
+        """
+        for key, val in variables.items():
+
+            if key not in dir(self):
+                continue
+            obj = getattr(self, key)
+
+            if isinstance(obj, Namelist):
+                obj.update(val)
+            elif isinstance(obj, Card):
+                obj.option = val[0]
+                while obj:
+                    obj.pop()
+                obj.extend(val[1:])
+
 
     def __str__(self):
 

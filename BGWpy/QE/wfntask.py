@@ -93,6 +93,9 @@ class QeWfnTask(QeTask):
             nbnd = kwargs.get('nbnd'),
             )
 
+        if 'variables' in kwargs:
+            self.input.set_variables(kwargs['variables'])
+
         self.input.fname = self._input_fname
 
         # Run script
