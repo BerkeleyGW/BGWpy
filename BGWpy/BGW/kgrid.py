@@ -89,8 +89,18 @@ class KgridTask(Task):
             subprocess.call([self.executable, self.inputname,
                              self.outputname, self.logname])
         except OSError as E:
-            raise OSError(str(E) + '\n' +
-                'Please make sure that kgrid.x is available for execution.')
+            message = (str(E) + '\n\n' +
+            79 * '=' + '\n\n' +
+            'Could not find the executable kgrid.x\n' + 
+            'Please make sure it is available for execution.\n' +
+            'On a computing cluster, you might do this my loading the module:\n' + 
+            '    module load berkeleygw\n' +
+            "If you compiled BerkeleyGW yourself, " + 
+            "make sure that the 'bin' directory\n" + 
+            'of BerkeleyGW is listed in your PATH environment variable.\n' +
+            '\n' + 79 * '=' + '\n')
+                
+            raise OSError(message)
     
 
     def clean_up(self):
@@ -303,9 +313,18 @@ def get_kpt_grid(structure, ngkpt,
     try:
         subprocess.call([executable, inputname, outputname, logname])
     except OSError as E:
-        raise OSError(str(E) + '\n' +
-                      'Please make sure that {} is available for execution.'
-                      .format(executable))
+        message = (str(E) + '\n\n' +
+        79 * '=' + '\n\n' +
+        'Could not find the executable {} .\n'.format(executable) + 
+        'Please make sure it is available for execution.\n' +
+        'On a computing cluster, you might do this my loading the module:\n' + 
+        '    module load berkeleygw\n' +
+        "If you compiled BerkeleyGW yourself, " + 
+        "make sure that the 'bin' directory\n" + 
+        'of BerkeleyGW is listed in your PATH environment variable.\n' +
+        '\n' + 79 * '=' + '\n')
+            
+        raise OSError(message)
     
 
     # Read the output
