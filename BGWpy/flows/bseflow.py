@@ -102,7 +102,7 @@ class BSEFlow(Workflow):
 
         self.structure = kwargs['structure']
         self.ngkpt = kwargs.pop('ngkpt')
-        self.kshift = kwargs.pop('kshift')
+        self.kshift = kwargs.pop('kshift', [.0,.0,.0])
         self.qshift = kwargs.pop('qshift')
 
         nband_aliases = ('nbnd', 'nband')
