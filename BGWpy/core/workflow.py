@@ -130,3 +130,15 @@ class Workflow(Task):
         for task in self.tasks:
             task.report(*args, **kwargs)
 
+    def __iter__(self):
+        """
+        Iterate over tasks. If a task is a workflow, continue iterating
+        over the tasks of the workflow.
+        """
+        for task in self.tasks:
+            if '__iter__' in dir(task):
+                for subtask in task:
+                    yield subtask
+            else:
+                yield task
+
