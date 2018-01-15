@@ -152,6 +152,11 @@ class Task(object):
         Completed, Unstarted, Unfinished, Unknown.
         """
         return self._STATUS_UNKNOWN
+
+    def is_complete(self):
+        """True if the task reports a completed status."""
+        status = self.get_status()
+        return (status is self._STATUS_COMPLETED)
         
     def report(self, file=None, color=True, **kwargs):
         """
