@@ -375,20 +375,22 @@ class IOTask(Task):
 
     def get_status(self, check_time=False):
 
-        if not self.input_fname or not self.output_fname:
-            return self._STATUS_UNKNOWN
+        if self._input_fname:
 
-        if not os.path.exists(self.input_fname):
-            return self._STATUS_UNSTARTED
+            if not os.path.exists(self.input_fname):
+                return self._STATUS_UNSTARTED
 
-        if not os.path.exists(self.output_fname):
-            return self._STATUS_UNSTARTED
+        if self._output_fname:
 
-        input_creation_time = os.path.getmtime(self.input_fname)
-        output_creation_time = os.path.getmtime(self.output_fname)
+            if not os.path.exists(self.output_fname):
+                return self._STATUS_UNSTARTED
 
-        if check_time and input_creation_time > output_creation_time:
-            return self._STATUS_UNSTARTED
+        if check_time:
+            input_creation_time = os.path.getmtime(self.input_fname)
+            output_creation_time = os.path.getmtime(self.output_fname)
+
+            if input_creation_time > output_creation_time:
+                return self._STATUS_UNSTARTED
 
         if not self._TAG_JOB_COMPLETED:
             return self._STATUS_UNKNOWN

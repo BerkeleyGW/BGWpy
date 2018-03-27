@@ -1,6 +1,7 @@
 from . import core
 from . import config
 from . import DFT
+from . import BGW
 
 # Development functions
 #from . import external

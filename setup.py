@@ -26,7 +26,7 @@ description = 'Interface BerkeleyGW flows in python.'
 author = 'Gabriel Antonius'
 author_email = 'antonius@civet.berkeley.edu'
 license = 'BSD'
-__version__ = '2.4.1'
+__version__ = '2.5.0'
 
 
 # Requirements
