@@ -24,6 +24,8 @@ task = AbinitBgwFlow(
     ecut = 5.0,           # Wavefunctions cutoff energy
     nband = 9,            # Number of bands
 
+    input_variables = {'autoparal' : 1},  # Any extra input variables we want to specify
+
     charge_density_fname = '11-Density/out_data/odat_DEN',
 
     # These are the default parameters for the MPI runner.

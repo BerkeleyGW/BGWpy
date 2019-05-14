@@ -23,10 +23,6 @@ class VmtxelTask(BGWTask):
         Mandatory Keyword arguments
         --------------------------
 
-        nbnd_val: int
-            Number of valence bands on the fine grid.
-        nbnd_cond: int
-            Number of conduction bands on the fine grid.
         wfn_fi_fname : str
             Path to the wavefunction file (fine grid) produced by pw2bgw.
 

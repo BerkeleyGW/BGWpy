@@ -20,6 +20,9 @@ task = EpsilonTask(
     qshift = [.001,.0,.0],  # q-shift to treat the Gamma point
     ecuteps = 10.0,         # Energy cutoff for the epsilon matrix
 
+    extra_lines = ['degeneracy_check_override'],
+    extra_variables = {'number_bands' : 8},
+
     # Files to be linked
     wfn_fname='12-Wfn/wfn.cplx',
     wfnq_fname='13-Wfnq/wfn.cplx',
