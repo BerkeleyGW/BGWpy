@@ -129,7 +129,10 @@ class QeWfnTask(QeTask):
     @data_file_fname.setter
     def data_file_fname(self, value):
         self._data_file_fname = value
-        dest = os.path.join(self.savedir, 'data-file.xml')
+        if self.version >= 6:
+            dest = os.path.join(self.savedir, 'data-file-schema.xml')
+        else:
+            dest = os.path.join(self.savedir, 'data-file.xml')
         self.update_copy(value, dest)
 
     def add_pseudos_copy(self):
