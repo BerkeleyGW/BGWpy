@@ -41,6 +41,11 @@ class DFTTask(MPITask):
         self.pseudos    = kwargs.get('pseudos', [])
         self.structure  = kwargs.get('structure')
 
+        # Patches for newer verisons of qe. Originally bgwpy was written for
+        # QE v5 but currently defaults to QE v6.
+        if self.is_flavor_QE:
+            self.version = kwargs.pop('version',  6)
+
         # This task is not part of a workflow.
         # It is executed on-the-fly and leaves no trace (clean_after=True). 
         self.kgridtask = KgridTask(dirname=dirname, **kwargs)
