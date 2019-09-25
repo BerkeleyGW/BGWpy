@@ -105,5 +105,10 @@ class QeScfTask(QeTask):
 
     @property
     def data_file_fname(self):
-        return os.path.join(self.dirname, self.savedir, 'data-file.xml')
+        # It seems newer versions of QE have switched from data-file.xml to
+        # data-file-schema.xml
+        if self.version >= 6:
+            return os.path.join(self.dirname, self.savedir, 'data-file-schema.xml')
+        else:
+            return os.path.join(self.dirname, self.savedir, 'data-file.xml')
 
