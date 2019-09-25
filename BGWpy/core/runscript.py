@@ -168,7 +168,7 @@ class RunScript(Writable):
         for line in self.header:
             S += line + '\n'
 
-        for name, value in self.variables.iteritems():
+        for name, value in self.variables.items():
             value = self._get_quoted_string(value)
             S += '{}={}\n'.format(name, value)
 

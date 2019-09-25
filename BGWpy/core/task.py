@@ -99,7 +99,7 @@ class Task(object):
             self.runscript.write()
 
             if self.variables:
-                with open('variables.pkl', 'write') as f:
+                with open('variables.pkl', 'w') as f:
                     pickle.dump(self.variables, f)
 
     def update_link(self, target, dest):

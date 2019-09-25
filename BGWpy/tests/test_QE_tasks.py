@@ -27,7 +27,7 @@ class TestQETasksMaker(TestTask):
 
     def get_scftask(self, **kwargs):
         """Construct a QeScfTask."""
-        for key, val in self.common_kwargs.iteritems():
+        for key, val in self.common_kwargs.items():
             kwargs.setdefault(key, val)
 
         kwargs.setdefault('dirname', os.path.join(self.tmpdir, 'Density'))
@@ -36,7 +36,7 @@ class TestQETasksMaker(TestTask):
         
     def get_wfntask(self, scftask, **kwargs):
         """Construct a QeWfnTask."""
-        for key, val in self.common_kwargs.iteritems():
+        for key, val in self.common_kwargs.items():
             kwargs.setdefault(key, val)
 
         kwargs.setdefault('dirname', os.path.join(self.tmpdir, 'Wfn'))
@@ -50,7 +50,7 @@ class TestQETasksMaker(TestTask):
         
     def get_pw2bgwtask(self, wfntask, **kwargs):
         """Construct a Qe2BgwTask."""
-        for key, val in self.common_kwargs.iteritems():
+        for key, val in self.common_kwargs.items():
             kwargs.setdefault(key, val)
 
         kwargs.setdefault('wfn_fname', 'wfn.cplx')

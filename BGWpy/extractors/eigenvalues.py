@@ -11,7 +11,7 @@ def get_eigs_unpol(savedir):
     Returns: kpoints, eigenvalues_Ha
     """
 
-    with open(os.path.join(savedir, 'data-file.xml'), 'read') as f:
+    with open(os.path.join(savedir, 'data-file.xml'), 'r') as f:
         datafile = xmltodict.parse(f)
 
     kpoints = list()
@@ -22,7 +22,7 @@ def get_eigs_unpol(savedir):
         kpt = np.array(map(float, kdict['K-POINT_COORDS']['#text'].split()))
 
         eigfname = os.path.join(savedir, kdict['DATAFILE']['@iotk_link'])
-        with open(eigfname, 'read') as f:
+        with open(eigfname, 'r') as f:
             edict = xmltodict.parse(f)
 
         eigs_Ha = np.array(map(float, edict['Root'][u'EIGENVALUES']['#text'].split()))

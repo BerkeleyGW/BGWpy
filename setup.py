@@ -3,10 +3,6 @@ import sys
 import os
 import shutil
 
-if sys.version[0:3] < '2.7':
-    sys.stderr.write("Python version 2.7 or above is required. Exiting.")
-    sys.exit(1)
-
 try:
     import setuptools
 except ImportError:
@@ -23,10 +19,15 @@ from setuptools import setup, find_packages
 
 name = 'BGWpy'
 description = 'Interface BerkeleyGW flows in python.'
-author = 'Gabriel Antonius'
-author_email = 'antonius@civet.berkeley.edu'
 license = 'BSD'
-__version__ = '2.5.0'
+url = 'https://github.com/BerkeleyGW/BGWpy'
+__version__ = '3.0.0'
+
+# author and author_email should be a single string, not a list, but we can put
+# multiple authors / emails by separating them by commas inside the string.
+# If you contributed to this package, add your name and email. Don't be shy!
+author = 'Gabriel Antonius'
+author_email = 'gabriel.antonius@gmail.com'
 
 
 # Requirements
@@ -49,20 +50,6 @@ def install_user_configuration():
     if os.path.exists(user_config):
         shutil.copy(user_config, dest)
 
-# Actually, this function breaks the build...
-def cleanup():
-    """Clean up the junk left around by the build process."""
-
-    egg = 'BGWpy.egg-info'  # Warning: Do not build that string variable.
-    try:
-        shutil.rmtree(egg)
-    except Exception as E:
-        print(E)
-        try:
-            os.unlink(egg)
-        except:
-            pass
-
 # --------------------------------------------------------------------------- #
 # Setup
 # --------------------------------------------------------------------------- #
@@ -70,15 +57,16 @@ def cleanup():
 install_user_configuration()
 
 setup_args = dict(
-      name             = name,
-      version          = __version__,
-      description      = description,
-      author           = author,
-      author_email     = author_email,
-      license          = license,
-      install_requires = install_requires,
-      packages         = find_packages(),
-      package_data     = get_package_data(),
+      name              = name,
+      version           = __version__,
+      description       = description,
+      author            = author,
+      author_email      = author_email,
+      license           = license,
+      url               = url,
+      install_requires  = install_requires,
+      packages          = find_packages(),
+      package_data      = get_package_data(),
       )
 
 if __name__ == "__main__":

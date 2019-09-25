@@ -31,7 +31,7 @@ class TestAbinitTaskMaker(TestTask):
         """Construct a AbinitBgwFlow."""
         kwargs.setdefault('dirname', os.path.join(self.tmpdir, 'DFT'))
         kwargs.update(charge_density_fname = scftask.charge_density_fname)
-        for key, val in self.common.iteritems():
+        for key, val in self.common.items():
             kwargs.setdefault(key, val)
 
         return AbinitBgwFlow(**kwargs)
@@ -40,7 +40,7 @@ class TestAbinitTaskMaker(TestTask):
     def get_scftask(self, **kwargs):
         """Construct a ScfTask."""
         kwargs.setdefault('dirname', os.path.join(self.tmpdir, 'SCF'))
-        for key, val in self.common.iteritems():
+        for key, val in self.common.items():
             kwargs.setdefault(key, val)
 
         return AbinitScfTask(**kwargs)
@@ -49,7 +49,7 @@ class TestAbinitTaskMaker(TestTask):
         """Construct a WfnTask."""
         kwargs.setdefault('dirname', os.path.join(self.tmpdir, 'Wfn'))
         kwargs.update(charge_density_fname = scftask.charge_density_fname)
-        for key, val in self.common.iteritems():
+        for key, val in self.common.items():
             kwargs.setdefault(key, val)
 
         return AbinitWfnTask(**kwargs)
@@ -64,7 +64,7 @@ class TestAbinitTaskMaker(TestTask):
             rho_fname = scftask.rho_fname,
             vxc_fname = scftask.vxc_fname)
 
-        for key, val in self.common.iteritems():
+        for key, val in self.common.items():
             kwargs.setdefault(key, val)
 
         return Abi2BgwTask(**kwargs)
