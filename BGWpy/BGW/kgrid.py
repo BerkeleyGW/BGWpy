@@ -60,7 +60,7 @@ class KgridTask(Task):
 
     def read_kpoints(self):
         """Read a list of kpoints and their weights from kgrid.x output file."""
-        with open(self.outputname, 'read') as f:
+        with open(self.outputname, 'r') as f:
             content = f.read()
 
         lines = content.splitlines()[2:]
@@ -81,7 +81,7 @@ class KgridTask(Task):
         if self.new_dir:
             subprocess.call(['mkdir', '-p', self.dirname])
 
-        with open(self.inputname, 'write') as f:
+        with open(self.inputname, 'w') as f:
             f.write(self.get_kgrid_input())
 
     def run(self):
@@ -181,7 +181,7 @@ class KgridTask(Task):
     def read_symmetries(self):
         """Read the symmetries matrices and translation vectors."""
 
-        with open(self.logname, 'read') as f:
+        with open(self.logname, 'r') as f:
             while True:
                 try:
                     line = f.next()
@@ -306,7 +306,7 @@ def get_kpt_grid(structure, ngkpt,
         #os.system('mkdir -p ' + dirname)
         subprocess.call(['mkdir', '-p', dirname])
 
-    with open(inputname, 'write') as f:
+    with open(inputname, 'w') as f:
         f.write(inputcontent)
 
     # Run kgrid.x
@@ -328,7 +328,7 @@ def get_kpt_grid(structure, ngkpt,
     
 
     # Read the output
-    with open(outputname, 'read') as f:
+    with open(outputname, 'r') as f:
         outputcontent = f.read()
 
     # Clean up

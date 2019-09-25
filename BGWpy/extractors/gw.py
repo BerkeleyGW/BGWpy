@@ -251,10 +251,10 @@ def extract_multiple_GW_results(dirnames):
 
     for dname in dirnames:
 
-        with open(os.path.join(dname, 'variables.pkl'), 'read') as f:
+        with open(os.path.join(dname, 'variables.pkl'), 'r') as f:
             variables = pickle.load(f)
 
-        with open(os.path.join(dname, 'sigma.out'), 'read') as f:
+        with open(os.path.join(dname, 'sigma.out'), 'r') as f:
             out = parse_sigma_output(f)
 
         data['variables'].append(variables)

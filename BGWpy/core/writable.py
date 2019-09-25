@@ -33,7 +33,7 @@ class BasicInputFile(Writable):
     def __str__(self):
 
         lines = list()
-        for key, val in self.variables.iteritems():
+        for key, val in self.variables.items():
             lines.append('{} {}'.format(key, val))
 
         lines.extend(self.keywords)
