@@ -44,7 +44,8 @@ class QeWfnTask(QeTask):
             Number of bands to be computed.
         charge_density_fname : str
             Path to the charge density file produced
-            by a density calculation ('charge-density.dat').
+            by a density calculation ('charge-density.dat' or
+            'charge-density.hdf5').
         data_file_fname : str
             Path to the xml data file produced 
             by a density calculation ('data-file.xml').
@@ -109,7 +110,8 @@ class QeWfnTask(QeTask):
     @charge_density_fname.setter
     def charge_density_fname(self, value):
         self._charge_density_fname = value
-        dest = os.path.join(self.savedir, 'charge-density.dat')
+        name = 'charge-density.hdf5' if self._use_hdf5 else 'charge-density.dat'
+        dest = os.path.join(self.savedir, name)
         self.update_link(value, dest)
 
     @property

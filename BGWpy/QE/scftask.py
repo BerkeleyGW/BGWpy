@@ -62,7 +62,8 @@ class QeScfTask(QeTask):
         ----------
 
         charge_density_fname : str
-            Path to the charge density file produced ('charge-density.dat').
+            Path to the charge density file produced ('charge-density.dat' or
+            'charge-density.hdf5').
 
         data_file_fname : str
             Path to the xml data file produced ('data-file.xml').
@@ -97,7 +98,8 @@ class QeScfTask(QeTask):
 
     @property
     def charge_density_fname(self):
-        return os.path.join(self.dirname, self.savedir, 'charge-density.dat')
+        name = 'charge-density.hdf5' if self._use_hdf5 else 'charge-density.dat'
+        return os.path.join(self.dirname, self.savedir, name)
 
     @property
     def spin_polarization_fname(self):
