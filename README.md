@@ -25,7 +25,7 @@ Requirements
 
 The following software and modules are required to use BGWpy.
 
-  * python 2.7 required (Python 3 not supported at the moment) 
+  * python 3 and python 2 compatible
   * numpy 1.6+      (http://www.scipy.org/)
   * pymatgen 4.0+   (http://pymatgen.org/)
   * BerkeleyGW 1.2+ (http://www.berkeleygw.org/)
