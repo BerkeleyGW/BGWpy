@@ -2,6 +2,7 @@ from __future__ import print_function
 
 import os
 
+from ..config import use_hdf5
 from ..core.util import exec_from_dir
 from ..core import MPITask, IOTask
 from ..DFT import DFTTask
@@ -14,6 +15,7 @@ class QeTask(DFTTask, IOTask):
     """Base class for Quantum Espresso calculations."""
 
     _TAG_JOB_COMPLETED = 'JOB DONE'
+    _use_hdf5 = use_hdf5
 
     def __init__(self, dirname, **kwargs):
         """
