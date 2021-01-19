@@ -214,7 +214,7 @@ class Qe2BgwTask(QeTask):
 
         # Run script
         self.runscript['PW2BGW'] = 'pw2bgw.x'
-        self.runscript.append('$MPIRUN $PW2BGW -in {} &> {}'.format(
+        self.runscript.append('$MPIRUN $PW2BGW $PWFLAGS -in {} &> {}'.format(
                               self._input_fname, self._output_fname))
 
     _wfn_fname = 'wfn.cplx'

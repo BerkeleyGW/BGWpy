@@ -3,6 +3,7 @@ from .default_configuration import (
     default_mpi,
     default_runscript,
     use_hdf5,
+    use_hdf5_qe,
     flavor_complex,
     dft_flavor,
     )
@@ -22,6 +23,9 @@ try:
 
         if 'use_hdf5' in dir(user_configuration):
             use_hdf5 = user_configuration.use_hdf5
+
+        if 'use_hdf5_qe' in dir(user_configuration):
+            use_hdf5_qe = user_configuration.use_hdf5_qe
 
         if 'flavor_complex' in dir(user_configuration):
             flavor_complex = user_configuration.flavor_complex

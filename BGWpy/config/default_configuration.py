@@ -19,6 +19,7 @@ default_runscript = dict(
     )
 
 use_hdf5 = True
+use_hdf5_qe = False
 flavor_complex = True
 
 dft_flavor = 'espresso'

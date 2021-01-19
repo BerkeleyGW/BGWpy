@@ -43,6 +43,7 @@ default_runscript = dict(
 # BerkeleyGW can be compiled with or without HDF5 io.
 # Set this flag accordingly.
 use_hdf5 = True
+use_hdf5_qe = False
 
 # BerkeleyGW can be compiled in complex or real flavor.
 # Set this flag accordingly.
