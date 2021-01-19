@@ -98,7 +98,12 @@ class SigmaTask(BGWTask):
                 if key in kwargs:
                     kgrid_kwargs[key] = kwargs[key]
             self.kgridtask = KgridTask(dirname=dirname, **kgrid_kwargs)
-            kpts, wtks = self.kgridtask.get_kpoints()
+
+            symkpt = kwargs.get('symkpt', True)
+            if symkpt:
+                kpts, wtks = self.kgridtask.get_kpoints()
+            else:
+                kpts, wtks = self.kgridtask.get_kpt_grid_nosym()
 
 
         # Use specified qpoints or compute them from grid (HF).
