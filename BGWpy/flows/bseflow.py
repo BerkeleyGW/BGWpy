@@ -233,7 +233,7 @@ class BSEFlow(Workflow):
         else:
 
             self.scftask = QeScfTask(
-                dirname = pjoin(self.dirname, '01-Density'),
+                dirname = pjoin(self.dirname, '01-density'),
                 ngkpt = self.ngkpt,
                 kshift = self.kshift,
                 **kwargs)
@@ -253,19 +253,21 @@ class BSEFlow(Workflow):
         
         # Wavefunction tasks for Epsilon
         self.wfntask_ksh = QeBgwFlow(
-            dirname = pjoin(self.dirname, '02-Wfn'),
+            dirname = pjoin(self.dirname, '02-wfn'),
             ngkpt = self.ngkpt,
             kshift = self.kshift,
             nbnd = self.nbnd,
             rhog_flag = True,
+            symkpt=False,
             **kwargs)
 
         self.wfntask_qsh = QeBgwFlow(
-            dirname = pjoin(self.dirname, '03-Wfnq'),
+            dirname = pjoin(self.dirname, '03-wfnq'),
             ngkpt = self.ngkpt,
             kshift = self.kshift,
             qshift = self.qshift,
             nbnd = None,
+            symkpt=False,
             **kwargs)
 
         self.add_tasks([self.wfntask_ksh, self.wfntask_qsh])
@@ -275,10 +277,11 @@ class BSEFlow(Workflow):
         if self.has_kshift:
 
             self.wfntask_ush = QeBgwFlow(
-                dirname = pjoin(self.dirname, '04-Wfn_co'),
+                dirname = pjoin(self.dirname, '04-wfn_co'),
                 ngkpt = self.ngkpt,
                 nbnd = self.nbnd,
                 rhog_flag = True,
+                symkpt=False,
                 **kwargs)
 
             self.add_task(self.wfntask_ush)
@@ -288,7 +291,7 @@ class BSEFlow(Workflow):
 
         # Wavefunctions on fine k-point grids
         self.wfntask_fi_ush = QeBgwFlow(
-            dirname = pjoin(self.dirname, '05-Wfn_fi'),
+            dirname = pjoin(self.dirname, '05-wfn_fi'),
             nbnd = self.nbnd_fine,
             ngkpt = self.ngkpt_fi,
             kshift = self.kshift_fi,
@@ -297,7 +300,7 @@ class BSEFlow(Workflow):
             **kwargs)
         
         self.wfntask_fi_qsh = QeBgwFlow(
-            dirname = pjoin(self.dirname, '06-Wfnq_fi'),
+            dirname = pjoin(self.dirname, '06-wfnq_fi'),
             ngkpt = self.ngkpt_fi,
             kshift = self.kshift_fi,
             qshift = self.qshift_fi,
@@ -330,7 +333,7 @@ class BSEFlow(Workflow):
 
         else:
             self.scftask = AbinitScfTask(
-                dirname = pjoin(self.dirname, '01-Density'),
+                dirname = pjoin(self.dirname, '01-density'),
                 ngkpt = self.ngkpt,
                 kshift = self.kshift,
                 **kwargs)
@@ -343,7 +346,7 @@ class BSEFlow(Workflow):
 
         # Wavefunction tasks for Epsilon
         self.wfntask_ksh = AbinitBgwFlow(
-            dirname = pjoin(self.dirname, '02-Wfn'),
+            dirname = pjoin(self.dirname, '02-wfn'),
             ngkpt = self.ngkpt,
             kshift = self.kshift,
             nband = self.nbnd,
@@ -351,7 +354,7 @@ class BSEFlow(Workflow):
             **kwargs)
         
         self.wfntask_qsh = AbinitBgwFlow(
-            dirname = pjoin(self.dirname, '03-Wfnq'),
+            dirname = pjoin(self.dirname, '03-wfnq'),
             ngkpt = self.ngkpt,
             kshift = self.kshift,
             qshift = self.qshift,
@@ -365,7 +368,7 @@ class BSEFlow(Workflow):
         if self.has_kshift:
 
             self.wfntask_ush = AbinitBgwFlow(
-                dirname = pjoin(self.dirname, '04-Wfn_co'),
+                dirname = pjoin(self.dirname, '04-wfn_co'),
                 ngkpt = self.ngkpt,
                 nband = self.nbnd,
                 rhog_flag = True,
@@ -379,7 +382,7 @@ class BSEFlow(Workflow):
 
         # Wavefunctions on fine k-point grids
         self.wfntask_fi_ush = AbinitBgwFlow(
-            dirname = pjoin(self.dirname, '05-Wfn_fi'),
+            dirname = pjoin(self.dirname, '05-wfn_fi'),
             nband = self.nbnd_fine,
             ngkpt = self.ngkpt_fi,
             kshift = self.kshift_fi,
@@ -388,7 +391,7 @@ class BSEFlow(Workflow):
             **kwargs)
         
         self.wfntask_fi_qsh = AbinitBgwFlow(
-            dirname = pjoin(self.dirname, '06-Wfnq_fi'),
+            dirname = pjoin(self.dirname, '06-wfnq_fi'),
             nband = None,
             ngkpt = self.ngkpt_fi,
             kshift = self.kshift_fi,

@@ -76,7 +76,7 @@ class VmtxelFlow(Workflow):
 
         else:
             self.scftask = AbinitScfTask(
-                dirname = pjoin(self.dirname, '01-Density'),
+                dirname = pjoin(self.dirname, '01-density'),
                 ngkpt = self.ngkpt,
                 kshift = self.kshift,
                 **kwargs)
@@ -90,7 +90,7 @@ class VmtxelFlow(Workflow):
 
         # Wavefunctions on fine k-point grids
         self.wfntask_fi_ush = AbinitBgwFlow(
-            dirname = pjoin(self.dirname, '05-Wfn_fi'),
+            dirname = pjoin(self.dirname, '05-wfn_fi'),
             nband = self.nbnd_fine,
             ngkpt = self.ngkpt_fi,
             kshift = self.kshift_fi,
@@ -99,7 +99,7 @@ class VmtxelFlow(Workflow):
             **kwargs)
         
         self.wfntask_fi_qsh = AbinitBgwFlow(
-            dirname = pjoin(self.dirname, '06-Wfnq_fi'),
+            dirname = pjoin(self.dirname, '06-wfnq_fi'),
             nband = None,
             ngkpt = self.ngkpt_fi,
             kshift = self.kshift_fi,
