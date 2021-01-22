@@ -110,7 +110,7 @@ class QeWfnTask(QeTask):
     @charge_density_fname.setter
     def charge_density_fname(self, value):
         self._charge_density_fname = value
-        name = 'charge-density.hdf5' if self._use_hdf5 else 'charge-density.dat'
+        name = 'charge-density.hdf5' if self._use_hdf5_qe else 'charge-density.dat'
         dest = os.path.join(self.savedir, name)
         self.update_link(value, dest)
 

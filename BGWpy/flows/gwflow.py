@@ -188,7 +188,7 @@ class GWFlow(Workflow):
         else:
 
             self.scftask = QeScfTask(
-                dirname = pjoin(self.dirname, '01-Density'),
+                dirname = pjoin(self.dirname, '01-density'),
                 ngkpt = self.ngkpt,
                 kshift = self.kshift,
                 **kwargs)
@@ -202,7 +202,7 @@ class GWFlow(Workflow):
         
         # Wavefunction tasks for Epsilon
         self.wfntask_ksh = QeBgwFlow(
-            dirname = pjoin(self.dirname, '02-Wfn'),
+            dirname = pjoin(self.dirname, '02-wfn'),
             ngkpt = self.ngkpt,
             kshift = self.kshift,
             nbnd = self.nbnd,
@@ -210,7 +210,7 @@ class GWFlow(Workflow):
             **kwargs)
 
         self.wfntask_qsh = QeBgwFlow(
-            dirname = pjoin(self.dirname, '03-Wfnq'),
+            dirname = pjoin(self.dirname, '03-wfnq'),
             ngkpt = self.ngkpt,
             kshift = self.kshift,
             qshift = self.qshift,
@@ -224,7 +224,7 @@ class GWFlow(Workflow):
         if self.has_kshift:
 
             self.wfntask_ush = QeBgwFlow(
-                dirname = pjoin(self.dirname, '04-Wfn_co'),
+                dirname = pjoin(self.dirname, '04-wfn_co'),
                 ngkpt = self.ngkpt,
                 nbnd = self.nbnd,
                 rhog_flag = True,
@@ -257,7 +257,7 @@ class GWFlow(Workflow):
 
         else:
             self.scftask = AbinitScfTask(
-                dirname = pjoin(self.dirname, '01-Density'),
+                dirname = pjoin(self.dirname, '01-density'),
                 ngkpt = self.ngkpt,
                 kshift = self.kshift,
                 **kwargs)
@@ -321,7 +321,7 @@ class GWFlow(Workflow):
 
         # Wavefunction tasks for Epsilon
         self.wfntask_ksh = AbinitBgwFlow(
-            dirname = pjoin(self.dirname, '02-Wfn'),
+            dirname = pjoin(self.dirname, '02-wfn'),
             ngkpt = self.ngkpt,
             kshift = self.kshift,
             nband = nbnd,
@@ -330,7 +330,7 @@ class GWFlow(Workflow):
             **kwargs)
         
         self.wfntask_qsh = AbinitBgwFlow(
-            dirname = pjoin(self.dirname, '03-Wfnq'),
+            dirname = pjoin(self.dirname, '03-wfnq'),
             ngkpt = self.ngkpt,
             kshift = self.kshift,
             qshift = self.qshift,
@@ -343,7 +343,7 @@ class GWFlow(Workflow):
         if self.split_wfn:
             nbdbuf = int(self.nbnd*0.2)  # 20% of bands are in buffer
             self.wfntask_large = AbinitBgwFlow(
-                dirname = pjoin(self.dirname, '02-Wfn-large'),
+                dirname = pjoin(self.dirname, '02-wfn-large'),
                 ngkpt = self.ngkpt,
                 kshift = self.kshift,
                 #qshift = self.qshift,  # GA: I am doubtious about this...
@@ -360,7 +360,7 @@ class GWFlow(Workflow):
         if self.has_kshift:
 
             self.wfntask_ush = AbinitBgwFlow(
-                dirname = pjoin(self.dirname, '04-Wfn_co'),
+                dirname = pjoin(self.dirname, '04-wfn_co'),
                 ngkpt = self.ngkpt,
                 nband = self.nbnd,
                 rhog_flag = True,

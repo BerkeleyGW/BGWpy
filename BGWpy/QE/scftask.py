@@ -98,7 +98,7 @@ class QeScfTask(QeTask):
 
     @property
     def charge_density_fname(self):
-        name = 'charge-density.hdf5' if self._use_hdf5 else 'charge-density.dat'
+        name = 'charge-density.hdf5' if self._use_hdf5_qe else 'charge-density.dat'
         return os.path.join(self.dirname, self.savedir, name)
 
     @property

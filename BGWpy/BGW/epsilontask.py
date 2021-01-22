@@ -76,7 +76,12 @@ class EpsilonTask(BGWTask):
             if key in kwargs:
                 kgrid_kwargs[key] = kwargs[key]
         self.kgridtask = KgridTask(dirname=dirname, **kgrid_kwargs)
-        kpts_ush, wtks_ush = self.kgridtask.get_kpoints()
+
+        symkpt = kwargs.get('symkpt', True)
+        if symkpt:
+            kpts_ush, wtks_ush = self.kgridtask.get_kpoints()
+        else:
+            kpts_ush, wtks_ush = self.kgridtask.get_kpt_grid_nosym()
 
         extra_lines = kwargs.get('extra_lines',[])
         extra_variables = kwargs.get('extra_variables',{})

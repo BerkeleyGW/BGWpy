@@ -172,7 +172,8 @@ class PWscfInput(Writable):
             self.cell_parameters.append(np.round(vec, 8))
 
         # Set atomic species
-        for element in structure.types_of_specie:
+        types_of_specie = sorted(set(structure.species), key=structure.species.index)
+        for element in types_of_specie:
             self.atomic_species.append([element.symbol, float(element.atomic_mass)])
 
         if self.pseudos:
