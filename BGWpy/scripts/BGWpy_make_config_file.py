@@ -1,4 +1,4 @@
-import sys
+#!/usr/bin/env python
 import configparser                                                                                                                                              
 config = configparser.ConfigParser()
 
@@ -39,6 +39,7 @@ header = """\
 """
 
 if __name__ == '__main__':
+    import sys
     import os
     import argparse
 
@@ -58,5 +59,3 @@ if __name__ == '__main__':
     with open(fname, 'w') as cf:
       cf.write(header)
       config.write(cf)
-
-
