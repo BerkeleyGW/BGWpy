@@ -184,23 +184,23 @@ class KgridTask(Task):
         with open(self.logname, 'r') as f:
             while True:
                 try:
-                    line = f.next()
+                    line = next(f)
 
                     if 'symmetries of the crystal without FFT grid' in line:
-                        line = f.next()
+                        line = next(f)
                         nsym = int(line)
 
-                        line = f.next()
+                        line = next(f)
                         assert 'Space group' in line
 
                         syms = np.zeros((nsym, 9), dtype=np.int)
                         taus = np.zeros((nsym, 3), dtype=np.float)
 
                         for i in range(nsym):
-                            line = f.next()
+                            line = next(f)
                             parts = line.split()
-                            syms[i,:] = map(int, parts[2:11])
-                            taus[i,:] = map(float, parts[11:14])
+                            syms[i,:] = [int(p) for p in parts[2:11]]
+                            taus[i,:] = [float(p) for p in parts[11:14]]
 
                         break
 

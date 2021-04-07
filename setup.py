@@ -1,6 +1,7 @@
 from __future__ import print_function
 import sys
 import os
+from glob import glob
 import shutil
 
 try:
@@ -21,7 +22,7 @@ name = 'BGWpy'
 description = 'Interface BerkeleyGW flows in python.'
 license = 'BSD'
 url = 'https://github.com/BerkeleyGW/BGWpy'
-__version__ = '3.0.0'
+__version__ = '3.1.0'
 
 # author and author_email should be a single string, not a list, but we can put
 # multiple authors / emails by separating them by commas inside the string.
@@ -40,21 +41,22 @@ install_requires = [
 # Helper functions
 # --------------------------------------------------------------------------- #
 
-def get_package_data():
+def find_package_data():
     package_data={'BGWpy': ['data/structures/*', 'data/pseudos/*']}
     return package_data
 
-def install_user_configuration():
-    user_config = os.path.join('config', 'user_configuration.py')
-    dest = os.path.join('BGWpy', 'config', 'user_configuration.py')
-    if os.path.exists(user_config):
-        shutil.copy(user_config, dest)
+def find_data_files():
+    return [('config', ['config/BGWpyrc'])]
+
+def find_scripts():
+    scripts = []
+    scripts.append(os.path.join('BGWpy', 'scripts', "__init__.py"))
+    scripts.extend(glob(os.path.join('BGWpy', 'scripts', "*.py")))
+    return scripts
 
 # --------------------------------------------------------------------------- #
 # Setup
 # --------------------------------------------------------------------------- #
-
-install_user_configuration()
 
 setup_args = dict(
       name              = name,
@@ -66,7 +68,9 @@ setup_args = dict(
       url               = url,
       install_requires  = install_requires,
       packages          = find_packages(),
-      package_data      = get_package_data(),
+      package_data      = find_package_data(),
+      data_files        = find_data_files(),
+      scripts           = find_scripts(), 
       )
 
 if __name__ == "__main__":

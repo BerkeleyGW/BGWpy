@@ -2,6 +2,7 @@ from . import core
 from . import config
 from . import DFT
 from . import BGW
+from . import scripts
 
 # Development functions
 #from . import external

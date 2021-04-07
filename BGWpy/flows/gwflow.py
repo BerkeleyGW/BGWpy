@@ -3,8 +3,8 @@ from __future__ import print_function
 
 from os.path import join as pjoin
 
-from ..config import dft_flavor, check_dft_flavor
-from ..config import is_dft_flavor_espresso, is_dft_flavor_abinit
+from ..config import flavors
+from ..config import is_dft_flavor_espresso, is_dft_flavor_abinit, check_dft_flavor
 from ..external import Structure
 from ..core import Workflow
 from ..BGW import EpsilonTask, SigmaTask
@@ -90,7 +90,7 @@ class GWFlow(Workflow):
             'Number of bands must be specified with one of these keywords: {}.'
             .format(nband_aliases))
 
-        self.dft_flavor = check_dft_flavor(kwargs.get('dft_flavor',dft_flavor))
+        self.dft_flavor = check_dft_flavor(kwargs.get('dft_flavor', flavors['dft_flavor']))
 
         # ==== DFT calculations ==== #
 

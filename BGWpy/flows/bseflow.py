@@ -2,8 +2,8 @@
 from os.path import join as pjoin
 import warnings
 
-from ..config import dft_flavor, check_dft_flavor
-from ..config import is_dft_flavor_espresso, is_dft_flavor_abinit
+from ..config import flavors
+from ..config import is_dft_flavor_espresso, is_dft_flavor_abinit, check_dft_flavor
 from ..external import Structure
 from ..core import Workflow
 from ..BGW import EpsilonTask, SigmaTask, KernelTask, AbsorptionTask
@@ -127,8 +127,7 @@ class BSEFlow(Workflow):
         self.nbnd_fine = kwargs.pop('nbnd_fine', self.nbnd)
 
         # ==== DFT calculations ==== #
-
-        self.dft_flavor = check_dft_flavor(kwargs.get('dft_flavor',dft_flavor))
+        self.dft_flavor = check_dft_flavor(kwargs.get('dft_flavor', flavors['dft_flavor']))
 
         # Quantum Espresso flavor
         if is_dft_flavor_espresso(self.dft_flavor):

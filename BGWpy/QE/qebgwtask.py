@@ -5,7 +5,7 @@ from numpy import array
 from ..core import Namelist
 from .qetask import QeTask
 
-from ..config import flavor_complex
+from ..config import flavors
 
 # Public
 __all__ = ['Qe2BgwTask', 'Qe2BgwInput']
@@ -173,7 +173,7 @@ class Qe2BgwTask(QeTask):
             kshift      = self.kshift,
             qshift      = self.qshift,
             wfng_file   = kwargs.get('wfn_fname', 'wfn.cplx'),
-            real_or_complex = 2 if flavor_complex else 1,
+            real_or_complex = 2 if flavors['flavor_complex'] else 1,
             wfng_flag   = True,
             wfng_kgrid  = True,
             )

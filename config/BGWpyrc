@@ -1,0 +1,30 @@
+; Configuration file for BGWpy
+; This file should be saved as ~/.BGWpyrc
+;
+; Lines starting with "#" will be included in the shell scripts.
+; Entries in header and footer should be expanded or removed by the user.
+
+[flavors]
+use_hdf5 = True
+use_hdf5_qe = False
+flavor_complex = True
+dft_flavor = espresso
+
+[MPI]
+mpirun = mpirun
+nproc = 1
+nproc_flag = -n
+nproc_per_node = 1
+nproc_per_node_flag = --npernode
+nodes = 
+nodes_flag = 
+
+[runscript]
+first_line = #!/bin/sh
+header = 
+	# Lines before execution
+	
+footer = 
+	# Lines after execution
+	
+

@@ -2,41 +2,47 @@
 from .default_configuration import (
     default_mpi,
     default_runscript,
-    use_hdf5,
-    use_hdf5_qe,
-    flavor_complex,
-    dft_flavor,
+    flavors,
     )
 
 # The user configuration file is used
 # to override the default configuration.
 import os
-try:
-    if 'user_configuration.py' in  os.listdir(os.path.dirname(__file__)):
-        from . import user_configuration
+import configparser
+config_file = os.path.join(os.environ['HOME'], '.BGWpyrc')
+if os.path.exists(config_file):
+    config = configparser.ConfigParser(comment_prefixes=(';'))                      
+    config.read(config_file)
 
-        if 'default_mpi' in dir(user_configuration):
-            default_mpi.update(user_configuration.default_mpi)
+    sk = 'flavors'
+    keys = ('use_hdf5', 'use_hdf5_qe', 'flavor_complex', 'dft_flavor')
+    if sk in config:
+        for key in keys:
+            if key in config[sk]:
+                flavors[key] = config[sk][key]
 
-        if 'default_runscript' in dir(user_configuration):
-            default_runscript.update(user_configuration.default_runscript)
+    sk = 'MPI'
+    keys = ('mpirun', 'nproc', 'nproc_flag',
+            'nproc_per_node', 'nproc_per_node_flag',
+            'nodes', 'nodes_flag')
+    if sk in config:
+        for key in keys:
+            if key in config[sk]:
+                default_mpi[key] = config[sk][key]
 
-        if 'use_hdf5' in dir(user_configuration):
-            use_hdf5 = user_configuration.use_hdf5
+    sk = 'runscript'
+    keys = ('first_line', 'header', 'footer')
+    if sk in config:
+        for key in keys:
+            if key in config[sk]:
+                default_runscript[key] = config[sk][key]
 
-        if 'use_hdf5_qe' in dir(user_configuration):
-            use_hdf5_qe = user_configuration.use_hdf5_qe
-
-        if 'flavor_complex' in dir(user_configuration):
-            flavor_complex = user_configuration.flavor_complex
-
-        if 'dft_flavor' in dir(user_configuration):
-            dft_flavor = user_configuration.dft_flavor
-
-except Exception as e:
+else:
     import warnings
-    warnings.warn('Could not process user_configuration.py:\n' + str(e))
+    warnings.warn('Did not find user configuration file ~/.BGWpyrc')
     del warnings
+
+del sk, keys
 
 del os
 

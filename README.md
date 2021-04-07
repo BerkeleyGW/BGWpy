@@ -41,8 +41,10 @@ Once you have satisfied the requirements, install the package with
 
   python setup.py install
 
-See the file INSTALL for more information about configuring
-the module's default parameters.
+You may then run the script `BGWpy_make_config_file.py`
+to generate a runtime configuration file `~/.BGWpyrc`
+which you can modify. Most options in this file
+represent default values, and can be overridden when using the module.
 
 
 License

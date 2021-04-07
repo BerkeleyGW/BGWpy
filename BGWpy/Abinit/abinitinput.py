@@ -1,7 +1,7 @@
 from __future__ import print_function, division
 import numpy as np
 
-import pymatgen
+#import pymatgen
 
 from ..core import Writable
 from .abidata import input_variable_blocks
@@ -165,7 +165,9 @@ class VariableBlock(list):
 def structure_to_abivars(structure):
     """Get abinit variables from a pymatgen.Structure object."""
 
-    rprim = structure.lattice.matrix / pymatgen.units.bohr_to_ang
+    from scipy import constants
+    bohr_to_ang = constants.physical_constants['Bohr radius'][0] / constants.angstrom
+    rprim = structure.lattice.matrix / bohr_to_ang
     
     xred = list()
     for site in structure.sites:

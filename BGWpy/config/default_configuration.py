@@ -1,4 +1,3 @@
-
 # These are the original defaults.
 # Do not modify these by hand. Use the user_configuration file instead.
 
@@ -18,8 +17,9 @@ default_runscript = dict(
     footer = [],
     )
 
-use_hdf5 = True
-use_hdf5_qe = False
-flavor_complex = True
-
-dft_flavor = 'espresso'
+flavors = dict(
+    use_hdf5 = True,
+    use_hdf5_qe = False,
+    flavor_complex = True,
+    dft_flavor = 'espresso',
+    )
