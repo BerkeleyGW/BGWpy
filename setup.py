@@ -22,7 +22,7 @@ name = 'BGWpy'
 description = 'Interface BerkeleyGW flows in python.'
 license = 'BSD'
 url = 'https://github.com/BerkeleyGW/BGWpy'
-__version__ = '3.1.1'
+__version__ = '3.1.2'
 
 # author and author_email should be a single string, not a list, but we can put
 # multiple authors / emails by separating them by commas inside the string.

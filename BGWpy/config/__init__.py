@@ -37,13 +37,14 @@ if os.path.exists(config_file):
             if key in config[sk]:
                 default_runscript[key] = config[sk][key]
 
+    del sk, keys
+
 else:
     import warnings
-    warnings.warn('Did not find user configuration file ~/.BGWpyrc\n'+
+    warnings.warn('Did not find user configuration file ~/.BGWpyrc. '
                   'Try running the script BGWpy_make_config_file.py')
     del warnings
 
-del sk, keys
 
 del os
 
