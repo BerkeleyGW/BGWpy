@@ -4,11 +4,11 @@ Installing
 
 Automatic installation:
 
-  python -m pip install BGWpy
+    python -m pip install BGWpy
 
 Manual installation: once you have satisfied the requirements, install the package with
 
-  python setup.py install
+    python setup.py install
 
 Whether you install automatically of manually,
 you should run the script `BGWpy_make_config_file.py`
