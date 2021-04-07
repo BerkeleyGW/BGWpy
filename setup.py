@@ -34,7 +34,7 @@ author_email = 'gabriel.antonius@gmail.com'
 # Requirements
 install_requires = [
     'numpy >=1.6',
-    'pymatgen >=4.0',
+    'pymatgen >=2020',
     ]
 
 # --------------------------------------------------------------------------- #
