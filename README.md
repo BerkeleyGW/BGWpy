@@ -37,13 +37,18 @@ in your PATH environment variable.
 Installing
 ----------
 
-Once you have satisfied the requirements, install the package with
+Automatic installation:
+
+  python -m pip install BGWpy
+
+Manual installation: once you have satisfied the requirements, install the package with
 
   python setup.py install
 
-You may then run the script `BGWpy_make_config_file.py`
+Whether you install automatically of manually,
+you should run the script `BGWpy_make_config_file.py`
 to generate a runtime configuration file `~/.BGWpyrc`
-which you can modify. Most options in this file
+which you can then modify. Most options in this file
 represent default values, and can be overridden when using the module.
 
 
