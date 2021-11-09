@@ -1,0 +1,37 @@
+ Opening abi2bgw.in
+ Summary of input variables
+ wfng_file_abi out_data/odat_WFK
+ wfng_flag      T
+ wfng_file     wfn.cplx
+ wfng_nk1                 2
+ wfng_nk2                 2
+ wfng_nk3                 2
+ wfng_dk1         0.0000000000000000     
+ wfng_dk2         0.0000000000000000     
+ wfng_dk3         0.0000000000000000     
+ rhog_file_abi ../01-Density/out_data/odat_DEN
+ rhog_flag      T
+ rhog_file     rho.cplx
+ cell_symmetry              0
+ symrel_file_flag F
+ vxcg_flag      T
+ vxcg_file     vxc.cplx
+ #Generated list of g-vectors for density\/potential writen in file: gsphere_bgw.out
+ spin            1 kpt            1 /           3
+ spin            1 kpt            2 /           3
+ spin            1 kpt            3 /           3
+ Writing DEN file:
+Reading header of density file
+ Inconsistency found in the following input parameters
+ List of stored \& read values:
+nkpt         3 /=      4
+nband       12 /=      5
+ There may be a difference in kpoints/bands in the DEN/WFK calculations
+ Assuming an experienced user, the calculation will continue
+ Reading density array     16 x     16 x     16 x      1
+ Norm of rho( spin = 1 ) =       8.00
+ Writing VXC file:
+Reading header of density file
+ Reading density array     16 x     16 x     16 x      1
+ Norm of vxc( spin = 1 ) =       0.70
+ Calculation completed

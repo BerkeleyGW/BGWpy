@@ -15,13 +15,11 @@ dist/*/
 dist/*.egg
 
 # Files produced by the tests not referenced
-Examples/MakingStructures/[0-9]*
-Examples/QuantumEspresso/*/[0-9]*
-Examples/Abinit/*/[0-9]*
-
-# Configuration files
-BGWpy/config/user_configuration.py
-config/user_configuration.py
+Documentation/Examples/MakingStructures/[0-9]*
+Documentation/Examples/QuantumEspresso/*/[0-9]*
+Documentation/Examples/Abinit/*/[0-9]*
+Documentation/.ipynb*
+Documentation/Tutorial/Runs*
 
 # ctags
 tags

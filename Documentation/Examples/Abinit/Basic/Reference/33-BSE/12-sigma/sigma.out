@@ -1,0 +1,452 @@
+
+ BerkeleyGW branch 1.2.x revision 7090
+ Sigma code, Complex version, run on 04-Nov-2016 at 14:20:51 -0700
+
+                                                                 ..o.          
+                                                                .oxxo.         
+                                                               .oxxxxo...      
+                                                               oxxxxxxo.       
+                                                              .oxxxxxxx.       
+                                                              .ooooooxxo..     
+                                                              .oooooooxo..     
+                                                              .oooooxxo...     
+                                                       .........oxooo......    
+                                                 ............................  
+                                             ................................. 
+                                          .................................... 
+           .          ..oo. ....  .................................oooxxxxxxxo.
+     .............oxxxx@ox@@@x@x.....................o...........ooooooooooxx. 
+    .o.........oox@x.oo........xxx@@............ooxxxxo..........ooooxxxxxoxo  
+    .x........x@xxo...............o@xxo........oxxx@@@xoooooooooooooooxxxo...  
+    .o......ox@@o..................oox@o.....ooxxx@xoooxxxxxxxoooooooooooo.... 
+    o..ooooo@@xoooo....ooo...........x@o.....ooxxxxo   .oxxxxxxxxxxooooooo.... 
+    . .oooo@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@....ooooox.     .oxx@@@@@xxoo........ 
+      .ooooxxxxxxxooooooxooooooooooooooxo...oooooxx.        ..ox@xxxoo.........
+      .ooooooxxxx@xoooooooooooooxxoooooooooooxxxxx.            .oxxooooooooxxo.
+     .oooooxxxxx@@@xxxxxxxxxxxxxxxxxxxxxxxxoxxxxo.                .oxxxxxxxxo. 
+   ....oooxxxxx@@@xo..oxxx@@@@@@xxxxoxxoooooooxx.                  .oxxxoo..   
+  .....ooxxxx@@xo.       ........    .ooooooooxxo                              
+  ..oooxxxx@@@o                       .oooooooxoo.                             
+  ....oxooxxxxx.                       .ooo..oooo.                             
+  .....o.ooxxxxxo.                     .oooooooxo.                             
+ ......ooooxxxxxxo.                     .ooooooxoo..                           
+........ooxxxxxxxo..                     .o....oxoo...                         
+.......ooooxxxxxxxo.                     ........oooo.                         
+.ooooooo..ooxxxxoooo.                    .........ooo...                       
+..oxo...ooooxxxoooo..                    .ooo......oooo...                     
+  .ooooo....o.                            .oxxxoo....ooo....                   
+    .oooooo...                              ...ooooo...ooo..                   
+       ...                                     .oo.......                      
+                                               ....ooo...                      
+                      __              __                                       
+ ______              [  |            [  |                 ._____  _          _ 
+|_   _ \              | |  _          | |                /  ___ \| |        | |
+  | |_) | .---.  _. _.| | / |  .---.  | | .---.  _    _ / /    \_|\ \  /\  / / 
+  |  __'./ /__\\[ /`\_| '' <  / /__\\ | |/ /__\\| \  | | |   _____ \ \/  \/ /  
+ _| |__| | \__. | |   | |`\ \ | \___. | || \___. \ \/ / \ \.___| |  \  /\  /   
+|_______/ \.__./[_]  [__|  \_] \.__./[___]\.__./  \  /   \.____./    \/  \/    
+                                                  / /                          
+                                                 /_/                           
+--------------------------------------------------------------------------------
+ Please cite the following papers when using results from BerkeleyGW:
+
+ F. H. da Jornada, J. Deslippe, D. Vigil-Fowler, J. I. Mustafa, T. Rangel,
+ F. Bruneval, F. Liu, D. Y. Qiu, D. A. Strubbe, G. Samsonidze, J. Lischner,
+ C. Yang, J. B. Neaton, and S. G. Louie, In preparation. (2016)
+
+ Jack Deslippe, Georgy Samsonidze, David A. Strubbe, Manish Jain, Marvin L.
+ Cohen, and Steven G. Louie, "BerkeleyGW: A Massively Parallel Computer Package
+ for the Calculation of the Quasiparticle and Optical Properties of Materials
+ and Nanostructures," Comput. Phys. Commun. 183, 1269 (2012)
+
+ Mark S. Hybertsen and Steven G. Louie, "Electron correlation in semiconductors
+ and insulators: Band gaps and quasiparticle energies," Phys. Rev. B 34, 5390
+ (1986)
+
+ Michael Rohlfing and Steven G. Louie, "Electron-hole excitations and optical
+ spectra from first principles," Phys. Rev. B 62, 4927 (2000)
+--------------------------------------------------------------------------------
+
+ Running MPI version (parallel)
+ Running with 2 MPI task(s)
+
+ Compilation flags:
+ - Compiler: GNU
+ - Para. flags: MPI
+ - Math  flags: USESCALAPACK, USEFFTW3, HDF5
+ - Debug flags: 
+
+ Running with verbosity level 1 (default).
+
+ Using the Generalized Plasmon Pole model
+
+ We are communicating via MPI
+
+ Computing CH as a partial sum over empty bands
+
+ Running with semiconductor screening
+
+ We are using no truncation
+
+ Cutoff for Monte-Carlo average of Coulomb potential: 1.000E+012 Ry
+
+ Computing exchange-correlation matrix elements from VXC file
+
+ Treating W within the Hybertsen-Louie Generalized Plasmon Pole model
+
+ Memory available: 992.2 MB per PE
+
+ Read from eps0mat.h5:
+ - Number of G-vectors in the charge-density grid: 1291
+ - Max. number of G-vectors for dielectric matrices: 169
+ - Cutoff of the dielectric matrix (Ry): 10.000
+ - Number of imaginary frequencies: 0
+ - Total number of frequencies: 1
+ - Frequency dependence: 0
+ - Number of q-points: 1
+ - Q grid: 2 2 2
+
+ Read from epsmat.h5:
+ - Number of G-vectors in the charge-density grid: 1291
+ - Max. number of G-vectors for dielectric matrices: 168
+ - Cutoff of the dielectric matrix: 10.000
+ - Number of imaginary frequencies: 0
+ - Total number of frequencies: 1
+ - Frequency dependence: 0
+ - Number of q-points: 2
+ - Q grid: 2 2 2
+
+ Reading header of WFN_inner
+ Highest occupied band (unshifted grid) = 4
+ Valence max    (unshifted grid) = -.354893 eV
+ Conduction min (unshifted grid) = .311640 eV
+ Middle energy  (unshifted grid) = -.021627 eV
+ Fermi  energy  (unshifted grid) = -.021627 eV
+
+
+ Calculation parameters:
+ - Cutoff of the bare Coulomb interaction (Ry): 10.00
+ - Cutoff of the screened Coulomb interaction (Ry): 10.00
+ - Number of G-vectors up to the bare int. cutoff: 169
+ - Number of G-vectors up to the screened int. cutoff: 169
+ - Total number of bands in the calculation: 11
+ - Number of fully occupied valence bands: 4
+ - Number of partially occ. conduction bands: 0
+
+ Memory required for execution: 1.7 MB per PE
+ Memory required for vcoul: 114.4 MB per PE
+
+ Number of electrons per unit cell (from ifmax) = 8.000000
+ Number of electrons per unit cell (from occupations) = 8.000000
+ Plasma Frequency = 1.148512 Ry
+
+ Q-grid symmetries are being used.
+
+ Parallelization report:
+ - Using 2 processor(s), 1 pool(s), 2 processor(s) per pool.
+ - Each pool is computing 8 diagonal sigma matrix element(s).
+ - Each pool is computing 0 off-diagonal sigma matrix element(s).
+ - Each pool is holding 5 to 6 band(s).
+ - Note: distribution is not ideal because the total number of bands
+   (11) is not divisible by the number of processors per pool (2).
+
+
+ Started reading wavefunctions (WFN_inner) with 33 state(s) at 14:20:51.
+ [ 14:20:51 |   0% ] state  1 / 33.
+ [ 14:20:51 |   6% ] state  3 / 33, remaining: 0 s.
+ [ 14:20:51 |   9% ] state  4 / 33, remaining: 0 s.
+ [ 14:20:51 |  18% ] state  7 / 33, remaining: 0 s.
+ [ 14:20:51 |  27% ] state 10 / 33, remaining: 0 s.
+ [ 14:20:51 |  39% ] state 14 / 33, remaining: 0 s.
+ [ 14:20:51 |  48% ] state 17 / 33, remaining: 0 s.
+ [ 14:20:51 |  58% ] state 20 / 33, remaining: 0 s.
+ [ 14:20:51 |  70% ] state 24 / 33, remaining: 0 s.
+ [ 14:20:51 |  79% ] state 27 / 33, remaining: 0 s.
+ [ 14:20:51 |  88% ] state 30 / 33, remaining: 0 s.
+ [ 14:20:51 |  97% ] state 33 / 33, remaining: 0 s.
+ Finished reading wavefunctions (WFN_inner) at 14:20:51.
+ Elapsed time: 0 s.
+
+
+ Scissors parameters:
+ - Valence:    es =   0.0000 eV, e0 =   0.0000 eV, edel =   0.0000
+ - Conduction: es =   0.0000 eV, e0 =   0.0000 eV, edel =   0.0000
+
+ Scissors parameters (outer):
+ - Valence:    es =   0.0000 eV, e0 =   0.0000 eV, edel =   0.0000
+ - Conduction: es =   0.0000 eV, e0 =   0.0000 eV, edel =   0.0000
+
+
+ Data for sum rule:
+ - rho(0,1) = 8.000000 electrons
+ - wp = 15.626301 eV
+
+ Number of bands to compute diagonal self-energy matrix elements: 8
+ Bands:
+ - 1
+ - 2
+ - 3
+ - 4
+ - 5
+ - 6
+ - 7
+ - 8
+ Number of off-diagonal bands to compute self-energy matrix elements: 0
+
+
+ Total number of frequencies in the dielectric matrix: 1
+ Number of imag. frequencies in the dielectric matrix: 0
+
+
+ Started reading eps0mat.h5 with 1 q-point(s) at 14:20:51.
+ [ 14:20:51 |   0% ] q-point 1 / 1.
+ Finished reading eps0mat.h5 at 14:20:51.
+ Elapsed time: 0 s.
+
+
+ Started reading epsmat.h5 with 2 q-point(s) at 14:20:51.
+ [ 14:20:51 |   0% ] q-point 1 / 2.
+ [ 14:20:51 |  50% ] q-point 2 / 2.
+ Finished reading epsmat.h5 at 14:20:51.
+ Elapsed time: 0 s.
+
+ Number of k-points in WFN_inner: 3
+ Number of k-points in the full BZ of WFN_inner: 8
+ k+G sampling:   0.081061  0.076425  0.071489 (reciprocal lattice units)
+
+================================================================================
+ 14:20:51   Dealing with k =  0.000000  0.000000  0.000000                 1 / 3
+================================================================================
+
+ Number of q-points in the irreducible BZ(k) (nrq): 3
+
+ Started calculating Sigma with 24 block(s) at 14:20:51.
+ [ 14:20:52 |   0% ] block  1 / 24.
+ [ 14:20:52 |   8% ] block  3 / 24, remaining: 0 s.
+ [ 14:20:52 |  17% ] block  5 / 24, remaining: 0 s.
+ [ 14:20:52 |  29% ] block  8 / 24, remaining: 0 s.
+ [ 14:20:52 |  38% ] block 10 / 24, remaining: 0 s.
+ [ 14:20:52 |  46% ] block 12 / 24, remaining: 0 s.
+ [ 14:20:52 |  58% ] block 15 / 24, remaining: 0 s.
+ [ 14:20:53 |  67% ] block 17 / 24, remaining: 0 s.
+ [ 14:20:53 |  79% ] block 20 / 24, remaining: 0 s.
+ [ 14:20:53 |  88% ] block 22 / 24, remaining: 0 s.
+ [ 14:20:53 |  96% ] block 24 / 24, remaining: 0 s.
+ Finished calculating Sigma at 14:20:53.
+ Elapsed time: 2 s.
+
+ Unsymmetrized values for ik =   1 spin = 1
+
+     n      Emf       Eo      Vxc        X     SX-X       CH      Cor      Sig
+     1  -12.735  -12.735  -12.417  -17.495   12.070   -5.964    6.106  -11.389
+     2   -0.355   -0.355  -12.644  -13.033    8.880   -6.089    2.792  -10.241
+     3   -0.355   -0.355  -12.644  -14.285    9.158   -5.777    3.382  -10.903
+     4   -0.355   -0.355  -12.644  -14.563    9.252   -5.713    3.539  -11.025
+     5    0.312    0.312  -12.807   -5.373    3.140   -6.273   -3.133   -8.506
+     6    3.415    3.415  -10.514   -4.497    2.696   -5.438   -2.742   -7.239
+     7    3.415    3.415  -10.514   -4.320    2.108   -5.131   -3.023   -7.343
+     8    3.415    3.415  -10.514   -4.602    2.299   -5.164   -2.865   -7.466
+
+ Symmetrized values from band-averaging:
+
+       k =  0.000000  0.000000  0.000000 ik =   1 spin = 1
+
+     n      Emf       Eo      Vxc        X      Cor     Eqp0     Eqp1      Znk
+     1  -12.735  -12.735  -12.417  -17.495    6.106  -11.707  -11.975    0.739
+     2   -0.355   -0.355  -12.644  -13.960    3.237    1.567    1.201    0.810
+     3   -0.355   -0.355  -12.644  -13.960    3.237    1.567    1.201    0.810
+     4   -0.355   -0.355  -12.644  -13.960    3.237    1.567    1.201    0.810
+     5    0.312    0.312  -12.807   -5.373   -3.133    4.613    3.746    0.799
+     6    3.415    3.415  -10.514   -4.473   -2.877    6.580    5.963    0.805
+     7    3.415    3.415  -10.514   -4.473   -2.877    6.580    5.963    0.805
+     8    3.415    3.415  -10.514   -4.473   -2.877    6.580    5.963    0.805
+
+================================================================================
+ 14:20:53   Dealing with k =  0.000000  0.000000  0.500000                 2 / 3
+================================================================================
+
+ Number of q-points in the irreducible BZ(k) (nrq): 4
+
+ Started calculating Sigma with 32 block(s) at 14:20:53.
+ [ 14:20:53 |   0% ] block  1 / 32.
+ [ 14:20:53 |   6% ] block  3 / 32, remaining: 0 s.
+ [ 14:20:53 |   9% ] block  4 / 32, remaining: 0 s.
+ [ 14:20:53 |  19% ] block  7 / 32, remaining: 0 s.
+ [ 14:20:53 |  28% ] block 10 / 32, remaining: 1 s.
+ [ 14:20:53 |  38% ] block 13 / 32, remaining: 0 s.
+ [ 14:20:53 |  50% ] block 17 / 32, remaining: 0 s.
+ [ 14:20:53 |  59% ] block 20 / 32, remaining: 0 s.
+ [ 14:20:53 |  69% ] block 23 / 32, remaining: 0 s.
+ [ 14:20:53 |  78% ] block 26 / 32, remaining: 0 s.
+ [ 14:20:53 |  88% ] block 29 / 32, remaining: 0 s.
+ Finished calculating Sigma at 14:20:53.
+ Elapsed time: 1 s.
+
+ Unsymmetrized values for ik =   2 spin = 1
+
+     n      Emf       Eo      Vxc        X     SX-X       CH      Cor      Sig
+     1  -11.145  -11.145  -13.170  -17.573   11.991   -6.138    5.854  -11.719
+     2   -6.675   -6.675  -11.131  -13.343    9.066   -5.665    3.402   -9.941
+     3   -1.295   -1.295  -12.285  -13.617    8.944   -5.753    3.191  -10.426
+     4   -1.295   -1.295  -12.285  -13.791    8.995   -5.808    3.186  -10.604
+     5    0.649    0.649  -11.084   -4.737    2.593   -5.634   -3.041   -7.777
+     6    4.041    4.041   -9.972   -3.842    2.172   -5.252   -3.081   -6.922
+     7    4.041    4.041   -9.972   -4.258    2.189   -5.046   -2.856   -7.114
+     8    7.342    7.342   -8.299   -2.149    1.036   -4.728   -3.692   -5.842
+
+ Symmetrized values from band-averaging:
+
+       k =  0.000000  0.000000  0.500000 ik =   2 spin = 1
+
+     n      Emf       Eo      Vxc        X      Cor     Eqp0     Eqp1      Znk
+     1  -11.145  -11.145  -13.170  -17.573    5.854   -9.694  -10.059    0.748
+     2   -6.675   -6.675  -11.131  -13.343    3.402   -5.485   -5.745    0.782
+     3   -1.295   -1.295  -12.285  -13.704    3.189    0.475    0.133    0.807
+     4   -1.295   -1.295  -12.285  -13.704    3.189    0.475    0.133    0.807
+     5    0.649    0.649  -11.084   -4.737   -3.041    3.955    3.301    0.802
+     6    4.041    4.041   -9.972   -4.050   -2.968    6.995    6.426    0.808
+     7    4.041    4.041   -9.972   -4.050   -2.968    6.995    6.426    0.808
+     8    7.342    7.342   -8.299   -2.149   -3.692    9.799    9.291    0.793
+
+================================================================================
+ 14:20:53   Dealing with k =  0.000000  0.500000  0.500000                 3 / 3
+================================================================================
+
+ Number of q-points in the irreducible BZ(k) (nrq): 4
+
+ Started calculating Sigma with 32 block(s) at 14:20:53.
+ [ 14:20:53 |   0% ] block  1 / 32.
+ [ 14:20:53 |   6% ] block  3 / 32, remaining: 0 s.
+ [ 14:20:53 |   9% ] block  4 / 32, remaining: 0 s.
+ [ 14:20:53 |  19% ] block  7 / 32, remaining: 0 s.
+ [ 14:20:54 |  28% ] block 10 / 32, remaining: 1 s.
+ [ 14:20:54 |  38% ] block 13 / 32, remaining: 0 s.
+ [ 14:20:54 |  50% ] block 17 / 32, remaining: 0 s.
+ [ 14:20:54 |  59% ] block 20 / 32, remaining: 0 s.
+ [ 14:20:54 |  69% ] block 23 / 32, remaining: 0 s.
+ [ 14:20:54 |  78% ] block 26 / 32, remaining: 0 s.
+ [ 14:20:54 |  88% ] block 29 / 32, remaining: 0 s.
+ Finished calculating Sigma at 14:20:54.
+ Elapsed time: 1 s.
+
+ Unsymmetrized values for ik =   3 spin = 1
+
+     n      Emf       Eo      Vxc        X     SX-X       CH      Cor      Sig
+     1  -10.420  -10.420  -13.570  -17.651   11.967   -6.247    5.720  -11.931
+     2   -6.842   -6.842  -11.463  -13.740    9.291   -5.678    3.614  -10.126
+     3   -2.705   -2.705  -11.629  -12.831    8.763   -5.791    2.971   -9.859
+     4   -2.705   -2.705  -11.629  -13.735    9.005   -5.704    3.301  -10.435
+     5    0.871    0.871   -8.970   -3.546    1.945   -5.159   -3.214   -6.760
+     6    1.116    1.116   -9.831   -4.257    2.230   -5.219   -2.989   -7.246
+     7    9.822    9.822  -11.736   -3.645    2.018   -5.835   -3.817   -7.462
+     8    9.822    9.822  -11.736   -3.908    2.173   -5.845   -3.673   -7.581
+
+ Symmetrized values from band-averaging:
+
+       k =  0.000000  0.500000  0.500000 ik =   3 spin = 1
+
+     n      Emf       Eo      Vxc        X      Cor     Eqp0     Eqp1      Znk
+     1  -10.420  -10.420  -13.570  -17.651    5.720   -8.781   -9.150    0.775
+     2   -6.842   -6.842  -11.463  -13.740    3.614   -5.505   -5.796    0.783
+     3   -2.705   -2.705  -11.629  -13.283    3.136   -1.223   -1.517    0.802
+     4   -2.705   -2.705  -11.629  -13.283    3.136   -1.223   -1.517    0.802
+     5    0.871    0.871   -8.970   -3.546   -3.214    3.081    2.654    0.807
+     6    1.116    1.116   -9.831   -4.257   -2.989    3.702    3.199    0.806
+     7    9.822    9.822  -11.736   -3.776   -3.745   14.037   13.055    0.767
+     8    9.822    9.822  -11.736   -3.776   -3.745   14.037   13.055    0.767
+
+================================================================================
+
+    n = band index.
+  Emf = "inner" mean-field energy eigenvalue used to construct Sigma(E),
+        read from WFN_inner.
+   Eo = "outer" mean-field energy eigenvalue where we center the evaluation
+        frequency grid {E} of Sigma(E). Defaults to Emf, unless
+        you use WFN_outer and eqp_outer.dat / scissors_outer.
+  Vxc = exchange-correlation pot., calculated from VXC or read from vxc.dat.
+    X = bare exchange.
+   SX = screened exchange contrib. to Sigma(E) at energy E=Eo
+   CH = Coulomb hole contrib. to Sigma(E) at energy E=Eo
+  Cor = SX-X + CH = correlation portion of Sigma(E) at energy E=Eo.
+  Sig = X + Cor = self energy, Sigma(E), at energy E=Eo.
+ Eqp0 = on-shell QP energy = Emf - Vxc + Sig(Eo)
+        Eqp0 is *not* the recommended quantity to use for QP properties.
+ Eqp1 = off-shell solution to the linearized  Dyson`s equation
+      = Eqp0 + (dSig/dE) / (1 - dSig/dE) * (Eqp0 - Eo),
+        or a full linear interpolation if more freq. points where computed.
+        Eqp1 is the recommended quantity to use for QP properties.
+  Znk = quasiparticle renormalization factor
+
+ Notes on the finite_difference_form from sigma.inp file:
+   none    : -2 => dSig/dE = 0 (skip the expansion)
+   backward: -1 => dSig/dE = (Sig(Eo) - Sig(Eo-dE)) / dE
+   central :  0 => dSig/dE = (Sig(Eo+dE) - Sig(Eo-dE)) / (2*dE)
+   forward :  1 => dSig/dE = (Sig(Eo+dE) - Sig(Eo)) / dE
+   default :  2 => forward for diagonal and none for off-diagonal
+   dE is finite_difference_spacing from Sigma.inp file.
+   We are using the form #2 with dE = 1.000 eV.
+
+ General notes:
+ - All energies are reported here in eV.
+ - Both Emf and Vxc contain the average pot. Vxc0, so Vxc0 doesn`t affect Sigma.
+ - Eqp1 and Eqp0 are Eqs. (36-37) from Hybertsen & Louie PRB 34 5390.
+ - We recommend you use Eqp1 for QP properties of materials.
+
+================================================================================
+
+
+WARNING: |Eqp0 - Eo| > finite_difference_spacing. Linear extrapolation for eqp1
+may be inaccurate. You should test the validity of eqp1 by rerunning the
+calculation with the self energy evaluated at the eqp0 energies. For that,
+use the eqp_outer.dat file, created with eqp.py script and point WFN_outer to
+WFN_inner, if you were not already using WFN_outer.
+
+
+                      CPU (s)        WALL (s)           #
+
+FULLBZ:                 0.000           0.000           2
+IRRBZ:                  0.000           0.000           3
+SUBGRP:                 0.000           0.000           3
+GMAP:                   0.000           0.000          11
+INPUT:                  0.013           0.018           1
+INPUT I/O               0.000           0.000          44
+INPUT COMM              0.000           0.001          44
+INPUT (READ):           0.001           0.000          40
+INPUT (WRITE):          0.000           0.000          36
+INPUT_OUTER:            0.000           0.000           1
+GENWF:                  0.001           0.000          11
+WF COMM:                0.000           0.001           3
+WF_CH COMM:             0.000           0.000           0
+EPSCOPY:                0.029           0.031           1
+EPSCOPY IO:             0.026           0.028           3
+EPSCOPY COMM:           0.000           0.000           0
+READ NEPS:              0.001           0.001           1
+EPSREAD:                0.001           0.000          11
+MTXEL:                  0.094           0.095          88
+MTXEL_CH:               0.000           0.000           0
+MTXEL COMM:             0.000           0.000          11
+VCOUL:                  2.370           2.377          11
+VXC:                    0.004           0.004           6
+BARE X:                 0.000           0.000          91
+MTXEL_COR TOT:          0.604           0.608          88
+M.COR INIT:             0.002           0.003          88
+M.COR EPSINIT:          0.196           0.196          88
+M.COR COMM:             0.004           0.005         176
+M.COR PP PREP:          0.118           0.115        7128
+M.COR SX+CH:            0.399           0.402         968
+M.COR RA SX:            0.000           0.000           0
+M.COR RA CH:            0.000           0.000           0
+M.COR RA CH2:           0.000           0.000           0
+M.COR RA SUM:           0.000           0.000           0
+M.COR CD RES:           0.000           0.000           0
+M.COR CD INT:           0.000           0.000           0
+M.COR CD SUM:           0.000           0.000           0
+M.COR REMAIN:           0.000           0.000           0
+FFT ZERO                0.004           0.003         643
+FFT PUT                 0.003           0.001         643
+FFT PLAN                0.045           0.052        1171
+FFT EXEC                0.032           0.029        1171
+FFT MLTPLY              0.004           0.003         528
+
+TOTAL:                  3.129           3.145
+

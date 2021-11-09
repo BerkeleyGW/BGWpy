@@ -1,0 +1,258 @@
+
+ BerkeleyGW branch 1.2.x revision 7090
+ BSE/Kernel code, Complex version, run on 04-Nov-2016 at 14:20:24 -0700
+
+                                                                 ..o.          
+                                                                .oxxo.         
+                                                               .oxxxxo...      
+                                                               oxxxxxxo.       
+                                                              .oxxxxxxx.       
+                                                              .ooooooxxo..     
+                                                              .oooooooxo..     
+                                                              .oooooxxo...     
+                                                       .........oxooo......    
+                                                 ............................  
+                                             ................................. 
+                                          .................................... 
+           .          ..oo. ....  .................................oooxxxxxxxo.
+     .............oxxxx@ox@@@x@x.....................o...........ooooooooooxx. 
+    .o.........oox@x.oo........xxx@@............ooxxxxo..........ooooxxxxxoxo  
+    .x........x@xxo...............o@xxo........oxxx@@@xoooooooooooooooxxxo...  
+    .o......ox@@o..................oox@o.....ooxxx@xoooxxxxxxxoooooooooooo.... 
+    o..ooooo@@xoooo....ooo...........x@o.....ooxxxxo   .oxxxxxxxxxxooooooo.... 
+    . .oooo@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@....ooooox.     .oxx@@@@@xxoo........ 
+      .ooooxxxxxxxooooooxooooooooooooooxo...oooooxx.        ..ox@xxxoo.........
+      .ooooooxxxx@xoooooooooooooxxoooooooooooxxxxx.            .oxxooooooooxxo.
+     .oooooxxxxx@@@xxxxxxxxxxxxxxxxxxxxxxxxoxxxxo.                .oxxxxxxxxo. 
+   ....oooxxxxx@@@xo..oxxx@@@@@@xxxxoxxoooooooxx.                  .oxxxoo..   
+  .....ooxxxx@@xo.       ........    .ooooooooxxo                              
+  ..oooxxxx@@@o                       .oooooooxoo.                             
+  ....oxooxxxxx.                       .ooo..oooo.                             
+  .....o.ooxxxxxo.                     .oooooooxo.                             
+ ......ooooxxxxxxo.                     .ooooooxoo..                           
+........ooxxxxxxxo..                     .o....oxoo...                         
+.......ooooxxxxxxxo.                     ........oooo.                         
+.ooooooo..ooxxxxoooo.                    .........ooo...                       
+..oxo...ooooxxxoooo..                    .ooo......oooo...                     
+  .ooooo....o.                            .oxxxoo....ooo....                   
+    .oooooo...                              ...ooooo...ooo..                   
+       ...                                     .oo.......                      
+                                               ....ooo...                      
+                      __              __                                       
+ ______              [  |            [  |                 ._____  _          _ 
+|_   _ \              | |  _          | |                /  ___ \| |        | |
+  | |_) | .---.  _. _.| | / |  .---.  | | .---.  _    _ / /    \_|\ \  /\  / / 
+  |  __'./ /__\\[ /`\_| '' <  / /__\\ | |/ /__\\| \  | | |   _____ \ \/  \/ /  
+ _| |__| | \__. | |   | |`\ \ | \___. | || \___. \ \/ / \ \.___| |  \  /\  /   
+|_______/ \.__./[_]  [__|  \_] \.__./[___]\.__./  \  /   \.____./    \/  \/    
+                                                  / /                          
+                                                 /_/                           
+--------------------------------------------------------------------------------
+ Please cite the following papers when using results from BerkeleyGW:
+
+ F. H. da Jornada, J. Deslippe, D. Vigil-Fowler, J. I. Mustafa, T. Rangel,
+ F. Bruneval, F. Liu, D. Y. Qiu, D. A. Strubbe, G. Samsonidze, J. Lischner,
+ C. Yang, J. B. Neaton, and S. G. Louie, In preparation. (2016)
+
+ Jack Deslippe, Georgy Samsonidze, David A. Strubbe, Manish Jain, Marvin L.
+ Cohen, and Steven G. Louie, "BerkeleyGW: A Massively Parallel Computer Package
+ for the Calculation of the Quasiparticle and Optical Properties of Materials
+ and Nanostructures," Comput. Phys. Commun. 183, 1269 (2012)
+
+ Mark S. Hybertsen and Steven G. Louie, "Electron correlation in semiconductors
+ and insulators: Band gaps and quasiparticle energies," Phys. Rev. B 34, 5390
+ (1986)
+
+ Michael Rohlfing and Steven G. Louie, "Electron-hole excitations and optical
+ spectra from first principles," Phys. Rev. B 62, 4927 (2000)
+--------------------------------------------------------------------------------
+
+ Running MPI version (parallel)
+ Running with 2 MPI task(s)
+
+ Compilation flags:
+ - Compiler: GNU
+ - Para. flags: MPI
+ - Math  flags: USESCALAPACK, USEFFTW3, HDF5
+ - Debug flags: 
+
+ Calculating the kernel only for (v,c)->(v',c') transitions.
+
+ Running with verbosity level 1 (default).
+
+ Running with Semiconductor Screening
+
+ We are communicating via MPI
+
+ We are using no truncation
+
+ Highest occupied band (coarse grid) = 4
+ Valence max    (coarse grid) = 5.551619 eV
+ Conduction min (coarse grid) = 6.066319 eV
+ Middle energy  (coarse grid) = 5.808969 eV
+ Fermi  energy  (coarse grid) = 5.808969 eV
+
+ Using symmetries to expand the coarse grid sampling
+
+ Parallelizing over (k)^2
+ We will not reuse wavefunction FFTs.
+ Using pools:  nproc = 2  npool = 1  nown = 8  npown = 4                                                                         
+ Memory available: 1030.0 MB per PE
+ Memory required for execution: 1.2 MB per PE
+ Extra memory required for vcoul: .0 MB per PE
+        8192  elements per PE
+          24  wavefunctions stored per PE
+         169  G-vectors per wavefunction
+
+ Crystal wavefunctions read from file WFN_co:
+ - Number of k-points in WFN_co: 3
+ - Number of k-points in the full BZ of WFN_co: 8
+
+ Calculation parameters:
+ - This is a Bethe-Salpeter-equation calculation.
+ - Cutoff of the bare Coulomb interaction (Ry): 10.00
+ - Cutoff of the screened Coulomb interaction (Ry): 10.00
+ - Number of G-vectors up to the bare int. cutoff: 169
+ - Number of G-vectors up to the screened int. cutoff: 169
+ - Number of valence bands: 4
+ - Number of conduction bands: 4
+ - Number of spins: 1
+
+ Epsilon matrix for q->0 read from eps0mat.h5:
+ - Number of q-points: 1
+ - Dielectric cutoff (Ry): 10.00
+
+ Epsilon matrix for q/=0 read from epsmat.h5:
+ - Number of q-points: 2
+ - Dielectric cutoff (Ry): 10.00
+
+ Calculating Coulomb potential.
+ Note: for G=0: setting q0 =  0.001000  0.000000  0.000000
+
+ Started calculation of matrix elements with 32 block(s) at 14:20:24.
+ [ 14:20:24 |   0% ] block  1 / 32.
+
+WARNING: at least one vector from the epsilon G-space could not be mapped to 
+ the WFN G-space. This means that either:
+ (1) The WFN cutoff is too small (most likely and dangerous); or
+ (2) The cutoff of the dielectric matrix is simply huge.
+ Consider using the gsphere.py utility to figure out the cause of this warning.
+
+ [ 14:20:24 |   6% ] block  3 / 32, remaining: 1 s.
+ [ 14:20:24 |   9% ] block  4 / 32, remaining: 0 s.
+ [ 14:20:24 |  19% ] block  7 / 32, remaining: 0 s.
+ [ 14:20:24 |  28% ] block 10 / 32, remaining: 0 s.
+ [ 14:20:24 |  38% ] block 13 / 32, remaining: 0 s.
+ [ 14:20:24 |  50% ] block 17 / 32, remaining: 0 s.
+ [ 14:20:24 |  59% ] block 20 / 32, remaining: 0 s.
+ [ 14:20:24 |  69% ] block 23 / 32, remaining: 0 s.
+ [ 14:20:24 |  78% ] block 26 / 32, remaining: 0 s.
+ [ 14:20:24 |  88% ] block 29 / 32, remaining: 0 s.
+ Finished calculation of matrix elements at 14:20:24.
+ Elapsed time: 0 s.
+
+ Expected size of the BSE matrices:
+   bsemat.h5: 1.129 MB
+
+
+ Frobenius norm of the matrices per spin:
+ - Head :  1.818053600581E+0001
+ - Wing :  2.865881688378E+0000
+ - Body :  2.339626528941E+0001
+ - X    :  2.455418984544E+0001
+
+
+                             CPU (s)        WALL (s)          #
+
+ INPUT:          (min.)        0.003           0.008          1
+                 (PE 0)        0.003           0.008
+                 (max.)        0.003           0.008
+ EPSCOPY:        (min.)        0.030           0.030          1
+                 (PE 0)        0.030           0.030
+                 (max.)        0.030           0.030
+ GENWF:          (min.)        0.007           0.010         32
+                 (PE 0)        0.007           0.010
+                 (max.)        0.008           0.010
+ EXCWF:          (min.)        0.000           0.000          0
+                 (PE 0)        0.000           0.000
+                 (max.)        0.000           0.000
+ MTXEL:          (min.)        0.415           0.417         32
+                 (PE 0)        0.416           0.417
+                 (max.)        0.416           0.417
+ FULLBZ:         (min.)        0.000           0.000          2
+                 (PE 0)        0.000           0.000
+                 (max.)        0.000           0.000
+ BSEWRITE:       (min.)        0.010           0.011          1
+                 (PE 0)        0.010           0.011
+                 (max.)        0.011           0.011
+ MTXEL Setup:    (min.)        0.000           0.001         64
+                 (PE 0)        0.000           0.001
+                 (max.)        0.016           0.018
+ MTXEL Vcoul:    (min.)        0.000           0.000         64
+                 (PE 0)        0.000           0.000
+                 (max.)        0.000           0.000
+ MTXEL W:        (min.)        0.007           0.006       4720
+                 (PE 0)        0.007           0.006
+                 (max.)        0.007           0.009
+ MTXEL W-Sum:    (min.)        0.028           0.017       4752
+                 (PE 0)        0.028           0.024
+                 (max.)        0.028           0.024
+ MTXEL FFT Dir:  (min.)        0.148           0.148         32
+                 (PE 0)        0.172           0.170
+                 (max.)        0.172           0.170
+ MTXEL High G:   (min.)        0.000           0.000         32
+                 (PE 0)        0.000           0.000
+                 (max.)        0.000           0.000
+ MTXEL FFT X:    (min.)        0.146           0.147         32
+                 (PE 0)        0.161           0.160
+                 (max.)        0.161           0.160
+ MTXEL BSEX:     (min.)        0.002           0.003         32
+                 (PE 0)        0.003           0.005
+                 (max.)        0.003           0.005
+ MTXEL INDEX:    (min.)        0.000           0.000         32
+                 (PE 0)        0.000           0.000
+                 (max.)        0.000           0.000
+ MTXEL EPSHEAD:  (min.)        0.000           0.000         32
+                 (PE 0)        0.000           0.000
+                 (max.)        0.000           0.000
+ MTXEL EPSREAD:  (min.)        0.006           0.006       5408
+                 (PE 0)        0.006           0.006
+                 (max.)        0.006           0.007
+ MTXEL EPSOPEN:  (min.)        0.000           0.000          0
+                 (PE 0)        0.000           0.000
+                 (max.)        0.000           0.000
+ MTXEL G SUM:    (min.)        0.004           0.002         32
+                 (PE 0)        0.004           0.002
+                 (max.)        0.004           0.005
+ MTXEL COMM:     (min.)        0.022           0.031         64
+                 (PE 0)        0.022           0.031
+                 (max.)        0.042           0.052
+ BSEWRITE COMM:  (min.)        0.006           0.007          1
+                 (PE 0)        0.006           0.007
+                 (max.)        0.007           0.007
+ BSEWRITE I/O:   (min.)        0.004           0.003          1
+                 (PE 0)        0.004           0.003
+                 (max.)        0.004           0.003
+ MTXEL FFT CC:   (min.)        0.075           0.075         32
+                 (PE 0)        0.088           0.087
+                 (max.)        0.088           0.087
+ MTXEL FFT VV:   (min.)        0.072           0.072         32
+                 (PE 0)        0.083           0.083
+                 (max.)        0.083           0.083
+ MTXEL FIND:     (min.)        0.000           0.000         32
+                 (PE 0)        0.000           0.000
+                 (max.)        0.000           0.000
+ MTXEL ALLOC:    (min.)        0.000           0.000         32
+                 (PE 0)        0.000           0.000
+                 (max.)        0.000           0.001
+ MTXEL FFTBOX:   (min.)        0.000           0.000         32
+                 (PE 0)        0.000           0.000
+                 (max.)        0.000           0.000
+ MTXEL FFT VC:   (min.)        0.146           0.147         32
+                 (PE 0)        0.161           0.160
+                 (max.)        0.161           0.160
+
+ TOTAL:          (min.)        0.468           0.478
+                 (PE 0)        0.468           0.478
+                 (max.)        0.469           0.478
+

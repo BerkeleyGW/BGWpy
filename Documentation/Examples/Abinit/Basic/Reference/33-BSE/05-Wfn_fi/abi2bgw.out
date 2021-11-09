@@ -1,0 +1,98 @@
+ Opening abi2bgw.in
+ Summary of input variables
+ wfng_file_abi out_data/odat_WFK
+ wfng_flag      T
+ wfng_file     wfn.cplx
+ wfng_nk1                 4
+ wfng_nk2                 4
+ wfng_nk3                 4
+ wfng_dk1         0.0000000000000000     
+ wfng_dk2         0.0000000000000000     
+ wfng_dk3         0.0000000000000000     
+ rhog_file_abi ../01-Density/out_data/odat_DEN
+ rhog_flag      T
+ rhog_file     rho.cplx
+ cell_symmetry              0
+ symrel_file_flag F
+ vxcg_flag      T
+ vxcg_file     vxc.cplx
+ #Generated list of g-vectors for density\/potential writen in file: gsphere_bgw.out
+ spin            1 kpt            1 /          64
+ spin            1 kpt            2 /          64
+ spin            1 kpt            3 /          64
+ spin            1 kpt            4 /          64
+ spin            1 kpt            5 /          64
+ spin            1 kpt            6 /          64
+ spin            1 kpt            7 /          64
+ spin            1 kpt            8 /          64
+ spin            1 kpt            9 /          64
+ spin            1 kpt           10 /          64
+ spin            1 kpt           11 /          64
+ spin            1 kpt           12 /          64
+ spin            1 kpt           13 /          64
+ spin            1 kpt           14 /          64
+ spin            1 kpt           15 /          64
+ spin            1 kpt           16 /          64
+ spin            1 kpt           17 /          64
+ spin            1 kpt           18 /          64
+ spin            1 kpt           19 /          64
+ spin            1 kpt           20 /          64
+ spin            1 kpt           21 /          64
+ spin            1 kpt           22 /          64
+ spin            1 kpt           23 /          64
+ spin            1 kpt           24 /          64
+ spin            1 kpt           25 /          64
+ spin            1 kpt           26 /          64
+ spin            1 kpt           27 /          64
+ spin            1 kpt           28 /          64
+ spin            1 kpt           29 /          64
+ spin            1 kpt           30 /          64
+ spin            1 kpt           31 /          64
+ spin            1 kpt           32 /          64
+ spin            1 kpt           33 /          64
+ spin            1 kpt           34 /          64
+ spin            1 kpt           35 /          64
+ spin            1 kpt           36 /          64
+ spin            1 kpt           37 /          64
+ spin            1 kpt           38 /          64
+ spin            1 kpt           39 /          64
+ spin            1 kpt           40 /          64
+ spin            1 kpt           41 /          64
+ spin            1 kpt           42 /          64
+ spin            1 kpt           43 /          64
+ spin            1 kpt           44 /          64
+ spin            1 kpt           45 /          64
+ spin            1 kpt           46 /          64
+ spin            1 kpt           47 /          64
+ spin            1 kpt           48 /          64
+ spin            1 kpt           49 /          64
+ spin            1 kpt           50 /          64
+ spin            1 kpt           51 /          64
+ spin            1 kpt           52 /          64
+ spin            1 kpt           53 /          64
+ spin            1 kpt           54 /          64
+ spin            1 kpt           55 /          64
+ spin            1 kpt           56 /          64
+ spin            1 kpt           57 /          64
+ spin            1 kpt           58 /          64
+ spin            1 kpt           59 /          64
+ spin            1 kpt           60 /          64
+ spin            1 kpt           61 /          64
+ spin            1 kpt           62 /          64
+ spin            1 kpt           63 /          64
+ spin            1 kpt           64 /          64
+ Writing DEN file:
+Reading header of density file
+ Inconsistency found in the following input parameters
+ List of stored \& read values:
+nkpt        64 /=      4
+nband        9 /=      5
+ There may be a difference in kpoints/bands in the DEN/WFK calculations
+ Assuming an experienced user, the calculation will continue
+ Reading density array     16 x     16 x     16 x      1
+ Norm of rho( spin = 1 ) =       8.00
+ Writing VXC file:
+Reading header of density file
+ Reading density array     16 x     16 x     16 x      1
+ Norm of vxc( spin = 1 ) =       0.70
+ Calculation completed
