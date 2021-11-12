@@ -15,7 +15,13 @@ if os.path.exists(config_file):
     config.read(config_file)
 
     sk = 'flavors'
-    keys = ('use_hdf5', 'use_hdf5_qe', 'flavor_complex', 'dft_flavor')
+    keys = ('use_hdf5', 'use_hdf5_qe', 'flavor_complex')
+    if sk in config:
+        for key in keys:
+            if key in config[sk]:
+                flavors[key] = config[sk].getboolean(key)
+
+    keys = ('dft_flavor',)
     if sk in config:
         for key in keys:
             if key in config[sk]:
