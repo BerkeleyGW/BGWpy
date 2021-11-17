@@ -18,9 +18,8 @@ dist/*.egg
 Documentation/Examples/MakingStructures/[0-9]*
 Documentation/Examples/QuantumEspresso/*/[0-9]*
 Documentation/Examples/Abinit/*/[0-9]*
-Documentation/.ipynb*
+Documentation/Tutorial/.ipynb*
 Documentation/Tutorial/Runs*
-Documentation/Tutorial/.ipynb_checkpoints
 
 # ctags
 tags

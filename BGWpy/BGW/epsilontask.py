@@ -39,7 +39,7 @@ class EpsilonTask(BGWTask):
         qshift : list(3), float
             Q-point used to treat the Gamma point.
         ecuteps : float
-            Energy cutoff for the dielectric function.
+            Energy cutoff for the dielectric function, in Ry.
         wfn_fname : str
             Path to the wavefunction file produced by pw2bgw.
         wfnq_fname : str
