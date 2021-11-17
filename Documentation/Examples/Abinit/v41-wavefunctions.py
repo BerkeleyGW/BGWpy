@@ -31,17 +31,17 @@ common = dict(
     )
 
 scftask = AbinitScfTask(
-    dirname = '01-Wavefunctions/Density',
+    dirname = '41-Wavefunctions/Density',
     **common)
 
 # Wavefunctions and eigenvalues calculation (NSCF) on a k-shifted grid
 wfntask = AbinitWfnTask(
-    dirname = '01-Wavefunctions/Wavefunctions',
+    dirname = '41-Wavefunctions/Wavefunctions',
     charge_density_fname = scftask.charge_density_fname,
     **common)
 
 # Interfacing PW with BerkeleyGW.
-qe2bgwtask = Abi2BgwTask(
+abi2bgwtask = Abi2BgwTask(
     dirname = wfntask.dirname,
     wfn_fname = wfntask.wfn_fname,
     rho_fname = scftask.charge_density_fname,
@@ -51,7 +51,7 @@ qe2bgwtask = Abi2BgwTask(
     **common)
 
 # Execution
-for task in (scftask, wfntask, qe2bgwtask):
+for task in (scftask, wfntask, abi2bgwtask):
     task.write()
     task.run()
     task.report()

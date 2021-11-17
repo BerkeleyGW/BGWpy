@@ -10,9 +10,9 @@ structure of a Workflow.
 """
 from os.path import join as pjoin
 
-from BGWpy import Structure, Workflow, QeScfTask, QeWfnTask, Qe2BgwTask, EpsilonTask, SigmaTask
+from BGWpy import Structure, Workflow, AbinitScfTask, AbinitWfnTask, Abi2BgwTask, EpsilonTask, SigmaTask
 
-workflow = Workflow(dirname='11-Workflow')
+workflow = Workflow(dirname='42-Workflow')
 
 # Common arguments for tasks.
 kwargs = dict(
@@ -20,11 +20,11 @@ kwargs = dict(
     structure = Structure.from_file('../../Data/Structures/GaAs.json'),
     prefix = 'GaAs',
     pseudo_dir = '../../Data/Pseudos',
-    pseudos = ['31-Ga.PBE.UPF', '33-As.PBE.UPF'],
+    pseudos = ['31-Ga.pspnc', '33-As.pspnc'],
 
     ngkpt = [2,2,2],
-    ecutwfc = 10.0,
-    nbnd = 9,
+    ecut = 5.0,
+    nband = 9,
 
     # Parameters for the MPI runner
     nproc = 8,
@@ -36,64 +36,63 @@ kwargs = dict(
 
 
 # Ground state density calculation (SCF)
-scftask = QeScfTask(
+scftask = AbinitScfTask(
     dirname = pjoin(workflow.dirname, 'density'),
     kshift = [.5,.5,.5],
     **kwargs)
 
 
 # Wavefunctions and eigenvalues calculation (NSCF) on a k-shifted grid
-wfntask_ksh = QeWfnTask(
+wfntask_ksh = AbinitWfnTask(
     dirname = pjoin(workflow.dirname, 'wfn'),
     kshift = [.5,.5,.5],
     charge_density_fname = scftask.charge_density_fname,
-    data_file_fname = scftask.data_file_fname,
     **kwargs)
 
 
-# Interfacing PW with BerkeleyGW.
-pw2bgwtask_ksh = Qe2BgwTask(
+# Interfacing Abinit with BerkeleyGW.
+abi2bgwtask_ksh = Abi2BgwTask(
     dirname = wfntask_ksh.dirname,
     kshift = [.5,.5,.5],
-    wfn_fname = 'wfn.cplx',
+    wfn_fname = wfntask_ksh.wfn_fname,
     **kwargs)
 
 
 # Wavefunctions and eigenvalues calculation (NSCF) on a k+q-shifted grid
-wfntask_qsh = QeWfnTask(
+wfntask_qsh = AbinitWfnTask(
     dirname = pjoin(workflow.dirname, 'wfnq'),
     kshift = [.5,.5,.5],
     qshift = [.001,.0,.0],
     charge_density_fname = scftask.charge_density_fname,
-    data_file_fname = scftask.data_file_fname,
     **kwargs)
 
 
-# Interfacing PW with BerkeleyGW.
-pw2bgwtask_qsh = Qe2BgwTask(
+# Interfacing Abinit with BerkeleyGW.
+abi2bgwtask_qsh = Abi2BgwTask(
     dirname = wfntask_qsh.dirname,
     kshift = [.5,.5,.5],
     qshift = [.001,.0,.0],
-    wfn_fname = 'wfnq.cplx',
+    wfn_fname = wfntask_qsh.wfn_fname,
     **kwargs)
 
 
 # Wavefunctions and eigenvalues calculation (NSCF) on an unshifted grid
-wfntask_ush = QeWfnTask(
+wfntask_ush = AbinitWfnTask(
     dirname = pjoin(workflow.dirname, 'wfn_co'),
     kshift = [.0,.0,.0],
     charge_density_fname = scftask.charge_density_fname,
-    data_file_fname = scftask.data_file_fname,
     **kwargs)
 
 
-# Interfacing PW with BerkeleyGW.
-pw2bgwtask_ush = Qe2BgwTask(
+# Interfacing Abinit with BerkeleyGW.
+abi2bgwtask_ush = Abi2BgwTask(
     dirname = wfntask_ush.dirname,
     kshift = [.0,.0,.0],
-    wfn_fname = 'wfn_co.cplx',
-    rho_fname = 'rho.real',
-    vxc_diag_nmax = 8,
+    wfn_fname = wfntask_ush.wfn_fname,
+    rho_fname = scftask.rho_fname,
+    vxc_fname = scftask.vxc_fname,
+    rhog_flag = True,
+    vxcg_flag = True,
     **kwargs)
 
 
@@ -102,8 +101,8 @@ epsilontask = EpsilonTask(
     dirname = pjoin(workflow.dirname, 'epsilon'),
     qshift = [.001,.0,.0],
     ecuteps = 10.0,
-    wfn_fname = pw2bgwtask_ksh.wfn_fname,
-    wfnq_fname = pw2bgwtask_qsh.wfn_fname,
+    wfn_fname = abi2bgwtask_ksh.wfn_fname,
+    wfnq_fname = abi2bgwtask_qsh.wfn_fname,
     **kwargs)
 
 
@@ -114,9 +113,9 @@ sigmatask = SigmaTask(
     ibnd_max = 8,
     extra_lines = ['screening_semiconductor'],
     #extra_variables = {'number_of_frequencies' : 10},
-    wfn_co_fname = pw2bgwtask_ush.wfn_fname,
-    rho_fname = pw2bgwtask_ush.rho_fname,
-    vxc_dat_fname = pw2bgwtask_ush.vxc_dat_fname,
+    wfn_co_fname = abi2bgwtask_ush.wfn_fname,
+    rho_fname = abi2bgwtask_ush.rho_fname,
+    vxc_fname = abi2bgwtask_ush.vxc_fname,
     eps0mat_fname = epsilontask.eps0mat_fname,
     epsmat_fname = epsilontask.epsmat_fname,
     **kwargs)
@@ -124,9 +123,9 @@ sigmatask = SigmaTask(
 
 # Add all task without merging (executed from a sub-directory)
 workflow.add_tasks([scftask,
-                    wfntask_ksh, pw2bgwtask_ksh,
-                    wfntask_qsh, pw2bgwtask_qsh,
-                    wfntask_ush, pw2bgwtask_ush,
+                    wfntask_ksh, abi2bgwtask_ksh,
+                    wfntask_qsh, abi2bgwtask_qsh,
+                    wfntask_ush, abi2bgwtask_ush,
                     epsilontask, sigmatask,
                    ], merge=False)
 

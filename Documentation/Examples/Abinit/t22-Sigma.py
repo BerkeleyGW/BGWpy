@@ -21,6 +21,9 @@ task = SigmaTask(
     ibnd_max = 8,           # Maximum band for GW corrections
     ecuteps = 10.0,         # Energy cutoff for the epsilon matrix
 
+    extra_lines = ['dont_use_vxcdat'],
+    #extra_lines = ['dont_use_vxcdat', 'dont_use_hdf5'],
+
     # Files to be linked
     wfn_co_fname='14-Wfn_co/wfn.cplx',
     rho_fname='14-Wfn_co/rho.cplx',

@@ -1,18 +1,18 @@
 """
 Compute DFT wavefunctions and eigenvalues
-on a 'fine' k-shifted and q-shifted k-point grid,
+on a k-shifted k-point grid,
 then adapt them for BGW.
 
 Depends on:
     11-Density
 
 Used by:
-    24-Absorption
+    21-Epsilon
 """
 from BGWpy import Structure, QeBgwFlow
 
 task = QeBgwFlow(
-    dirname = '16-Wfnq_fi',
+    dirname = '12-Wfn',
 
     structure = Structure.from_file('../../Data/Structures/GaAs.json'),
     prefix = 'GaAs',
@@ -21,13 +21,11 @@ task = QeBgwFlow(
 
     ngkpt = [2,2,2],      # k-points grid
     kshift = [.5,.5,.5],  # k-points shift
-    qshift = [.001,.0,.0],# k-points q-shift
     ecutwfc = 10.0,       # Wavefunctions cutoff energy
     nbnd = 9,             # Number of bands
-    symkpt = False,       # Do not reduce the k-point grid with symmetries.
 
-    charge_density_fname = '11-Density/GaAs.save/charge-density.dat',
-    data_file_fname = '11-Density/GaAs.save/data-file.xml',
+    charge_density_fname = '11-Density/GaAs.save/charge-density.hdf5',
+    data_file_fname = '11-Density/GaAs.save/data-file-schema.xml',
 
     # These are the default parameters for the MPI runner.
     # Please adapt them to your needs.

@@ -41,3 +41,5 @@ task.write()
 task.run()
 task.report()
 
+print(task._use_hdf5)
+print(type(task._use_hdf5))

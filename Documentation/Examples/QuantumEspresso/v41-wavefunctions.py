@@ -31,12 +31,12 @@ common = dict(
     )
 
 scftask = QeScfTask(
-    dirname = '01-Wavefunctions/Density',
+    dirname = '41-Wavefunctions/Density',
     **common)
 
 # Wavefunctions and eigenvalues calculation (NSCF) on a k-shifted grid
 wfntask = QeWfnTask(
-    dirname = '01-Wavefunctions/Wavefunctions',
+    dirname = '41-Wavefunctions/Wavefunctions',
     charge_density_fname = scftask.charge_density_fname,
     data_file_fname = scftask.data_file_fname,
     **common)

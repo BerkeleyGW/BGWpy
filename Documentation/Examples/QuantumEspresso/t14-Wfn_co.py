@@ -28,8 +28,8 @@ task = QeBgwFlow(
 
     rhog_flag = True,     # Also convert the charge density and vxc for BGW.
 
-    charge_density_fname = '11-Density/GaAs.save/charge-density.dat',
-    data_file_fname = '11-Density/GaAs.save/data-file.xml',
+    charge_density_fname = '11-Density/GaAs.save/charge-density.hdf5',
+    data_file_fname = '11-Density/GaAs.save/data-file-schema.xml',
 
     # These are the default parameters for the MPI runner.
     # Please adapt them to your needs.

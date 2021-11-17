@@ -134,6 +134,11 @@ class AbinitBgwFlow(WfnBgwFlow):
         return self.wfnbgwntask.rho_fname
 
     @property
+    def den_fname(self):
+        """The charge density file name for BerkeleyGW."""
+        return self.rho_fname
+
+    @property
     def wfn_fname(self):
         """The wavefunctions file name for BerkeleyGW."""
         return self.wfnbgwntask.wfn_fname
