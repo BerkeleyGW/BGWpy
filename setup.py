@@ -22,7 +22,7 @@ name = 'BGWpy'
 description = 'Interface BerkeleyGW flows in python.'
 license = 'BSD'
 url = 'https://github.com/BerkeleyGW/BGWpy'
-__version__ = '3.2.0'
+__version__ = '3.2.1'
 
 # author and author_email should be a single string, not a list, but we can put
 # multiple authors / emails by separating them by commas inside the string.
@@ -34,7 +34,7 @@ author_email = 'gabriel.antonius@gmail.com'
 # Requirements
 install_requires = [
     'numpy >=1.6',
-    'pymatgen >=2020',
+    'pymatgen >=2021',
     ]
 
 # --------------------------------------------------------------------------- #
@@ -50,7 +50,9 @@ def find_data_files():
 
 def find_scripts():
     scripts = []
-    scripts.extend(glob(os.path.join('BGWpy', 'scripts', "*.py")))
+    for fname in glob(os.path.join('BGWpy', 'scripts', "*.py")):
+        if os.path.basename(fname) != '__init__.py':
+            scripts.append(fname)
     return scripts
 
 def cleanup():

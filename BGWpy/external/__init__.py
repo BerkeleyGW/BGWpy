@@ -1,2 +1,2 @@
 from . import xmltodict
-from pymatgen import Structure
+from pymatgen.core import Structure
