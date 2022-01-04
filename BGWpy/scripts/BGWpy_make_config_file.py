@@ -1,35 +1,40 @@
 #!/usr/bin/env python
 import configparser                                                                                                                                              
-config = configparser.ConfigParser()
 
-config['flavors'] = dict(
-    use_hdf5 = True,
-    use_hdf5_qe = False,
-    flavor_complex = True,
-    dft_flavor = 'espresso',
-    )
-
-config['MPI'] = dict(
-    mpirun = 'mpirun',
-    nproc = 1,
-    nproc_flag = '-n',
-    nproc_per_node = 1,
-    nproc_per_node_flag = '--npernode',
-    nodes = '',
-    nodes_flag = '',
-    )
-
-config['runscript'] = dict(
-    first_line = '#!/bin/sh',
-    header = """
+def get_config():
+    config = configparser.ConfigParser()
+    
+    config['flavors'] = dict(
+        use_hdf5 = True,
+        use_hdf5_qe = False,
+        flavor_complex = True,
+        dft_flavor = 'espresso',
+        )
+    
+    config['MPI'] = dict(
+        mpirun = 'mpirun',
+        nproc = 1,
+        nproc_flag = '-n',
+        nproc_per_node = 1,
+        nproc_per_node_flag = '--npernode',
+        nodes = '',
+        nodes_flag = '',
+        )
+    
+    config['runscript'] = dict(
+        first_line = '#!/bin/sh',
+        header = """
 # Lines before execution
 """,
-    footer = """
+        footer = """
 # Lines after execution
 """,
     )
 
-header = """\
+    return config
+
+def get_header():
+    return """\
 ; Configuration file for BGWpy
 ; This file should be saved as ~/.BGWpyrc
 ;
@@ -38,7 +43,7 @@ header = """\
 
 """
 
-if __name__ == '__main__':
+def main():
     import sys
     import os
     import argparse
@@ -57,5 +62,9 @@ if __name__ == '__main__':
 
     print('Writing ~/.BGWpyrc')
     with open(fname, 'w') as cf:
-      cf.write(header)
-      config.write(cf)
+      cf.write(get_header())
+      get_config().write(cf)
+
+if __name__ == '__main__':
+    main()
+
