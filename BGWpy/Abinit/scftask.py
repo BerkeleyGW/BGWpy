@@ -3,15 +3,16 @@ import os
 
 from .abinittask import AbinitTask
 
-__all__ = ['AbinitScfTask']
+__all__ = ["AbinitScfTask"]
+
 
 class AbinitScfTask(AbinitTask):
     """Charge density calculation."""
 
-    _TASK_NAME = 'SCF'
+    _TASK_NAME = "SCF"
 
-    _input_fname = 'scf.in'
-    _output_fname = 'scf.out'
+    _input_fname = "scf.in"
+    _output_fname = "scf.out"
 
     def __init__(self, dirname, **kwargs):
         """
@@ -61,7 +62,7 @@ class AbinitScfTask(AbinitTask):
 
         """
 
-        kwargs.setdefault('prefix', 'scf')
+        kwargs.setdefault("prefix", "scf")
 
         super(AbinitScfTask, self).__init__(dirname, **kwargs)
 
@@ -71,24 +72,23 @@ class AbinitScfTask(AbinitTask):
     def get_scf_variables(**kwargs):
         """Return a dict of variables required for an SCF calculation."""
         variables = dict(
-            prtden = 1,
-            prtvxc = 1,
-            tolvrs = kwargs.get('tolvrs', 1e-10),
-            ecut = kwargs.get('ecut'),
-            )
+            prtden=1,
+            prtvxc=1,
+            tolvrs=kwargs.get("tolvrs", 1e-10),
+            ecut=kwargs.get("ecut"),
+        )
         return variables
 
     @property
     def charge_density_fname(self):
-        #return os.path.join(self.dirname, self.get_odat('DEN'))
-        return self.get_odat('DEN')
+        # return os.path.join(self.dirname, self.get_odat('DEN'))
+        return self.get_odat("DEN")
 
     rho_fname = charge_density_fname
 
     @property
     def xc_potential_fname(self):
-        #return os.path.join(self.dirname, self.get_odat('DEN'))
-        return self.get_odat('VXC')
+        # return os.path.join(self.dirname, self.get_odat('DEN'))
+        return self.get_odat("VXC")
 
     vxc_fname = xc_potential_fname
-

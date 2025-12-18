@@ -3,15 +3,16 @@ import os
 
 from .abinittask import AbinitTask
 
-__all__ = ['AbinitWfnTask']
+__all__ = ["AbinitWfnTask"]
+
 
 class AbinitWfnTask(AbinitTask):
     """Charge density calculation."""
 
-    _TASK_NAME = 'Wfn'
+    _TASK_NAME = "Wfn"
 
-    _input_fname = 'wfn.in'
-    _output_fname = 'wfn.out'
+    _input_fname = "wfn.in"
+    _output_fname = "wfn.out"
 
     def __init__(self, dirname, **kwargs):
         """
@@ -60,27 +61,27 @@ class AbinitWfnTask(AbinitTask):
 
         """
 
-        kwargs.setdefault('prefix', 'wfn')
+        kwargs.setdefault("prefix", "wfn")
 
         super(AbinitWfnTask, self).__init__(dirname, **kwargs)
 
-        self.charge_density_fname = kwargs['charge_density_fname']
+        self.charge_density_fname = kwargs["charge_density_fname"]
 
-        if 'input_wavefunction_fname' in kwargs:
-            self.input_wavefunction_fname = kwargs['input_wavefunction_fname']
+        if "input_wavefunction_fname" in kwargs:
+            self.input_wavefunction_fname = kwargs["input_wavefunction_fname"]
 
         self.input.set_variables(self.get_wfn_variables(**kwargs))
 
     def get_wfn_variables(self, **kwargs):
         """Return a dict of variables required for an SCF calculation."""
 
-        nband = kwargs.get('nband')
+        nband = kwargs.get("nband")
         if not nband:
-            nband = kwargs.get('nbnd')
+            nband = kwargs.get("nbnd")
 
-        ecut = kwargs.get('ecut')
+        ecut = kwargs.get("ecut")
         if not ecut:
-            ecut = kwargs.get('ecutwfc')
+            ecut = kwargs.get("ecutwfc")
             if not ecut:
                 raise Exception("Please specify 'ecut' for Abinit.")
             else:
@@ -88,52 +89,52 @@ class AbinitWfnTask(AbinitTask):
                 pass
 
         variables = dict(
-            ecut = ecut,
-            nband = nband,
-            irdden = 1,
-            nbdbuf = kwargs.get('nbdbuf', 0),
-            irdwfk = 1 if self.input_wavefunction_fname else 0,
-            tolwfr = kwargs.get('tolwfr', 1e-16),
-            iscf = kwargs.get('iscf', -3),
-            istwfk = kwargs.get('istwfk', '*1'),
-            )
+            ecut=ecut,
+            nband=nband,
+            irdden=1,
+            nbdbuf=kwargs.get("nbdbuf", 0),
+            irdwfk=1 if self.input_wavefunction_fname else 0,
+            tolwfr=kwargs.get("tolwfr", 1e-16),
+            iscf=kwargs.get("iscf", -3),
+            istwfk=kwargs.get("istwfk", "*1"),
+        )
         return variables
 
     @property
     def wavefunction_fname(self):
-        return self.get_odat('WFK')
+        return self.get_odat("WFK")
 
     wfn_fname = wavefunction_fname
     wfk_fname = wavefunction_fname
 
     @property
     def charge_density_fname(self):
-        return self.get_odat('DEN')
+        return self.get_odat("DEN")
 
     @charge_density_fname.setter
     def charge_density_fname(self, value):
         self._charge_density_fname = value
-        dest = os.path.relpath(self.get_idat('DEN'), self.dirname)
-        if value.endswith('.nc'):
-            dest += '.nc'
+        dest = os.path.relpath(self.get_idat("DEN"), self.dirname)
+        if value.endswith(".nc"):
+            dest += ".nc"
         self.update_link(value, dest)
 
     rho_fname = charge_density_fname
 
-    _input_wavefunction_fname = ''
+    _input_wavefunction_fname = ""
+
     @property
     def input_wavefunction_fname(self):
         return self._input_wavefunction_fname
-    
+
     @input_wavefunction_fname.setter
     def input_wavefunction_fname(self, value):
         self._input_wavefunction_fname = value
-        dest = os.path.relpath(self.get_idat('WFK'), self.dirname)
+        dest = os.path.relpath(self.get_idat("WFK"), self.dirname)
         self.update_link(value, dest)
 
     @property
     def exchange_correlation_potential_fname(self):
-        return self.get_odat('VXC')
+        return self.get_odat("VXC")
 
     vxc_fname = exchange_correlation_potential_fname
-

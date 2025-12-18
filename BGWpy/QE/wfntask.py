@@ -1,20 +1,20 @@
 from __future__ import print_function
 import os
 
-from .qetask      import QeTask
+from .qetask import QeTask
 from .constructor import get_bands_input
 
 # Public
-__all__ = ['QeWfnTask']
+__all__ = ["QeWfnTask"]
 
 
 class QeWfnTask(QeTask):
     """Wavefunctions calculation."""
 
-    _TASK_NAME = 'Wfn'
+    _TASK_NAME = "Wfn"
 
-    _input_fname = 'wfn.in'
-    _output_fname = 'wfn.out'
+    _input_fname = "wfn.in"
+    _output_fname = "wfn.out"
 
     def __init__(self, dirname, **kwargs):
         """
@@ -47,7 +47,7 @@ class QeWfnTask(QeTask):
             by a density calculation ('charge-density.dat' or
             'charge-density.hdf5').
         data_file_fname : str
-            Path to the xml data file produced 
+            Path to the xml data file produced
             by a density calculation ('data-file.xml').
         spin_polarization_fname : str, optional
             Path to the spin polarization file produced
@@ -76,11 +76,11 @@ class QeWfnTask(QeTask):
 
         kpts, wtks = self.get_kpts(**kwargs)
 
-        self.charge_density_fname = kwargs['charge_density_fname']
-        if 'spin_polarization_fname' in kwargs:
-            self.spin_polarization_fname = kwargs['spin_polarization_fname']
+        self.charge_density_fname = kwargs["charge_density_fname"]
+        if "spin_polarization_fname" in kwargs:
+            self.spin_polarization_fname = kwargs["spin_polarization_fname"]
 
-        self.data_file_fname = kwargs['data_file_fname']
+        self.data_file_fname = kwargs["data_file_fname"]
 
         # Input file
         self.input = get_bands_input(
@@ -88,20 +88,23 @@ class QeWfnTask(QeTask):
             self.pseudo_dir,
             self.pseudos,
             self.structure,
-            kwargs['ecutwfc'],
+            kwargs["ecutwfc"],
             kpts,
             wtks,
-            nbnd = kwargs.get('nbnd'),
-            )
+            nbnd=kwargs.get("nbnd"),
+        )
 
-        if 'variables' in kwargs:
-            self.input.set_variables(kwargs['variables'])
+        if "variables" in kwargs:
+            self.input.set_variables(kwargs["variables"])
 
         self.input.fname = self._input_fname
 
         # Run script
-        self.runscript.append('$MPIRUN $PW $PWFLAGS -in {} &> {}'.format(
-                              self._input_fname, self._output_fname))
+        self.runscript.append(
+            "$MPIRUN $PW $PWFLAGS -in {} &> {}".format(
+                self._input_fname, self._output_fname
+            )
+        )
 
     @property
     def charge_density_fname(self):
@@ -110,7 +113,7 @@ class QeWfnTask(QeTask):
     @charge_density_fname.setter
     def charge_density_fname(self, value):
         self._charge_density_fname = value
-        name = 'charge-density.hdf5' if self._use_hdf5_qe else 'charge-density.dat'
+        name = "charge-density.hdf5" if self._use_hdf5_qe else "charge-density.dat"
         dest = os.path.join(self.savedir, name)
         self.update_link(value, dest)
 
@@ -121,7 +124,7 @@ class QeWfnTask(QeTask):
     @spin_polarization_fname.setter
     def spin_polarization_fname(self, value):
         self._spin_polarization_fname = value
-        dest = os.path.join(self.savedir, 'spin-polarization.dat')
+        dest = os.path.join(self.savedir, "spin-polarization.dat")
         self.update_link(value, dest)
 
     @property
@@ -132,9 +135,9 @@ class QeWfnTask(QeTask):
     def data_file_fname(self, value):
         self._data_file_fname = value
         if self.version >= 6:
-            dest = os.path.join(self.savedir, 'data-file-schema.xml')
+            dest = os.path.join(self.savedir, "data-file-schema.xml")
         else:
-            dest = os.path.join(self.savedir, 'data-file.xml')
+            dest = os.path.join(self.savedir, "data-file.xml")
         self.update_copy(value, dest)
 
     def add_pseudos_copy(self):
@@ -164,8 +167,8 @@ class QeWfnTask(QeTask):
             self._pseudo_dir = value
         else:
             self._pseudo_dir = os.path.relpath(value, self.dirname)
-        if 'input' in dir(self):
-            if 'control' in dir(self.input):
-                self.input.control['pseudo_dir'] = self._pseudo_dir
-        if 'pseudos' in dir(self):
+        if "input" in dir(self):
+            if "control" in dir(self.input):
+                self.input.control["pseudo_dir"] = self._pseudo_dir
+        if "pseudos" in dir(self):
             self.add_pseudos_copy()

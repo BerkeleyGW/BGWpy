@@ -11,29 +11,37 @@ from .util import exec_from_dir, last_lines_contain
 from .runscript import RunScript
 
 # Public
-__all__ = ['Task', 'MPITask', 'IOTask']
+__all__ = ["Task", "MPITask", "IOTask"]
 
 
 class Task(object):
     """Task executed from a single directory, from a single script."""
-    _dirname = '.'
 
-    _TASK_NAME = 'Task'
+    _dirname = "."
 
-    _STATUS_COMPLETED = 'Completed'
-    _STATUS_UNSTARTED = 'Unstarted'
-    _STATUS_UNFINISHED = 'Unfinished'
-    _STATUS_UNKNOWN = 'Unknown'
+    _TASK_NAME = "Task"
+
+    _STATUS_COMPLETED = "Completed"
+    _STATUS_UNSTARTED = "Unstarted"
+    _STATUS_UNFINISHED = "Unfinished"
+    _STATUS_UNKNOWN = "Unknown"
 
     _report_colors = {
-        _STATUS_COMPLETED : '\033[92m',
-        _STATUS_UNSTARTED : '\033[94m',
-        _STATUS_UNFINISHED : '\033[91m',
-        _STATUS_UNKNOWN : '\033[95m',
-        }
-    _end_color = '\033[0m'
+        _STATUS_COMPLETED: "\033[92m",
+        _STATUS_UNSTARTED: "\033[94m",
+        _STATUS_UNFINISHED: "\033[91m",
+        _STATUS_UNKNOWN: "\033[95m",
+    }
+    _end_color = "\033[0m"
 
-    def __init__(self, dirname='./', runscript_fname='run.sh', store_variables=False, *args, **kwargs):
+    def __init__(
+        self,
+        dirname="./",
+        runscript_fname="run.sh",
+        store_variables=False,
+        *args,
+        **kwargs,
+    ):
         """
         Keyword arguments
         -----------------
@@ -54,7 +62,7 @@ class Task(object):
         self.runscript.fname = runscript_fname
         self.variables = kwargs if store_variables else dict()
 
-        self._TASK_NAME = '{:<10} : {}'.format(self._TASK_NAME, self.dirname)
+        self._TASK_NAME = "{:<10} : {}".format(self._TASK_NAME, self.dirname)
 
     @property
     def dirname(self):
@@ -73,7 +81,7 @@ class Task(object):
     @runscript_fname.setter
     def runscript_fname(self, value):
         if os.path.basename(value) != value:
-            raise Exception('Cannot use a path for runscript_fname')
+            raise Exception("Cannot use a path for runscript_fname")
         self.runscript.fname = value
 
     @contextlib.contextmanager
@@ -94,12 +102,12 @@ class Task(object):
             self.runscript.run()
 
     def write(self):
-        subprocess.call(['mkdir', '-p', self.dirname])
+        subprocess.call(["mkdir", "-p", self.dirname])
         with self.exec_from_dirname():
             self.runscript.write()
 
             if self.variables:
-                with open('variables.pkl', 'w') as f:
+                with open("variables.pkl", "w") as f:
                     pickle.dump(self.variables, f)
 
     def update_link(self, target, dest):
@@ -115,7 +123,8 @@ class Task(object):
             return
 
         reltarget = os.path.relpath(
-            target, os.path.join(self.dirname, os.path.dirname(dest)))
+            target, os.path.join(self.dirname, os.path.dirname(dest))
+        )
 
         for link in self.runscript.links:
             if link[1] == dest:
@@ -130,7 +139,7 @@ class Task(object):
             if link[1] == dest:
                 del self.runscript.links[i]
                 break
-        
+
     def update_copy(self, source, dest):
         """
         Modify or add a file to copy.
@@ -156,8 +165,8 @@ class Task(object):
     def is_complete(self):
         """True if the task reports a completed status."""
         status = self.get_status()
-        return (status is self._STATUS_COMPLETED)
-        
+        return status is self._STATUS_COMPLETED
+
     def report(self, file=None, color=True, **kwargs):
         """
         Report whether the task completed normally.
@@ -179,7 +188,7 @@ class Task(object):
             col = self._report_colors[status]
             status = col + str(status) + self._end_color
 
-        s = '   {:<50}  -  Status :  {}'.format(self._TASK_NAME, status)
+        s = "   {:<50}  -  Status :  {}".format(self._TASK_NAME, status)
 
         file = file if file is not None else sys.stdout
         print(s, file=file)
@@ -191,13 +200,13 @@ class Task(object):
 class MPITask(Task):
     """Task whose run script defines MPI variables for the main execution."""
 
-    _mpirun = default_mpi['mpirun']
-    _nproc = default_mpi['nproc']
-    _nproc_flag = default_mpi['nproc_flag']
-    _nproc_per_node = default_mpi['nproc_per_node']
-    _nproc_per_node_flag = default_mpi['nproc_per_node_flag']
-    _nodes = default_mpi['nodes']
-    _nodes_flag = default_mpi['nodes_flag']
+    _mpirun = default_mpi["mpirun"]
+    _nproc = default_mpi["nproc"]
+    _nproc_flag = default_mpi["nproc_flag"]
+    _nproc_per_node = default_mpi["nproc_per_node"]
+    _nproc_per_node_flag = default_mpi["nproc_per_node_flag"]
+    _nodes = default_mpi["nodes"]
+    _nodes_flag = default_mpi["nodes_flag"]
 
     def __init__(self, *args, **kwargs):
         """
@@ -227,41 +236,46 @@ class MPITask(Task):
 
         super(MPITask, self).__init__(*args, **kwargs)
 
-        self.mpirun = default_mpi['mpirun']
-        self.nproc_flag = default_mpi['nproc_flag']
-        self.nproc_per_node_flag = default_mpi['nproc_per_node_flag']
-        self.nproc = default_mpi['nproc']
-        self.nproc_per_node = default_mpi['nproc_per_node']
+        self.mpirun = default_mpi["mpirun"]
+        self.nproc_flag = default_mpi["nproc_flag"]
+        self.nproc_per_node_flag = default_mpi["nproc_per_node_flag"]
+        self.nproc = default_mpi["nproc"]
+        self.nproc_per_node = default_mpi["nproc_per_node"]
 
-        for key in ('mpirun', 'nproc', 'nproc_flag',
-                    'nproc_per_node', 'nproc_per_node_flag',
-                    'nodes', 'nodes_flag'):
-                   
+        for key in (
+            "mpirun",
+            "nproc",
+            "nproc_flag",
+            "nproc_per_node",
+            "nproc_per_node_flag",
+            "nodes",
+            "nodes_flag",
+        ):
             if key in kwargs:
                 setattr(self, key, kwargs[key])
 
         # This is mostly for backward compatibility
-        if 'mpirun_n' in kwargs:
-            self.mpirun_n = kwargs['mpirun_n']
+        if "mpirun_n" in kwargs:
+            self.mpirun_n = kwargs["mpirun_n"]
 
     def _declare_mpirun(self):
-        self.runscript['MPIRUN'] = self.mpirun_variable
+        self.runscript["MPIRUN"] = self.mpirun_variable
 
     @property
     def mpirun_variable(self):
         if not self.mpirun:
-            return ''
+            return ""
 
         variable = str(self.mpirun)
 
         if self.nproc_flag and self.nproc:
-            variable += ' {} {}'.format(self.nproc_flag, self.nproc)
+            variable += " {} {}".format(self.nproc_flag, self.nproc)
 
         if self.nproc_per_node_flag and self.nproc_per_node:
-            variable += ' {} {}'.format(self.nproc_per_node_flag, self.nproc_per_node)
+            variable += " {} {}".format(self.nproc_per_node_flag, self.nproc_per_node)
 
         if self.nodes_flag and self.nodes:
-            variable += ' {} {}'.format(self.nodes_flag, self.nodes)
+            variable += " {} {}".format(self.nodes_flag, self.nodes)
 
         return variable
 
@@ -330,22 +344,22 @@ class MPITask(Task):
 
     @property
     def mpirun_n(self):
-        return self.mpirun + ' ' + self.nproc_flag
+        return self.mpirun + " " + self.nproc_flag
 
     @mpirun_n.setter
     def mpirun_n(self, value):
         if not value:
-            self.nproc_flag = ''
-            self.mpirun = ''
+            self.nproc_flag = ""
+            self.mpirun = ""
 
         parts = value.split()
 
         if len(parts) == 0:
-            self.nproc_flag = ''
-            self.mpirun = ''
+            self.nproc_flag = ""
+            self.mpirun = ""
 
         elif len(parts) == 1:
-            self.nproc_flag = ''
+            self.nproc_flag = ""
             self.mpirun = parts[0]
 
         elif len(parts) == 2:
@@ -366,22 +380,19 @@ class IOTask(Task):
     which might be checked for completion.
     """
 
-    _input_fname = ''
-    _output_fname = ''
-    _TAG_JOB_COMPLETED = 'JOB COMPLETED'
+    _input_fname = ""
+    _output_fname = ""
+    _TAG_JOB_COMPLETED = "JOB COMPLETED"
 
     # It is important that this task has no __init__ function,
     # because it is mostly used with multiple-inheritance classes.
 
     def get_status(self, check_time=False):
-
         if self._input_fname:
-
             if not os.path.exists(self.input_fname):
                 return self._STATUS_UNSTARTED
 
         if self._output_fname:
-
             if not os.path.exists(self.output_fname):
                 return self._STATUS_UNSTARTED
 
@@ -403,20 +414,18 @@ class IOTask(Task):
     @property
     def input_fname(self):
         basename = self._input_fname
-        if 'input' in dir(self):
+        if "input" in dir(self):
             basename = self.input.fname
         return os.path.join(self.dirname, basename)
 
     @input_fname.setter
     def input_fname(self, value):
         if os.path.basename(value) != value:
-            raise Exception('Cannot use a path for input_fname')
+            raise Exception("Cannot use a path for input_fname")
         self._input_fname = value
-        if 'input' in dir(self):
+        if "input" in dir(self):
             self.input.fname = value
 
     @property
     def output_fname(self):
         return os.path.join(self.dirname, self._output_fname)
-
-

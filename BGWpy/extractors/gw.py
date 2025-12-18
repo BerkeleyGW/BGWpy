@@ -45,7 +45,7 @@ def parse_sigma_output(f):
     """
 
     if isinstance(f, str):
-        with open(f, 'r') as fi:
+        with open(f, "r") as fi:
             return parse_sigma_output(fi)
 
     # Break the output into large kpoint block.
@@ -53,7 +53,6 @@ def parse_sigma_output(f):
 
     # Count k-points from number of kpt blocks
     nkpt = len(large_kpt_blocks)
-
 
     # Break the blocks into smaller kpt and spin block
     kpt_spin_blocks = list()
@@ -64,7 +63,6 @@ def parse_sigma_output(f):
     # Count spins from number of sub-blocks
     nspin = len(subblock)
 
-
     # Parse each block
     block_results = list()
     for block in kpt_spin_blocks:
@@ -72,32 +70,30 @@ def parse_sigma_output(f):
         block_results.append(block_result)
 
     # Count number of bands from the lines of last block
-    nband = len(block_result['n'])
-
+    nband = len(block_result["n"])
 
     # Initialize the results dict
     results = dict(nspin=nspin, nkpt=nkpt, nband=nband)
 
-#    keys = ['elda','ecor','x','sx-x','ch','sig','vxc','eqp0','eqp1','Znk']
-    keys=['Emf','Eo','Vxc','X','Cor','Eqp0','Eqp1','Znk']
+    #    keys = ['elda','ecor','x','sx-x','ch','sig','vxc','eqp0','eqp1','Znk']
+    keys = ["Emf", "Eo", "Vxc", "X", "Cor", "Eqp0", "Eqp1", "Znk"]
 
     for key in keys:
         results[key] = np.zeros((nspin, nkpt, nband), dtype=np.float)
 
-    results['kpt'] = np.zeros((nkpt,3), dtype=np.float)
-    results['n'] = np.zeros(nband, dtype=np.int)
-
+    results["kpt"] = np.zeros((nkpt, 3), dtype=np.float)
+    results["n"] = np.zeros(nband, dtype=np.int)
 
     # Merge the blocks
     for block_result in block_results:
-        ispin = block_result['spin'] - 1
-        ikpt = block_result['ik'] - 1
+        ispin = block_result["spin"] - 1
+        ikpt = block_result["ik"] - 1
         for key in keys:
             for iband, val in enumerate(block_result[key]):
-                results[key][ispin,ikpt,iband] = val
+                results[key][ispin, ikpt, iband] = val
 
-        results['kpt'][ikpt] = np.array(block_result['k'])
-        results['n'] = np.array(block_result['n'], dtype=np.int)
+        results["kpt"][ikpt] = np.array(block_result["k"])
+        results["n"] = np.array(block_result["n"], dtype=np.int)
 
     return results
 
@@ -105,15 +101,14 @@ def parse_sigma_output(f):
 def break_output_in_kpt_blocks(f):
     """Break the output into large kpoint block."""
     blocks = list()
-    S = ''
+    S = ""
     reading_block = False
     for line in f.readlines():
-
-        if 'Dealing with k' in line:
+        if "Dealing with k" in line:
             reading_block = True
             if S:
                 blocks.append(S)
-            S = ''
+            S = ""
 
         if reading_block:
             S += line
@@ -127,32 +122,30 @@ def break_output_in_kpt_blocks(f):
 def break_kpt_spin_blocks(S):
     """Break a block into smaller kpt and spin blocks."""
 
-    if not 'Symmetrized values from band-averaging' in S:
-        raise Exception('Could not find symmetrized values in block:\n' + S)
+    if not "Symmetrized values from band-averaging" in S:
+        raise Exception("Could not find symmetrized values in block:\n" + S)
 
-    S = S.split('Symmetrized values from band-averaging')[-1]
-    S = S.split('======================')[0]
+    S = S.split("Symmetrized values from band-averaging")[-1]
+    S = S.split("======================")[0]
 
     blocks = list()
     iterlines = iter(S.splitlines())
     while True:
-
         try:
             line = iterlines.next()
         except StopIteration:
             break
 
-        if line.startswith('       k ='):
-
+        if line.startswith("       k ="):
             lines = list()
-            lines.append(line)       # kpoint line
+            lines.append(line)  # kpoint line
             line = iterlines.next()  # empty line
             lines.append(line)
             line = iterlines.next()  # labels line
             while line.strip():
                 lines.append(line)
                 line = iterlines.next()
-            blocks.append('\n'.join(lines))
+            blocks.append("\n".join(lines))
 
     return blocks
 
@@ -163,8 +156,8 @@ def parse_sigma_output_block(S):
     from a block containing a single k-point and spin results.
     The block should be of the form
 
-           k =  0.000000  0.000000  0.000000 ik =   1 spin = 1  
-      
+           k =  0.000000  0.000000  0.000000 ik =   1 spin = 1
+
        n     elda     ecor        x     sx-x       ch      sig      vxc     eqp0     eqp1      Znk
        8  -13.367  -13.367  -39.235   20.589  -12.126  -30.771  -32.926  -11.213  -11.682    0.782
        9  -13.367  -13.367  -39.235   20.589  -12.126  -30.771  -32.926  -11.213  -11.682    0.782
@@ -217,16 +210,15 @@ def parse_sigma_output_block(S):
     kpt_line = results_lines.pop(0)
     del results_lines[:2]
 
-    results['k'] = np.array(list(map(float, kpt_line.split()[2:5])))
-    results['ik'] = int(kpt_line.split()[7])
-    results['spin'] = int(kpt_line.split()[10])
+    results["k"] = np.array(list(map(float, kpt_line.split()[2:5])))
+    results["ik"] = int(kpt_line.split()[7])
+    results["spin"] = int(kpt_line.split()[10])
 
-#    keys = ['n','elda','ecor','x','sx-x','ch','sig','vxc','eqp0','eqp1','Znk']
-#    types = [int] + 10 * [float]
+    #    keys = ['n','elda','ecor','x','sx-x','ch','sig','vxc','eqp0','eqp1','Znk']
+    #    types = [int] + 10 * [float]
 
-    keys=['n','Emf','Eo','Vxc','X','Cor','Eqp0','Eqp1','Znk']
+    keys = ["n", "Emf", "Eo", "Vxc", "X", "Cor", "Eqp0", "Eqp1", "Znk"]
     types = [int] + 8 * [float]
-
 
     for key in keys:
         results[key] = list()
@@ -239,26 +231,21 @@ def parse_sigma_output_block(S):
     return results
 
 
-
-
-
 def extract_multiple_GW_results(dirnames):
     """Extract GW results from a list of directories."""
     data = dict()
-    data['variables'] = list()
-    data['results'] = list()
-    data['ndata'] = len(dirnames)
+    data["variables"] = list()
+    data["results"] = list()
+    data["ndata"] = len(dirnames)
 
     for dname in dirnames:
-
-        with open(os.path.join(dname, 'variables.pkl'), 'r') as f:
+        with open(os.path.join(dname, "variables.pkl"), "r") as f:
             variables = pickle.load(f)
 
-        with open(os.path.join(dname, 'sigma.out'), 'r') as f:
+        with open(os.path.join(dname, "sigma.out"), "r") as f:
             out = parse_sigma_output(f)
 
-        data['variables'].append(variables)
-        data['results'].append(out)
+        data["variables"].append(variables)
+        data["results"].append(out)
 
     return data
-

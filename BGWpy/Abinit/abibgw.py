@@ -1,4 +1,5 @@
 """Abinit to BGW interface."""
+
 import os
 import subprocess
 from numpy import array
@@ -6,15 +7,15 @@ from ..core import fortran_str
 from ..core import BasicInputFile
 from .abinittask import AbinitTask
 
-__all__ = ['Abi2BgwInput', 'Abi2BgwTask']
+__all__ = ["Abi2BgwInput", "Abi2BgwTask"]
 
 
 # Note
 # The implementation of abi2bgw is different from that of pw2bgw.
 # Here the kpoint grid is handled by the task rather than the input.
 
-class Abi2BgwInput(BasicInputFile):
 
+class Abi2BgwInput(BasicInputFile):
     def __init__(self, **kwargs):
         """
         Keyword arguments
@@ -23,7 +24,7 @@ class Abi2BgwInput(BasicInputFile):
             Name of the wfn file produced by Abinit. (_WFK)
         wfng_flag : bool
             Activate the output of the wavefunction for BGW.
-        wfng_file : 
+        wfng_file :
             Name of the wfn file for BGW.
         rhog_file_abi : str
             Name of the density file produced by Abinit. (_DEN)
@@ -55,63 +56,62 @@ class Abi2BgwInput(BasicInputFile):
             Write symmetry matrices in file.
         """
 
-        super(Abi2BgwInput, self).__init__(fname = kwargs.get('fname', 'abi2bgw.in'))
+        super(Abi2BgwInput, self).__init__(fname=kwargs.get("fname", "abi2bgw.in"))
 
-        #self.fname = kwargs.get('fname', 'abi2bgw.in')
+        # self.fname = kwargs.get('fname', 'abi2bgw.in')
 
         # Flags and options
-        self['wfng_flag']        = kwargs.get('wfng_flag', True)
-        self['rhog_flag']        = kwargs.get('rhog_flag', False)
-        self['vxcg_flag']        = kwargs.get('vxcg_flag', False)
-        self['symrel_file_flag'] = kwargs.get('symrel_file_flag', False)
-        self['cell_symmetry']    = kwargs.get('cell_symmetry', 0)
+        self["wfng_flag"] = kwargs.get("wfng_flag", True)
+        self["rhog_flag"] = kwargs.get("rhog_flag", False)
+        self["vxcg_flag"] = kwargs.get("vxcg_flag", False)
+        self["symrel_file_flag"] = kwargs.get("symrel_file_flag", False)
+        self["cell_symmetry"] = kwargs.get("cell_symmetry", 0)
 
         # Output files
-        self._wfn_fname   = kwargs.get('wfng_file', 'wfn.cplx')
-        self['wfng_file'] = self._wfn_fname
-        self._rho_fname   = kwargs.get('rhog_file', 'rho.cplx')
-        self['rhog_file'] = self._rho_fname
-        self._vxc_fname   = kwargs.get('vxcg_file', 'vxc.cplx')
-        self['vxcg_file'] = self._vxc_fname
+        self._wfn_fname = kwargs.get("wfng_file", "wfn.cplx")
+        self["wfng_file"] = self._wfn_fname
+        self._rho_fname = kwargs.get("rhog_file", "rho.cplx")
+        self["rhog_file"] = self._rho_fname
+        self._vxc_fname = kwargs.get("vxcg_file", "vxc.cplx")
+        self["vxcg_file"] = self._vxc_fname
 
         # Input files
-        self['wfng_file_abi'] = kwargs.get('wfng_file_abi')
-        self['rhog_file_abi'] = kwargs.get('rhog_file_abi')
-        self['vxcg_file_abi'] = kwargs.get('vxcg_file_abi')
+        self["wfng_file_abi"] = kwargs.get("wfng_file_abi")
+        self["rhog_file_abi"] = kwargs.get("rhog_file_abi")
+        self["vxcg_file_abi"] = kwargs.get("vxcg_file_abi")
 
         # k-points grid
-        for key in ('wfng_nk1', 'wfng_nk2', 'wfng_nk3'):
+        for key in ("wfng_nk1", "wfng_nk2", "wfng_nk3"):
             self[key] = kwargs.get(key)
-                    
-        for key in ('wfng_dk1', 'wfng_dk2', 'wfng_dk3'):
-            self[key] = kwargs.get(key, 0.)
+
+        for key in ("wfng_dk1", "wfng_dk2", "wfng_dk3"):
+            self[key] = kwargs.get(key, 0.0)
 
     def __str__(self):
-
         # The keyword order is rigid for abi2bgw.
         keys = [
-            'wfng_file_abi',
-            'wfng_flag',
-            'wfng_file',
-            'wfng_nk1',
-            'wfng_nk2',
-            'wfng_nk3',
-            'wfng_dk1',
-            'wfng_dk2',
-            'wfng_dk3',
-            'rhog_file_abi',
-            'rhog_flag',
-            'rhog_file',
-            'cell_symmetry',
-            'symrel_file_flag',
-            'vxcg_file_abi',
-            'vxcg_flag',
-            'vxcg_file',
-            ]
+            "wfng_file_abi",
+            "wfng_flag",
+            "wfng_file",
+            "wfng_nk1",
+            "wfng_nk2",
+            "wfng_nk3",
+            "wfng_dk1",
+            "wfng_dk2",
+            "wfng_dk3",
+            "rhog_file_abi",
+            "rhog_flag",
+            "rhog_file",
+            "cell_symmetry",
+            "symrel_file_flag",
+            "vxcg_file_abi",
+            "vxcg_flag",
+            "vxcg_file",
+        ]
 
-        S = ''
+        S = ""
         for key in keys:
-            S += '{} {}\n'.format(key, fortran_str(self[key]))
+            S += "{} {}\n".format(key, fortran_str(self[key]))
         return S
 
 
@@ -121,11 +121,11 @@ class Abi2BgwInput(BasicInputFile):
 class Abi2BgwTask(AbinitTask):
     """Wavefunctions convertion."""
 
-    _TASK_NAME = 'Abi2BGW'
-    _TAG_JOB_COMPLETED = 'Calculation completed'
+    _TASK_NAME = "Abi2BGW"
+    _TAG_JOB_COMPLETED = "Calculation completed"
 
-    _input_fname = 'abi2bgw.in'
-    _output_fname = 'abi2bgw.out'
+    _input_fname = "abi2bgw.in"
+    _output_fname = "abi2bgw.out"
 
     def __init__(self, dirname, **kwargs):
         """
@@ -175,7 +175,7 @@ class Abi2BgwTask(AbinitTask):
             Path to the vxc file produced.
         """
 
-        kwargs.setdefault('runscript_fname', 'abi2bgw.run.sh')
+        kwargs.setdefault("runscript_fname", "abi2bgw.run.sh")
 
         super(Abi2BgwTask, self).__init__(dirname, **kwargs)
 
@@ -183,63 +183,67 @@ class Abi2BgwTask(AbinitTask):
         self.input.fname = self._input_fname
 
         # TODO setter functions
-        self.ngkpt = kwargs.pop('ngkpt')
-        self.kshift = kwargs.get('kshift', 3*[.0])
-        self.qshift = kwargs.get('qshift', 3*[.0])
+        self.ngkpt = kwargs.pop("ngkpt")
+        self.kshift = kwargs.get("kshift", 3 * [0.0])
+        self.qshift = kwargs.get("qshift", 3 * [0.0])
 
-        if kwargs.get('rhog_fname') or kwargs.get('rhog_file_abi'):
+        if kwargs.get("rhog_fname") or kwargs.get("rhog_file_abi"):
             self.set_rho()
 
-        self.wfn_fname = kwargs.pop('wfn_fname', 'dummy')
-        self.rho_fname = kwargs.pop('rho_fname', 'dummy')
-        self.vxc_fname = kwargs.pop('vxc_fname', 'dummy')
+        self.wfn_fname = kwargs.pop("wfn_fname", "dummy")
+        self.rho_fname = kwargs.pop("rho_fname", "dummy")
+        self.vxc_fname = kwargs.pop("vxc_fname", "dummy")
 
         # Run script
-        self.runscript['ABI2BGW'] = 'abi2bgw.x'
+        self.runscript["ABI2BGW"] = "abi2bgw.x"
         del self.runscript.main[:]
-        self.runscript.append('$ABI2BGW {} >& {}'.format(
-                              self._input_fname, self._output_fname))
+        self.runscript.append(
+            "$ABI2BGW {} >& {}".format(self._input_fname, self._output_fname)
+        )
 
     def write(self):
-
-        subprocess.call(['mkdir', '-p', self.dirname])
+        subprocess.call(["mkdir", "-p", self.dirname])
         with self.exec_from_dirname():
             self.runscript.write()
 
         with self.exec_from_dirname():
             self.input.write()
 
-    _wfn_fname = 'wfn.cplx'
+    _wfn_fname = "wfn.cplx"
+
     @property
     def wfn_fname(self):
         return os.path.join(self.dirname, self._wfn_fname)
-    
+
     @wfn_fname.setter
     def wfn_fname(self, value):
-        #self._wfn_fname = value
-        self.input['wfng_file_abi'] = os.path.relpath(value, self.dirname)
-    
-    _rho_fname = 'rho.cplx'
+        # self._wfn_fname = value
+        self.input["wfng_file_abi"] = os.path.relpath(value, self.dirname)
+
+    _rho_fname = "rho.cplx"
+
     @property
     def rho_fname(self):
         return os.path.join(self.dirname, self._rho_fname)
-    
+
     @rho_fname.setter
     def rho_fname(self, value):
-        #self._rho_fname = value
-        self.input['rhog_file_abi'] = os.path.relpath(value, self.dirname)
-    
-    _vxc_fname = 'vxc.cplx'
+        # self._rho_fname = value
+        self.input["rhog_file_abi"] = os.path.relpath(value, self.dirname)
+
+    _vxc_fname = "vxc.cplx"
+
     @property
     def vxc_fname(self):
         return os.path.join(self.dirname, self._vxc_fname)
-    
+
     @vxc_fname.setter
     def vxc_fname(self, value):
-        #self._vxc_fname = value
-        self.input['vxcg_file_abi'] = os.path.relpath(value, self.dirname)
+        # self._vxc_fname = value
+        self.input["vxcg_file_abi"] = os.path.relpath(value, self.dirname)
 
-    _ngkpt = 3*[1]
+    _ngkpt = 3 * [1]
+
     @property
     def ngkpt(self):
         return self._ngkpt
@@ -247,12 +251,13 @@ class Abi2BgwTask(AbinitTask):
     @ngkpt.setter
     def ngkpt(self, ngkpt):
         self._ngkpt = array(ngkpt)
-        self.input['wfng_nk1'] = ngkpt[0]
-        self.input['wfng_nk2'] = ngkpt[1]
-        self.input['wfng_nk3'] = ngkpt[2]
+        self.input["wfng_nk1"] = ngkpt[0]
+        self.input["wfng_nk2"] = ngkpt[1]
+        self.input["wfng_nk3"] = ngkpt[2]
         self._set_kqshift()
 
-    _kshift = 3*[.0]
+    _kshift = 3 * [0.0]
+
     @property
     def kshift(self):
         return self._kshift
@@ -264,7 +269,8 @@ class Abi2BgwTask(AbinitTask):
         self._kshift = array(kshift)
         self._set_kqshift()
 
-    _qshift = 3*[.0]
+    _qshift = 3 * [0.0]
+
     @property
     def qshift(self):
         return self._qshift
@@ -281,14 +287,13 @@ class Abi2BgwTask(AbinitTask):
         return self.kshift + self.qshift * self.ngkpt
 
     def _set_kqshift(self):
-        self.input['wfng_dk1'] = self.kqshift[0]
-        self.input['wfng_dk2'] = self.kqshift[1]
-        self.input['wfng_dk3'] = self.kqshift[2]
+        self.input["wfng_dk1"] = self.kqshift[0]
+        self.input["wfng_dk2"] = self.kqshift[1]
+        self.input["wfng_dk3"] = self.kqshift[2]
 
     def set_rho(self):
-        self.input['rhog_flag'] = True
+        self.input["rhog_flag"] = True
 
     @property
     def output_fname(self):
         return os.path.join(self.dirname, self._output_fname)
-

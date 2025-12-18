@@ -2,19 +2,19 @@ from __future__ import print_function
 import os
 
 from .bgwtask import BGWTask
-from .kgrid   import KgridTask, get_kpt_grid
-from .inputs  import EpsilonInput
+from .kgrid import KgridTask, get_kpt_grid
+from .inputs import EpsilonInput
 
 # Public
-__all__ = ['EpsilonTask']
+__all__ = ["EpsilonTask"]
 
 
 class EpsilonTask(BGWTask):
     """Inverse dielectric function calculation."""
 
-    _TASK_NAME = 'Epsilon'
-    _input_fname  = 'epsilon.inp'
-    _output_fname = 'epsilon.out'
+    _TASK_NAME = "Epsilon"
+    _input_fname = "epsilon.inp"
+    _output_fname = "epsilon.out"
 
     def __init__(self, dirname, **kwargs):
         """
@@ -68,41 +68,42 @@ class EpsilonTask(BGWTask):
 
         # Compute k-points grids
         # TODO maybe make these properties
-        #structure = kwargs['structure']
-        #ngkpt = kwargs['ngkpt']
-        #kpts_ush, wtks_ush = get_kpt_grid(structure, ngkpt)
+        # structure = kwargs['structure']
+        # ngkpt = kwargs['ngkpt']
+        # kpts_ush, wtks_ush = get_kpt_grid(structure, ngkpt)
         kgrid_kwargs = dict()
-        for key in ('structure', 'ngkpt', 'fft', 'use_tr', 'clean_after'):
+        for key in ("structure", "ngkpt", "fft", "use_tr", "clean_after"):
             if key in kwargs:
                 kgrid_kwargs[key] = kwargs[key]
         self.kgridtask = KgridTask(dirname=dirname, **kgrid_kwargs)
 
-        symkpt = kwargs.get('symkpt', True)
+        symkpt = kwargs.get("symkpt", True)
         if symkpt:
             kpts_ush, wtks_ush = self.kgridtask.get_kpoints()
         else:
             kpts_ush, wtks_ush = self.kgridtask.get_kpt_grid_nosym()
 
-        extra_lines = kwargs.get('extra_lines',[])
-        extra_variables = kwargs.get('extra_variables',{})
+        extra_lines = kwargs.get("extra_lines", [])
+        extra_variables = kwargs.get("extra_variables", {})
 
         # Input file
         self.input = EpsilonInput(
-            kwargs['ecuteps'],
-            kwargs['qshift'],
+            kwargs["ecuteps"],
+            kwargs["qshift"],
             kpts_ush[1:],
             *extra_lines,
-            **extra_variables)
+            **extra_variables,
+        )
 
         self.input.fname = self._input_fname
 
         # Set up the run script
-        self.wfn_fname = kwargs['wfn_fname']
-        self.wfnq_fname = kwargs['wfnq_fname']
+        self.wfn_fname = kwargs["wfn_fname"]
+        self.wfnq_fname = kwargs["wfnq_fname"]
 
-        ex = 'epsilon.cplx.x' if self._flavor_complex else 'epsilon.real.x'
-        self.runscript['EPSILON'] = ex
-        self.runscript.append('$MPIRUN $EPSILON &> {}'.format(self._output_fname))
+        ex = "epsilon.cplx.x" if self._flavor_complex else "epsilon.real.x"
+        self.runscript["EPSILON"] = ex
+        self.runscript.append("$MPIRUN $EPSILON &> {}".format(self._output_fname))
 
     @property
     def wfn_fname(self):
@@ -111,7 +112,7 @@ class EpsilonTask(BGWTask):
     @wfn_fname.setter
     def wfn_fname(self, value):
         self._wfn_fname = value
-        self.update_link(value, 'WFN')
+        self.update_link(value, "WFN")
 
     @property
     def wfnq_fname(self):
@@ -120,7 +121,7 @@ class EpsilonTask(BGWTask):
     @wfnq_fname.setter
     def wfnq_fname(self, value):
         self._wfnq_fname = value
-        self.update_link(value, 'WFNq')
+        self.update_link(value, "WFNq")
 
     def write(self):
         super(EpsilonTask, self).write()
@@ -130,11 +131,10 @@ class EpsilonTask(BGWTask):
     @property
     def eps0mat_fname(self):
         # Eventually, hdf5 will be mandatory.
-        basename = 'eps0mat.h5' if self._use_hdf5 else 'eps0mat'
+        basename = "eps0mat.h5" if self._use_hdf5 else "eps0mat"
         return os.path.join(self.dirname, basename)
-    
+
     @property
     def epsmat_fname(self):
-        basename = 'epsmat.h5' if self._use_hdf5 else 'epsmat'
+        basename = "epsmat.h5" if self._use_hdf5 else "epsmat"
         return os.path.join(self.dirname, basename)
-    

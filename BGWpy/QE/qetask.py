@@ -8,14 +8,14 @@ from ..core import MPITask, IOTask
 from ..DFT import DFTTask
 
 # Public
-__all__ = ['QeTask']
+__all__ = ["QeTask"]
 
 
 class QeTask(DFTTask, IOTask):
     """Base class for Quantum Espresso calculations."""
 
-    _TAG_JOB_COMPLETED = 'JOB DONE'
-    _use_hdf5_qe = flavors['use_hdf5_qe']
+    _TAG_JOB_COMPLETED = "JOB DONE"
+    _use_hdf5_qe = flavors["use_hdf5_qe"]
 
     def __init__(self, dirname, **kwargs):
         """
@@ -36,11 +36,11 @@ class QeTask(DFTTask, IOTask):
 
         super(QeTask, self).__init__(dirname, **kwargs)
 
-        self.prefix = kwargs['prefix']
-        self.savedir = self.prefix + '.save'
+        self.prefix = kwargs["prefix"]
+        self.savedir = self.prefix + ".save"
 
-        self.runscript['PW'] = kwargs.get('PW', 'pw.x')
-        self.runscript['PWFLAGS'] = kwargs.get('PWFLAGS', '')
+        self.runscript["PW"] = kwargs.get("PW", "pw.x")
+        self.runscript["PWFLAGS"] = kwargs.get("PWFLAGS", "")
 
     def exec_from_savedir(self):
         original = os.path.realpath(os.curdir)
@@ -67,7 +67,6 @@ class QeTask(DFTTask, IOTask):
             self._pseudo_dir = value
         else:
             self._pseudo_dir = os.path.relpath(value, self.dirname)
-        if 'input' in dir(self):
-            if 'control' in dir(self.input):
-                self.input.control['pseudo_dir'] = self._pseudo_dir
-
+        if "input" in dir(self):
+            if "control" in dir(self.input):
+                self.input.control["pseudo_dir"] = self._pseudo_dir

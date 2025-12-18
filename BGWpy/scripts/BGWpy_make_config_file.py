@@ -1,37 +1,39 @@
 #!/usr/bin/env python
-import configparser                                                                                                                                              
+import configparser
+
 
 def get_config():
     config = configparser.ConfigParser()
-    
-    config['flavors'] = dict(
-        use_hdf5 = True,
-        use_hdf5_qe = False,
-        flavor_complex = True,
-        dft_flavor = 'espresso',
-        )
-    
-    config['MPI'] = dict(
-        mpirun = 'mpirun',
-        nproc = 1,
-        nproc_flag = '-n',
-        nproc_per_node = 1,
-        nproc_per_node_flag = '--npernode',
-        nodes = '',
-        nodes_flag = '',
-        )
-    
-    config['runscript'] = dict(
-        first_line = '#!/bin/sh',
-        header = """
+
+    config["flavors"] = dict(
+        use_hdf5=True,
+        use_hdf5_qe=False,
+        flavor_complex=True,
+        dft_flavor="espresso",
+    )
+
+    config["MPI"] = dict(
+        mpirun="mpirun",
+        nproc=1,
+        nproc_flag="-n",
+        nproc_per_node=1,
+        nproc_per_node_flag="--npernode",
+        nodes="",
+        nodes_flag="",
+    )
+
+    config["runscript"] = dict(
+        first_line="#!/bin/sh",
+        header="""
 # Lines before execution
 """,
-        footer = """
+        footer="""
 # Lines after execution
 """,
     )
 
     return config
+
 
 def get_header():
     return """\
@@ -43,28 +45,33 @@ def get_header():
 
 """
 
+
 def main():
     import sys
     import os
     import argparse
 
-    parser = argparse.ArgumentParser(description='Process some integers.')
-    parser.add_argument('-f', dest='force', action='store_true',
-                        help='Overwrite existing file')
+    parser = argparse.ArgumentParser(description="Process some integers.")
+    parser.add_argument(
+        "-f", dest="force", action="store_true", help="Overwrite existing file"
+    )
     args = parser.parse_args()
 
-    fname = os.path.join(os.environ['HOME'], '.BGWpyrc')
+    fname = os.path.join(os.environ["HOME"], ".BGWpyrc")
     if os.path.exists(fname):
         if not args.force:
             import warnings
-            warnings.warn('Cannot overwrite existing file ~/.BGWpyrc. Use -f to overwrite')
+
+            warnings.warn(
+                "Cannot overwrite existing file ~/.BGWpyrc. Use -f to overwrite"
+            )
             sys.exit(1)
 
-    print('Writing ~/.BGWpyrc')
-    with open(fname, 'w') as cf:
-      cf.write(get_header())
-      get_config().write(cf)
+    print("Writing ~/.BGWpyrc")
+    with open(fname, "w") as cf:
+        cf.write(get_header())
+        get_config().write(cf)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()
-

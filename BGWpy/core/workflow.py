@@ -55,26 +55,29 @@ class Workflow(Task):
         """
         if merge:
             assert self.dirname == task.dirname, (
-                    'Only tasks with the same dirname can be merged to a flow.')
+                "Only tasks with the same dirname can be merged to a flow."
+            )
             self.runscript.merge(task.runscript)
 
         else:
-
             # FIXME: I should also check that there is no clash between
             #        the task's runscript fname and the workflow's runscript fname.
             # Check that there is no clash in runscript file names.
             for t in self.tasks:
-                if (t.dirname == task.dirname and
-                    t.runscript.fname == task.runscript.fname):
-                        raise Exception(
-                            "Two tasks with the same directory name" +
-                            " and runscript file name are being added:\n" +
-                            task.dirname + '\n' +
-                            " Use the variable 'runscript_fname' to set" +
-                            " the task's runscript file name.")
+                if (
+                    t.dirname == task.dirname
+                    and t.runscript.fname == task.runscript.fname
+                ):
+                    raise Exception(
+                        "Two tasks with the same directory name"
+                        + " and runscript file name are being added:\n"
+                        + task.dirname
+                        + "\n"
+                        + " Use the variable 'runscript_fname' to set"
+                        + " the task's runscript file name."
+                    )
 
             if task.dirname != self.dirname:
-
                 # FIXME
                 # This script is unsafe, because if it fails to change directory,
                 # the script ends up calling itself repeatedly.
@@ -84,17 +87,26 @@ class Workflow(Task):
                 # the calculation and skip the first steps that completed normally).
                 # Therefore, the syntax must remain as simple as possible...
 
-                #self.runscript.append('if [ -d {} ]'.format(task.dirname))
-                #self.runscript.append('then')
-                self.runscript.append('cd {}'.format(os.path.relpath(task.dirname, self.dirname)))
-                self.runscript.append('bash {}'.format(task.runscript.fname))
-                self.runscript.append('cd {}'.format(os.path.relpath(self.dirname, task.dirname, )))
-                #self.runscript.append('else')
-                #self.runscript.append('exit 1')
-                #self.runscript.append('fi')
+                # self.runscript.append('if [ -d {} ]'.format(task.dirname))
+                # self.runscript.append('then')
+                self.runscript.append(
+                    "cd {}".format(os.path.relpath(task.dirname, self.dirname))
+                )
+                self.runscript.append("bash {}".format(task.runscript.fname))
+                self.runscript.append(
+                    "cd {}".format(
+                        os.path.relpath(
+                            self.dirname,
+                            task.dirname,
+                        )
+                    )
+                )
+                # self.runscript.append('else')
+                # self.runscript.append('exit 1')
+                # self.runscript.append('fi')
 
             else:
-                self.runscript.append('bash {}'.format(task.runscript.fname))
+                self.runscript.append("bash {}".format(task.runscript.fname))
 
         self.tasks.append(task)
 
@@ -110,7 +122,7 @@ class Workflow(Task):
             # Overwrite any runscript of the children tasks
             self.runscript.write()
 
-    #def run_tasks(self):
+    # def run_tasks(self):
     #    for task in self.tasks:
     #        task.run()
 
@@ -125,7 +137,7 @@ class Workflow(Task):
                 return status
         else:
             return self._STATUS_COMPLETED
-        
+
     def report(self, *args, **kwargs):
         for task in self.tasks:
             task.report(*args, **kwargs)
@@ -136,9 +148,8 @@ class Workflow(Task):
         over the tasks of the workflow.
         """
         for task in self.tasks:
-            if '__iter__' in dir(task):
+            if "__iter__" in dir(task):
                 for subtask in task:
                     yield subtask
             else:
                 yield task
-

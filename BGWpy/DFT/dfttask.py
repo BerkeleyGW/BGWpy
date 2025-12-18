@@ -8,7 +8,8 @@ from ..core import MPITask, Workflow
 from ..BGW import KgridTask
 
 # Public
-__all__ = ['DFTTask', 'DFTFlow']
+__all__ = ["DFTTask", "DFTFlow"]
+
 
 class DFTTask(MPITask):
     """
@@ -30,33 +31,33 @@ class DFTTask(MPITask):
         """
 
         # too restrictive
-        #self.ngkpt  = kwargs.pop('ngkpt', 3*[1])
-        #self.kshift = kwargs.pop('kshift', 3*[.0])
-        #self.qshift = kwargs.pop('qshift', 3*[.0])
+        # self.ngkpt  = kwargs.pop('ngkpt', 3*[1])
+        # self.kshift = kwargs.pop('kshift', 3*[.0])
+        # self.qshift = kwargs.pop('qshift', 3*[.0])
 
         super(DFTTask, self).__init__(dirname, **kwargs)
 
-        self.flavor     = kwargs.pop('flavor',  'qe')
-        self.pseudo_dir = kwargs.get('pseudo_dir', self.dirname)
-        self.pseudos    = kwargs.get('pseudos', [])
-        self.structure  = kwargs.get('structure')
+        self.flavor = kwargs.pop("flavor", "qe")
+        self.pseudo_dir = kwargs.get("pseudo_dir", self.dirname)
+        self.pseudos = kwargs.get("pseudos", [])
+        self.structure = kwargs.get("structure")
 
         # Patches for newer verisons of qe. Originally bgwpy was written for
         # QE v5 but currently defaults to QE v6.
         if self.is_flavor_QE:
-            self.version = kwargs.pop('version',  6)
+            self.version = kwargs.pop("version", 6)
 
         # This task is not part of a workflow.
-        # It is executed on-the-fly and leaves no trace (clean_after=True). 
+        # It is executed on-the-fly and leaves no trace (clean_after=True).
         self.kgridtask = KgridTask(dirname=dirname, **kwargs)
 
-    @ property
+    @property
     def is_flavor_QE(self):
-        return any([tag in self.flavor.lower() for tag in ['qe', 'espresso']])
+        return any([tag in self.flavor.lower() for tag in ["qe", "espresso"]])
 
-    @ property
+    @property
     def is_flavor_abinit(self):
-        return any([tag in self.flavor.lower() for tag in ['abi', 'abinit']])
+        return any([tag in self.flavor.lower() for tag in ["abi", "abinit"]])
 
     def get_kpts(self, **kwargs):
         """
@@ -81,27 +82,27 @@ class DFTTask(MPITask):
 
         """
 
-        symkpt = kwargs.get('symkpt', True)
+        symkpt = kwargs.get("symkpt", True)
 
-        if 'ngkpt' in kwargs:
+        if "ngkpt" in kwargs:
             if symkpt:
                 kpts, wtks = self.kgridtask.get_kpoints()
             else:
                 kpts, wtks = self.kgridtask.get_kpt_grid_nosym()
         else:
-            kpts, wtks = kwargs['kpts'], kwargs['wtks']
+            kpts, wtks = kwargs["kpts"], kwargs["wtks"]
 
         return kpts, wtks
 
     def check_pseudos(self):
         """Check that pseudopotential files exist."""
         for pseudo in self.pseudos:
-            fname = os.path.relpath(
-                    os.path.join(self.dirname, self.pseudo_dir, pseudo))
+            fname = os.path.relpath(os.path.join(self.dirname, self.pseudo_dir, pseudo))
             if not os.path.exists(fname):
-                warnings.warn('Pseudopotential not found:\n{}'.format(fname))
+                warnings.warn("Pseudopotential not found:\n{}".format(fname))
 
-    _pseudo_dir = './'
+    _pseudo_dir = "./"
+
     @property
     def pseudo_dir(self):
         return self._pseudo_dir
@@ -146,7 +147,6 @@ class DFTTask(MPITask):
 
 
 class DFTFlow(Workflow, DFTTask):
-
     def __init__(self, *args, **kwargs):
         """
         Keyword Arguments
@@ -161,8 +161,7 @@ class DFTFlow(Workflow, DFTTask):
         """
         super(DFTFlow, self).__init__(*args, **kwargs)
 
-        #self.flavor     = kwargs.pop('flavor',  'qe')
-        self.pseudo_dir = kwargs.get('pseudo_dir', self.dirname)
-        self.pseudos = kwargs.get('pseudos', [])
-        self.structure = kwargs.get('structure')
-
+        # self.flavor     = kwargs.pop('flavor',  'qe')
+        self.pseudo_dir = kwargs.get("pseudo_dir", self.dirname)
+        self.pseudos = kwargs.get("pseudos", [])
+        self.structure = kwargs.get("structure")

@@ -1,10 +1,10 @@
-
 from os.path import join as pjoin
 
 from . import QeScfTask, QeWfnTask, Qe2BgwTask
 from ..DFT import WfnBgwFlow
 
-__all__ = ['QeBgwFlow']
+__all__ = ["QeBgwFlow"]
+
 
 class QeBgwFlow(WfnBgwFlow):
     """
@@ -13,9 +13,9 @@ class QeBgwFlow(WfnBgwFlow):
     The charge density can optionally be computed as a first step.
     """
 
-    _charge_density_fname = ''
-    _spin_polarization_fname = ''
-    _data_file_fname = ''
+    _charge_density_fname = ""
+    _spin_polarization_fname = ""
+    _data_file_fname = ""
 
     def __init__(self, **kwargs):
         """
@@ -91,22 +91,20 @@ class QeBgwFlow(WfnBgwFlow):
 
         super(QeBgwFlow, self).__init__(**kwargs)
 
-        kwargs.pop('dirname', None)
+        kwargs.pop("dirname", None)
 
-        self.charge_density_fname = kwargs['charge_density_fname']
-        self.data_file_fname = kwargs['data_file_fname']
-        self.spin_polarization_fname = kwargs.get('spin_polarization_fname', 'dummy')
+        self.charge_density_fname = kwargs["charge_density_fname"]
+        self.data_file_fname = kwargs["data_file_fname"]
+        self.spin_polarization_fname = kwargs.get("spin_polarization_fname", "dummy")
 
         # Wfn task
-        self.wfntask = QeWfnTask(dirname = self.dirname, **kwargs)
-        self.wfntask.runscript.fname = 'wfn.run.sh'
+        self.wfntask = QeWfnTask(dirname=self.dirname, **kwargs)
+        self.wfntask.runscript.fname = "wfn.run.sh"
         self.add_task(self.wfntask, merge=False)
 
         # Wfn 2 BGW
-        self.wfnbgwntask = Qe2BgwTask(
-            dirname = self.wfntask.dirname,
-            **kwargs)
-        self.wfnbgwntask.runscript.fname = 'pw2bgw.run.sh'
+        self.wfnbgwntask = Qe2BgwTask(dirname=self.wfntask.dirname, **kwargs)
+        self.wfnbgwntask.runscript.fname = "pw2bgw.run.sh"
 
         self.add_task(self.wfnbgwntask, merge=False)
 
@@ -137,7 +135,6 @@ class QeBgwFlow(WfnBgwFlow):
     def data_file_fname(self, value):
         self._data_file_fname = value
 
-
     @property
     def rho_fname(self):
         """The charge density file name for BerkeleyGW."""
@@ -150,11 +147,9 @@ class QeBgwFlow(WfnBgwFlow):
 
     @property
     def vxc_fname(self):
-        raise NotImplementedError(
-            'Please use vxc_dat_fname instead of vxc_fname.')
+        raise NotImplementedError("Please use vxc_dat_fname instead of vxc_fname.")
 
     @property
     def vxc_dat_fname(self):
         """The xc potential file name for BerkeleyGW."""
         return self.wfnbgwntask.vxc_dat_fname
-

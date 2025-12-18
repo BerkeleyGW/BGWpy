@@ -1,20 +1,20 @@
 from __future__ import print_function
 import os
 
-from .qetask      import QeTask
+from .qetask import QeTask
 from .constructor import get_scf_input
 
 # Public
-__all__ = ['QeScfTask']
+__all__ = ["QeScfTask"]
 
 
 class QeScfTask(QeTask):
     """Charge density calculation."""
 
-    _TASK_NAME = 'SCF'
+    _TASK_NAME = "SCF"
 
-    _input_fname = 'scf.in'
-    _output_fname = 'scf.out'
+    _input_fname = "scf.in"
+    _output_fname = "scf.out"
 
     def __init__(self, dirname, **kwargs):
         """
@@ -82,35 +82,37 @@ class QeScfTask(QeTask):
             self.pseudo_dir,
             self.pseudos,
             self.structure,
-            kwargs['ecutwfc'],
+            kwargs["ecutwfc"],
             kpts,
             wtks,
-            )
+        )
 
-        if 'variables' in kwargs:
-            self.input.set_variables(kwargs['variables'])
+        if "variables" in kwargs:
+            self.input.set_variables(kwargs["variables"])
 
         self.input.fname = self._input_fname
 
         # Run script
-        self.runscript.append('$MPIRUN $PW $PWFLAGS -in {} &> {}'.format(
-                              self._input_fname, self._output_fname))
+        self.runscript.append(
+            "$MPIRUN $PW $PWFLAGS -in {} &> {}".format(
+                self._input_fname, self._output_fname
+            )
+        )
 
     @property
     def charge_density_fname(self):
-        name = 'charge-density.hdf5' if self._use_hdf5_qe else 'charge-density.dat'
+        name = "charge-density.hdf5" if self._use_hdf5_qe else "charge-density.dat"
         return os.path.join(self.dirname, self.savedir, name)
 
     @property
     def spin_polarization_fname(self):
-        return os.path.join(self.dirname, self.savedir, 'spin-polarization.dat')
+        return os.path.join(self.dirname, self.savedir, "spin-polarization.dat")
 
     @property
     def data_file_fname(self):
         # It seems newer versions of QE have switched from data-file.xml to
         # data-file-schema.xml
         if self.version >= 6:
-            return os.path.join(self.dirname, self.savedir, 'data-file-schema.xml')
+            return os.path.join(self.dirname, self.savedir, "data-file-schema.xml")
         else:
-            return os.path.join(self.dirname, self.savedir, 'data-file.xml')
-
+            return os.path.join(self.dirname, self.savedir, "data-file.xml")

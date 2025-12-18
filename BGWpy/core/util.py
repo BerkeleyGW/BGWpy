@@ -1,6 +1,7 @@
 import os
 import contextlib
 
+
 @contextlib.contextmanager
 def exec_from_dir(dirname):
     original = os.path.realpath(os.curdir)
@@ -10,10 +11,11 @@ def exec_from_dir(dirname):
     finally:
         os.chdir(original)
 
+
 def last_lines_contain(fname, tag, nlines=60):
     """True if the last nlines of fname contain tag."""
     nlines = int(nlines)
-    with open(fname, 'r') as f:
+    with open(fname, "r") as f:
         lines = f.readlines()
         lines.reverse()
 
@@ -26,4 +28,3 @@ def last_lines_contain(fname, tag, nlines=60):
             if tag in line:
                 return True
     return False
-

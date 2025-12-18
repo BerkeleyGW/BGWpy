@@ -4,10 +4,9 @@ import subprocess
 from ..config import default_runscript
 from .writable import Writable
 
-class RunScript(Writable):
 
-    def __init__(self, variables=None, links=None, copies=None, main=None,
-                 **kwargs):
+class RunScript(Writable):
+    def __init__(self, variables=None, links=None, copies=None, main=None, **kwargs):
         """
         Just a run script. Starts with a few declarations (variables),
         then create symbolic links, and finally execute a list of commands (main).
@@ -60,14 +59,16 @@ class RunScript(Writable):
             for link in links:
                 if not self._check_pair(link):
                     raise Exception(
-                    "The variable 'links' must contain pairs of two elements")
+                        "The variable 'links' must contain pairs of two elements"
+                    )
                 self.add_link(*link)
 
         if copies is not None:
             for copy in copies:
                 if not self._check_pair(copy):
                     raise Exception(
-                    "The variable 'copies' must contain pairs of two elements")
+                        "The variable 'copies' must contain pairs of two elements"
+                    )
                 self.add_copy(*copy)
 
         if isinstance(main, str):
@@ -75,16 +76,15 @@ class RunScript(Writable):
         elif main is not None:
             self.main.extend(main)
 
-        self.first_line = kwargs.get('first_line',
-                                     default_runscript['first_line'])
+        self.first_line = kwargs.get("first_line", default_runscript["first_line"])
 
-        header = kwargs.get('header', default_runscript['header'])
+        header = kwargs.get("header", default_runscript["header"])
         if isinstance(header, str):
             self.header.append(header)
         elif header is not None:
             self.header.extend(header)
 
-        footer = kwargs.get('footer', default_runscript['footer'])
+        footer = kwargs.get("footer", default_runscript["footer"])
         if isinstance(footer, str):
             self.footer.append(footer)
         elif footer is not None:
@@ -114,14 +114,14 @@ class RunScript(Writable):
         self.copies.append([src, dest])
 
     def merge(self, other):
-        """ 
+        """
         Merge an other RunScript, executing the lines sequentially,
         assuming that both scripts are in the same directory.
         """
         self.variables.update(other.variables)
         self.links.extend(other.links)
         self.copies.extend(other.copies)
-        self.main.extend(['\n'] + other.main)
+        self.main.extend(["\n"] + other.main)
 
     def __setitem__(self, key, value):
         """Declare a variable."""
@@ -136,7 +136,6 @@ class RunScript(Writable):
         del self.variables[key]
 
     def _get_quoted_string(self, value):
-
         # Strip the value of single or double quotes
         # but strip a single occurence ...
         single, double = "'", '"'
@@ -153,47 +152,49 @@ class RunScript(Writable):
         elif double in value and single not in value:
             value = single + value + single
         else:
-            raise Exception("Cannot process the quotes for variable named " +
-                            "{}\nwith value {}.\n".format(name, value) +
-                            "Action: simply add this declaration " + 
-                            "in the 'main' list of commands.")
+            raise Exception(
+                "Cannot process the quotes for variable named "
+                + "{}\nwith value {}.\n".format(name, value)
+                + "Action: simply add this declaration "
+                + "in the 'main' list of commands."
+            )
 
         return value
 
     def __str__(self):
-        S = ''
-        S += self.first_line + 2 * '\n'
+        S = ""
+        S += self.first_line + 2 * "\n"
 
-        S += '\n'
+        S += "\n"
         for line in self.header:
-            S += line + '\n'
+            S += line + "\n"
 
         for name, value in self.variables.items():
             value = self._get_quoted_string(value)
-            S += '{}={}\n'.format(name, value)
+            S += "{}={}\n".format(name, value)
 
         if self.links:
-            S += '\n'
+            S += "\n"
             for target, dest in self.links:
                 # Don't attempt to create a link if the names match.
                 if target == dest:
                     continue
-                S += 'ln -nfs {} {}\n'.format(target, dest)
+                S += "ln -nfs {} {}\n".format(target, dest)
 
         if self.copies:
-            S += '\n'
+            S += "\n"
             for src, dest in self.copies:
-                S += 'cp -f {} {}\n'.format(src, dest)
+                S += "cp -f {} {}\n".format(src, dest)
 
-        S += '\n'
+        S += "\n"
         for line in self.main:
-            S += line + '\n'
+            S += line + "\n"
 
-        S += '\n'
+        S += "\n"
         for line in self.footer:
-            S += line + '\n'
+            S += line + "\n"
 
         return S
 
     def run(self):
-        subprocess.call(['bash', self.fname])
+        subprocess.call(["bash", self.fname])

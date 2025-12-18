@@ -1,13 +1,12 @@
-
 from os.path import join as pjoin
 
 from . import AbinitScfTask, AbinitWfnTask, Abi2BgwTask
 from ..DFT import WfnBgwFlow
 
-__all__ = ['AbinitBgwFlow']
+__all__ = ["AbinitBgwFlow"]
+
 
 class AbinitBgwFlow(WfnBgwFlow):
-
     def __init__(self, **kwargs):
         """
         Keyword Arguments
@@ -71,13 +70,13 @@ class AbinitBgwFlow(WfnBgwFlow):
 
         super(AbinitBgwFlow, self).__init__(**kwargs)
 
-        kwargs.pop('dirname', None)
+        kwargs.pop("dirname", None)
 
-        #if kwargs.get('charge_density_fname'):
+        # if kwargs.get('charge_density_fname'):
         #    kwargs.setdefault('with_density', False)
 
         ## SCF task
-        #if self.with_density:
+        # if self.with_density:
         #    self.scftask = AbinitScfTask(
         #        dirname = kwargs.get('density_dirname',
         #                             pjoin(self.dirname, 'Density')),
@@ -91,32 +90,32 @@ class AbinitBgwFlow(WfnBgwFlow):
 
         #    self.add_task(self.scftask, merge=False)
 
-        self.charge_density_fname = kwargs['charge_density_fname']
+        self.charge_density_fname = kwargs["charge_density_fname"]
 
-        vxc_fname = kwargs.pop('vxc_fname', '')
+        vxc_fname = kwargs.pop("vxc_fname", "")
 
         # Wfn task
         self.wfntask = AbinitWfnTask(dirname=self.dirname, **kwargs)
-        self.wfntask.runscript.fname = 'wfn.run.sh'
+        self.wfntask.runscript.fname = "wfn.run.sh"
         self.add_task(self.wfntask, merge=False)
 
-        wfn_fname = kwargs.pop('wfn_fname',None)
+        wfn_fname = kwargs.pop("wfn_fname", None)
 
         # Wfn 2 BGW
         self.wfnbgwntask = Abi2BgwTask(
-            dirname = self.wfntask.dirname,
-            wfng_flag = kwargs.pop('wfng_flag', True),
-            rhog_flag = kwargs.pop('rhog_flag', True),
-            vxcg_flag = kwargs.pop('vxcg_flag', bool(vxc_fname)),
-            rho_fname = self.charge_density_fname,
-            wfn_fname = self.wfntask.wfn_fname,
-            vxc_fname = vxc_fname if vxc_fname else 'dummy',
-            **kwargs)
+            dirname=self.wfntask.dirname,
+            wfng_flag=kwargs.pop("wfng_flag", True),
+            rhog_flag=kwargs.pop("rhog_flag", True),
+            vxcg_flag=kwargs.pop("vxcg_flag", bool(vxc_fname)),
+            rho_fname=self.charge_density_fname,
+            wfn_fname=self.wfntask.wfn_fname,
+            vxc_fname=vxc_fname if vxc_fname else "dummy",
+            **kwargs,
+        )
 
         self.add_task(self.wfnbgwntask, merge=False)
 
-
-    _charge_density_fname = ''
+    _charge_density_fname = ""
 
     @property
     def charge_density_fname(self):
@@ -126,7 +125,6 @@ class AbinitBgwFlow(WfnBgwFlow):
     @charge_density_fname.setter
     def charge_density_fname(self, value):
         self._charge_density_fname = value
-
 
     @property
     def rho_fname(self):
@@ -150,6 +148,4 @@ class AbinitBgwFlow(WfnBgwFlow):
 
     @property
     def vxc_dat_fname(self):
-        raise NotImplementedError(
-            'Please use vxc_fname instead of vxc_dat_fname.')
-
+        raise NotImplementedError("Please use vxc_fname instead of vxc_dat_fname.")

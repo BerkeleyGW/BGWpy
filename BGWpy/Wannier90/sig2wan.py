@@ -1,14 +1,14 @@
-
 from ..core import Writable
 
-__all__ = ['Sig2WanInput']
+__all__ = ["Sig2WanInput"]
+
 
 class Sig2WanInput(Writable):
-
-    def __init__(self, prefix, nbnd, nspin=1, eqp=1, sigma_file='sigma_hp.log', prefix_gw=None):
-
+    def __init__(
+        self, prefix, nbnd, nspin=1, eqp=1, sigma_file="sigma_hp.log", prefix_gw=None
+    ):
         self.prefix = prefix
-        self.prefix_gw = prefix_gw if prefix_gw else prefix + '_GW'
+        self.prefix_gw = prefix_gw if prefix_gw else prefix + "_GW"
         self.nspin = nspin
         self.nbnd = nbnd
         self.eqp = eqp
@@ -22,8 +22,11 @@ class Sig2WanInput(Writable):
 {nnkp:<30} ! Wannier90 input file to read k-points from
 {eig:<30} ! file where the output of sig2wan is written
 {nbnd:<30} ! number of bands to write out
-""".format(sigma=self.sigma_file, nnkp=self.prefix+'.nnkp', eig=self.prefix_gw+'.eig',
-           nspin=self.nspin, eqp=self.eqp, nbnd=self.nbnd).lstrip()
-
-
-
+""".format(
+            sigma=self.sigma_file,
+            nnkp=self.prefix + ".nnkp",
+            eig=self.prefix_gw + ".eig",
+            nspin=self.nspin,
+            eqp=self.eqp,
+            nbnd=self.nbnd,
+        ).lstrip()

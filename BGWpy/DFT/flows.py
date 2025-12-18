@@ -1,8 +1,8 @@
-
 from .dfttask import DFTFlow
 from .wfntask import WfnTask, WfnBgwConverter
 
-__all__ = ['WfnBgwFlow']
+__all__ = ["WfnBgwFlow"]
+
 
 class WfnBgwFlow(DFTFlow):
     """A workflow for wavefunction calculation and conversion to BGW."""

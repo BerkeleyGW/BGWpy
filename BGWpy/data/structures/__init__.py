@@ -1,17 +1,5 @@
-
-
-
-#structures['GaAs'] = 'GaAs.json'
+# structures['GaAs'] = 'GaAs.json'
 
 structures_files = [
-    'GaAs.cif'
-    'GaAs.json'
-    'Si.cif'
-    'Si.json'
-    'write-GaAs-structure.py'
-    'write-Si-structure.py'
-    ]
-
-
-
-
+    "GaAs.cifGaAs.jsonSi.cifSi.jsonwrite-GaAs-structure.pywrite-Si-structure.py"
+]

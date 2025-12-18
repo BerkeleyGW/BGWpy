@@ -1,24 +1,41 @@
-
 from collections import OrderedDict
 
-input_variable_blocks = OrderedDict((
-('Datasets', '''
+input_variable_blocks = OrderedDict(
+    (
+        (
+            "Datasets",
+            """
     ndtset jdtset udtset
-    '''),
-('Basis set', '''
+    """,
+        ),
+        (
+            "Basis set",
+            """
     ecut ecutsm
-    '''),
-('Bands', '''
+    """,
+        ),
+        (
+            "Bands",
+            """
     nband nbdbuf
-    '''),
-('k-point grid', '''
+    """,
+        ),
+        (
+            "k-point grid",
+            """
     kptopt nkpt kpt wtk ngkpt kptrlatt
     nshiftk shiftk kptbounds kptns
-    '''),
-('Models', '''
+    """,
+        ),
+        (
+            "Models",
+            """
     ixc ppmodel ppmfreq usepawu upawu jpawu
-    '''),
-('PAW options', '''
+    """,
+        ),
+        (
+            "PAW options",
+            """
     bxctmindg  dmatpawu   dmatpuopt   dmatudiag  iboxcut
     jpawu  lpawu   lexexch  mqgriddg  ngfftdg
     pawcpxocc   pawcross   pawecutdg   pawfatbnd
@@ -29,26 +46,44 @@ input_variable_blocks = OrderedDict((
     pawxcdev   prtcs   prtefg   prtfc   prtnabla
     ptcharge  quadmom  spnorbscl  usedmatpu   upawu
     useexexch   usepawu   usexcnhat
-    '''),
-('SCF procedure', '''
+    """,
+        ),
+        (
+            "SCF procedure",
+            """
     iscf nstep nline tolvrs tolwfr
     toldfe toldff tolimg tolmxf tolrff
-    '''),
-('KSS generation', '''
+    """,
+        ),
+        (
+            "KSS generation",
+            """
     kssform nbandkss
-    '''),
-('GW procedure', '''
+    """,
+        ),
+        (
+            "GW procedure",
+            """
     optdriver gwcalctyp spmeth nkptgw kptgw
     bdgw nqptdm qptdm
-    '''),
-('GW param', '''
+    """,
+        ),
+        (
+            "GW param",
+            """
     ecuteps ecutsigx ecutwfn nomegasf
     nfreqim nfreqre freqremax npweps rhoqpmix
-    '''),
-('GW options', '''
+    """,
+        ),
+        (
+            "GW options",
+            """
     userre awtr symchi gwpara symsigma gwmem fftgw
-    '''),
-('Structural optimization', '''
+    """,
+        ),
+        (
+            "Structural optimization",
+            """
     amu  bmass  delayperm   diismemory   dilatmx   dtion   dynimage
     ecutsm  friction   fxcartfactor  getcell   getxcart   getxred
     goprecon   goprecprm  iatcon   iatfix   iatfixx   iatfixy   iatfixz
@@ -57,8 +92,11 @@ input_variable_blocks = OrderedDict((
     ntime   ntimimage  optcell  pimass   pitransform   prtatlist  qmass
     random_atpos   restartxf  signperm   strfact   strprecon   strtarget
     tolimg   tolmxf  vel   vis  wtatcon
-    '''),
-('Response function', '''
+    """,
+        ),
+        (
+            "Response function",
+            """
     bdeigrf elph2_imagden esmear frzfermi
     ieig2rf mkqmem mk1mem prepanl prepgkk
     prtbbb rfasr rfatpol rfddk rfdir rfelfd
@@ -66,30 +104,49 @@ input_variable_blocks = OrderedDict((
     rf1elfd rf1phon rf2atpol rf2dir rf2elfd
     rf2phon rf3atpol rf3dir rf3elfd rf3phon
     sciss smdelta td_maxene td_mexcit
-    '''),
-('Wannier 90', '''
+    """,
+        ),
+        (
+            "Wannier 90",
+            """
     w90iniprj w90prtunk
-    '''),
-('Parallelisation', '''
+    """,
+        ),
+        (
+            "Parallelisation",
+            """
     gwpara localrdwf ngroup_rf npband npfft
     npimage   npkpt   npspinor paral_kgb
     paral_rf use_gpu_cuda
-    '''),
-('Unit cell', '''
+    """,
+        ),
+        (
+            "Unit cell",
+            """
     acell angdeg rprim ntypat znucl natom typat xred xcart
-    '''),
-('Symmetries', '''
+    """,
+        ),
+        (
+            "Symmetries",
+            """
     nsym symrel tnons spgroup
-    '''),
-('Printing', '''
+    """,
+        ),
+        (
+            "Printing",
+            """
     prtvol enunit
-    '''),
-('Files', '''
+    """,
+        ),
+        (
+            "Files",
+            """
     irdddk irdden ird1den irdqps irdkss irdscr
     irdsuscep irdwfk irdwfq ird1wf getcell
     getddk getden getgam_eig2nkq getkss getocc
     getqps getscr getsuscep getvel getwfk
     getwfq getxcart getxred get1den get1wf
-    '''),
-))
-
+    """,
+        ),
+    )
+)

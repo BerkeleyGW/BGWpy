@@ -2,13 +2,14 @@ import os
 import unittest
 import tempfile, shutil
 
-class TestTask(unittest.TestCase):
 
+class TestTask(unittest.TestCase):
     def setUp(self):
         self.tmpdir = tempfile.mkdtemp()
-        self.local_testdir = 'tmp.Tests'
+        self.local_testdir = "tmp.Tests"
         self.local_tmpdir = os.path.join(
-            self.local_testdir, os.path.split(self.tmpdir)[-1])
+            self.local_testdir, os.path.split(self.tmpdir)[-1]
+        )
 
     def tearDown(self):
         shutil.rmtree(self.tmpdir)
@@ -23,5 +24,6 @@ class TestTask(unittest.TestCase):
         completed = task.get_status() == task._STATUS_COMPLETED
         if not completed:
             self.recover_tmpdir()
-        assert completed, 'Task failed. Directory copied to: {}'.format(self.local_tmpdir)
-
+        assert completed, "Task failed. Directory copied to: {}".format(
+            self.local_tmpdir
+        )

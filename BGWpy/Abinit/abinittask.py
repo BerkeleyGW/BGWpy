@@ -10,13 +10,13 @@ from ..DFT import DFTTask
 from ..BGW import KgridTask
 from .abinitinput import AbinitInput
 
-__all__ = ['AbinitTask']
+__all__ = ["AbinitTask"]
 
 
 class AbinitTask(DFTTask, IOTask):
     """Base class for Abinit calculations."""
 
-    _TAG_JOB_COMPLETED = 'Calculation completed'
+    _TAG_JOB_COMPLETED = "Calculation completed"
 
     def __init__(self, dirname, **kwargs):
         """
@@ -54,41 +54,44 @@ class AbinitTask(DFTTask, IOTask):
 
         super(AbinitTask, self).__init__(dirname, **kwargs)
 
-        #self.ngkpt  = kwargs.get('ngkpt', 3*[1])
-        #self.kshift = kwargs.get('kshift', 3*[.0])
-        #self.qshift = kwargs.get('qshift', 3*[.0])
+        # self.ngkpt  = kwargs.get('ngkpt', 3*[1])
+        # self.kshift = kwargs.get('kshift', 3*[.0])
+        # self.qshift = kwargs.get('qshift', 3*[.0])
 
-        self.prefix = kwargs.get('prefix', 'abinit')
+        self.prefix = kwargs.get("prefix", "abinit")
 
-        self.input = AbinitInput(fname=self.prefix + '.in')
+        self.input = AbinitInput(fname=self.prefix + ".in")
         self.input.set_structure(self.structure)
 
         # Handle k-points and symmetries
         ((kpt, wtk), (symrel, tnons)) = self.kgridtask.get_kpoints_and_sym()
         nsym = len(symrel)
-        if not kwargs.get('symkpt', True):
+        if not kwargs.get("symkpt", True):
             kpt, wtk = self.kgridtask.get_kpt_grid_nosym()
 
         # Transpose all symmetry matrices
-        symrel = np.linalg.inv(symrel.reshape((-1,3,3)).transpose((0,2,1)))
+        symrel = np.linalg.inv(symrel.reshape((-1, 3, 3)).transpose((0, 2, 1)))
         symrel = np.array(symrel, dtype=np.int)
 
         # A 2pi factor is added to tnons by kgrid for phase factor calculations
-        tnons = np.round(tnons / (2*np.pi),5)
+        tnons = np.round(tnons / (2 * np.pi), 5)
 
-        self.input.set_variables({'symrel':symrel, 'tnons':tnons, 'nsym':nsym})
+        self.input.set_variables({"symrel": symrel, "tnons": tnons, "nsym": nsym})
         self.set_kpoints(kpt, wtk)
 
-        self.input.set_variables(kwargs.get('input_variables', {}))
+        self.input.set_variables(kwargs.get("input_variables", {}))
 
-        self.runscript['ABINIT'] = kwargs.get('ABINIT', 'abinit')
-        self.runscript.append('$MPIRUN $ABINIT < {} &> {}'.format(
-                              self.filesfile_basename, self.log_basename))
+        self.runscript["ABINIT"] = kwargs.get("ABINIT", "abinit")
+        self.runscript.append(
+            "$MPIRUN $ABINIT < {} &> {}".format(
+                self.filesfile_basename, self.log_basename
+            )
+        )
 
     @property
     def output_fname(self):
         first = pjoin(self.dirname, self.output_basename)
-        for s in reversed('ABCDEFGHIJKLMNOPQRSTUVWXYZ'):
+        for s in reversed("ABCDEFGHIJKLMNOPQRSTUVWXYZ"):
             last = first + s
             if os.path.exists(last):
                 return last
@@ -96,42 +99,42 @@ class AbinitTask(DFTTask, IOTask):
 
     @property
     def filesfile_basename(self):
-        return self.prefix + '.files'
+        return self.prefix + ".files"
 
     @property
     def output_basename(self):
-        return self.prefix + '.out'
+        return self.prefix + ".out"
 
     @property
     def log_basename(self):
-        return self.prefix + '.log'
+        return self.prefix + ".log"
 
     @property
     def input_data_dir(self):
-        return pjoin(self.dirname, 'input_data')
+        return pjoin(self.dirname, "input_data")
 
     @property
     def out_data_dir(self):
-        return pjoin(self.dirname, 'out_data')
+        return pjoin(self.dirname, "out_data")
 
     @property
     def tmp_data_dir(self):
-        return pjoin(self.dirname, 'tmp_data')
+        return pjoin(self.dirname, "tmp_data")
 
     @property
     def idat_root(self):
         """The root name for input data files."""
-        return pjoin(self.input_data_dir, 'idat')
+        return pjoin(self.input_data_dir, "idat")
 
     @property
     def odat_root(self):
         """The root name for output data files."""
-        return pjoin(self.out_data_dir, 'odat')
+        return pjoin(self.out_data_dir, "odat")
 
     @property
     def tmp_root(self):
         """The root name for temporaty data files."""
-        return pjoin(self.tmp_data_dir, 'tmp')
+        return pjoin(self.tmp_data_dir, "tmp")
 
     def get_odat(self, datatype, dtset=0):
         """
@@ -148,9 +151,9 @@ class AbinitTask(DFTTask, IOTask):
         fname = self.odat_root
 
         if int(dtset) > 0:
-            fname += '_DS' + str(dtset)
+            fname += "_DS" + str(dtset)
 
-        fname += '_' + datatype.lstrip('_')
+        fname += "_" + datatype.lstrip("_")
 
         return fname
 
@@ -169,27 +172,26 @@ class AbinitTask(DFTTask, IOTask):
         fname = self.idat_root
 
         if int(dtset) > 0:
-            fname += '_DS' + str(dtset)
+            fname += "_DS" + str(dtset)
 
-        fname += '_' + datatype.upper().lstrip('_')
+        fname += "_" + datatype.upper().lstrip("_")
 
         return fname
 
     def get_filesfile_content(self):
-        S = ''
-        S += os.path.relpath(self.input_fname, self.dirname) + '\n'
-        S += self.output_basename + '\n'
+        S = ""
+        S += os.path.relpath(self.input_fname, self.dirname) + "\n"
+        S += self.output_basename + "\n"
         for path in (self.idat_root, self.odat_root, self.tmp_root):
-            S += os.path.relpath(path, self.dirname) + '\n'
+            S += os.path.relpath(path, self.dirname) + "\n"
 
         for pseudo in self.pseudos:
             pseudo_path = pjoin(self.pseudo_dir, pseudo)
-            S += pseudo_path + '\n'  # pseudo_dir is already a relpath
+            S += pseudo_path + "\n"  # pseudo_dir is already a relpath
 
         return S
 
     def write(self):
-
         # Main directory, etc...
         super(AbinitTask, self).write()
 
@@ -201,7 +203,7 @@ class AbinitTask(DFTTask, IOTask):
                 os.mkdir(d)
 
         with self.exec_from_dirname():
-            with open(self.filesfile_basename, 'w') as f:
+            with open(self.filesfile_basename, "w") as f:
                 f.write(self.get_filesfile_content())
 
             self.input.write()
@@ -209,25 +211,28 @@ class AbinitTask(DFTTask, IOTask):
     def set_kpoints(self, kpt, wtk, **kwargs):
         """Set kpoint variables."""
         wtk_normalized = np.array(wtk, dtype=np.float64) / sum(wtk)
-        self.input.set_variables({
-            'kptopt' : 0,
-            'kpt' : kpt,
-            'nkpt' : len(kpt),
-            'ngkpt' : None,
-            'nshiftk' : None,
-            'shiftk' : None,
-            })
-        self.input.set_variable('wtk', wtk_normalized, decimals=16)
+        self.input.set_variables(
+            {
+                "kptopt": 0,
+                "kpt": kpt,
+                "nkpt": len(kpt),
+                "ngkpt": None,
+                "nshiftk": None,
+                "shiftk": None,
+            }
+        )
+        self.input.set_variable("wtk", wtk_normalized, decimals=16)
 
-    def set_ngkpt(self, ngkpt, shiftk=[3*[.0]], **kwargs):
+    def set_ngkpt(self, ngkpt, shiftk=[3 * [0.0]], **kwargs):
         """Set kpoint variables."""
-        self.input.set_variables({
-            'kptopt' : kwargs.get('kptopt', 1),
-            'ngkpt' : ngkpt,
-            'nshiftk' : len(shiftk),
-            'shiftk' : shiftk,
-            'kpt' : None,
-            'wtk' : None,
-            'nkpt' : None,
-            })
-
+        self.input.set_variables(
+            {
+                "kptopt": kwargs.get("kptopt", 1),
+                "ngkpt": ngkpt,
+                "nshiftk": len(shiftk),
+                "shiftk": shiftk,
+                "kpt": None,
+                "wtk": None,
+                "nkpt": None,
+            }
+        )
