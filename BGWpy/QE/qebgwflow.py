@@ -1,7 +1,6 @@
-from os.path import join as pjoin
-
-from . import QeScfTask, QeWfnTask, Qe2BgwTask
-from ..DFT import WfnBgwFlow
+from BGWpy.DFT import WfnBgwFlow
+from BGWpy.QE.qebgwtask import Qe2BgwTask
+from BGWpy.QE.wfntask import QeWfnTask
 
 __all__ = ["QeBgwFlow"]
 
@@ -56,8 +55,7 @@ class QeBgwFlow(WfnBgwFlow):
             Absolute shift of the k-points grid along each direction.
         symkpt : bool (True), optional
             Use symmetries for the k-point grid generation.
-        kpts : 2D list(nkpt,3), float, optional
-            List of k-points.
+        kpts : 2D list(nkpt,3), float, optional of k-points.
             K-points are either specified using ngkpt or using kpts and wtks.
         wtks : list(nkpt), float, optional
             Weights of each k-point.
@@ -89,7 +87,7 @@ class QeBgwFlow(WfnBgwFlow):
             Path to the vxc.dat file used by BerkeleyGW.
         """
 
-        super(QeBgwFlow, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
         kwargs.pop("dirname", None)
 
@@ -147,7 +145,8 @@ class QeBgwFlow(WfnBgwFlow):
 
     @property
     def vxc_fname(self):
-        raise NotImplementedError("Please use vxc_dat_fname instead of vxc_fname.")
+        msg = "Please use vxc_dat_fname instead of vxc_fname."
+        raise NotImplementedError(msg)
 
     @property
     def vxc_dat_fname(self):

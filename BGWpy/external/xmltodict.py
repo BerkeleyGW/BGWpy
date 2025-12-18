@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+from __future__ import annotations
+
 "Makes working with XML feel like you are working with JSON"
 
 # Note (Gabriel Antonius)
@@ -37,28 +39,23 @@ from xml.sax.saxutils import XMLGenerator
 from xml.sax.xmlreader import AttributesImpl
 
 try:  # pragma no cover
-    from cStringIO import StringIO
+    from cStringIO import StringIO  # type: ignore[import-not-found]
 except ImportError:  # pragma no cover
     try:
-        from StringIO import StringIO
+        from StringIO import StringIO  # type: ignore[import-not-found]
     except ImportError:
         from io import StringIO
 try:  # pragma no cover
     from collections import OrderedDict
 except ImportError:  # pragma no cover
     try:
-        from ordereddict import OrderedDict
+        from ordereddict import OrderedDict  # type: ignore[import-not-found]
     except ImportError:
-        OrderedDict = dict
+        OrderedDict = dict  # type: ignore[misc]
 
-try:  # pragma no cover
-    _basestring = basestring
-except NameError:  # pragma no cover
-    _basestring = str
-try:  # pragma no cover
-    _unicode = unicode
-except NameError:  # pragma no cover
-    _unicode = str
+# Python 3 only
+_basestring = str
+_unicode = str
 
 __author__ = "Martin Blech"
 __version__ = "0.9.2"
@@ -69,7 +66,7 @@ class ParsingInterrupted(Exception):
     pass
 
 
-class _DictSAXHandler(object):
+class _DictSAXHandler:
     def __init__(
         self,
         item_depth=0,
@@ -112,13 +109,12 @@ class _DictSAXHandler(object):
         short_namespace = self.namespaces.get(namespace, namespace)
         if not short_namespace:
             return name
-        else:
-            return self.namespace_separator.join((short_namespace, name))
+        return self.namespace_separator.join((short_namespace, name))
 
     def _attrs_to_dict(self, attrs):
         if isinstance(attrs, dict):
             return attrs
-        return self.dict_constructor(zip(attrs[0::2], attrs[1::2]))
+        return self.dict_constructor(zip(attrs[0::2], attrs[1::2], strict=False))
 
     def startElement(self, full_name, attrs):
         name = self._build_name(full_name)
@@ -143,7 +139,7 @@ class _DictSAXHandler(object):
                 item = self.data
             should_continue = self.item_callback(self.path, item)
             if not should_continue:
-                raise ParsingInterrupted()
+                raise ParsingInterrupted
         if len(self.stack):
             item, data = self.item, self.data
             self.item, self.data = self.stack.pop()
@@ -229,7 +225,7 @@ def parse(
     Streaming example::
 
         >>> def handle(path, item):
-        ...     print 'path:%s item:%s' % (path, item)
+        ...     print(f'path:{path} item:{item}')
         ...     return True
         ...
         >>> xmltodict.parse(\"\"\"
@@ -306,7 +302,8 @@ def _emit(
     if not isinstance(value, (list, tuple)):
         value = [value]
     if full_document and depth == 0 and len(value) > 1:
-        raise ValueError("document with multiple roots")
+        msg = "document with multiple roots"
+        raise ValueError(msg)
     for v in value:
         if v is None:
             v = OrderedDict()
@@ -368,7 +365,8 @@ def unparse(input_dict, output=None, encoding="utf-8", full_document=True, **kwa
 
     """
     if full_document and len(input_dict) != 1:
-        raise ValueError("Document must have exactly one root.")
+        msg = "Document must have exactly one root."
+        raise ValueError(msg)
     must_return = False
     if output is None:
         output = StringIO()
@@ -383,15 +381,16 @@ def unparse(input_dict, output=None, encoding="utf-8", full_document=True, **kwa
     if must_return:
         value = output.getvalue()
         try:  # pragma no cover
-            value = value.decode(encoding)
+            value = value.decode(encoding)  # type: ignore[attr-defined]
         except AttributeError:  # pragma no cover
             pass
         return value
+    return None
 
 
 if __name__ == "__main__":  # pragma: no cover
-    import sys
     import marshal
+    import sys
 
     (item_depth,) = sys.argv[1:]
     item_depth = int(item_depth)

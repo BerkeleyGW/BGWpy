@@ -1,9 +1,10 @@
-from __future__ import print_function
+from __future__ import annotations
+
 from collections import OrderedDict
 
 import numpy as np
 
-from ..core import BasicInputFile
+from BGWpy.core import BasicInputFile
 
 
 class EpsilonInput(BasicInputFile):
@@ -16,7 +17,7 @@ class EpsilonInput(BasicInputFile):
 
         all_variables.update(variables)
 
-        super(EpsilonInput, self).__init__(all_variables, keywords)
+        super().__init__(all_variables, keywords)
 
         self.q0 = q0
         self.qpts = qpts
@@ -24,16 +25,16 @@ class EpsilonInput(BasicInputFile):
     def __str__(self):
         qpt_block = "\nbegin qpoints\n"
         for q0i in self.q0:
-            qpt_block += " {:11.8f}".format(q0i)
+            qpt_block += f" {q0i:11.8f}"
         qpt_block += " 1.0 1\n"
 
         for q in self.qpts:
             for qi in q:
-                qpt_block += " {:11.8f}".format(qi)
+                qpt_block += f" {qi:11.8f}"
             qpt_block += " 1.0 0\n"
         qpt_block += "end\n"
 
-        return super(EpsilonInput, self).__str__() + qpt_block
+        return super().__str__() + qpt_block
 
 
 class SigmaInput(BasicInputFile):
@@ -53,24 +54,25 @@ class SigmaInput(BasicInputFile):
                 break
         else:
             if self.qpts:
-                raise Exception(
+                msg = (
                     "When qpts is specified, the qpoint grid must also be specified "
-                    + "through 'ngqpt' or 'qgrid'."
+                    "through 'ngqpt' or 'qgrid'."
                 )
+                raise Exception(msg)
 
         all_variables.update(variables)
 
-        super(SigmaInput, self).__init__(all_variables, keywords)
+        super().__init__(all_variables, keywords)
 
         self.kpts = kpts
 
     def __str__(self):
-        S = super(SigmaInput, self).__str__()
+        S = super().__str__()
 
         kpt_block = "\nbegin kpoints\n"
         for k in self.kpts:
             for ki in k:
-                kpt_block += " {:11.8f}".format(ki)
+                kpt_block += f" {ki:11.8f}"
             kpt_block += " 1.0\n"
         kpt_block += "end\n"
 
@@ -80,7 +82,7 @@ class SigmaInput(BasicInputFile):
             qpt_block = "\nbegin qpoints\n"
             for q in self.qpts:
                 for qi in q:
-                    qpt_block += " {:11.8f}".format(qi)
+                    qpt_block += f" {qi:11.8f}"
 
                 if all(np.isclose(q, 0.0)):
                     qpt_block += " 1.0 1\n"
@@ -105,7 +107,7 @@ class KernelInput(BasicInputFile):
 
         all_variables.update(variables)
 
-        super(KernelInput, self).__init__(all_variables, keywords)
+        super().__init__(all_variables, keywords)
 
 
 class AbsorptionInput(BasicInputFile):
@@ -130,4 +132,4 @@ class AbsorptionInput(BasicInputFile):
 
         all_variables.update(variables)
 
-        super(AbsorptionInput, self).__init__(all_variables, keywords)
+        super().__init__(all_variables, keywords)

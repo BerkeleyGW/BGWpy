@@ -1,16 +1,21 @@
+from __future__ import annotations
+
 import os
 import subprocess
+import warnings
+from pathlib import Path
+
 import numpy as np
-from ..core import fortran_str
-from ..core import Task
+
+from BGWpy.core import Task, fortran_str
 
 __all__ = [
-    "get_kpt_grid",
+    "KgridTask",
     "get_kgrid_input",
     "get_kpoints",
-    "get_kqshift",
+    "get_kpt_grid",
     "get_kpt_grid_nosym",
-    "KgridTask",
+    "get_kqshift",
 ]
 
 
@@ -49,11 +54,11 @@ class KgridTask(Task):
             Use time reversal symmetry.
         """
 
-        rootname = os.path.join(dirname, rootname)
-        self.dirname = os.path.dirname(rootname)
-        self.inputname = rootname + ".in"
-        self.outputname = rootname + ".out"
-        self.logname = rootname + ".log"
+        rootname = Path(dirname) / rootname
+        self.dirname = str(Path(rootname).parent)
+        self.inputname = str(rootname.with_suffix(".in"))
+        self.outputname = str(rootname.with_suffix(".out"))
+        self.logname = str(rootname.with_suffix(".log"))
         self.executable = executable
         self.clean_after = clean_after
 
@@ -66,12 +71,12 @@ class KgridTask(Task):
 
     def read_kpoints(self):
         """Read a list of kpoints and their weights from kgrid.x output file."""
-        with open(self.outputname, "r") as f:
+        with open(self.outputname) as f:
             content = f.read()
 
         lines = content.splitlines()[2:]
-        kpoints = list()
-        weights = list()
+        kpoints = []
+        weights = []
         for line in lines:
             k = [float(ki) for ki in line.split()[:3]]
             w = float(line.split()[-1])
@@ -81,7 +86,7 @@ class KgridTask(Task):
 
     @property
     def new_dir(self):
-        return self.dirname and not os.path.exists(self.dirname)
+        return self.dirname and not Path(self.dirname).exists()
 
     def write(self):
         if self.new_dir:
@@ -92,9 +97,7 @@ class KgridTask(Task):
 
     def run(self):
         try:
-            subprocess.call(
-                [self.executable, self.inputname, self.outputname, self.logname]
-            )
+            subprocess.call([self.executable, self.inputname, self.outputname, self.logname])
         except OSError as E:
             message = (
                 str(E)
@@ -113,21 +116,21 @@ class KgridTask(Task):
                 + "\n"
             )
 
-            raise OSError(message)
+            raise OSError(message) from E
 
     def clean_up(self):
         """Remove all temporary files (input, output log)."""
         for fname in (self.inputname, self.outputname, self.logname):
-            if os.path.exists(fname):
+            if Path(fname).exists():
                 try:
-                    os.remove(fname)
-                except Exception as E:
-                    print(E)
+                    Path(fname).unlink()
+                except Exception as e:
+                    warnings.warn(f"Error during cleanup: {e}", stacklevel=2)
         if self.new_dir:
             try:
-                os.removedirs(dirname)
-            except Exception as E:
-                print(E)
+                os.removedirs(self.dirname)
+            except Exception as e:
+                warnings.warn(f"Error during cleanup: {e}", stacklevel=2)
 
     def get_kgrid_input(self):
         """Make a kgrid.x input, using pymatgen.Structure object."""
@@ -141,34 +144,31 @@ class KgridTask(Task):
 
         abc = np.array(structure.lattice.abc)
 
-        latt_vec_rel = (
-            (structure.lattice.matrix.transpose() / abc).transpose().round(12)
-        )
+        latt_vec_rel = (structure.lattice.matrix.transpose() / abc).transpose().round(12)
         pos_cart_rel = np.dot(structure.frac_coords, latt_vec_rel).round(6)
 
-        S = ""
+        result_str = ""
 
         for arr in (ngkpt, kshift, qshift):
-            S += fortran_str(arr) + "\n"
+            result_str += fortran_str(arr) + "\n"
 
-        S += "\n"
+        result_str += "\n"
 
-        for arr in latt_vec_rel.tolist() + [structure.num_sites]:
-            S += fortran_str(arr) + "\n"
+        for arr in [*latt_vec_rel.tolist(), structure.num_sites]:
+            result_str += fortran_str(arr) + "\n"
 
-        for Z, pos in zip(structure.atomic_numbers, pos_cart_rel):
-            S += str(Z) + " " + fortran_str(pos) + "\n"
+        for Z, pos in zip(structure.atomic_numbers, pos_cart_rel, strict=False):
+            result_str += str(Z) + " " + fortran_str(pos) + "\n"
 
         for arr in (fft, use_tr):
-            S += fortran_str(arr) + "\n"
+            result_str += fortran_str(arr) + "\n"
 
-        return S
+        return result_str
 
     @staticmethod
-    def get_kqshift(self, ngkpt, kshift, qshift):
+    def get_kqshift(ngkpt, kshift, qshift):
         """Add an absolute qshift to a relative kshift."""
-        kqshiftk = [kshift[i] + qshift[i] * ngkpt[i] for i in range(3)]
-        return kqshiftk
+        return [kshift[i] + qshift[i] * ngkpt[i] for i in range(3)]
 
     def get_kpt_grid_nosym(self):
         """
@@ -180,8 +180,8 @@ class KgridTask(Task):
         qshift = self.qshift
         nkx, nky, nkz = ngkpt
 
-        kpoints = list()
-        weights = list()
+        kpoints = []
+        weights = []
         for ikx in range(nkx):
             for iky in range(nky):
                 for ikz in range(nkz):
@@ -194,7 +194,7 @@ class KgridTask(Task):
     def read_symmetries(self):
         """Read the symmetries matrices and translation vectors."""
 
-        with open(self.logname, "r") as f:
+        with open(self.logname) as f:
             while True:
                 try:
                     line = next(f)
@@ -206,8 +206,8 @@ class KgridTask(Task):
                         line = next(f)
                         assert "Space group" in line
 
-                        syms = np.zeros((nsym, 9), dtype=np.int)
-                        taus = np.zeros((nsym, 3), dtype=np.float)
+                        syms = np.zeros((nsym, 9), dtype=np.int64)
+                        taus = np.zeros((nsym, 3), dtype=np.float64)
 
                         for i in range(nsym):
                             line = next(f)
@@ -221,7 +221,7 @@ class KgridTask(Task):
                     break
 
                 except ValueError as e:
-                    raise Exception("Could not parse kgrid file.\n\n" + str(e))
+                    raise Exception("Could not parse kgrid file.\n\n" + str(e)) from e
 
         return syms, taus
 
@@ -311,8 +311,8 @@ def get_kpt_grid(
 
     """
 
-    dirname = os.path.dirname(rootname)
-    new_dir = dirname and not os.path.exists(dirname)
+    dirname = Path(rootname).parent
+    new_dir = dirname and not Path(dirname).exists()
     inputname = rootname + ".in"
     outputname = rootname + ".out"
     logname = rootname + ".log"
@@ -321,7 +321,6 @@ def get_kpt_grid(
 
     # Write the input
     if new_dir:
-        # os.system('mkdir -p ' + dirname)
         subprocess.call(["mkdir", "-p", dirname])
 
     with open(inputname, "w") as f:
@@ -336,7 +335,7 @@ def get_kpt_grid(
             + "\n\n"
             + 79 * "="
             + "\n\n"
-            + "Could not find the executable {} .\n".format(executable)
+            + f"Could not find the executable {executable} .\n"
             + "Please make sure it is available for execution.\n"
             + "On a computing cluster, you might do this my loading the module:\n"
             + "    module load berkeleygw\n"
@@ -348,25 +347,25 @@ def get_kpt_grid(
             + "\n"
         )
 
-        raise OSError(message)
+        raise OSError(message) from None
 
     # Read the output
-    with open(outputname, "r") as f:
+    with open(outputname) as f:
         outputcontent = f.read()
 
     # Clean up
     if clean_after:
         for fname in (inputname, outputname, logname):
-            if os.path.exists(fname):
+            if Path(fname).exists():
                 try:
-                    os.remove(fname)
-                except Exception as E:
-                    print(E)
+                    Path(fname).unlink()
+                except Exception as e:
+                    warnings.warn(f"Error during cleanup: {e}", stacklevel=2)
         if new_dir:
             try:
                 os.removedirs(dirname)
-            except Exception as E:
-                print(E)
+            except Exception as e:
+                warnings.warn(f"Error during cleanup: {e}", stacklevel=2)
 
     # Parse the output
     return get_kpoints(outputcontent)
@@ -375,14 +374,20 @@ def get_kpt_grid(
 def get_kgrid_input(
     structure,
     ngkpt,
-    kshift=[0.0, 0.0, 0.0],
-    qshift=[0.0, 0.0, 0.0],
-    fft=[0, 0, 0],
+    kshift=None,
+    qshift=None,
+    fft=None,
     use_tr=False,
     **kwargs,
 ):
     """Make a kgrid.x input, using pymatgen.Structure object."""
 
+    if fft is None:
+        fft = [0, 0, 0]
+    if qshift is None:
+        qshift = [0.0, 0.0, 0.0]
+    if kshift is None:
+        kshift = [0.0, 0.0, 0.0]
     abc = np.array(structure.lattice.abc)
 
     latt_vec_rel = (structure.lattice.matrix.transpose() / abc).transpose().round(12)
@@ -395,10 +400,10 @@ def get_kgrid_input(
 
     S += "\n"
 
-    for arr in latt_vec_rel.tolist() + [structure.num_sites]:
+    for arr in [*latt_vec_rel.tolist(), structure.num_sites]:
         S += fortran_str(arr) + "\n"
 
-    for Z, pos in zip(structure.atomic_numbers, pos_cart_rel):
+    for Z, pos in zip(structure.atomic_numbers, pos_cart_rel, strict=False):
         S += str(Z) + " " + fortran_str(pos) + "\n"
 
     for arr in (fft, use_tr):
@@ -410,8 +415,8 @@ def get_kgrid_input(
 def get_kpoints(content):
     """Read a list of kpoints and their weights from kgrid.x output file."""
     lines = content.splitlines()[2:]
-    kpoints = list()
-    weights = list()
+    kpoints = []
+    weights = []
     for line in lines:
         k = [float(ki) for ki in line.split()[:3]]
         w = float(line.split()[-1])
@@ -422,32 +427,32 @@ def get_kpoints(content):
 
 def get_kqshift(ngkpt, kshift, qshift):
     """Add an absolute qshift to a relative kshift."""
-    kqshiftk = [kshift[i] + qshift[i] * ngkpt[i] for i in range(3)]
-    return kqshiftk
+    return [kshift[i] + qshift[i] * ngkpt[i] for i in range(3)]
 
 
 # ============================================================== #
 
 
-def get_kpt_grid_nosym(ngkpt, kshift=[0.0, 0.0, 0.0], qshift=[0.0, 0.0, 0.0]):
+def get_kpt_grid_nosym(ngkpt, kshift=None, qshift=None):
     """
     Return a list of kpoints generated without any symmetry,
     along with their weights.
     """
+    if qshift is None:
+        qshift = [0.0, 0.0, 0.0]
+    if kshift is None:
+        kshift = [0.0, 0.0, 0.0]
     ngkpt = np.array(ngkpt)
     kshift = np.array(kshift)
     qshift = np.array(qshift)
     nkx, nky, nkz = ngkpt
 
-    kpoints = list()
-    weights = list()
+    kpoints = []
+    weights = []
     # for ikx in range(-nkx, nkx):
     #    for iky in range(-nky, nky):
     #        for ikz in range(-nkz, nkz):
 
-    #            k = (np.array([ikx, iky, ikz]) + kshift) / ngkpt * .5 + qshift
-    #            kpoints.append(k)
-    #            weights.append(1.)
     for ikx in range(nkx):
         for iky in range(nky):
             for ikz in range(nkz):

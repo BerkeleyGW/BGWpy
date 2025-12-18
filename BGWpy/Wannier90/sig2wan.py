@@ -1,12 +1,10 @@
-from ..core import Writable
+from BGWpy.core import Writable
 
 __all__ = ["Sig2WanInput"]
 
 
 class Sig2WanInput(Writable):
-    def __init__(
-        self, prefix, nbnd, nspin=1, eqp=1, sigma_file="sigma_hp.log", prefix_gw=None
-    ):
+    def __init__(self, prefix, nbnd, nspin=1, eqp=1, sigma_file="sigma_hp.log", prefix_gw=None):
         self.prefix = prefix
         self.prefix_gw = prefix_gw if prefix_gw else prefix + "_GW"
         self.nspin = nspin

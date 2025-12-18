@@ -1,8 +1,8 @@
-from __future__ import print_function
-import os
+from __future__ import annotations
+
+from pathlib import Path
 
 from .bgwtask import BGWTask
-from .kgrid import get_kpt_grid
 from .inputs import KernelInput
 
 # Public
@@ -58,7 +58,7 @@ class KernelTask(BGWTask):
 
         """
 
-        super(KernelTask, self).__init__(dirname, **kwargs)
+        super().__init__(dirname, **kwargs)
 
         # Compute k-points grids
 
@@ -72,14 +72,14 @@ class KernelTask(BGWTask):
 
         self.input.fname = self._input_fname
 
-        # Set up the run script
+        # up the run script
         self.wfn_co_fname = kwargs["wfn_co_fname"]
         self.eps0mat_fname = kwargs["eps0mat_fname"]
         self.epsmat_fname = kwargs["epsmat_fname"]
 
         ex = "kernel.cplx.x" if self._flavor_complex else "kernel.real.x"
         self.runscript["KERNEL"] = ex
-        self.runscript.append("$MPIRUN $KERNEL &> {}".format(self._output_fname))
+        self.runscript.append(f"$MPIRUN $KERNEL &> {self._output_fname}")
 
     @property
     def wfn_co_fname(self):
@@ -111,21 +111,21 @@ class KernelTask(BGWTask):
         self.update_link(value, dest)
 
     def write(self):
-        super(KernelTask, self).write()
+        super().write()
         with self.exec_from_dirname():
             self.input.write()
 
     @property
     def bsedmat_fname(self):
         basename = "bsedmat.h5" if self._use_hdf5 else "bsedmat"
-        return os.path.join(self.dirname, basename)
+        return str(Path(self.dirname) / basename)
 
     @property
     def bsexmat_fname(self):
         basename = "bsexmat.h5" if self._use_hdf5 else "bsexmat"
-        return os.path.join(self.dirname, basename)
+        return str(Path(self.dirname) / basename)
 
     @property
     def bsemat_fname(self):
         basename = "bsemat.h5" if self._use_hdf5 else "bsemat"
-        return os.path.join(self.dirname, basename)
+        return str(Path(self.dirname) / basename)

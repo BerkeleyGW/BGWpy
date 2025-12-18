@@ -1,6 +1,9 @@
+from __future__ import annotations
+
 import numpy as np
 
-from ..core import Writable, arr_str
+from BGWpy.core import Writable
+from BGWpy.core.F90io import arr_str
 
 __all__ = ["Wannier90Input"]
 
@@ -29,61 +32,72 @@ class Wannier90Input(Writable):
         self.variables = variables
 
     def __str__(self):
-        S = ""
+        # Validate input dimensions
+        if len(self.mp_grid) != 3:
+            msg = f"mp_grid must have exactly 3 elements, got {len(self.mp_grid)}"
+            raise ValueError(msg)
 
-        S += "num_bands = {}\n".format(self.nbnd)
-        S += "num_wann = {}\n".format(self.nwann)
-        S += "dis_froz_max = 12.1\n"
-        S += "bands_plot = .true.\n"
+        if len(self.klabels) != len(self.kbounds):
+            msg = f"klabels and kbounds must have same length, got {len(self.klabels)} and {len(self.kbounds)}"
+            raise ValueError(msg)
+
+        result_str = ""
+
+        result_str += f"num_bands = {self.nbnd}\n"
+        result_str += f"num_wann = {self.nwann}\n"
+        result_str += "dis_froz_max = 12.1\n"
+        result_str += "bands_plot = .true.\n"
 
         for key, val in self.variables.items():
-            S += "{} = {}\n".format(key, val)
+            result_str += f"{key} = {val}\n"
 
-        S += "\nBegin Atoms_Frac\n"
+        result_str += "\nBegin Atoms_Frac\n"
         for site in self.structure.sites:
-            frac_coords = site.frac_coords
+            frac_coords = site.frac_coords.copy()
             for i in range(3):
                 if abs(frac_coords[i]) > 0.5:
                     frac_coords[i] += -1.0 * np.sign(frac_coords[i])
-            S += "  {}  {}\n".format(site.specie.symbol, arr_str(frac_coords))
-        S += "End Atoms_Frac\n"
+            result_str += f"  {site.specie.symbol}  {arr_str(frac_coords)}\n"
+        result_str += "End Atoms_Frac\n"
 
-        S += "\nBegin Projections\n"
+        result_str += "\nBegin Projections\n"
         if self.projections:
             if isinstance(self.projections, dict):
                 for key, val in self.projections.items():
-                    S += "{} : {}\n".format(key, val)
-            elif "__iter__" in dir(self.projections):
+                    result_str += f"{key} : {val}\n"
+            elif isinstance(self.projections, str):
+                result_str += self.projections + "\n"
+            elif hasattr(self.projections, "__iter__"):
                 for proj in self.projections:
-                    S += proj + "\n"
+                    result_str += proj + "\n"
         else:
-            S += "random\n"
-        S += "End Projections\n"
+            result_str += "random\n"
+        result_str += "End Projections\n"
 
-        S += "\nBegin kpoint_path\n"
+        result_str += "\nBegin kpoint_path\n"
         for i in range(len(self.kbounds) - 1):
-            S += self.klabels[i] + " "
+            result_str += self.klabels[i] + " "
             for j in range(3):
-                S += "{:.4f} ".format(self.kbounds[i][j])
-            S += self.klabels[i + 1] + " "
+                result_str += f"{self.kbounds[i][j]:.4f} "
+            result_str += self.klabels[i + 1] + " "
             for j in range(3):
-                S += "{:.4f} ".format(self.kbounds[i + 1][j])
-            S += "\n"
-        S += "End kpoint_path\n"
+                result_str += f"{self.kbounds[i + 1][j]:.4f} "
+            result_str += "\n"
+        result_str += "End kpoint_path\n"
 
-        S += "\nBegin Unit_Cell_Cart\n"
-        S += "Angstrom\n"
+        result_str += "\nBegin Unit_Cell_Cart\n"
+        result_str += "Angstrom\n"
         latt_vec = np.round(self.structure.lattice_vectors(), 8)
-        S += arr_str(latt_vec) + "\n"
-        S += "End Unit_Cell_Cart\n"
+        result_str += arr_str(latt_vec) + "\n"
+        result_str += "End Unit_Cell_Cart\n"
 
-        S += "mp_grid      = {} {} {}\n".format(*self.mp_grid)
+        result_str += "mp_grid      = {} {} {}\n".format(*self.mp_grid)
 
-        S += "\nBegin kpoints\n"
+        result_str += "\nBegin kpoints\n"
         for k in self.kpts:
             for ki in k:
-                S += "{:.9f} ".format(ki)
-            S += "1.0\n"
-        S += "End kpoints\n"
+                result_str += f"{ki:.9f} "
+            result_str += "1.0\n"
+        result_str += "End kpoints\n"
 
-        return S
+        return result_str

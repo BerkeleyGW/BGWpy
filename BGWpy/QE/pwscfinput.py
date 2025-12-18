@@ -1,15 +1,18 @@
-from ..core import fortran_str
-from ..core import Writable, Namelist, Card
+from __future__ import annotations
+
 import warnings
+
 import numpy as np
+
+from BGWpy.core import Card, Namelist, Writable, fortran_str
 
 
 class PWscfInput(Writable):
     _structure = None
-    _pseudos = list()
+    _pseudos = None
 
     def __init__(self, **kwargs):
-        super(PWscfInput, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
         self.control = Namelist("control")
         self.system = Namelist("system")
@@ -102,48 +105,47 @@ class PWscfInput(Writable):
         # Perform checks
         self.check_pseudos_names()
 
-        S = ""
-        S += str(self.control)
-        S += str(self.system)
-        S += str(self.electrons)
+        result_str = ""
+        result_str += str(self.control)
+        result_str += str(self.system)
+        result_str += str(self.electrons)
 
         if self.ions or self._isrelax():
-            S += str(self.ions)
+            result_str += str(self.ions)
 
         if self.cell or self._isvc():
-            S += str(self.cell)
+            result_str += str(self.cell)
 
         if self.cell_parameters or self._isfreebrav():
-            S += str(self.cell_parameters)
+            result_str += str(self.cell_parameters)
 
         # This card is special, since only parts of it need quotes.
-        # S += str(self.atomic_species)
-        S += "{} {}\n".format(self.atomic_species.name, self.atomic_species.option)
+        result_str += f"{self.atomic_species.name} {self.atomic_species.option}\n"
         for val in self.atomic_species:
-            S += "   {} {}\n".format(
-                fortran_str(val[0], quotes=False), fortran_str(val[1:], quotes=True)
+            result_str += (
+                f"   {fortran_str(val[0], quotes=False)} {fortran_str(val[1:], quotes=True)}\n"
             )
 
-        S += str(self.atomic_positions)
+        result_str += str(self.atomic_positions)
 
         if self.constraints or self._isconstrained():
-            S += str(self.constraints)
+            result_str += str(self.constraints)
 
         if self.occupations or self._is_manual_occ():
-            S += str(self.occupations)
+            result_str += str(self.occupations)
 
         if self.atomic_forces:
-            S += str(self.atomic_forces)
+            result_str += str(self.atomic_forces)
 
-        S += str(self.k_points)
+        result_str += str(self.k_points)
 
-        return S
+        return result_str
 
     def set_kpoints_crystal(self, kpts, wtks):
         self.k_points.option = "crystal"
         self.k_points.append(len(kpts))
-        for k, w in zip(kpts, wtks):
-            self.k_points.append(list(k) + [w])
+        for k, w in zip(kpts, wtks, strict=False):
+            self.k_points.append([*list(k), w])
 
     @property
     def structure(self):
@@ -154,18 +156,18 @@ class PWscfInput(Writable):
         """A pymatgen.Structure object."""
         self._structure = structure
 
-        # Set system specifications
+        # system specifications
         self.system["ibrav"] = 0
         self.system["nat"] = structure.num_sites
         self.system["ntyp"] = structure.ntypesp
 
-        # Set cell parameters
+        # cell parameters
         self.cell_parameters.option = "angstrom"
         # for vec in structure.lattice_vectors():
         for vec in structure.lattice.matrix:
             self.cell_parameters.append(np.round(vec, 8))
 
-        # Set atomic species
+        # atomic species
         types_of_specie = sorted(set(structure.species), key=structure.species.index)
         for element in types_of_specie:
             self.atomic_species.append([element.symbol, float(element.atomic_mass)])
@@ -174,14 +176,14 @@ class PWscfInput(Writable):
             for i, pseudo in enumerate(self.pseudos):
                 self.atomic_species[i].append(pseudo)
 
-        # Set atomic positions
+        # atomic positions
         self.atomic_positions.option = "crystal"
         for site in structure.sites:
             frac_coords = list(site.frac_coords)
             for i in range(3):
                 if abs(frac_coords[i]) > 0.5:
                     frac_coords[i] += -1.0 * np.sign(frac_coords[i])
-            self.atomic_positions.append([site.specie.symbol] + frac_coords)
+            self.atomic_positions.append([site.specie.symbol, *frac_coords])
 
     @property
     def pseudos(self):
@@ -195,8 +197,6 @@ class PWscfInput(Writable):
                 self.atomic_species[i].append(pseudo)
 
     def check_pseudos_names(self):
-        for symbol, mass, pseudo in self.atomic_species:
+        for symbol, _mass, pseudo in self.atomic_species:
             if symbol.lower() not in pseudo.lower():
-                warnings.warn(
-                    "Suspicious pseudo name for atom {}: {}".format(symbol, pseudo)
-                )
+                warnings.warn(f"Suspicious pseudo name for atom {symbol}: {pseudo}", stacklevel=2)

@@ -1,4 +1,4 @@
-from ..core import Namelist
+from BGWpy.core import Namelist
 
 __all__ = ["PW2WanInput"]
 
@@ -13,7 +13,7 @@ class PW2WanInput(Namelist):
         seedname=None,
         **kwargs,
     ):
-        super(PW2WanInput, self).__init__(
+        super().__init__(
             "inputpp",
             [
                 ("prefix", prefix),

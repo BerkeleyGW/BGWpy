@@ -1,4 +1,5 @@
-from __future__ import print_function
+from __future__ import annotations
+
 import os
 
 from .abinittask import AbinitTask
@@ -63,7 +64,7 @@ class AbinitWfnTask(AbinitTask):
 
         kwargs.setdefault("prefix", "wfn")
 
-        super(AbinitWfnTask, self).__init__(dirname, **kwargs)
+        super().__init__(dirname, **kwargs)
 
         self.charge_density_fname = kwargs["charge_density_fname"]
 
@@ -83,22 +84,20 @@ class AbinitWfnTask(AbinitTask):
         if not ecut:
             ecut = kwargs.get("ecutwfc")
             if not ecut:
-                raise Exception("Please specify 'ecut' for Abinit.")
-            else:
-                # Maybe warn the user that ecut is in Hartree?
-                pass
+                msg = "Please specify 'ecut' for Abinit."
+                raise Exception(msg)
+            # Maybe warn the user that ecut is in Hartree?
 
-        variables = dict(
-            ecut=ecut,
-            nband=nband,
-            irdden=1,
-            nbdbuf=kwargs.get("nbdbuf", 0),
-            irdwfk=1 if self.input_wavefunction_fname else 0,
-            tolwfr=kwargs.get("tolwfr", 1e-16),
-            iscf=kwargs.get("iscf", -3),
-            istwfk=kwargs.get("istwfk", "*1"),
-        )
-        return variables
+        return {
+            "ecut": ecut,
+            "nband": nband,
+            "irdden": 1,
+            "nbdbuf": kwargs.get("nbdbuf", 0),
+            "irdwfk": 1 if self.input_wavefunction_fname else 0,
+            "tolwfr": kwargs.get("tolwfr", 1e-16),
+            "iscf": kwargs.get("iscf", -3),
+            "istwfk": kwargs.get("istwfk", "*1"),
+        }
 
     @property
     def wavefunction_fname(self):
@@ -107,8 +106,12 @@ class AbinitWfnTask(AbinitTask):
     wfn_fname = wavefunction_fname
     wfk_fname = wavefunction_fname
 
+    _charge_density_fname = None
+
     @property
     def charge_density_fname(self):
+        if self._charge_density_fname is not None:
+            return self._charge_density_fname
         return self.get_odat("DEN")
 
     @charge_density_fname.setter

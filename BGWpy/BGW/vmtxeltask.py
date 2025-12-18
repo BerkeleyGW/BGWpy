@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from .bgwtask import BGWTask
 
 __all__ = ["VmtxelTask"]
@@ -32,7 +34,7 @@ class VmtxelTask(BGWTask):
             Path to the q-shifted wavefunction file (fine grid) produced by pw2bgw.
         """
 
-        super(VmtxelTask, self).__init__(dirname, **kwargs)
+        super().__init__(dirname, **kwargs)
 
         # Run script
         self.wfn_fi_fname = kwargs["wfn_fi_fname"]
@@ -43,7 +45,7 @@ class VmtxelTask(BGWTask):
             "vmtxel.cplx.x" if self._flavor_complex else "vmtxel.real.x"
         )  # Gotta get rid of this boilerplate
         self.runscript["VMTXEL"] = ex
-        self.runscript.append("$MPIRUN $VMTXEL &> {}".format(self._output_fname))
+        self.runscript.append(f"$MPIRUN $VMTXEL &> {self._output_fname}")
 
     @property
     def wfn_fi_fname(self):

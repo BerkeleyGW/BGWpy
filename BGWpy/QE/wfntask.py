@@ -1,8 +1,10 @@
-from __future__ import print_function
-import os
+from __future__ import annotations
 
-from .qetask import QeTask
+import os
+from pathlib import Path
+
 from .constructor import get_bands_input
+from .qetask import QeTask
 
 # Public
 __all__ = ["QeWfnTask"]
@@ -63,15 +65,14 @@ class QeWfnTask(QeTask):
             Absolute shift of the k-points grid along each direction.
         symkpt : bool (True), optional
             Use symmetries for the k-point grid generation.
-        kpts : 2D list(nkpt,3), float, optional
-            List of k-points.
+        kpts : 2D list(nkpt,3), float, optional of k-points.
             K-points are either specified using ngkpt or using kpts and wtks.
         wtks : list(nkpt), float, optional
             Weights of each k-point.
 
         """
 
-        super(QeWfnTask, self).__init__(dirname, **kwargs)
+        super().__init__(dirname, **kwargs)
         self.add_pseudos_copy()
 
         kpts, wtks = self.get_kpts(**kwargs)
@@ -101,9 +102,7 @@ class QeWfnTask(QeTask):
 
         # Run script
         self.runscript.append(
-            "$MPIRUN $PW $PWFLAGS -in {} &> {}".format(
-                self._input_fname, self._output_fname
-            )
+            f"$MPIRUN $PW $PWFLAGS -in {self._input_fname} &> {self._output_fname}"
         )
 
     @property
@@ -114,7 +113,7 @@ class QeWfnTask(QeTask):
     def charge_density_fname(self, value):
         self._charge_density_fname = value
         name = "charge-density.hdf5" if self._use_hdf5_qe else "charge-density.dat"
-        dest = os.path.join(self.savedir, name)
+        dest = Path(self.savedir) / name
         self.update_link(value, dest)
 
     @property
@@ -124,7 +123,7 @@ class QeWfnTask(QeTask):
     @spin_polarization_fname.setter
     def spin_polarization_fname(self, value):
         self._spin_polarization_fname = value
-        dest = os.path.join(self.savedir, "spin-polarization.dat")
+        dest = Path(self.savedir) / "spin-polarization.dat"
         self.update_link(value, dest)
 
     @property
@@ -135,9 +134,9 @@ class QeWfnTask(QeTask):
     def data_file_fname(self, value):
         self._data_file_fname = value
         if self.version >= 6:
-            dest = os.path.join(self.savedir, "data-file-schema.xml")
+            dest = Path(self.savedir) / "data-file-schema.xml"
         else:
-            dest = os.path.join(self.savedir, "data-file.xml")
+            dest = Path(self.savedir) / "data-file.xml"
         self.update_copy(value, dest)
 
     def add_pseudos_copy(self):
@@ -150,13 +149,14 @@ class QeWfnTask(QeTask):
         if os.path.realpath(self.pseudo_dir) == self.pseudo_dir.rstrip(os.path.sep):
             sourcedir = self.pseudo_dir
         else:
-            sourcedir = os.path.join(self.dirname, self.pseudo_dir)
+            sourcedir = Path(self.dirname) / self.pseudo_dir
         for pseudo in self.pseudos:
-            source = os.path.join(sourcedir, pseudo)
-            dest = os.path.join(self.savedir, pseudo)
+            source = Path(sourcedir) / pseudo
+            dest = Path(self.savedir) / pseudo
             self.update_copy(source, dest)
 
-    # Yikes! I have to recopy the property. python3 would be so much better...
+    # Override parent property to trigger pseudopotential copying when pseudo_dir changes.
+    # This ensures pseudos are copied to the save directory, which is required by QE.
     @property
     def pseudo_dir(self):
         return self._pseudo_dir
@@ -167,8 +167,7 @@ class QeWfnTask(QeTask):
             self._pseudo_dir = value
         else:
             self._pseudo_dir = os.path.relpath(value, self.dirname)
-        if "input" in dir(self):
-            if "control" in dir(self.input):
-                self.input.control["pseudo_dir"] = self._pseudo_dir
+        if "input" in dir(self) and "control" in dir(self.input):
+            self.input.control["pseudo_dir"] = self._pseudo_dir
         if "pseudos" in dir(self):
             self.add_pseudos_copy()

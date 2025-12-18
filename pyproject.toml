@@ -1,0 +1,224 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "BGWpy"
+version = "4.0.0"
+description = "A modern Python interface for BerkeleyGW workflows"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "BSD-3-Clause"}
+authors = [
+    {name = "Gabriel Antonius", email = "gabriel.antonius@gmail.com"},
+]
+maintainers = [
+    {name = "Gabriel Antonius", email = "gabriel.antonius@gmail.com"},
+]
+keywords = [
+    "BerkeleyGW",
+    "GW",
+    "BSE",
+    "DFT",
+    "computational-physics",
+    "materials-science",
+    "electronic-structure",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: BSD License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Physics",
+    "Topic :: Scientific/Engineering :: Chemistry",
+    "Typing :: Typed",
+]
+dependencies = [
+    "numpy>=1.24",
+    "pymatgen>=2024.1.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=4.1",
+    "pytest-xdist>=3.5",
+    "ruff>=0.6.0",
+    "ty",  # Astral's type checker (in public beta)
+    "ipython>=8.12",
+]
+docs = [
+    "sphinx>=7.0",
+    "sphinx-rtd-theme>=2.0",
+    "sphinx-autodoc-typehints>=2.0",
+]
+all = [
+    "BGWpy[dev,docs]",
+]
+
+[project.urls]
+Homepage = "https://github.com/BerkeleyGW/BGWpy"
+Repository = "https://github.com/BerkeleyGW/BGWpy"
+Documentation = "https://github.com/BerkeleyGW/BGWpy"
+"Bug Tracker" = "https://github.com/BerkeleyGW/BGWpy/issues"
+Changelog = "https://github.com/BerkeleyGW/BGWpy/blob/main/CHANGELOG.md"
+
+[project.scripts]
+bgwpy-config = "BGWpy.scripts.BGWpy_make_config_file:main"
+
+[tool.setuptools]
+zip-safe = false
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["BGWpy*"]
+exclude = ["tests*", "docs*"]
+
+[tool.setuptools.package-data]
+BGWpy = [
+    "data/structures/*",
+    "data/pseudos/*",
+    "py.typed",
+]
+
+# Ruff configuration - modern Python linter/formatter
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+src = ["BGWpy"]
+extend-exclude = [
+    "*.egg-info",
+    ".git",
+    ".jj",
+    ".ruff_cache",
+    "__pycache__",
+    "build",
+    "dist",
+]
+
+[tool.ruff.lint]
+select = [
+    "E",      # pycodestyle errors
+    "W",      # pycodestyle warnings
+    "F",      # pyflakes
+    "I",      # isort
+    "N",      # pep8-naming
+    "UP",     # pyupgrade
+    "B",      # flake8-bugbear
+    "C4",     # flake8-comprehensions
+    "DTZ",    # flake8-datetimez
+    "T10",    # flake8-debugger
+    "EM",     # flake8-errmsg
+    "FA",     # flake8-future-annotations
+    "ISC",    # flake8-implicit-str-concat
+    "ICN",    # flake8-import-conventions
+    "PIE",    # flake8-pie
+    "PT",     # flake8-pytest-style
+    "Q",      # flake8-quotes
+    "RSE",    # flake8-raise
+    "RET",    # flake8-return
+    "SIM",    # flake8-simplify
+    "TID",    # flake8-tidy-imports
+    "TCH",    # flake8-type-checking
+    "ARG",    # flake8-unused-arguments
+    "PTH",    # flake8-use-pathlib
+    "ERA",    # eradicate (commented-out code)
+    "PL",     # pylint
+    "PERF",   # perflint
+    "RUF",    # ruff-specific rules
+]
+ignore = [
+    "E501",     # line too long (handled by formatter)
+    "PLR0913",  # too many arguments
+    "PLR2004",  # magic value comparison
+    "B008",     # function call in default argument
+    "ISC001",   # implicit string concatenation (conflicts with formatter)
+    "N999",     # invalid module name (BGWpy is our package name)
+]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401", "F403", "E402", "F405", "PLE0604"]  # unused imports, wildcard imports, module-level import not at top, star imports, invalid __all__
+"test_*.py" = ["ARG001", "PLR2004", "PT009"]  # unused arguments, magic values OK in tests, unittest assertions
+"**/tests/**" = ["ARG001", "PLR2004", "PT009"]
+"**/external/**" = ["ALL"]  # external/vendored code, ignore all checks
+"**/scripts/**" = ["PLC0415"]  # import outside top-level OK in scripts
+"**/Abinit/variable.py" = ["N802", "N803", "N806"]  # naming conventions for Fortran compatibility
+"**/BGW/kgrid.py" = ["PLR0912", "PLR0915"]  # complex parsing logic requires many branches/statements
+
+[tool.ruff.lint.isort]
+known-first-party = ["BGWpy"]
+section-order = ["future", "standard-library", "third-party", "first-party", "local-folder"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+
+# ty configuration - Astral's modern type checker (public beta)
+# ty uses pyproject.toml for configuration
+# Documentation: https://github.com/astral-sh/ty
+[tool.ty]
+# ty will auto-detect Python version from requires-python
+# Configuration options will be added as ty's public beta progresses
+
+# Pytest configuration
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["BGWpy/tests", "BGWpy/core/tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "--strict-markers",
+    "--strict-config",
+    "--showlocals",
+    "-ra",
+]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests as integration tests",
+    "unit: marks tests as unit tests",
+]
+filterwarnings = [
+    "error",
+    "ignore::DeprecationWarning",
+    "ignore::PendingDeprecationWarning",
+]
+
+# Coverage configuration
+[tool.coverage.run]
+source = ["BGWpy"]
+branch = true
+parallel = true
+omit = [
+    "*/tests/*",
+    "*/test_*.py",
+    "*/__pycache__/*",
+]
+
+[tool.coverage.report]
+precision = 2
+show_missing = true
+skip_covered = false
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+    "@abstractmethod",
+    "@overload",
+]
+
+[tool.coverage.html]
+directory = "htmlcov"

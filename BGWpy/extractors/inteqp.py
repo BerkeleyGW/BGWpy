@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import numpy as np
 
 
@@ -30,12 +32,12 @@ def extract_inteqp_bandstructure(fname):
 
     data = np.loadtxt(fname, unpack=True)
 
-    spin = np.array(data[0], dtype=np.int)
-    band = np.array(data[1], dtype=np.int)
-    kpt = np.array(data[2:5,], dtype=np.float).transpose()
-    E_DFT = np.array(data[5], dtype=np.float)
-    E_QP = np.array(data[6], dtype=np.float)
-    DE = np.array(data[7], dtype=np.float)
+    spin = np.array(data[0], dtype=np.int64)
+    band = np.array(data[1], dtype=np.int64)
+    kpt = np.array(data[2:5,], dtype=np.float64).transpose()
+    E_DFT = np.array(data[5], dtype=np.float64)
+    E_QP = np.array(data[6], dtype=np.float64)
+    DE = np.array(data[7], dtype=np.float64)
 
     # Find the dimensions
     ndata = len(spin)
@@ -49,12 +51,12 @@ def extract_inteqp_bandstructure(fname):
             nkpt = i
             break
     else:
-        nkpt = len(kpt) / nspin
+        nkpt = len(kpt) // nspin
 
     # Construct data arrays
-    eigs_dft_eV = np.zeros((nspin, nkpt, nband), dtype=np.float)
-    eigs_gw_eV = np.zeros((nspin, nkpt, nband), dtype=np.float)
-    delta_eigs_eV = np.zeros((nspin, nkpt, nband), dtype=np.float)
+    eigs_dft_eV = np.zeros((nspin, nkpt, nband), dtype=np.float64)
+    eigs_gw_eV = np.zeros((nspin, nkpt, nband), dtype=np.float64)
+    delta_eigs_eV = np.zeros((nspin, nkpt, nband), dtype=np.float64)
 
     for i in range(ndata):
         ispin = spin[i] - 1
@@ -65,19 +67,17 @@ def extract_inteqp_bandstructure(fname):
         eigs_gw_eV[ispin, ikpt, iband] = E_QP[i]
         delta_eigs_eV[ispin, ikpt, iband] = DE[i]
 
-    results = dict(
-        nspin=nspin,
-        nkpt=nkpt,
-        nband=nband,
-        kpts=kpt[:nkpt],
-        ib_min=ib_min,
-        ib_max=ib_max,
-        eigs_dft_eV=eigs_dft_eV,
-        eigs_gw_eV=eigs_gw_eV,
-        delta_eigs_eV=delta_eigs_eV,
-    )
-
-    return results
+    return {
+        "nspin": nspin,
+        "nkpt": nkpt,
+        "nband": nband,
+        "kpts": kpt[:nkpt],
+        "ib_min": ib_min,
+        "ib_max": ib_max,
+        "eigs_dft_eV": eigs_dft_eV,
+        "eigs_gw_eV": eigs_gw_eV,
+        "delta_eigs_eV": delta_eigs_eV,
+    }
 
 
 def extract_inteqp_eqp(fname):
@@ -107,15 +107,15 @@ def extract_inteqp_eqp(fname):
             Difference between GW and DFT eigenvalues, in eV.
     """
 
-    with open(fname, "r") as f:
+    with open(fname) as f:
         # Read the first block to compute the dimensions
-        line = f.next()
+        line = next(f)
         parts = line.split()
         nstates = int(parts[3])
-        spins = list()
-        bands = list()
-        for i in range(nstates):
-            line = f.next()
+        spins = []
+        bands = []
+        for _ in range(nstates):
+            line = next(f)
             parts = line.split()
             spins.append(int(parts[0]))
             bands.append(int(parts[1]))
@@ -129,28 +129,28 @@ def extract_inteqp_eqp(fname):
         nlines = nstates + 1
         while True:
             try:
-                line = f.next()
+                line = next(f)
                 nlines += 1
             except StopIteration:
                 break
 
         nkpt = nlines // (nstates + 1)
 
-        kpts = np.zeros((nkpt, 3), dtype=np.ndarray)
-        eigs_dft_eV = np.zeros((nspin, nkpt, nband), dtype=np.ndarray)
-        eigs_gw_eV = np.zeros((nspin, nkpt, nband), dtype=np.ndarray)
+        kpts = np.zeros((nkpt, 3), dtype=np.float64)
+        eigs_dft_eV = np.zeros((nspin, nkpt, nband), dtype=np.float64)
+        eigs_gw_eV = np.zeros((nspin, nkpt, nband), dtype=np.float64)
 
         # Rewind file to start
         f.seek(0)
 
         for ikpt in range(nkpt):
-            line = f.next()
+            line = next(f)
             parts = line.split()
 
-            kpts[ikpt, :] = map(float, parts[:3])
+            kpts[ikpt, :] = list(map(float, parts[:3]))
 
             for i in range(nstates):
-                line = f.next()
+                line = next(f)
                 parts = line.split()
 
                 ispin = i // nband
@@ -161,16 +161,14 @@ def extract_inteqp_eqp(fname):
 
     delta_eigs_eV = eigs_gw_eV - eigs_dft_eV
 
-    results = dict(
-        nspin=nspin,
-        nkpt=nkpt,
-        nband=nband,
-        kpts=kpts,
-        ib_min=ib_min,
-        ib_max=ib_max,
-        eigs_dft_eV=eigs_dft_eV,
-        eigs_gw_eV=eigs_gw_eV,
-        delta_eigs_eV=delta_eigs_eV,
-    )
-
-    return results
+    return {
+        "nspin": nspin,
+        "nkpt": nkpt,
+        "nband": nband,
+        "kpts": kpts,
+        "ib_min": ib_min,
+        "ib_max": ib_max,
+        "eigs_dft_eV": eigs_dft_eV,
+        "eigs_gw_eV": eigs_gw_eV,
+        "delta_eigs_eV": delta_eigs_eV,
+    }

@@ -1,8 +1,9 @@
-from __future__ import print_function
-import os
+from __future__ import annotations
 
-from .qetask import QeTask
+from pathlib import Path
+
 from .constructor import get_scf_input
+from .qetask import QeTask
 
 # Public
 __all__ = ["QeScfTask"]
@@ -51,8 +52,7 @@ class QeScfTask(QeTask):
             Absolute shift of the k-points grid along each direction.
         symkpt : bool (True), optional
             Use symmetries for the k-point grid generation.
-        kpts : 2D list(nkpt,3), float, optional
-            List of k-points.
+        kpts : 2D list(nkpt,3), float, optional of k-points.
             K-points are either specified using ngkpt or using kpts and wtks.
         wtks : list(nkpt), float, optional
             Weights of each k-point.
@@ -72,7 +72,7 @@ class QeScfTask(QeTask):
             Path to the spin polarization file produced ('spin-polarization.dat').
         """
 
-        super(QeScfTask, self).__init__(dirname, **kwargs)
+        super().__init__(dirname, **kwargs)
 
         kpts, wtks = self.get_kpts(**kwargs)
 
@@ -94,25 +94,22 @@ class QeScfTask(QeTask):
 
         # Run script
         self.runscript.append(
-            "$MPIRUN $PW $PWFLAGS -in {} &> {}".format(
-                self._input_fname, self._output_fname
-            )
+            f"$MPIRUN $PW $PWFLAGS -in {self._input_fname} &> {self._output_fname}"
         )
 
     @property
     def charge_density_fname(self):
         name = "charge-density.hdf5" if self._use_hdf5_qe else "charge-density.dat"
-        return os.path.join(self.dirname, self.savedir, name)
+        return str(Path(self.dirname) / self.savedir / name)
 
     @property
     def spin_polarization_fname(self):
-        return os.path.join(self.dirname, self.savedir, "spin-polarization.dat")
+        return str(Path(self.dirname) / self.savedir / "spin-polarization.dat")
 
     @property
     def data_file_fname(self):
         # It seems newer versions of QE have switched from data-file.xml to
         # data-file-schema.xml
         if self.version >= 6:
-            return os.path.join(self.dirname, self.savedir, "data-file-schema.xml")
-        else:
-            return os.path.join(self.dirname, self.savedir, "data-file.xml")
+            return str(Path(self.dirname) / self.savedir / "data-file-schema.xml")
+        return str(Path(self.dirname) / self.savedir / "data-file.xml")

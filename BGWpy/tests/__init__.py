@@ -1,29 +1,29 @@
+from __future__ import annotations
+
 import os
+import shutil
+import tempfile
 import unittest
-import tempfile, shutil
+from pathlib import Path
 
 
 class TestTask(unittest.TestCase):
     def setUp(self):
         self.tmpdir = tempfile.mkdtemp()
         self.local_testdir = "tmp.Tests"
-        self.local_tmpdir = os.path.join(
-            self.local_testdir, os.path.split(self.tmpdir)[-1]
-        )
+        self.local_tmpdir = Path(self.local_testdir) / Path(self.tmpdir).name
 
     def tearDown(self):
         shutil.rmtree(self.tmpdir)
 
     def recover_tmpdir(self):
         """Debug tool to copy the execution directory locally."""
-        if not os.path.exists(self.local_testdir):
-            os.mkdir(self.local_testdir)
+        if not Path(self.local_testdir).exists():
+            Path(self.local_testdir).mkdir(parents=True, exist_ok=True)
         shutil.copytree(self.tmpdir, self.local_tmpdir, symlinks=True)
 
     def assertCompleted(self, task):
         completed = task.get_status() == task._STATUS_COMPLETED
         if not completed:
             self.recover_tmpdir()
-        assert completed, "Task failed. Directory copied to: {}".format(
-            self.local_tmpdir
-        )
+        assert completed, f"Task failed. Directory copied to: {self.local_tmpdir}"

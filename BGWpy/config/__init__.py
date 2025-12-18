@@ -1,16 +1,20 @@
+from __future__ import annotations
+
+import configparser
+
+# The user configuration file is used
+# to override the default configuration.
+import os
+from pathlib import Path
+
 from .default_configuration import (
     default_mpi,
     default_runscript,
     flavors,
 )
 
-# The user configuration file is used
-# to override the default configuration.
-import os
-import configparser
-
-config_file = os.path.join(os.environ["HOME"], ".BGWpyrc")
-if os.path.exists(config_file):
+config_file = Path(os.environ["HOME"]) / ".BGWpyrc"
+if Path(config_file).exists():
     config = configparser.ConfigParser(comment_prefixes=(";"))
     config.read(config_file)
 
@@ -56,7 +60,8 @@ else:
 
     warnings.warn(
         "Did not find user configuration file ~/.BGWpyrc. "
-        "Try running the script BGWpy_make_config_file.py"
+        "Try running the script BGWpy_make_config_file.py",
+        stacklevel=2,
     )
     del warnings
 

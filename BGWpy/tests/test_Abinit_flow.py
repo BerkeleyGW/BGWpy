@@ -1,10 +1,12 @@
-import os
+from __future__ import annotations
+
+from pathlib import Path
+from typing import ClassVar
+
+from BGWpy import Structure, data
+from BGWpy.Abinit import Abi2BgwTask, AbinitBgwFlow, AbinitScfTask, AbinitWfnTask
 
 from . import TestTask
-
-from .. import data
-from .. import Structure
-from ..Abinit import AbinitScfTask, AbinitWfnTask, Abi2BgwTask, AbinitBgwFlow
 
 # Note: The tests are redundant. The issue being that
 # tests cannot be interdependent.
@@ -14,22 +16,22 @@ class TestAbinitTaskMaker(TestTask):
     _structure_fname = data.structure_Si
 
     # Common arguments for tasks.
-    common = dict(
-        structure=Structure.from_file(_structure_fname),
-        prefix="Si",
-        pseudo_dir=data.pseudo_dir,
-        pseudos=data.pseudos_Si,
-        ngkpt=[2, 2, 2],
-        kshift=[0.5, 0.5, 0.5],
-        ecut=10.0,
-        nband=9,
-        ecuteps=10.0,
-        with_density=True,
-    )
+    common: ClassVar[dict] = {
+        "structure": Structure.from_file(_structure_fname),
+        "prefix": "Si",
+        "pseudo_dir": data.pseudo_dir,
+        "pseudos": data.pseudos_Si,
+        "ngkpt": [2, 2, 2],
+        "kshift": [0.5, 0.5, 0.5],
+        "ecut": 10.0,
+        "nband": 9,
+        "ecuteps": 10.0,
+        "with_density": True,
+    }
 
     def get_wfnbgwflow(self, scftask, **kwargs):
         """Construct a AbinitBgwFlow."""
-        kwargs.setdefault("dirname", os.path.join(self.tmpdir, "DFT"))
+        kwargs.setdefault("dirname", Path(self.tmpdir) / "DFT")
         kwargs.update(charge_density_fname=scftask.charge_density_fname)
         for key, val in self.common.items():
             kwargs.setdefault(key, val)
@@ -38,7 +40,7 @@ class TestAbinitTaskMaker(TestTask):
 
     def get_scftask(self, **kwargs):
         """Construct a ScfTask."""
-        kwargs.setdefault("dirname", os.path.join(self.tmpdir, "SCF"))
+        kwargs.setdefault("dirname", Path(self.tmpdir) / "SCF")
         for key, val in self.common.items():
             kwargs.setdefault(key, val)
 
@@ -46,7 +48,7 @@ class TestAbinitTaskMaker(TestTask):
 
     def get_wfntask(self, scftask, **kwargs):
         """Construct a WfnTask."""
-        kwargs.setdefault("dirname", os.path.join(self.tmpdir, "Wfn"))
+        kwargs.setdefault("dirname", Path(self.tmpdir) / "Wfn")
         kwargs.update(charge_density_fname=scftask.charge_density_fname)
         for key, val in self.common.items():
             kwargs.setdefault(key, val)

@@ -1,20 +1,20 @@
 """Workflow to compute dipole operator matrix elements."""
 
-from os.path import join as pjoin
-import warnings
+from __future__ import annotations
 
-from ..config import flavors
-from ..config import is_dft_flavor_espresso, is_dft_flavor_abinit, check_dft_flavor
-from ..external import Structure
-from ..core import Workflow
-from ..BGW import VmtxelTask
+import warnings
+from pathlib import Path
+
+from BGWpy.BGW import VmtxelTask
+from BGWpy.config import check_dft_flavor, flavors, is_dft_flavor_abinit, is_dft_flavor_espresso
+from BGWpy.core import Workflow
 
 __all__ = ["VmtxelFlow"]
 
 
 class VmtxelFlow(Workflow):
     def __init__(self, **kwargs):
-        super(VmtxelFlow, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
         kwargs.pop("dirname")
 
@@ -29,11 +29,8 @@ class VmtxelFlow(Workflow):
                 self.nbnd = kwargs.pop(key)
                 break
         else:
-            raise Exception(
-                "Number of bands must be specified with one of these keywords: {}.".format(
-                    nband_aliases
-                )
-            )
+            msg = f"Number of bands must be specified with one of these keywords: {nband_aliases}."
+            raise Exception(msg)
 
         # BSE parameters
         self.ngkpt_fi = kwargs.pop("ngkpt_fine", self.ngkpt)
@@ -43,29 +40,28 @@ class VmtxelFlow(Workflow):
         if "nbnd_fine" not in kwargs:
             warnings.warn(
                 "'nbnd_fine' was not specified.\n"
-                + "Thus, number of band computed on the fine grid will default to 'nbnd' (coarse grid).\n"
-                + "This is usually a waste and you might want to choose 'nbnd_fine' according to\n"
-                + "   nbnd_fine = nbnd_occupied + nbnd_cond_fi + 1."
+                "Thus, number of band computed on the fine grid will default to 'nbnd' (coarse grid).\n"
+                "This is usually a waste and you might want to choose 'nbnd_fine' according to\n"
+                "   nbnd_fine = nbnd_occupied + nbnd_cond_fi + 1.",
+                stacklevel=2,
             )
         self.nbnd_fine = kwargs.pop("nbnd_fine", self.nbnd)
 
         # ==== DFT calculations ==== #
 
-        self.dft_flavor = check_dft_flavor(
-            kwargs.get("dft_flavor", flavors["dft_flavor"])
-        )
+        self.dft_flavor = check_dft_flavor(kwargs.get("dft_flavor", flavors["dft_flavor"]))
         # Quantum Espresso flavor
         if is_dft_flavor_espresso(self.dft_flavor):
-            raise NotImplementedError()
+            raise NotImplementedError
             fnames = self.make_dft_tasks_espresso(**kwargs)
             kwargs.update(fnames)
 
         # Abinit flavor
-        elif is_dft_flavor_abinit(self.dft_flavor):
+        if is_dft_flavor_abinit(self.dft_flavor):
             fnames = self.make_dft_tasks_abinit(**kwargs)
             kwargs.update(fnames)
 
-        self.vmtxeltask = VmtxelTask(dirname=pjoin(self.dirname, "21-vmtxel"), **kwargs)
+        self.vmtxeltask = VmtxelTask(dirname=Path(self.dirname) / "21-vmtxel", **kwargs)
 
         self.add_task(self.vmtxeltask)
 
@@ -74,18 +70,17 @@ class VmtxelFlow(Workflow):
         Initialize all DFT tasks using Abinit.
         Return a dictionary of file names.
         """
-        from ..Abinit import AbinitScfTask, AbinitBgwFlow
+        from BGWpy.Abinit import AbinitBgwFlow, AbinitScfTask
 
         # Either charge density is provided or an SCF task is initialized.
         if "charge_density_fname" in kwargs:
             if "vxc_fname" not in kwargs:
-                raise Exception(
-                    "Error, when providing charge_density_fname, vxc_fname is required"
-                )
+                msg = "Error, when providing charge_density_fname, vxc_fname is required"
+                raise Exception(msg)
 
         else:
             self.scftask = AbinitScfTask(
-                dirname=pjoin(self.dirname, "01-density"),
+                dirname=Path(self.dirname) / "01-density",
                 ngkpt=self.ngkpt,
                 kshift=self.kshift,
                 **kwargs,
@@ -100,7 +95,7 @@ class VmtxelFlow(Workflow):
 
         # Wavefunctions on fine k-point grids
         self.wfntask_fi_ush = AbinitBgwFlow(
-            dirname=pjoin(self.dirname, "05-wfn_fi"),
+            dirname=Path(self.dirname) / "05-wfn_fi",
             nband=self.nbnd_fine,
             ngkpt=self.ngkpt_fi,
             kshift=self.kshift_fi,
@@ -110,7 +105,7 @@ class VmtxelFlow(Workflow):
         )
 
         self.wfntask_fi_qsh = AbinitBgwFlow(
-            dirname=pjoin(self.dirname, "06-wfnq_fi"),
+            dirname=Path(self.dirname) / "06-wfnq_fi",
             nband=None,
             ngkpt=self.ngkpt_fi,
             kshift=self.kshift_fi,
@@ -121,9 +116,7 @@ class VmtxelFlow(Workflow):
 
         self.add_tasks([self.wfntask_fi_ush, self.wfntask_fi_qsh])
 
-        fnames = dict(
-            wfn_fi_fname=self.wfntask_fi_ush.wfn_fname,
-            wfnq_fi_fname=self.wfntask_fi_qsh.wfn_fname,
-        )
-
-        return fnames
+        return {
+            "wfn_fi_fname": self.wfntask_fi_ush.wfn_fname,
+            "wfnq_fi_fname": self.wfntask_fi_qsh.wfn_fname,
+        }

@@ -1,13 +1,10 @@
-from . import pwscfinput
-from . import constructor
-
 # Core
-from . import qetask
+from . import constructor, pwscfinput, qetask
+from .qebgwflow import *
+from .qebgwtask import *
 
 # Public
 from .scftask import *
 from .wfntask import *
-from .qebgwtask import *
-from .qebgwflow import *
 
 __all__ = scftask.__all__ + wfntask.__all__ + qebgwtask.__all__ + qebgwflow.__all__

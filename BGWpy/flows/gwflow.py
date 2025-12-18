@@ -1,14 +1,12 @@
 """Workflow to perform GW calculation."""
 
-from __future__ import print_function
+from __future__ import annotations
 
-from os.path import join as pjoin
+from pathlib import Path
 
-from ..config import flavors
-from ..config import is_dft_flavor_espresso, is_dft_flavor_abinit, check_dft_flavor
-from ..external import Structure
-from ..core import Workflow
-from ..BGW import EpsilonTask, SigmaTask
+from BGWpy.BGW import EpsilonTask, SigmaTask
+from BGWpy.config import check_dft_flavor, flavors, is_dft_flavor_abinit, is_dft_flavor_espresso
+from BGWpy.core import Workflow
 
 __all__ = ["GWFlow"]
 
@@ -73,7 +71,7 @@ class GWFlow(Workflow):
             Any other variables that should be declared in the sigma input file.
 
         """
-        super(GWFlow, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
         kwargs.pop("dirname", None)
 
@@ -88,15 +86,10 @@ class GWFlow(Workflow):
                 self.nbnd = kwargs.pop(key)
                 break
         else:
-            raise Exception(
-                "Number of bands must be specified with one of these keywords: {}.".format(
-                    nband_aliases
-                )
-            )
+            msg = f"Number of bands must be specified with one of these keywords: {nband_aliases}."
+            raise Exception(msg)
 
-        self.dft_flavor = check_dft_flavor(
-            kwargs.get("dft_flavor", flavors["dft_flavor"])
-        )
+        self.dft_flavor = check_dft_flavor(kwargs.get("dft_flavor", flavors["dft_flavor"]))
 
         # ==== DFT calculations ==== #
 
@@ -112,7 +105,7 @@ class GWFlow(Workflow):
 
         # ==== GW calculations ==== #
 
-        # Set some common variables for Epsilon and Sigma
+        # some common variables for Epsilon and Sigma
         self.epsilon_extra_lines = kwargs.pop("epsilon_extra_lines", [])
         self.epsilon_extra_variables = kwargs.pop("epsilon_extra_variables", {})
 
@@ -121,7 +114,7 @@ class GWFlow(Workflow):
 
         # Dielectric matrix computation and inversion (epsilon)
         self.epsilontask = EpsilonTask(
-            dirname=pjoin(self.dirname, "11-epsilon"),
+            dirname=Path(self.dirname) / "11-epsilon",
             ngkpt=self.ngkpt,
             qshift=self.qshift,
             extra_lines=self.epsilon_extra_lines,
@@ -131,7 +124,7 @@ class GWFlow(Workflow):
 
         # Self-energy calculation (sigma)
         self.sigmatask = SigmaTask(
-            dirname=pjoin(self.dirname, "12-sigma"),
+            dirname=Path(self.dirname) / "12-sigma",
             ngkpt=self.ngkpt,
             extra_lines=self.sigma_extra_lines,
             extra_variables=self.sigma_extra_variables,
@@ -147,7 +140,7 @@ class GWFlow(Workflow):
 
     @property
     def has_kshift(self):
-        return any([i != 0 for i in self.kshift])
+        return any(i != 0 for i in self.kshift)
 
     @property
     def sigma_kpts(self):
@@ -183,17 +176,16 @@ class GWFlow(Workflow):
         Initialize all DFT tasks using Quantum Espresso.
         Return a dictionary of file names.
         """
-        from ..QE import QeScfTask, QeBgwFlow
+        from BGWpy.QE import QeBgwFlow, QeScfTask
 
         if "charge_density_fname" in kwargs:
             if "data_file_fname" not in kwargs:
-                raise Exception(
-                    "Error, when providing charge_density_fname, data_file_fname is required."
-                )
+                msg = "Error, when providing charge_density_fname, data_file_fname is required."
+                raise Exception(msg)
 
         else:
             self.scftask = QeScfTask(
-                dirname=pjoin(self.dirname, "01-density"),
+                dirname=Path(self.dirname) / "01-density",
                 ngkpt=self.ngkpt,
                 kshift=self.kshift,
                 **kwargs,
@@ -209,7 +201,7 @@ class GWFlow(Workflow):
 
         # Wavefunction tasks for Epsilon
         self.wfntask_ksh = QeBgwFlow(
-            dirname=pjoin(self.dirname, "02-wfn"),
+            dirname=Path(self.dirname) / "02-wfn",
             ngkpt=self.ngkpt,
             kshift=self.kshift,
             nbnd=self.nbnd,
@@ -218,7 +210,7 @@ class GWFlow(Workflow):
         )
 
         self.wfntask_qsh = QeBgwFlow(
-            dirname=pjoin(self.dirname, "03-wfnq"),
+            dirname=Path(self.dirname) / "03-wfnq",
             ngkpt=self.ngkpt,
             kshift=self.kshift,
             qshift=self.qshift,
@@ -232,7 +224,7 @@ class GWFlow(Workflow):
         # only if not already computed for Epsilon.
         if self.has_kshift:
             self.wfntask_ush = QeBgwFlow(
-                dirname=pjoin(self.dirname, "04-wfn_co"),
+                dirname=Path(self.dirname) / "04-wfn_co",
                 ngkpt=self.ngkpt,
                 nbnd=self.nbnd,
                 rhog_flag=True,
@@ -244,33 +236,30 @@ class GWFlow(Workflow):
         else:
             self.wfntask_ush = self.wfntask_ksh
 
-        fnames = dict(
-            wfn_fname=self.wfntask_ksh.wfn_fname,
-            wfnq_fname=self.wfntask_qsh.wfn_fname,
-            wfn_co_fname=self.wfntask_ush.wfn_fname,
-            rho_fname=self.wfntask_ush.rho_fname,
-            vxc_dat_fname=self.wfntask_ush.vxc_dat_fname,
-        )
-
-        return fnames
+        return {
+            "wfn_fname": self.wfntask_ksh.wfn_fname,
+            "wfnq_fname": self.wfntask_qsh.wfn_fname,
+            "wfn_co_fname": self.wfntask_ush.wfn_fname,
+            "rho_fname": self.wfntask_ush.rho_fname,
+            "vxc_dat_fname": self.wfntask_ush.vxc_dat_fname,
+        }
 
     def make_dft_tasks_abinit(self, **kwargs):
         """
         Initialize all DFT tasks using Abinit.
         Return a dictionary of file names.
         """
-        from ..Abinit import AbinitScfTask, AbinitBgwFlow
+        from BGWpy.Abinit import AbinitBgwFlow, AbinitScfTask
 
         # Either charge density is provided or an SCF task is initialized.
         if "charge_density_fname" in kwargs:
             if "vxc_fname" not in kwargs:
-                raise Exception(
-                    "Error, when providing charge_density_fname, vxc_fname is required"
-                )
+                msg = "Error, when providing charge_density_fname, vxc_fname is required"
+                raise Exception(msg)
 
         else:
             self.scftask = AbinitScfTask(
-                dirname=pjoin(self.dirname, "01-density"),
+                dirname=Path(self.dirname) / "01-density",
                 ngkpt=self.ngkpt,
                 kshift=self.kshift,
                 **kwargs,
@@ -293,62 +282,62 @@ class GWFlow(Workflow):
         if "wfn_fname" in kwargs:
             self.with_wfn = False
             wfn_fname = kwargs["wfn_fname"]
+        elif not self.with_wfn:
+            msg = "When with_wfn=False, wfn_fname must be provided"
+            raise Exception(msg)
 
         if "wfnq_fname" in kwargs:
             wfnq_fname = kwargs["wfnq_fname"]
         elif not self.with_wfn:
-            raise Exception("When providing wfn_fname, wfnq_fname is also required")
+            msg = "When with_wfn=False, wfnq_fname is also required"
+            raise Exception(msg)
 
         if "wfn_co_fname" in kwargs:
             wfn_co_fname = kwargs["wfn_co_fname"]
         elif not self.with_wfn:
-            raise Exception("When providing wfn_fname, wfn_co_fname is also required")
+            msg = "When with_wfn=False, wfn_co_fname is also required"
+            raise Exception(msg)
 
         if "rho_fname" in kwargs:
             rho_fname = kwargs["rho_fname"]
         elif not self.with_wfn:
-            raise Exception("When providing wfn_fname, rho_fname is required")
+            msg = "When with_wfn=False, rho_fname is required"
+            raise Exception(msg)
 
         if "vxc_fname" in kwargs:
             vxc_fname = kwargs["vxc_fname"]
         elif not self.with_wfn:
-            raise Exception("When providing wfn_fname, vxc_fname is required")
+            msg = "When with_wfn=False, vxc_fname is required"
+            raise Exception(msg)
 
         # In case wavefunctions are already provided
         if not self.with_wfn:
-            fnames = dict(
-                wfn_fname=wfn_fname,
-                wfnq_fname=wfnq_fname,
-                wfn_co_fname=wfn_co_fname,
-                rho_fname=rho_fname,
-                vxc_fname=vxc_fname,
-            )
+            return {
+                "wfn_fname": wfn_fname,
+                "wfnq_fname": wfnq_fname,
+                "wfn_co_fname": wfn_co_fname,
+                "rho_fname": rho_fname,
+                "vxc_fname": vxc_fname,
+            }
 
-            return fnames
-
-        # Set number of bands and bands in the buffer,
+        # number of bands and bands in the buffer,
         # specially for cases in which calculation is split into two parts.
         nbnd = self.nbnd
         if self.split_wfn:
             nbnd = kwargs.pop("nband1")
-            # if nbnd > 30:
-            #   nbdbuf = 5
-            # else:
-            #   nbdbuf = 0
 
         # Wavefunction tasks for Epsilon
         self.wfntask_ksh = AbinitBgwFlow(
-            dirname=pjoin(self.dirname, "02-wfn"),
+            dirname=Path(self.dirname) / "02-wfn",
             ngkpt=self.ngkpt,
             kshift=self.kshift,
             nband=nbnd,
-            # nbdbuf = nbdbuf, #lucky number
             rhog_flag=True,
             **kwargs,
         )
 
         self.wfntask_qsh = AbinitBgwFlow(
-            dirname=pjoin(self.dirname, "03-wfnq"),
+            dirname=Path(self.dirname) / "03-wfnq",
             ngkpt=self.ngkpt,
             kshift=self.kshift,
             qshift=self.qshift,
@@ -362,10 +351,9 @@ class GWFlow(Workflow):
         if self.split_wfn:
             nbdbuf = int(self.nbnd * 0.2)  # 20% of bands are in buffer
             self.wfntask_large = AbinitBgwFlow(
-                dirname=pjoin(self.dirname, "02-wfn-large"),
+                dirname=Path(self.dirname) / "02-wfn-large",
                 ngkpt=self.ngkpt,
                 kshift=self.kshift,
-                # qshift = self.qshift,  # GA: I am doubtious about this...
                 nband=self.nbnd,
                 nbdbuf=nbdbuf,
                 tolwfr="1.d-05",
@@ -378,7 +366,7 @@ class GWFlow(Workflow):
         # only if not already computed for Epsilon.
         if self.has_kshift:
             self.wfntask_ush = AbinitBgwFlow(
-                dirname=pjoin(self.dirname, "04-wfn_co"),
+                dirname=Path(self.dirname) / "04-wfn_co",
                 ngkpt=self.ngkpt,
                 nband=self.nbnd,
                 rhog_flag=True,
@@ -393,24 +381,23 @@ class GWFlow(Workflow):
 
         if self.split_wfn:
             if self.has_kshift:
-                raise Exception(
-                    "Cannot use split_wfn with a k-shift at the moment (to be fixed)"
-                )
+                msg = "Cannot use split_wfn with a k-shift at the moment (to be fixed)"
+                raise Exception(msg)
 
-            fnames = dict(
-                wfn_fname=self.wfntask_large.wfn_fname,
-                wfnq_fname=self.wfntask_qsh.wfn_fname,
-                wfn_co_fname=self.wfntask_large.wfn_fname,
-                rho_fname=self.wfntask_large.rho_fname,
-                vxc_fname=self.wfntask_large.vxc_fname,
-            )
+            fnames = {
+                "wfn_fname": self.wfntask_large.wfn_fname,
+                "wfnq_fname": self.wfntask_qsh.wfn_fname,
+                "wfn_co_fname": self.wfntask_large.wfn_fname,
+                "rho_fname": self.wfntask_large.rho_fname,
+                "vxc_fname": self.wfntask_large.vxc_fname,
+            }
         else:
-            fnames = dict(
-                wfn_fname=self.wfntask_ksh.wfn_fname,
-                wfnq_fname=self.wfntask_qsh.wfn_fname,
-                wfn_co_fname=self.wfntask_ush.wfn_fname,
-                rho_fname=self.wfntask_ush.rho_fname,
-                vxc_fname=self.wfntask_ush.vxc_fname,
-            )
+            fnames = {
+                "wfn_fname": self.wfntask_ksh.wfn_fname,
+                "wfnq_fname": self.wfntask_qsh.wfn_fname,
+                "wfn_co_fname": self.wfntask_ush.wfn_fname,
+                "rho_fname": self.wfntask_ush.rho_fname,
+                "vxc_fname": self.wfntask_ush.vxc_fname,
+            }
 
         return fnames

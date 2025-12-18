@@ -1,10 +1,15 @@
 """Abinit to BGW interface."""
 
+from __future__ import annotations
+
 import os
 import subprocess
+from pathlib import Path
+
 from numpy import array
-from ..core import fortran_str
-from ..core import BasicInputFile
+
+from BGWpy.core import BasicInputFile, fortran_str
+
 from .abinittask import AbinitTask
 
 __all__ = ["Abi2BgwInput", "Abi2BgwTask"]
@@ -56,9 +61,7 @@ class Abi2BgwInput(BasicInputFile):
             Write symmetry matrices in file.
         """
 
-        super(Abi2BgwInput, self).__init__(fname=kwargs.get("fname", "abi2bgw.in"))
-
-        # self.fname = kwargs.get('fname', 'abi2bgw.in')
+        super().__init__(fname=kwargs.get("fname", "abi2bgw.in"))
 
         # Flags and options
         self["wfng_flag"] = kwargs.get("wfng_flag", True)
@@ -109,10 +112,10 @@ class Abi2BgwInput(BasicInputFile):
             "vxcg_file",
         ]
 
-        S = ""
+        result_str = ""
         for key in keys:
-            S += "{} {}\n".format(key, fortran_str(self[key]))
-        return S
+            result_str += f"{key} {fortran_str(self[key])}\n"
+        return result_str
 
 
 # =========================================================================== #
@@ -177,7 +180,7 @@ class Abi2BgwTask(AbinitTask):
 
         kwargs.setdefault("runscript_fname", "abi2bgw.run.sh")
 
-        super(Abi2BgwTask, self).__init__(dirname, **kwargs)
+        super().__init__(dirname, **kwargs)
 
         self.input = Abi2BgwInput(**kwargs)
         self.input.fname = self._input_fname
@@ -197,9 +200,7 @@ class Abi2BgwTask(AbinitTask):
         # Run script
         self.runscript["ABI2BGW"] = "abi2bgw.x"
         del self.runscript.main[:]
-        self.runscript.append(
-            "$ABI2BGW {} >& {}".format(self._input_fname, self._output_fname)
-        )
+        self.runscript.append(f"$ABI2BGW {self._input_fname} >& {self._output_fname}")
 
     def write(self):
         subprocess.call(["mkdir", "-p", self.dirname])
@@ -213,33 +214,33 @@ class Abi2BgwTask(AbinitTask):
 
     @property
     def wfn_fname(self):
-        return os.path.join(self.dirname, self._wfn_fname)
+        return str(Path(self.dirname) / self._wfn_fname)
 
     @wfn_fname.setter
     def wfn_fname(self, value):
-        # self._wfn_fname = value
+        self._wfn_fname = os.path.basename(value)
         self.input["wfng_file_abi"] = os.path.relpath(value, self.dirname)
 
     _rho_fname = "rho.cplx"
 
     @property
     def rho_fname(self):
-        return os.path.join(self.dirname, self._rho_fname)
+        return str(Path(self.dirname) / self._rho_fname)
 
     @rho_fname.setter
     def rho_fname(self, value):
-        # self._rho_fname = value
+        self._rho_fname = os.path.basename(value)
         self.input["rhog_file_abi"] = os.path.relpath(value, self.dirname)
 
     _vxc_fname = "vxc.cplx"
 
     @property
     def vxc_fname(self):
-        return os.path.join(self.dirname, self._vxc_fname)
+        return str(Path(self.dirname) / self._vxc_fname)
 
     @vxc_fname.setter
     def vxc_fname(self, value):
-        # self._vxc_fname = value
+        self._vxc_fname = os.path.basename(value)
         self.input["vxcg_file_abi"] = os.path.relpath(value, self.dirname)
 
     _ngkpt = 3 * [1]
@@ -296,4 +297,4 @@ class Abi2BgwTask(AbinitTask):
 
     @property
     def output_fname(self):
-        return os.path.join(self.dirname, self._output_fname)
+        return str(Path(self.dirname) / self._output_fname)

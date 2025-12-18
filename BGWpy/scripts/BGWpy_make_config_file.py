@@ -1,36 +1,39 @@
 #!/usr/bin/env python
+from __future__ import annotations
+
 import configparser
+from pathlib import Path
 
 
 def get_config():
     config = configparser.ConfigParser()
 
-    config["flavors"] = dict(
-        use_hdf5=True,
-        use_hdf5_qe=False,
-        flavor_complex=True,
-        dft_flavor="espresso",
-    )
+    config["flavors"] = {  # type: ignore[assignment]
+        "use_hdf5": True,
+        "use_hdf5_qe": False,
+        "flavor_complex": True,
+        "dft_flavor": "espresso",
+    }
 
-    config["MPI"] = dict(
-        mpirun="mpirun",
-        nproc=1,
-        nproc_flag="-n",
-        nproc_per_node=1,
-        nproc_per_node_flag="--npernode",
-        nodes="",
-        nodes_flag="",
-    )
+    config["MPI"] = {  # type: ignore[assignment]
+        "mpirun": "mpirun",
+        "nproc": 1,
+        "nproc_flag": "-n",
+        "nproc_per_node": 1,
+        "nproc_per_node_flag": "--npernode",
+        "nodes": "",
+        "nodes_flag": "",
+    }
 
-    config["runscript"] = dict(
-        first_line="#!/bin/sh",
-        header="""
+    config["runscript"] = {  # type: ignore[assignment]
+        "first_line": "#!/bin/sh",
+        "header": """
 # Lines before execution
 """,
-        footer="""
+        "footer": """
 # Lines after execution
 """,
-    )
+    }
 
     return config
 
@@ -47,25 +50,22 @@ def get_header():
 
 
 def main():
-    import sys
-    import os
     import argparse
+    import os
+    import sys
 
     parser = argparse.ArgumentParser(description="Process some integers.")
-    parser.add_argument(
-        "-f", dest="force", action="store_true", help="Overwrite existing file"
-    )
+    parser.add_argument("-f", dest="force", action="store_true", help="Overwrite existing file")
     args = parser.parse_args()
 
-    fname = os.path.join(os.environ["HOME"], ".BGWpyrc")
-    if os.path.exists(fname):
-        if not args.force:
-            import warnings
+    fname = Path(os.environ["HOME"]) / ".BGWpyrc"
+    if Path(fname).exists() and not args.force:
+        import warnings
 
-            warnings.warn(
-                "Cannot overwrite existing file ~/.BGWpyrc. Use -f to overwrite"
-            )
-            sys.exit(1)
+        warnings.warn(
+            "Cannot overwrite existing file ~/.BGWpyrc. Use -f to overwrite", stacklevel=2
+        )
+        sys.exit(1)
 
     print("Writing ~/.BGWpyrc")
     with open(fname, "w") as cf:

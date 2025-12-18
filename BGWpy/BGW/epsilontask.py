@@ -1,9 +1,10 @@
-from __future__ import print_function
-import os
+from __future__ import annotations
+
+from pathlib import Path
 
 from .bgwtask import BGWTask
-from .kgrid import KgridTask, get_kpt_grid
 from .inputs import EpsilonInput
+from .kgrid import KgridTask
 
 # Public
 __all__ = ["EpsilonTask"]
@@ -64,14 +65,11 @@ class EpsilonTask(BGWTask):
 
         """
 
-        super(EpsilonTask, self).__init__(dirname, **kwargs)
+        super().__init__(dirname, **kwargs)
 
         # Compute k-points grids
         # TODO maybe make these properties
-        # structure = kwargs['structure']
-        # ngkpt = kwargs['ngkpt']
-        # kpts_ush, wtks_ush = get_kpt_grid(structure, ngkpt)
-        kgrid_kwargs = dict()
+        kgrid_kwargs = {}
         for key in ("structure", "ngkpt", "fft", "use_tr", "clean_after"):
             if key in kwargs:
                 kgrid_kwargs[key] = kwargs[key]
@@ -79,9 +77,9 @@ class EpsilonTask(BGWTask):
 
         symkpt = kwargs.get("symkpt", True)
         if symkpt:
-            kpts_ush, wtks_ush = self.kgridtask.get_kpoints()
+            kpts_ush, _wtks_ush = self.kgridtask.get_kpoints()
         else:
-            kpts_ush, wtks_ush = self.kgridtask.get_kpt_grid_nosym()
+            kpts_ush, _wtks_ush = self.kgridtask.get_kpt_grid_nosym()
 
         extra_lines = kwargs.get("extra_lines", [])
         extra_variables = kwargs.get("extra_variables", {})
@@ -97,13 +95,13 @@ class EpsilonTask(BGWTask):
 
         self.input.fname = self._input_fname
 
-        # Set up the run script
+        # up the run script
         self.wfn_fname = kwargs["wfn_fname"]
         self.wfnq_fname = kwargs["wfnq_fname"]
 
         ex = "epsilon.cplx.x" if self._flavor_complex else "epsilon.real.x"
         self.runscript["EPSILON"] = ex
-        self.runscript.append("$MPIRUN $EPSILON &> {}".format(self._output_fname))
+        self.runscript.append(f"$MPIRUN $EPSILON &> {self._output_fname}")
 
     @property
     def wfn_fname(self):
@@ -124,7 +122,7 @@ class EpsilonTask(BGWTask):
         self.update_link(value, "WFNq")
 
     def write(self):
-        super(EpsilonTask, self).write()
+        super().write()
         with self.exec_from_dirname():
             self.input.write()
 
@@ -132,9 +130,9 @@ class EpsilonTask(BGWTask):
     def eps0mat_fname(self):
         # Eventually, hdf5 will be mandatory.
         basename = "eps0mat.h5" if self._use_hdf5 else "eps0mat"
-        return os.path.join(self.dirname, basename)
+        return str(Path(self.dirname) / basename)
 
     @property
     def epsmat_fname(self):
         basename = "epsmat.h5" if self._use_hdf5 else "epsmat"
-        return os.path.join(self.dirname, basename)
+        return str(Path(self.dirname) / basename)

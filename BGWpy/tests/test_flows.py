@@ -1,11 +1,11 @@
-from __future__ import print_function
-import os
+from __future__ import annotations
+
 from copy import copy
+from pathlib import Path
+
+from BGWpy import BSEFlow, GWFlow
 
 from .test_BGW_tasks import TestBGWTasksMaker
-
-from .. import data
-from .. import Structure, GWFlow, BSEFlow
 
 
 class TestFlows(TestBGWTasksMaker):
@@ -36,11 +36,11 @@ class TestFlows(TestBGWTasksMaker):
 
     def get_gwflow(self):
         kwargs = copy(self.common_kwargs)
-        return GWFlow(dirname=os.path.join(self.tmpdir, "GW"), **kwargs)
+        return GWFlow(dirname=Path(self.tmpdir) / "GW", **kwargs)
 
     def get_bseflow(self):
         kwargs = copy(self.common_kwargs)
-        return BSEFlow(dirname=os.path.join(self.tmpdir, "BSE"), **kwargs)
+        return BSEFlow(dirname=Path(self.tmpdir) / "BSE", **kwargs)
 
     def test_gwflow(self):
         """Test GWFlow."""

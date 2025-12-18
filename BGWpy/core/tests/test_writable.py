@@ -10,7 +10,7 @@ class TestBasicInputFile(unittest.TestCase):
 
     def test_BasicInputFile_str(self):
         """Test the string representation of BasicInputFile."""
-        from .. import BasicInputFile
+        from BGWpy.core import BasicInputFile
 
         bif = BasicInputFile(self.variables, self.keywords)
         S = str(bif)

@@ -1,20 +1,64 @@
-from . import core
-from . import config
-from . import DFT
-from . import BGW
-from . import scripts
+"""BGWpy - A modern Python interface for BerkeleyGW workflows.
 
-# Development functions
-# from . import external
-# from . import extractors
-# from . import Wannier90
+BGWpy provides a high-level Python interface for setting up, managing, and
+executing BerkeleyGW calculations for many-body perturbation theory (GW-BSE).
 
-# "Public" objects
-from .external import Structure
-from .core import Workflow
-from .QE import *
+Examples
+--------
+Create a basic workflow:
+
+>>> from BGWpy import Workflow
+>>> from BGWpy.QE import QeScfTask
+>>> workflow = Workflow(dirname='my_calculation')
+>>> scf_task = QeScfTask(dirname='my_calculation/scf', ...)
+>>> workflow.add_task(scf_task)
+>>> workflow.write()
+
+Quick imports:
+
+>>> from BGWpy import Structure, Workflow, TaskStatus
+>>> from BGWpy.BGW import EpsilonTask, SigmaTask, KernelTask
+>>> from BGWpy.QE import QeScfTask, QeWfnTask
+"""
+
+__version__ = "4.0.0"
+__author__ = "Gabriel Antonius"
+__license__ = "BSD-3-Clause"
+
+# Core modules
+from . import BGW, DFT, config, core, scripts
+
+# Submodule imports
 from .Abinit import *
 from .BGW import *
-from .flows import *
 
-__all__ = ["Structure", "Workflow"] + QE.__all__ + BGW.__all__ + flows.__all__
+# Core classes
+from .core import TaskStatus, Workflow
+
+# External dependencies
+from .external import Structure
+from .flows import *
+from .QE import *
+
+# Public API
+__all__ = [
+    # Version and metadata
+    "__version__",
+    "__author__",
+    "__license__",
+    # Core classes
+    "Structure",
+    "Workflow",
+    "TaskStatus",
+    # Submodules
+    "BGW",
+    "DFT",
+    "config",
+    "core",
+    "scripts",
+    # Re-exported from submodules
+    *QE.__all__,
+    *BGW.__all__,
+    *flows.__all__,
+    *Abinit.__all__,
+]

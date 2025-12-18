@@ -1,0 +1,2 @@
+# PEP 561 marker file for type checking support
+# This file indicates that BGWpy supports type checking with tools like basedpyright/pyright

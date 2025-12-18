@@ -1,18 +1,14 @@
-from __future__ import print_function
-from . import inputs
-
 # Core
-from . import bgwtask
+from . import bgwtask, inputs
+from .absorptiontask import *
+from .epsilontask import *
+from .inteqptask import *
+from .kerneltask import *
 
 # Public
 from .kgrid import *
-from .epsilontask import *
 from .sigmatask import *
-from .kerneltask import *
-from .absorptiontask import *
 from .vmtxeltask import *
-
-from .inteqptask import *
 
 __all__ = (
     epsilontask.__all__

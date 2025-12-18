@@ -1,7 +1,6 @@
-from os.path import join as pjoin
+from __future__ import annotations
 
-from . import AbinitScfTask, AbinitWfnTask, Abi2BgwTask
-from ..DFT import WfnBgwFlow
+from BGWpy.DFT import WfnBgwFlow
 
 __all__ = ["AbinitBgwFlow"]
 
@@ -68,12 +67,11 @@ class AbinitBgwFlow(WfnBgwFlow):
 
         """
 
-        super(AbinitBgwFlow, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
         kwargs.pop("dirname", None)
 
         # if kwargs.get('charge_density_fname'):
-        #    kwargs.setdefault('with_density', False)
 
         ## SCF task
         # if self.with_density:
@@ -88,20 +86,22 @@ class AbinitBgwFlow(WfnBgwFlow):
         #    kwargs.setdefault('vxc_fname',
         #                      self.scftask.vxc_fname)
 
-        #    self.add_task(self.scftask, merge=False)
-
         self.charge_density_fname = kwargs["charge_density_fname"]
 
         vxc_fname = kwargs.pop("vxc_fname", "")
 
         # Wfn task
+        from .wfntask import AbinitWfnTask
+
         self.wfntask = AbinitWfnTask(dirname=self.dirname, **kwargs)
         self.wfntask.runscript.fname = "wfn.run.sh"
         self.add_task(self.wfntask, merge=False)
 
-        wfn_fname = kwargs.pop("wfn_fname", None)
+        kwargs.pop("wfn_fname", None)
 
         # Wfn 2 BGW
+        from .abibgw import Abi2BgwTask
+
         self.wfnbgwntask = Abi2BgwTask(
             dirname=self.wfntask.dirname,
             wfng_flag=kwargs.pop("wfng_flag", True),
@@ -148,4 +148,5 @@ class AbinitBgwFlow(WfnBgwFlow):
 
     @property
     def vxc_dat_fname(self):
-        raise NotImplementedError("Please use vxc_fname instead of vxc_dat_fname.")
+        msg = "Please use vxc_fname instead of vxc_dat_fname."
+        raise NotImplementedError(msg)

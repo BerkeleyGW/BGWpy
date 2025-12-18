@@ -42,9 +42,7 @@ kwargs = dict(
 
 
 # Ground state density calculation (SCF)
-scftask = QeScfTask(
-    dirname=pjoin(workflow.dirname, "density"), kshift=[0.5, 0.5, 0.5], **kwargs
-)
+scftask = QeScfTask(dirname=pjoin(workflow.dirname, "density"), kshift=[0.5, 0.5, 0.5], **kwargs)
 
 
 # Wavefunctions and eigenvalues calculation (NSCF) on a k-shifted grid

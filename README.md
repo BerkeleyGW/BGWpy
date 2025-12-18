@@ -1,11 +1,8 @@
-
 <a href="url"><img src="https://github.com/BerkeleyGW/BGWpy/blob/master/dev/logo/BGWpy.png" height="300" ></a><br clear="all" />
 
 A python module to operate BerkeleyGW
 
-
-Documentation
--------------
+## Documentation
 
 We recommend learning the basic usage from the examples provided
 with the source distribution in ~BGWpy/Examples/. The docstrings
@@ -14,28 +11,23 @@ from a python interpreter with
 
     help(BGWpy.<object>)
 
-
 or from ipython with
 
     In  [1]: BGWpy.<object>?
 
-
-Requirements
-------------
+## Requirements
 
 The following software and modules are required to use BGWpy.
 
-  * python 3 and python 2 compatible
-  * numpy 1.6+      (http://www.scipy.org/)
-  * pymatgen 4.0+   (http://pymatgen.org/)
-  * BerkeleyGW 1.2+ (http://www.berkeleygw.org/)
+- python 3 and python 2 compatible
+- numpy 1.6+ (http://www.scipy.org/)
+- pymatgen 4.0+ (http://pymatgen.org/)
+- BerkeleyGW 1.2+ (http://www.berkeleygw.org/)
 
 Note that the binary executables of BerkeleyGW must be found
 in your PATH environment variable.
 
-
-Installing
-----------
+## Installing
 
 Automatic installation:
 
@@ -51,10 +43,7 @@ to generate a runtime configuration file `~/.BGWpyrc`
 which you can then modify. Most options in this file
 represent default values, and can be overridden when using the module.
 
-
-License
--------
+## License
 
 This software is free to use under the BSD license.
 See license.txt for more information.
-

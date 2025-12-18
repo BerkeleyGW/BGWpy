@@ -1,14 +1,16 @@
-from __future__ import print_function
+from __future__ import annotations
 
 import os
 import warnings
+from pathlib import Path
+
 from numpy import array
 
-from ..core import MPITask, Workflow
-from ..BGW import KgridTask
+from BGWpy.BGW import KgridTask
+from BGWpy.core import MPITask, Workflow
 
 # Public
-__all__ = ["DFTTask", "DFTFlow"]
+__all__ = ["DFTFlow", "DFTTask"]
 
 
 class DFTTask(MPITask):
@@ -26,21 +28,23 @@ class DFTTask(MPITask):
             DFT code used for density and wavefunctions.
         pseudo_dir : str
             Path to the directory containing pseudopotential files.
-        pseudos : list, str
-            List of pseudopotential files.
+        pseudos : list, str of pseudopotential files.
         """
 
         # too restrictive
-        # self.ngkpt  = kwargs.pop('ngkpt', 3*[1])
-        # self.kshift = kwargs.pop('kshift', 3*[.0])
-        # self.qshift = kwargs.pop('qshift', 3*[.0])
 
-        super(DFTTask, self).__init__(dirname, **kwargs)
+        super().__init__(dirname, **kwargs)
 
         self.flavor = kwargs.pop("flavor", "qe")
         self.pseudo_dir = kwargs.get("pseudo_dir", self.dirname)
         self.pseudos = kwargs.get("pseudos", [])
         self.structure = kwargs.get("structure")
+
+        # Initialize property backing attributes
+        # Subclasses may set these via property setters
+        self._ngkpt = None
+        self._kshift = None
+        self._qshift = None
 
         # Patches for newer verisons of qe. Originally bgwpy was written for
         # QE v5 but currently defaults to QE v6.
@@ -53,11 +57,11 @@ class DFTTask(MPITask):
 
     @property
     def is_flavor_QE(self):
-        return any([tag in self.flavor.lower() for tag in ["qe", "espresso"]])
+        return any(tag in self.flavor.lower() for tag in ["qe", "espresso"])
 
     @property
     def is_flavor_abinit(self):
-        return any([tag in self.flavor.lower() for tag in ["abi", "abinit"]])
+        return any(tag in self.flavor.lower() for tag in ["abi", "abinit"])
 
     def get_kpts(self, **kwargs):
         """
@@ -90,6 +94,7 @@ class DFTTask(MPITask):
             else:
                 kpts, wtks = self.kgridtask.get_kpt_grid_nosym()
         else:
+            # If ngkpt not provided, kpts and wtks are required
             kpts, wtks = kwargs["kpts"], kwargs["wtks"]
 
         return kpts, wtks
@@ -97,9 +102,9 @@ class DFTTask(MPITask):
     def check_pseudos(self):
         """Check that pseudopotential files exist."""
         for pseudo in self.pseudos:
-            fname = os.path.relpath(os.path.join(self.dirname, self.pseudo_dir, pseudo))
-            if not os.path.exists(fname):
-                warnings.warn("Pseudopotential not found:\n{}".format(fname))
+            fname = os.path.relpath(Path(self.dirname) / self.pseudo_dir / pseudo)
+            if not Path(fname).exists():
+                warnings.warn(f"Pseudopotential not found:\n{fname}", stacklevel=2)
 
     _pseudo_dir = "./"
 
@@ -147,21 +152,42 @@ class DFTTask(MPITask):
 
 
 class DFTFlow(Workflow, DFTTask):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, dirname=None, **kwargs):
         """
+        Initialize a DFT workflow.
+
+        Parameters
+        ----------
+        dirname : str or Path, optional
+            Directory in which the workflow is executed.
+            If None, will use default from Task base class.
+
         Keyword Arguments
         -----------------
-
         flavor : str ['qe', 'abinit']
             DFT code used for density and wavefunctions.
         pseudo_dir : str
             Path to the directory containing pseudopotential files.
-        pseudos : list, str
-            List of pseudopotential files.
-        """
-        super(DFTFlow, self).__init__(*args, **kwargs)
+        pseudos : list, str of pseudopotential files.
+        structure : pymatgen.Structure
+            Structure object containing unit cell information.
 
-        # self.flavor     = kwargs.pop('flavor',  'qe')
-        self.pseudo_dir = kwargs.get("pseudo_dir", self.dirname)
-        self.pseudos = kwargs.get("pseudos", [])
-        self.structure = kwargs.get("structure")
+        Notes
+        -----
+        This class uses multiple inheritance (Workflow, DFTTask).
+        The dirname parameter can be passed as either a positional or
+        keyword argument. All DFT-specific attributes are initialized
+        via the DFTTask.__init__ in the super() chain.
+        """
+        # Handle dirname to work with both Workflow and DFTTask signatures
+        # Workflow expects (tasks=None, *args, **kwargs)
+        # DFTTask expects (dirname, **kwargs)
+        if dirname is not None:
+            kwargs.setdefault("dirname", dirname)
+
+        # Call super().__init__ which will chain through:
+        # Workflow.__init__ -> DFTTask.__init__ -> MPITask.__init__ -> Task.__init__
+        super().__init__(**kwargs)
+
+        # All instance attributes are already set by DFTTask.__init__
+        # No need to duplicate the initialization here

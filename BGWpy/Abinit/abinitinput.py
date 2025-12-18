@@ -1,12 +1,12 @@
-from __future__ import print_function, division
+from __future__ import annotations
+
 import numpy as np
 
-# import pymatgen
+from BGWpy.core import Writable
 
-from ..core import Writable
 from .abidata import input_variable_blocks
 from .utils import listify
-from .variable import InputVariable, SpecialInputVariable
+from .variable import SpecialInputVariable
 
 __all__ = ["AbinitInput"]
 
@@ -15,18 +15,18 @@ class AbinitInput(Writable):
     """Abinit input file."""
 
     def __init__(self, **kwargs):
-        super(AbinitInput, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
-        self.variables = dict()
-        self.variables_blocks = list()
-        self.decimals = dict()
+        self.variables = {}
+        self.variables_blocks = []
+        self.decimals = {}
 
         for name, register in input_variable_blocks.items():
             self.variables_blocks.append(VariableBlock(name, register))
         self.variables_blocks.append(VariableBlock("Other"))
 
     def __str__(self):
-        lines = list()
+        lines = []
 
         # Clear blocks
         for block in self.variables_blocks:
@@ -59,8 +59,16 @@ class AbinitInput(Writable):
         for block in self.variables_blocks:
             block.clear()
 
+    def __getitem__(self, key: str):
+        """Get a variable value by key."""
+        return self.variables[key]
+
+    def __setitem__(self, key: str, value):
+        """Set a variable value by key."""
+        self.variables[key] = value
+
     def set_variable(self, name, value, decimals=None):  # TODO ndecimal or ndigits
-        """Set a single variable."""
+        """a single variable."""
         self.variables[name] = value
         if value is None:
             del self.variables[name]
@@ -113,7 +121,6 @@ class AbinitInput(Writable):
             >>
             >> f.write('myfile.in')  # The name was not set at initialization.
         """
-        # variables.update(kwargs)
 
         if not dataset:
             dataset = [""]
@@ -148,7 +155,7 @@ class VariableBlock(list):
         del self[:]
 
     def __str__(self):
-        lines = ["#== {} ==#".format(self.title)]
+        lines = [f"#== {self.title} ==#"]
         for variable in sorted(self):
             svar = str(variable)
             if svar:
@@ -167,18 +174,16 @@ def structure_to_abivars(structure):
     bohr_to_ang = constants.physical_constants["Bohr radius"][0] / constants.angstrom
     rprim = structure.lattice.matrix / bohr_to_ang
 
-    xred = list()
-    for site in structure.sites:
-        xred.append(site.frac_coords.round(14).tolist())
+    xred = [site.frac_coords.round(14).tolist() for site in structure.sites]
 
     natom = structure.num_sites
-    ntypat = structure.ntypesp
+    ntypat = structure.n_elems
 
     znucl_atom = structure.atomic_numbers
 
     itypat = 0
-    typat = list()
-    znucl = list()
+    typat = []
+    znucl = []
     for z in znucl_atom:
         if z not in znucl:
             itypat += 1
@@ -188,14 +193,12 @@ def structure_to_abivars(structure):
             i = znucl.index(z)
             typat.append(i + 1)
 
-    d = dict(
-        rprim=rprim.tolist(),
-        acell=np.ones(3, dtype=float).tolist(),
-        natom=natom,
-        ntypat=ntypat,
-        znucl=znucl,
-        typat=typat,
-        xred=xred,
-    )
-
-    return d
+    return {
+        "rprim": rprim.tolist(),
+        "acell": np.ones(3, dtype=float).tolist(),
+        "natom": natom,
+        "ntypat": ntypat,
+        "znucl": znucl,
+        "typat": typat,
+        "xred": xred,
+    }

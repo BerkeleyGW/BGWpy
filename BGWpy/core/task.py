@@ -1,248 +1,353 @@
-from __future__ import print_function
-import sys
+"""Task management for BGWpy workflows.
+
+This module provides the core task abstraction for BGWpy, including base Task
+classes and specialized variants for MPI execution and I/O-based tasks.
+"""
+
+from __future__ import annotations
+
 import os
-import warnings
-import subprocess
 import pickle
-import contextlib
+import sys
+from enum import Enum
+from pathlib import Path
+from typing import Any, TextIO
 
-from ..config import default_mpi
-from .util import exec_from_dir, last_lines_contain
+from BGWpy.config import default_mpi
+
 from .runscript import RunScript
+from .util import ensure_directory, exec_from_dir, last_lines_contain
 
-# Public
-__all__ = ["Task", "MPITask", "IOTask"]
+__all__ = ["IOTask", "MPITask", "Task", "TaskStatus"]
 
 
-class Task(object):
-    """Task executed from a single directory, from a single script."""
+class TaskStatus(Enum):
+    """Enumeration of possible task statuses."""
 
-    _dirname = "."
+    COMPLETED = "Completed"
+    UNSTARTED = "Unstarted"
+    UNFINISHED = "Unfinished"
+    UNKNOWN = "Unknown"
 
-    _TASK_NAME = "Task"
+    @property
+    def color_code(self) -> str:
+        """Get ANSI color code for this status."""
+        colors = {
+            TaskStatus.COMPLETED: "\033[92m",  # Green
+            TaskStatus.UNSTARTED: "\033[94m",  # Blue
+            TaskStatus.UNFINISHED: "\033[91m",  # Red
+            TaskStatus.UNKNOWN: "\033[95m",  # Magenta
+        }
+        return colors[self]
 
-    _STATUS_COMPLETED = "Completed"
-    _STATUS_UNSTARTED = "Unstarted"
-    _STATUS_UNFINISHED = "Unfinished"
-    _STATUS_UNKNOWN = "Unknown"
+    def __str__(self) -> str:
+        """Return the status value as a string."""
+        return self.value
 
-    _report_colors = {
-        _STATUS_COMPLETED: "\033[92m",
-        _STATUS_UNSTARTED: "\033[94m",
-        _STATUS_UNFINISHED: "\033[91m",
-        _STATUS_UNKNOWN: "\033[95m",
-    }
-    _end_color = "\033[0m"
+
+class Task:
+    """Base class for tasks executed from a single directory.
+
+    A Task represents a computational task that can be written, executed,
+    and monitored. Each task operates within its own directory and uses
+    a shell script for execution.
+
+    Attributes
+    ----------
+    dirname : str
+        Main directory from which the task is executed.
+    runscript : RunScript
+        The execution script for this task.
+    variables : dict[str, Any]
+        Stored initialization variables (if store_variables=True).
+    """
+
+    _TASK_NAME: str = "Task"
 
     def __init__(
         self,
-        dirname="./",
-        runscript_fname="run.sh",
-        store_variables=False,
-        *args,
-        **kwargs,
-    ):
-        """
-        Keyword arguments
-        -----------------
+        dirname: str | Path = "./",
+        runscript_fname: str = "run.sh",
+        store_variables: bool = False,
+        **kwargs: Any,
+    ) -> None:
+        """Initialize a task.
 
-        dirname : str ('./')
+        Parameters
+        ----------
+        dirname : str | Path, default="./"
             Main directory from which the scripts are executed.
-        runscript_fname : str ('run.sh')
+        runscript_fname : str, default="run.sh"
             Name of the main execution script.
-        store_variables : bool (True)
+        store_variables : bool, default=False
             Write all the initialization variables in a pkl file
-            at writing time. Must be set at initialization
-            in order to be effective.
-
+            at writing time.
+        **kwargs
+            Additional keyword arguments to store (if store_variables=True).
         """
-
-        self.dirname = dirname
+        self._dirname = Path(dirname)
         self.runscript = RunScript()
         self.runscript.fname = runscript_fname
-        self.variables = kwargs if store_variables else dict()
-
-        self._TASK_NAME = "{:<10} : {}".format(self._TASK_NAME, self.dirname)
+        self.variables: dict[str, Any] = kwargs if store_variables else {}
 
     @property
-    def dirname(self):
-        return self._dirname
+    def dirname(self) -> str:
+        """Get the task directory."""
+        return str(self._dirname)
 
     @dirname.setter
-    def dirname(self, value):
-        self._dirname = value
-        # TODO: Update the links
+    def dirname(self, value: str | Path) -> None:
+        """Set the task directory."""
+        self._dirname = Path(value)
 
     @property
-    def runscript_fname(self):
-        basename = self.runscript.fname
-        return os.path.join(self.dirname, basename)
+    def runscript_fname(self) -> str:
+        """Get the full path to the runscript."""
+        if self.runscript.fname is None:
+            msg = "runscript.fname is not set"
+            raise ValueError(msg)
+        return str(self._dirname / self.runscript.fname)
 
     @runscript_fname.setter
-    def runscript_fname(self, value):
-        if os.path.basename(value) != value:
-            raise Exception("Cannot use a path for runscript_fname")
+    def runscript_fname(self, value: str) -> None:
+        """Set the runscript filename (basename only)."""
+        if Path(value).parent != Path():
+            msg = f"runscript_fname must be a basename, not a path: {value}"
+            raise ValueError(msg)
         self.runscript.fname = value
 
-    @contextlib.contextmanager
-    def exec_from_dirname(self):
-        """Exec commands from main directory then come back."""
-        original = os.path.realpath(os.curdir)
-        os.chdir(self.dirname)
-        try:
-            yield
-        finally:
-            os.chdir(original)
+    @property
+    def task_name(self) -> str:
+        """Get formatted task name for reporting."""
+        return f"{self._TASK_NAME:<10} : {self.dirname}"
 
     def exec_from_dirname(self):
+        """Get context manager to execute code from task directory.
+
+        Returns
+        -------
+        ContextManager
+            Context manager that changes to task directory.
+
+        Examples
+        --------
+        >>> with task.exec_from_dirname():
+        ...     # Code here runs in task.dirname
+        ...     pass
+        """
         return exec_from_dir(self.dirname)
 
-    def run(self):
+    def run(self) -> None:
+        """Execute the task's runscript."""
         with self.exec_from_dirname():
             self.runscript.run()
 
-    def write(self):
-        subprocess.call(["mkdir", "-p", self.dirname])
+    def write(self) -> None:
+        """Write the task to disk.
+
+        Creates the task directory, writes the runscript, and saves
+        variables if store_variables was enabled.
+        """
+        ensure_directory(self.dirname)
+
         with self.exec_from_dirname():
             self.runscript.write()
 
             if self.variables:
-                with open("variables.pkl", "w") as f:
+                with open("variables.pkl", "wb") as f:
                     pickle.dump(self.variables, f)
 
-    def update_link(self, target, dest):
-        """
-        Modify or add a symbolic link.
-        If dest is already defined in a link, then the target is replaced.
+    def update_link(self, target: str | Path | None, dest: str | Path) -> None:
+        """Modify or add a symbolic link.
+
+        Parameters
+        ----------
+        target : str | Path | None
+            Target path for the link. If None or empty, the link is removed.
+        dest : str | Path
+            Destination path (relative to task dirname).
+
+        Notes
+        -----
+        If dest is already defined in a link, the target is replaced.
         The target will be expressed relative to the dirname.
-        The destination *must* be relative to the dirname.
-        If target is empty or None, the link is suppressed.
         """
+        dest_str = str(dest)
+
         if not target:
-            self.remove_link(dest)
+            self.remove_link(dest_str)
             return
 
-        reltarget = os.path.relpath(
-            target, os.path.join(self.dirname, os.path.dirname(dest))
-        )
+        # Compute relative path from dest's directory to target
+        dest_parent = self.dirname / Path(dest_str).parent
+        target_path = Path(target).resolve()
+        # Use os.path.relpath to handle paths outside dest_parent
+        reltarget = Path(os.path.relpath(target_path, dest_parent.resolve()))
 
+        # Update existing link or add new one
         for link in self.runscript.links:
-            if link[1] == dest:
-                link[0] = reltarget
-                break
-        else:
-            self.runscript.add_link(reltarget, dest)
+            if link[1] == dest_str:
+                link[0] = str(reltarget)
+                return
 
-    def remove_link(self, dest):
-        """Remove a link from the name of the destination."""
-        for i, link in enumerate(self.runscript.links):
-            if link[1] == dest:
-                del self.runscript.links[i]
-                break
+        self.runscript.add_link(str(reltarget), dest_str)
 
-    def update_copy(self, source, dest):
+    def remove_link(self, dest: str) -> None:
+        """Remove a symbolic link by destination name.
+
+        Parameters
+        ----------
+        dest : str
+            The destination path of the link to remove.
         """
-        Modify or add a file to copy.
-        If dest is already defined in a link, then the source is replaced.
-        The source will be expressed relative to the dirname.
-        The destination *must* be relative to the dirname.
+        self.runscript.links = [link for link in self.runscript.links if link[1] != dest]
+
+    def update_copy(self, source: str | Path, dest: str | Path) -> None:
+        """Modify or add a file to copy.
+
+        Parameters
+        ----------
+        source : str | Path
+            Source file path.
+        dest : str | Path
+            Destination path (relative to task dirname).
+
+        Notes
+        -----
+        The source will be expressed relative to the task dirname.
+        If dest is already defined, the source is replaced.
         """
-        relsource = os.path.relpath(source, os.path.realpath(self.dirname))
+        source_path = Path(source).resolve()
+        dest_str = str(dest)
+        # Use os.path.relpath to handle paths outside dirname
+        relsource = Path(os.path.relpath(source_path, Path(self.dirname).resolve()))
+
+        # Update existing copy or add new one
         for copy in self.runscript.copies:
-            if copy[1] == dest:
-                copy[0] = relsource
-                break
-        else:
-            self.runscript.add_copy(relsource, dest)
+            if copy[1] == dest_str:
+                copy[0] = str(relsource)
+                return
 
-    def get_status(self):
+        self.runscript.add_copy(str(relsource), dest_str)
+
+    def get_status(self, **kwargs: Any) -> TaskStatus:
+        """Get the current status of the task.
+
+        Parameters
+        ----------
+        **kwargs
+            Additional keyword arguments (subclass-specific).
+
+        Returns
+        -------
+        TaskStatus
+            Current status of the task.
         """
-        Return the status of the task. Possible status are:
-        Completed, Unstarted, Unfinished, Unknown.
+        return TaskStatus.UNKNOWN
+
+    def is_complete(self) -> bool:
+        """Check if the task has completed successfully.
+
+        Returns
+        -------
+        bool
+            True if task status is COMPLETED.
         """
-        return self._STATUS_UNKNOWN
+        return self.get_status() == TaskStatus.COMPLETED
 
-    def is_complete(self):
-        """True if the task reports a completed status."""
-        status = self.get_status()
-        return status is self._STATUS_COMPLETED
+    def report(
+        self,
+        file: TextIO | None = None,
+        color: bool = True,
+        **kwargs: Any,
+    ) -> None:
+        """Report the task status.
 
-    def report(self, file=None, color=True, **kwargs):
-        """
-        Report whether the task completed normally.
+        Parameters
+        ----------
+        file : TextIO | None, default=None
+            Output file stream. If None, uses sys.stdout.
+        color : bool, default=True
+            Whether to use ANSI color codes. Ignored if file is not None.
+        **kwargs
+            Additional arguments passed to get_status().
 
-        Keyword arguments
-        -----------------
-        file: (sys.stdout)
-            Write the task status in an open file.
-        check_time: bool (False)
-            Consider a task as unstarted if output is older than input.
-        color: bool (True)
-            Color the output. Use this flag to disable the colors
-            e.g. if you want to pipe the output to a file.
-            No color are used whenever a 'file' argument is given.
+        Examples
+        --------
+        >>> task.report()
+           Task       : ./calculation  -  Status :  Completed
         """
         status = self.get_status(**kwargs)
 
+        # Format status with color if requested
         if file is None and color:
-            col = self._report_colors[status]
-            status = col + str(status) + self._end_color
+            status_str = f"{status.color_code}{status}\033[0m"
+        else:
+            status_str = str(status)
 
-        s = "   {:<50}  -  Status :  {}".format(self._TASK_NAME, status)
+        message = f"   {self.task_name:<50}  -  Status :  {status_str}"
 
-        file = file if file is not None else sys.stdout
-        print(s, file=file)
-
-
-# =========================================================================== #
+        output = file if file is not None else sys.stdout
+        print(message, file=output)
 
 
 class MPITask(Task):
-    """Task whose run script defines MPI variables for the main execution."""
+    """Task with MPI execution support.
 
-    _mpirun = default_mpi["mpirun"]
-    _nproc = default_mpi["nproc"]
-    _nproc_flag = default_mpi["nproc_flag"]
-    _nproc_per_node = default_mpi["nproc_per_node"]
-    _nproc_per_node_flag = default_mpi["nproc_per_node_flag"]
-    _nodes = default_mpi["nodes"]
-    _nodes_flag = default_mpi["nodes_flag"]
+    This class extends Task to support MPI-based parallel execution,
+    managing MPI runner configuration and process distribution.
 
-    def __init__(self, *args, **kwargs):
+    Attributes
+    ----------
+    mpirun : str
+        MPI runner command (e.g., 'mpirun', 'mpiexec').
+    nproc : int
+        Total number of processes.
+    nproc_flag : str
+        Flag to specify number of processes (e.g., '-n', '-np').
+    nproc_per_node : int
+        Number of processes per node.
+    nproc_per_node_flag : str
+        Flag to specify processes per node.
+    nodes : int
+        Number of compute nodes.
+    nodes_flag : str
+        Flag to specify number of nodes.
+    """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        """Initialize an MPI task.
+
+        Parameters
+        ----------
+        *args
+            Positional arguments passed to Task.__init__.
+        **kwargs
+            Keyword arguments. MPI-specific ones are extracted:
+            - mpirun : str
+            - nproc : int
+            - nproc_flag : str
+            - nproc_per_node : int
+            - nproc_per_node_flag : str
+            - nodes : int
+            - nodes_flag : str
+            - mpirun_n : str (deprecated, for backward compatibility)
+
+            Others are passed to Task.__init__.
         """
-        Keyword arguments
-        -----------------
+        super().__init__(*args, **kwargs)
 
-        dirname : str ('./')
-            Main directory from which the scripts are executed.
-        runscript_fname : str ('run.sh')
-            Name of the main execution script.
-        mpirun : str ('mpirun')
-            Command to call the mpi runner.
-        nproc : int (1)
-            Number of processors or number of parallel executions.
-        nproc_flag: str ('-n')
-            Flag to specify nproc to the mpi runner.
-        nproc_per_node : int (nproc)
-            Number of processors (parallel executions) per node.
-        nproc_per_node_flag : str ('--npernode')
-            Flag to specify the number of processors per node.
-        nodes : int (1)
-            Number of nodes.
-        nodes_flag: str ('-n')
-            Flag to specify the number of nodes to the mpi runner.
+        # Initialize MPI settings from defaults
+        self._mpirun: str = default_mpi.get("mpirun", "mpirun")
+        self._nproc: int = default_mpi.get("nproc", 1)
+        self._nproc_flag: str = default_mpi.get("nproc_flag", "-n")
+        self._nproc_per_node: int = default_mpi.get("nproc_per_node", 1)
+        self._nproc_per_node_flag: str = default_mpi.get("nproc_per_node_flag", "--npernode")
+        self._nodes: int = default_mpi.get("nodes", 1)
+        self._nodes_flag: str = default_mpi.get("nodes_flag", "--nodes")
 
-        """
-
-        super(MPITask, self).__init__(*args, **kwargs)
-
-        self.mpirun = default_mpi["mpirun"]
-        self.nproc_flag = default_mpi["nproc_flag"]
-        self.nproc_per_node_flag = default_mpi["nproc_per_node_flag"]
-        self.nproc = default_mpi["nproc"]
-        self.nproc_per_node = default_mpi["nproc_per_node"]
-
-        for key in (
+        # Override with provided values
+        mpi_params = {
             "mpirun",
             "nproc",
             "nproc_flag",
@@ -250,182 +355,278 @@ class MPITask(Task):
             "nproc_per_node_flag",
             "nodes",
             "nodes_flag",
-        ):
-            if key in kwargs:
-                setattr(self, key, kwargs[key])
+        }
 
-        # This is mostly for backward compatibility
+        for key in mpi_params:
+            if key in kwargs:
+                setattr(self, f"_{key}", kwargs[key])
+
+        # Backward compatibility for mpirun_n
         if "mpirun_n" in kwargs:
             self.mpirun_n = kwargs["mpirun_n"]
 
-    def _declare_mpirun(self):
+        # Initialize MPIRUN variable in runscript
+        self._declare_mpirun()
+
+    def _declare_mpirun(self) -> None:
+        """Update the MPIRUN variable in the runscript."""
         self.runscript["MPIRUN"] = self.mpirun_variable
 
     @property
-    def mpirun_variable(self):
-        if not self.mpirun:
+    def mpirun_variable(self) -> str:
+        """Construct the full MPI run command string.
+
+        Returns
+        -------
+        str
+            Complete MPI command with all flags.
+
+        Examples
+        --------
+        >>> task.mpirun_variable
+        'mpirun -n 4 --npernode 2'
+        """
+        if not self._mpirun:
             return ""
 
-        variable = str(self.mpirun)
+        parts = [self._mpirun]
 
-        if self.nproc_flag and self.nproc:
-            variable += " {} {}".format(self.nproc_flag, self.nproc)
+        if self._nproc_flag and self._nproc:
+            parts.extend([self._nproc_flag, str(self._nproc)])
 
-        if self.nproc_per_node_flag and self.nproc_per_node:
-            variable += " {} {}".format(self.nproc_per_node_flag, self.nproc_per_node)
+        if self._nproc_per_node_flag and self._nproc_per_node:
+            parts.extend([self._nproc_per_node_flag, str(self._nproc_per_node)])
 
-        if self.nodes_flag and self.nodes:
-            variable += " {} {}".format(self.nodes_flag, self.nodes)
+        if self._nodes_flag and self._nodes:
+            parts.extend([self._nodes_flag, str(self._nodes)])
 
-        return variable
+        return " ".join(parts)
+
+    # Properties with setters that update the runscript
 
     @property
-    def mpirun(self):
+    def mpirun(self) -> str:
+        """Get MPI runner command."""
         return self._mpirun
 
     @mpirun.setter
-    def mpirun(self, value):
+    def mpirun(self, value: str) -> None:
+        """Set MPI runner command and update runscript."""
         self._mpirun = value
         self._declare_mpirun()
 
     @property
-    def nproc(self):
+    def nproc(self) -> int:
+        """Get number of processes."""
         return self._nproc
 
     @nproc.setter
-    def nproc(self, value):
+    def nproc(self, value: int) -> None:
+        """Set number of processes and update runscript."""
         self._nproc = value
         self._declare_mpirun()
 
     @property
-    def nproc_flag(self):
+    def nproc_flag(self) -> str:
+        """Get process count flag."""
         return self._nproc_flag
 
     @nproc_flag.setter
-    def nproc_flag(self, value):
+    def nproc_flag(self, value: str) -> None:
+        """Set process count flag and update runscript."""
         self._nproc_flag = value
         self._declare_mpirun()
 
     @property
-    def nproc_per_node(self):
+    def nproc_per_node(self) -> int:
+        """Get processes per node."""
         return self._nproc_per_node
 
     @nproc_per_node.setter
-    def nproc_per_node(self, value):
+    def nproc_per_node(self, value: int) -> None:
+        """Set processes per node and update runscript."""
         self._nproc_per_node = value
         self._declare_mpirun()
 
     @property
-    def nproc_per_node_flag(self):
+    def nproc_per_node_flag(self) -> str:
+        """Get processes per node flag."""
         return self._nproc_per_node_flag
 
     @nproc_per_node_flag.setter
-    def nproc_per_node_flag(self, value):
+    def nproc_per_node_flag(self, value: str) -> None:
+        """Set processes per node flag and update runscript."""
         self._nproc_per_node_flag = value
         self._declare_mpirun()
 
     @property
-    def nodes(self):
+    def nodes(self) -> int:
+        """Get number of nodes."""
         return self._nodes
 
     @nodes.setter
-    def nodes(self, value):
+    def nodes(self, value: int) -> None:
+        """Set number of nodes and update runscript."""
         self._nodes = value
         self._declare_mpirun()
 
     @property
-    def nodes_flag(self):
+    def nodes_flag(self) -> str:
+        """Get nodes flag."""
         return self._nodes_flag
 
     @nodes_flag.setter
-    def nodes_flag(self, value):
+    def nodes_flag(self, value: str) -> None:
+        """Set nodes flag and update runscript."""
         self._nodes_flag = value
         self._declare_mpirun()
 
     @property
-    def mpirun_n(self):
-        return self.mpirun + " " + self.nproc_flag
+    def mpirun_n(self) -> str:
+        """Get deprecated mpirun_n format (for backward compatibility)."""
+        return f"{self._mpirun} {self._nproc_flag}"
 
     @mpirun_n.setter
-    def mpirun_n(self, value):
+    def mpirun_n(self, value: str) -> None:
+        """Set mpirun and flag from deprecated mpirun_n format."""
         if not value:
-            self.nproc_flag = ""
-            self.mpirun = ""
+            self._nproc_flag = ""
+            self._mpirun = ""
+            self._declare_mpirun()
+            return
 
         parts = value.split()
 
-        if len(parts) == 0:
-            self.nproc_flag = ""
-            self.mpirun = ""
+        match len(parts):
+            case 0:
+                self._nproc_flag = ""
+                self._mpirun = ""
+            case 1:
+                self._mpirun = parts[0]
+                self._nproc_flag = ""
+            case _:
+                self._mpirun = parts[0]
+                self._nproc_flag = parts[1]
 
-        elif len(parts) == 1:
-            self.nproc_flag = ""
-            self.mpirun = parts[0]
-
-        elif len(parts) == 2:
-            self.nproc_flag = parts[1]
-            self.mpirun = parts[0]
-
-        else:
-            self.nproc_flag = parts[1]
-            self.mpirun = parts[0]
-
-
-# =========================================================================== #
+        self._declare_mpirun()
 
 
 class IOTask(Task):
+    """Task with input/output file management.
+
+    This class extends Task to handle tasks that depend on input files
+    and produce output files, with completion checking based on output
+    file content.
+
+    Attributes
+    ----------
+    _input_fname : str
+        Name of the input file (basename).
+    _output_fname : str
+        Name of the output file (basename).
+    _TAG_JOB_COMPLETED : str
+        String tag indicating job completion in output file.
     """
-    Task that depends on an input and that produces an output,
-    which might be checked for completion.
-    """
 
-    _input_fname = ""
-    _output_fname = ""
-    _TAG_JOB_COMPLETED = "JOB COMPLETED"
+    _input_fname: str = ""
+    _output_fname: str = ""
+    _TAG_JOB_COMPLETED: str = "JOB COMPLETED"
 
-    # It is important that this task has no __init__ function,
-    # because it is mostly used with multiple-inheritance classes.
+    def get_status(self, check_time: bool = False, **kwargs: Any) -> TaskStatus:
+        """Get task status by checking input/output files.
 
-    def get_status(self, check_time=False):
-        if self._input_fname:
-            if not os.path.exists(self.input_fname):
-                return self._STATUS_UNSTARTED
+        Parameters
+        ----------
+        check_time : bool, default=False
+            If True, consider task unstarted if output is older than input.
 
-        if self._output_fname:
-            if not os.path.exists(self.output_fname):
-                return self._STATUS_UNSTARTED
+        Returns
+        -------
+        TaskStatus
+            Current status based on file existence and content.
 
-        if check_time:
-            input_creation_time = os.path.getmtime(self.input_fname)
-            output_creation_time = os.path.getmtime(self.output_fname)
+        Notes
+        -----
+        Status logic:
+        - UNSTARTED: Input or output file missing
+        - UNSTARTED: Output older than input (if check_time=True)
+        - COMPLETED: Completion tag found in output
+        - UNFINISHED: Output exists but no completion tag
+        - UNKNOWN: No completion tag defined
+        """
+        # Check input file exists
+        if self._input_fname and not Path(self.input_fname).exists():
+            return TaskStatus.UNSTARTED
 
-            if input_creation_time > output_creation_time:
-                return self._STATUS_UNSTARTED
+        # Check output file exists
+        if self._output_fname and not Path(self.output_fname).exists():
+            return TaskStatus.UNSTARTED
 
+        # Check file modification times
+        if check_time and self._input_fname and self._output_fname:
+            input_time = Path(self.input_fname).stat().st_mtime
+            output_time = Path(self.output_fname).stat().st_mtime
+
+            if input_time > output_time:
+                return TaskStatus.UNSTARTED
+
+        # Check for completion tag
         if not self._TAG_JOB_COMPLETED:
-            return self._STATUS_UNKNOWN
+            return TaskStatus.UNKNOWN
 
         if last_lines_contain(self.output_fname, self._TAG_JOB_COMPLETED):
-            return self._STATUS_COMPLETED
+            return TaskStatus.COMPLETED
 
-        return self._STATUS_UNFINISHED
+        return TaskStatus.UNFINISHED
 
     @property
-    def input_fname(self):
+    def input_fname(self) -> str:
+        """Get full path to input file.
+
+        Returns
+        -------
+        str
+            Full path to the input file.
+        """
         basename = self._input_fname
-        if "input" in dir(self):
+        if hasattr(self, "input") and hasattr(self.input, "fname"):
             basename = self.input.fname
-        return os.path.join(self.dirname, basename)
+        if not isinstance(basename, (str, Path)):
+            msg = f"basename must be a string or Path, not {type(basename)}"
+            raise TypeError(msg)
+        return str(Path(self.dirname) / basename)
 
     @input_fname.setter
-    def input_fname(self, value):
-        if os.path.basename(value) != value:
-            raise Exception("Cannot use a path for input_fname")
-        self._input_fname = value
-        if "input" in dir(self):
-            self.input.fname = value
+    def input_fname(self, value: str | Path) -> None:
+        """Set input filename (must be basename only).
+
+        Parameters
+        ----------
+        value : str | Path
+            Input filename (basename only, not a full path).
+
+        Raises
+        ------
+        ValueError
+            If value contains path separators.
+        """
+        path = Path(value)
+        if path.parent != Path():
+            msg = f"input_fname must be a basename, not a path: {value}"
+            raise ValueError(msg)
+
+        self._input_fname = str(value)
+
+        if hasattr(self, "input") and hasattr(self.input, "fname"):
+            self.input.fname = str(value)  # type: ignore[misc]
 
     @property
-    def output_fname(self):
-        return os.path.join(self.dirname, self._output_fname)
+    def output_fname(self) -> str:
+        """Get full path to output file.
+
+        Returns
+        -------
+        str
+            Full path to the output file.
+        """
+        return str(Path(self.dirname) / self._output_fname)

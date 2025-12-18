@@ -1,5 +1,7 @@
-import os
+from __future__ import annotations
+
 import pickle
+from pathlib import Path
 
 import numpy as np
 
@@ -45,7 +47,7 @@ def parse_sigma_output(f):
     """
 
     if isinstance(f, str):
-        with open(f, "r") as fi:
+        with open(f) as fi:
             return parse_sigma_output(fi)
 
     # Break the output into large kpoint block.
@@ -54,8 +56,12 @@ def parse_sigma_output(f):
     # Count k-points from number of kpt blocks
     nkpt = len(large_kpt_blocks)
 
+    if nkpt == 0:
+        msg = "No k-point blocks found in sigma output file"
+        raise ValueError(msg)
+
     # Break the blocks into smaller kpt and spin block
-    kpt_spin_blocks = list()
+    kpt_spin_blocks = []
     for block in large_kpt_blocks:
         subblock = break_kpt_spin_blocks(block)
         kpt_spin_blocks.extend(subblock)
@@ -64,7 +70,7 @@ def parse_sigma_output(f):
     nspin = len(subblock)
 
     # Parse each block
-    block_results = list()
+    block_results = []
     for block in kpt_spin_blocks:
         block_result = parse_sigma_output_block(block)
         block_results.append(block_result)
@@ -73,16 +79,15 @@ def parse_sigma_output(f):
     nband = len(block_result["n"])
 
     # Initialize the results dict
-    results = dict(nspin=nspin, nkpt=nkpt, nband=nband)
+    results = {"nspin": nspin, "nkpt": nkpt, "nband": nband}
 
-    #    keys = ['elda','ecor','x','sx-x','ch','sig','vxc','eqp0','eqp1','Znk']
     keys = ["Emf", "Eo", "Vxc", "X", "Cor", "Eqp0", "Eqp1", "Znk"]
 
     for key in keys:
-        results[key] = np.zeros((nspin, nkpt, nband), dtype=np.float)
+        results[key] = np.zeros((nspin, nkpt, nband), dtype=np.float64)
 
-    results["kpt"] = np.zeros((nkpt, 3), dtype=np.float)
-    results["n"] = np.zeros(nband, dtype=np.int)
+    results["kpt"] = np.zeros((nkpt, 3), dtype=np.float64)
+    results["n"] = np.zeros(nband, dtype=np.int64)
 
     # Merge the blocks
     for block_result in block_results:
@@ -90,31 +95,31 @@ def parse_sigma_output(f):
         ikpt = block_result["ik"] - 1
         for key in keys:
             for iband, val in enumerate(block_result[key]):
-                results[key][ispin, ikpt, iband] = val
+                results[key][ispin, ikpt, iband] = val  # type: ignore[index]
 
         results["kpt"][ikpt] = np.array(block_result["k"])
-        results["n"] = np.array(block_result["n"], dtype=np.int)
+        results["n"] = np.array(block_result["n"], dtype=np.int64)
 
     return results
 
 
 def break_output_in_kpt_blocks(f):
     """Break the output into large kpoint block."""
-    blocks = list()
-    S = ""
+    blocks = []
+    result_str = ""
     reading_block = False
     for line in f.readlines():
         if "Dealing with k" in line:
             reading_block = True
-            if S:
-                blocks.append(S)
-            S = ""
+            if result_str:
+                blocks.append(result_str)
+            result_str = ""
 
         if reading_block:
-            S += line
+            result_str += line
 
-    if S:
-        blocks.append(S)
+    if result_str:
+        blocks.append(result_str)
 
     return blocks
 
@@ -122,29 +127,33 @@ def break_output_in_kpt_blocks(f):
 def break_kpt_spin_blocks(S):
     """Break a block into smaller kpt and spin blocks."""
 
-    if not "Symmetrized values from band-averaging" in S:
+    if "Symmetrized values from band-averaging" not in S:
         raise Exception("Could not find symmetrized values in block:\n" + S)
 
     S = S.split("Symmetrized values from band-averaging")[-1]
     S = S.split("======================")[0]
 
-    blocks = list()
+    blocks = []
     iterlines = iter(S.splitlines())
     while True:
         try:
-            line = iterlines.next()
+            line = next(iterlines)
         except StopIteration:
             break
 
         if line.startswith("       k ="):
-            lines = list()
+            lines = []
             lines.append(line)  # kpoint line
-            line = iterlines.next()  # empty line
-            lines.append(line)
-            line = iterlines.next()  # labels line
-            while line.strip():
+            try:
+                line = next(iterlines)  # empty line
                 lines.append(line)
-                line = iterlines.next()
+                line = next(iterlines)  # labels line
+                while line.strip():
+                    lines.append(line)
+                    line = next(iterlines)
+            except StopIteration:
+                # File ended mid-block, skip this incomplete block
+                break
             blocks.append("\n".join(lines))
 
     return blocks
@@ -203,7 +212,7 @@ def parse_sigma_output_block(S):
             quasiparticle renormalization factor
     """
 
-    results = dict()
+    results = {}
 
     results_lines = S.splitlines()
 
@@ -214,18 +223,15 @@ def parse_sigma_output_block(S):
     results["ik"] = int(kpt_line.split()[7])
     results["spin"] = int(kpt_line.split()[10])
 
-    #    keys = ['n','elda','ecor','x','sx-x','ch','sig','vxc','eqp0','eqp1','Znk']
-    #    types = [int] + 10 * [float]
-
     keys = ["n", "Emf", "Eo", "Vxc", "X", "Cor", "Eqp0", "Eqp1", "Znk"]
     types = [int] + 8 * [float]
 
     for key in keys:
-        results[key] = list()
+        results[key] = []
 
     for line in results_lines:
         tokens = line.split()
-        for key, typ, token in zip(keys, types, tokens):
+        for key, typ, token in zip(keys, types, tokens, strict=False):
             results[key].append(typ(token))
 
     return results
@@ -233,16 +239,16 @@ def parse_sigma_output_block(S):
 
 def extract_multiple_GW_results(dirnames):
     """Extract GW results from a list of directories."""
-    data = dict()
-    data["variables"] = list()
-    data["results"] = list()
+    data = {}
+    data["variables"] = []
+    data["results"] = []
     data["ndata"] = len(dirnames)
 
     for dname in dirnames:
-        with open(os.path.join(dname, "variables.pkl"), "r") as f:
+        with open(Path(dname) / "variables.pkl", "rb") as f:
             variables = pickle.load(f)
 
-        with open(os.path.join(dname, "sigma.out"), "r") as f:
+        with open(Path(dname) / "sigma.out") as f:
             out = parse_sigma_output(f)
 
         data["variables"].append(variables)

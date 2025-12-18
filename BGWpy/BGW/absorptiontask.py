@@ -1,7 +1,4 @@
-from __future__ import print_function
-
 from .bgwtask import BGWTask
-from .kgrid import get_kpt_grid
 from .inputs import AbsorptionInput
 
 # Public
@@ -62,7 +59,7 @@ class AbsorptionTask(BGWTask):
 
         """
 
-        super(AbsorptionTask, self).__init__(dirname, **kwargs)
+        super().__init__(dirname, **kwargs)
 
         # Input file
         self.input = AbsorptionInput(
@@ -94,7 +91,7 @@ class AbsorptionTask(BGWTask):
 
         ex = "absorption.cplx.x" if self._flavor_complex else "absorption.real.x"
         self.runscript["ABSORPTION"] = ex
-        self.runscript.append("$MPIRUN $ABSORPTION &> {}".format(self._output_fname))
+        self.runscript.append(f"$MPIRUN $ABSORPTION &> {self._output_fname}")
 
     @property
     def wfn_co_fname(self):
@@ -202,6 +199,6 @@ class AbsorptionTask(BGWTask):
         self.update_link(value, "eqp_co.dat")
 
     def write(self):
-        super(AbsorptionTask, self).write()
+        super().write()
         with self.exec_from_dirname():
             self.input.write()

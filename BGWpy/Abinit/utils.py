@@ -1,7 +1,6 @@
-from __future__ import print_function, division
+from __future__ import annotations
 
 import collections
-
 from copy import deepcopy
 
 
@@ -10,7 +9,7 @@ def is_number(s):
     try:
         float(s)
         return True
-    except:
+    except (ValueError, TypeError):
         return False
 
 
@@ -21,7 +20,7 @@ def is_iter(obj):
 
 def is_scalar(obj):
     """Return True if the argument is not list-like."""
-    return not is_iter
+    return not is_iter(obj)
 
 
 def flatten(iterable):
@@ -46,7 +45,7 @@ def flatten(iterable):
 def listify(obj):
     """Return a flat list out of the argument."""
     if not obj:
-        obj = list()
+        obj = []
     elif is_iter(obj):
         obj = list(flatten(obj))
     else:

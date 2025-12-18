@@ -1,3 +1,3 @@
-from .gw import *
 from .eigenvalues import *
+from .gw import *
 from .inteqp import *

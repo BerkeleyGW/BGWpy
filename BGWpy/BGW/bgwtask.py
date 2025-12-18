@@ -1,6 +1,5 @@
-from __future__ import print_function
-from ..config import flavors
-from ..core import MPITask, IOTask
+from BGWpy.config import flavors
+from BGWpy.core import IOTask, MPITask
 
 # Public
 __all__ = ["BGWTask"]

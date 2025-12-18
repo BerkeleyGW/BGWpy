@@ -1,9 +1,10 @@
-from __future__ import print_function
-import os
+from __future__ import annotations
+
+from pathlib import Path
 
 from .bgwtask import BGWTask
-from .kgrid import KgridTask, get_kpt_grid
 from .inputs import SigmaInput
+from .kgrid import KgridTask
 
 # Public
 __all__ = ["SigmaTask"]
@@ -35,8 +36,7 @@ class SigmaTask(BGWTask):
         ngkpt : list(3), float
             K-points grid. Number of k-points along each primitive vector
             of the reciprocal lattice.
-        kpts : 2D list(nkpt,3), float, optional
-            List of k-points.
+        kpts : 2D list(nkpt,3), float, optional of k-points.
             K-points are either specified using ngkpt or using kpts.
         ibnd_min : int
             Minimum band index for GW corrections.
@@ -44,8 +44,7 @@ class SigmaTask(BGWTask):
             Maximum band index for GW corrections.
         ngqpt : list(3), float, optional
             Q-points grid, for HF or hybrid functionals.
-        qpts : 2D list(nqpt,3), float, optional
-            List of q-points, for HF or hybrid functionals.
+        qpts : 2D list(nqpt,3), float, optional of q-points, for HF or hybrid functionals.
         wfn_co_fname : str
             Path to the wavefunction file produced by pw2bgw.
         rho_fname : str
@@ -76,7 +75,7 @@ class SigmaTask(BGWTask):
 
         """
 
-        super(SigmaTask, self).__init__(dirname, **kwargs)
+        super().__init__(dirname, **kwargs)
 
         extra_lines = kwargs.get("extra_lines", [])
         extra_variables = kwargs.get("extra_variables", {})
@@ -95,10 +94,7 @@ class SigmaTask(BGWTask):
                 break
         else:
             # Compute k-points grids
-            # structure = kwargs['structure']
-            # ngkpt = kwargs['ngkpt']
-            # kpts, wtks = get_kpt_grid(structure, ngkpt)
-            kgrid_kwargs = dict()
+            kgrid_kwargs = {}
             for key in ("structure", "ngkpt", "fft", "use_tr", "clean_after"):
                 if key in kwargs:
                     kgrid_kwargs[key] = kwargs[key]
@@ -106,23 +102,20 @@ class SigmaTask(BGWTask):
 
             symkpt = kwargs.get("symkpt", True)
             if symkpt:
-                kpts, wtks = self.kgridtask.get_kpoints()
+                kpts, _wtks = self.kgridtask.get_kpoints()
             else:
-                kpts, wtks = self.kgridtask.get_kpt_grid_nosym()
+                kpts, _wtks = self.kgridtask.get_kpt_grid_nosym()
 
         # Use specified qpoints or compute them from grid (HF).
         if "qpts" in kwargs:
             qpts = kwargs["qpts"]
         elif "ngqpt" in kwargs:
-            # structure = kwargs['structure']
-            # ngqpt = kwargs['ngqpt']
-            # qpts, wtqs = get_kpt_grid(structure, ngqpt)
-            kgrid_kwargs = dict(ngkpt=kwargs["ngqpt"])
+            kgrid_kwargs = {"ngkpt": kwargs["ngqpt"]}
             for key in ("structure", "fft", "use_tr", "clean_after"):
                 if key in kwargs:
                     kgrid_kwargs[key] = kwargs[key]
             self.kgridtask = KgridTask(dirname=dirname, **kgrid_kwargs)
-            qpts, wtqs = self.kgridtask.get_kpoints()
+            qpts, _wtqs = self.kgridtask.get_kpoints()
 
         else:
             qpts = []
@@ -151,8 +144,7 @@ class SigmaTask(BGWTask):
             self.vxc_fname = kwargs["vxc_fname"]
         else:
             raise Exception(
-                "Either 'vxc_dat_fname' or 'vxc_fname' must be provided "
-                + "to SigmaTask."
+                "Either 'vxc_dat_fname' or 'vxc_fname' must be provided " + "to SigmaTask."
             )
 
         # It might be useful to issue a warning if those
@@ -161,10 +153,10 @@ class SigmaTask(BGWTask):
         self.eps0mat_fname = kwargs.get("eps0mat_fname")
         self.epsmat_fname = kwargs.get("epsmat_fname")
 
-        # Set up the run script
+        # up the run script
         ex = "sigma.cplx.x" if self._flavor_complex else "sigma.real.x"
         self.runscript["SIGMA"] = ex
-        self.runscript.append("$MPIRUN $SIGMA &> {}".format(self._output_fname))
+        self.runscript.append(f"$MPIRUN $SIGMA &> {self._output_fname}")
 
     @property
     def wfn_co_fname(self):
@@ -223,21 +215,21 @@ class SigmaTask(BGWTask):
         self.update_link(value, dest)
 
     def write(self):
-        super(SigmaTask, self).write()
+        super().write()
         with self.exec_from_dirname():
             self.input.write()
 
     @property
     def sigma_fname(self):
         """Path to the sigma_hp.log file produced."""
-        return os.path.join(self.dirname, "sigma_hp.log")
+        return str(Path(self.dirname) / "sigma_hp.log")
 
     @property
     def eqp0_fname(self):
         """Path to the eqp0.dat file produced."""
-        return os.path.join(self.dirname, "eqp0.dat")
+        return str(Path(self.dirname) / "eqp0.dat")
 
     @property
     def eqp1_fname(self):
         """Path to the eqp1.dat file produced."""
-        return os.path.join(self.dirname, "eqp1.dat")
+        return str(Path(self.dirname) / "eqp1.dat")

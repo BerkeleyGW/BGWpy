@@ -1,11 +1,11 @@
-from __future__ import print_function, division
+from __future__ import annotations
 
 import string
 import warnings
-from .utils import flatten, listify, is_number, is_iter
 
 import numpy as np
 
+from .utils import flatten, is_iter, is_number
 
 __all__ = ["InputVariable", "SpecialInputVariable"]
 
@@ -14,7 +14,7 @@ _SPECIAL_DATASET_INDICES = (":", "+", "?")
 _DATASET_INDICES = "".join(list(string.digits) + list(_SPECIAL_DATASET_INDICES))
 
 _INTERNAL_DATASET_INDICES = ("__s", "__i", "__a")
-_SPECIAL_CONVERSION = zip(_INTERNAL_DATASET_INDICES, _SPECIAL_DATASET_INDICES)
+_SPECIAL_CONVERSION = tuple(zip(_INTERNAL_DATASET_INDICES, _SPECIAL_DATASET_INDICES, strict=False))
 
 _UNITS = {
     "bohr": 1.0,
@@ -34,10 +34,10 @@ def convert_number(value):
     The string '1.0d-03' will be treated the same as '1.0e-03'
     """
 
-    if isinstance(value, float) or isinstance(value, int):
+    if isinstance(value, (float, int)):
         return value
 
-    elif isinstance(value, str):
+    if isinstance(value, str):
         if is_number(value):
             try:
                 val = int(value)
@@ -45,19 +45,16 @@ def convert_number(value):
                 val = float(value)
             return val
 
-        else:
-            val = value.replace("d", "e")
-            if is_number(val):
-                val = float(val)
-                return val
-            else:
-                raise ValueError("convert_number failed")
+        # Handle Fortran-style exponential notation
+        val = value.replace("d", "e")
+        if is_number(val):
+            return float(val)
 
-    else:
-        raise ValueError("convert_number failed")
+    msg = f"convert_number failed for value: {value}"
+    raise ValueError(msg)
 
 
-class InputVariable(object):
+class InputVariable:
     """An Abinit input variable."""
 
     def __init__(self, name, value, units="", decimals=0):
@@ -66,20 +63,15 @@ class InputVariable(object):
         self._units = units
         self.decimals = decimals
 
-        if (
-            is_iter(self.value)
-            and isinstance(self.value[-1], str)
-            and self.value[-1] in _UNITS
-        ):
+        if is_iter(self.value) and isinstance(self.value[-1], str) and self.value[-1] in _UNITS:
             self.value = list(self.value)
             self._units = self.value.pop(-1)
 
     def get_value(self):
         """Return the value."""
         if self.units:
-            return list(self.value) + [self.units]
-        else:
-            return self.value
+            return [*list(self.value), self.units]
+        return self.value
 
     @property
     def name(self):
@@ -171,7 +163,7 @@ class InputVariable(object):
 
         try:
             fval = float(val)
-        except:
+        except (ValueError, TypeError):
             return sval
 
         if fval == 0 or (abs(fval) > 1e-3 and abs(fval) < 1e4):
@@ -181,14 +173,22 @@ class InputVariable(object):
             form = "e"
             addlen = 8
 
-        ndec = max(len(str(fval - int(fval))) - 2, floatdecimal)
+        # Calculate number of decimal places more robustly
+        frac_part = abs(fval - int(fval))
+        if frac_part > 0:
+            frac_str = str(frac_part)
+            # Remove "0." prefix if present
+            if "." in frac_str:
+                ndec = max(len(frac_str.split(".")[-1]), floatdecimal)
+            else:
+                ndec = floatdecimal
+        else:
+            ndec = floatdecimal
         ndec = min(ndec, 16)
 
         sval = "{v:>{l}.{p}{f}}".format(v=fval, l=ndec + addlen, p=ndec, f=form)
 
-        sval = sval.replace("e", "d")
-
-        return sval
+        return sval.replace("e", "d")
 
     def format_list2d(self, values, floatdecimal=0):
         """Format a list of lists."""
@@ -203,24 +203,30 @@ class InputVariable(object):
                 for v in lvals:
                     float(v)
                 type_all = float
-            except:
+            except (ValueError, TypeError):
                 type_all = str
 
         # Determine the format
         width = max(len(str(s)) for s in lvals)
-        if type_all == int:
-            formatspec = ">{}d".format(width)
-        elif type_all == str:
-            formatspec = ">{}".format(width)
+        if type_all is int:
+            formatspec = f">{width}d"
+        elif type_all is str:
+            formatspec = f">{width}"
         else:
-            # Number of decimal
-            maxdec = max(len(str(f - int(f))) - 2 for f in lvals)
+            # Number of decimal - calculate more robustly
+            maxdec = 0
+            for f in lvals:
+                frac_part = abs(f - int(f))
+                if frac_part > 0:
+                    frac_str = str(frac_part)
+                    if "." in frac_str:
+                        maxdec = max(maxdec, len(frac_str.split(".")[-1]))
             ndec = min(max(maxdec, floatdecimal), 16)
 
             if all(f == 0 or (abs(f) > 1e-3 and abs(f) < 1e4) for f in lvals):
-                formatspec = ">{w}.{p}f".format(w=ndec + 5, p=ndec)
+                formatspec = f">{ndec + 5}.{ndec}f"
             else:
-                formatspec = ">{w}.{p}e".format(w=ndec + 8, p=ndec)
+                formatspec = f">{ndec + 8}.{ndec}e"
 
         line = "\n"
         for L in values:
@@ -268,46 +274,47 @@ class InputVariable(object):
                         break
 
                     # cases like acell 3*3.52
-                    else:
-                        n = int(part.split("*")[0])
-                        f = convert_number(part.split("*")[1])
-                        if value is None:
-                            value = []
-                        value += n * [f]
-                        continue
+                    n = int(part.split("*")[0])
+                    f = convert_number(part.split("*")[1])
+                    if value is None:
+                        value = []
+                    value += n * [f]
+                    continue
 
                 # Fractions
                 if "/" in part:
                     (num, den) = (float(part.split("/")[i]) for i in range(2))
-                    part = num / den
+                    converted_part = num / den
+                else:
+                    converted_part = part
 
                 # Unit
-                if part in _UNITS.keys():
+                if converted_part in _UNITS:
                     if value is None:
-                        warnings.warn("Could not apply the unit token '%s'." % part)
+                        warnings.warn(f"Could not apply the unit token '{part}'.", stacklevel=2)
                     elif isinstance(value, list):
-                        value.append(part)
+                        value.append(converted_part)
                     else:
-                        value = [value, part]
+                        value = [value, converted_part]
 
                     # Convert
                     if False:
                         if isinstance(value, list):
                             for i in range(len(value)):
-                                value[i] *= _UNITS[part]
+                                value[i] *= _UNITS[converted_part]
                         elif isinstance(value, str):
                             value = None
                             break
                         else:
-                            value *= _UNITS[part]
+                            value *= _UNITS[converted_part]
 
                     continue
 
                 # Convert
                 try:
-                    val = convert_number(part)
-                except:
-                    val = part
+                    val = convert_number(converted_part)
+                except (ValueError, TypeError):
+                    val = converted_part
 
                 if value is None:
                     value = val
@@ -315,7 +322,7 @@ class InputVariable(object):
                     value.append(val)
                 else:
                     value = [value, val]
-        except:
+        except (ValueError, TypeError, AttributeError):
             value = None
 
         if value is None:
@@ -338,7 +345,7 @@ class InputVariable(object):
                 ]
             )
             raise ValueError(msg)
-        elif not parts[0].isalpha():
+        if not parts[0].isalpha():
             msg = "\n".join(
                 [
                     "Unable to initialize variable from string:",
@@ -350,13 +357,9 @@ class InputVariable(object):
 
         # Make the name
         name = parts.pop(0)
-        # name = cls.declared_to_internal(name)
 
         # Make the units
-        if parts[-1] in _UNITS:
-            units = parts.pop(-1)
-        else:
-            units = None
+        units = parts.pop(-1) if parts[-1] in _UNITS else None
 
         value = cls.string_to_value(" ".join(parts))
 
@@ -365,13 +368,10 @@ class InputVariable(object):
     @property
     def sorting_name(self):
         """Name for sorting purposes."""
-        try:
-            letters = string.letters
-        except AttributeError:  # Py3
-            letters = string.ascii_letters
+        letters = string.ascii_letters
 
         dataset = self.dataset
-        for this, that in zip(_DATASET_INDICES, letters):
+        for this, that in zip(_DATASET_INDICES, letters, strict=False):
             dataset = dataset.replace(this, that)
 
         return self.basename + "_" + dataset
@@ -384,6 +384,9 @@ class InputVariable(object):
 
     def __eq__(self, other):
         return self.sorting_name == other.sorting_name
+
+    def __hash__(self):
+        return hash(self.sorting_name)
 
 
 class SpecialInputVariable(InputVariable):

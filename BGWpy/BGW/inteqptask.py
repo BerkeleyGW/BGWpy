@@ -1,5 +1,9 @@
+from __future__ import annotations
+
 from collections import OrderedDict
-from ..core import BasicInputFile
+
+from BGWpy.core import BasicInputFile
+
 from .bgwtask import BGWTask
 
 __all__ = ["IneqpInput", "IneqpTask"]
@@ -18,7 +22,7 @@ class IneqpInput(BasicInputFile):
 
         all_variables.update(variables)
 
-        super(IneqpInput, self).__init__(all_variables, keywords)
+        super().__init__(all_variables, keywords)
 
 
 class IneqpTask(BGWTask):
@@ -27,18 +31,18 @@ class IneqpTask(BGWTask):
     _output_fname = "inteqp.log"
 
     def __init__(self, dirname, **kwargs):
-        super(IneqpTask, self).__init__(dirname, **kwargs)
+        super().__init__(dirname, **kwargs)
 
         self.eqp_co_fname = kwargs["eqp_co_fname"]
         self.wfn_co_fname = kwargs["wfn_co_fname"]
         self.wfn_fi_fname = kwargs["wfn_fi_fname"]
 
         self.input = IneqpInput(
+            *kwargs.get("extra_lines", []),
             number_val_bands_coarse=kwargs.pop("number_val_bands_coarse", 1),
             number_val_bands_fine=kwargs.pop("number_val_bands_fine", 1),
             number_cond_bands_coarse=kwargs.pop("number_cond_bands_coarse", 1),
             number_cond_bands_fine=kwargs.pop("number_cond_bands_fine", 1),
-            *kwargs.get("extra_lines", []),
             **kwargs.get("extra_variables", {}),
         )
 
@@ -46,10 +50,10 @@ class IneqpTask(BGWTask):
 
         ex = "inteqp.cplx.x" if self._flavor_complex else "inteqp.real.x"
         self.runscript["INTEQP"] = ex
-        self.runscript.append("$MPIRUN $INTEQP &> {}".format(self._output_fname))
+        self.runscript.append(f"$MPIRUN $INTEQP &> {self._output_fname}")
 
     def write(self):
-        super(IneqpTask, self).write()
+        super().write()
         with self.exec_from_dirname():
             self.input.write()
 

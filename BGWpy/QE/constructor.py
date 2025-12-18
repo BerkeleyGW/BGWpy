@@ -30,9 +30,7 @@ def get_scf_input(prefix, pseudo_dir, pseudos, structure, ecutwfc, kpts, wtks):
     return inp
 
 
-def get_bands_input(
-    prefix, pseudo_dir, pseudos, structure, ecutwfc, kpts, wtks, nbnd=None
-):
+def get_bands_input(prefix, pseudo_dir, pseudos, structure, ecutwfc, kpts, wtks, nbnd=None):
     """Construct a Quantum Espresso bands input."""
     inp = get_scf_input(prefix, pseudo_dir, pseudos, structure, ecutwfc, kpts, wtks)
     inp.control["calculation"] = "bands"

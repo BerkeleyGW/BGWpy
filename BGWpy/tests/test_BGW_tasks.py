@@ -1,14 +1,11 @@
-from __future__ import print_function
-import os
+from __future__ import annotations
+
 from copy import copy
+from pathlib import Path
 
-from . import TestTask
+from BGWpy import AbsorptionTask, EpsilonTask, KernelTask, SigmaTask
+
 from .test_QE_tasks import TestQETasksMaker
-
-from .. import data
-from .. import Structure, QeScfTask
-from .. import EpsilonTask, SigmaTask
-from .. import KernelTask, AbsorptionTask
 
 # Note: The tests are redundant,
 # because tests cannot be interdependent.
@@ -42,9 +39,7 @@ class TestBGWTasksMaker(TestQETasksMaker):
     def get_wfntask_qsh(self, scftask):
         kwargs = copy(self.common_kwargs)
         kwargs.update(kshift=[0.5, 0.5, 0.5], qshift=[0.001, 0.0, 0.0])
-        return self.get_wfntask(
-            scftask, dirname=os.path.join(self.tmpdir, "Wfnq"), **kwargs
-        )
+        return self.get_wfntask(scftask, dirname=Path(self.tmpdir) / "Wfnq", **kwargs)
 
     def get_pw2bgwtask_qsh(self, wfntask_qsh):
         kwargs = copy(self.common_kwargs)
@@ -54,9 +49,7 @@ class TestBGWTasksMaker(TestQETasksMaker):
     def get_wfntask_ush(self, scftask):
         kwargs = copy(self.common_kwargs)
         kwargs.update(kshift=[0.0, 0.0, 0.0], qshift=[0.0, 0.0, 0.0])
-        return self.get_wfntask(
-            scftask, dirname=os.path.join(self.tmpdir, "wfn_co"), **kwargs
-        )
+        return self.get_wfntask(scftask, dirname=Path(self.tmpdir) / "wfn_co", **kwargs)
 
     def get_pw2bgwtask_ush(self, wfntask_ush):
         kwargs = copy(self.common_kwargs)
@@ -69,9 +62,7 @@ class TestBGWTasksMaker(TestQETasksMaker):
         kwargs = copy(self.common_kwargs)
         kwargs.update(kshift=[0.5, 0.5, 0.5], qshift=[0.0, 0.0, 0.0])
         kwargs.update(symkpt=False)
-        return self.get_wfntask(
-            scftask, dirname=os.path.join(self.tmpdir, "Wfn_fi"), **kwargs
-        )
+        return self.get_wfntask(scftask, dirname=Path(self.tmpdir) / "Wfn_fi", **kwargs)
 
     def get_pw2bgwtask_fi(self, wfntask_fi):
         kwargs = copy(self.common_kwargs)
@@ -83,9 +74,7 @@ class TestBGWTasksMaker(TestQETasksMaker):
         kwargs = copy(self.common_kwargs)
         kwargs.update(kshift=[0.5, 0.5, 0.5], qshift=[0.001, 0.0, 0.0])
         kwargs.update(symkpt=False)
-        return self.get_wfntask(
-            scftask, dirname=os.path.join(self.tmpdir, "Wfnq_fi"), **kwargs
-        )
+        return self.get_wfntask(scftask, dirname=Path(self.tmpdir) / "Wfnq_fi", **kwargs)
 
     def get_pw2bgwtask_fiq(self, wfntask_fiq):
         kwargs = copy(self.common_kwargs)
@@ -97,7 +86,7 @@ class TestBGWTasksMaker(TestQETasksMaker):
         kwargs = copy(self.common_kwargs)
         kwargs.update(qshift=[0.001, 0.0, 0.0])
         return EpsilonTask(
-            dirname=os.path.join(self.tmpdir, "Epsilon"),
+            dirname=Path(self.tmpdir) / "Epsilon",
             wfn_fname=pw2bgwtask_ksh.wfn_fname,
             wfnq_fname=pw2bgwtask_qsh.wfn_fname,
             **kwargs,
@@ -107,7 +96,7 @@ class TestBGWTasksMaker(TestQETasksMaker):
         kwargs = copy(self.common_kwargs)
         kwargs.update(extra_lines=["screening_semiconductor"])
         return SigmaTask(
-            dirname=os.path.join(self.tmpdir, "Sigma"),
+            dirname=Path(self.tmpdir) / "Sigma",
             wfn_co_fname=pw2bgwtask_ush.wfn_fname,
             rho_fname=pw2bgwtask_ush.rho_fname,
             vxc_dat_fname=pw2bgwtask_ush.vxc_dat_fname,
@@ -118,12 +107,10 @@ class TestBGWTasksMaker(TestQETasksMaker):
 
     def get_kerneltask(self, pw2bgwtask_ush, epsilontask):
         kwargs = copy(self.common_kwargs)
-        kwargs.update(
-            extra_lines=["screening_semiconductor", "use_symmetries_coarse_grid"]
-        )
+        kwargs.update(extra_lines=["screening_semiconductor", "use_symmetries_coarse_grid"])
 
         return KernelTask(
-            dirname=os.path.join(self.tmpdir, "Kernel"),
+            dirname=Path(self.tmpdir) / "Kernel",
             wfn_co_fname=pw2bgwtask_ush.wfn_fname,
             eps0mat_fname=epsilontask.eps0mat_fname,
             epsmat_fname=epsilontask.epsmat_fname,
@@ -162,7 +149,7 @@ class TestBGWTasksMaker(TestQETasksMaker):
             kwargs["bsexmat_fname"] = kerneltask.bsexmat_fname
 
         return AbsorptionTask(
-            dirname=os.path.join(self.tmpdir, "Absorption"),
+            dirname=Path(self.tmpdir) / "Absorption",
             wfn_co_fname=pw2bgwtask_ush.wfn_fname,
             eps0mat_fname=epsilontask.eps0mat_fname,
             epsmat_fname=epsilontask.epsmat_fname,

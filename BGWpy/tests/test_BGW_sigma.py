@@ -1,13 +1,11 @@
-from __future__ import print_function
-import os
+from __future__ import annotations
+
 from copy import copy
+from pathlib import Path
 
-from . import TestTask
+from BGWpy import SigmaTask
+
 from .test_BGW_tasks import TestBGWTasksMaker
-
-from .. import data
-from .. import Structure, QeScfTask
-from .. import EpsilonTask, SigmaTask
 
 
 class TestSigmaTasksMaker(TestBGWTasksMaker):
@@ -25,7 +23,7 @@ class TestSigmaTasksMaker(TestBGWTasksMaker):
         kwargs.update(extra_variables={"frequency_dependence": -1})
         kwargs.update(ngqpt=kwargs["ngkpt"])
         return SigmaTask(
-            dirname=os.path.join(self.tmpdir, "Sigma"),
+            dirname=Path(self.tmpdir) / "Sigma",
             wfn_co_fname=pw2bgwtask_ush.wfn_fname,
             rho_fname=pw2bgwtask_ush.rho_fname,
             vxc_dat_fname=pw2bgwtask_ush.vxc_dat_fname,
