@@ -88,3 +88,35 @@ class TestQETasks(TestQETasksMaker):
             task.run()
             task.report()
             self.assertCompleted(task)
+
+    def test_diagonalization_cg(self):
+        """Test that diago_david_ndim is removed when diagonalization is changed to 'cg'."""
+        task = self.get_scftask(
+            variables={
+                "electrons": {
+                    "diagonalization": "cg",
+                }
+            }
+        )
+        # Check that diagonalization was set to 'cg'
+        assert task.input.electrons["diagonalization"] == "cg"
+        # Check that diago_david_ndim was removed
+        assert "diago_david_ndim" not in task.input.electrons
+        # Check that other parameters are still present
+        assert task.input.electrons["diago_full_acc"] is True
+        assert task.input.electrons["conv_thr"] == 1.0e-10
+
+    def test_diagonalization_david(self):
+        """Test that diago_david_ndim is kept when diagonalization is 'david'."""
+        task = self.get_scftask(
+            variables={
+                "electrons": {
+                    "diagonalization": "david",
+                    "diago_david_ndim": 8,
+                }
+            }
+        )
+        # Check that diagonalization is 'david'
+        assert task.input.electrons["diagonalization"] == "david"
+        # Check that diago_david_ndim is present and was updated
+        assert task.input.electrons["diago_david_ndim"] == 8
