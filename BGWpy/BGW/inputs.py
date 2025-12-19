@@ -1,14 +1,30 @@
 from __future__ import annotations
 
 from collections import OrderedDict
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 
 from BGWpy.core import BasicInputFile
 
+if TYPE_CHECKING:
+    from collections.abc import Sequence
+
+    from numpy.typing import ArrayLike, NDArray
+
 
 class EpsilonInput(BasicInputFile):
-    def __init__(self, ecuteps, q0, qpts, *keywords, **variables):
+    q0: NDArray[np.floating[Any]]
+    qpts: list[NDArray[np.floating[Any]]]
+
+    def __init__(
+        self,
+        ecuteps: float,
+        q0: ArrayLike,
+        qpts: Sequence[ArrayLike],
+        *keywords: str,
+        **variables: Any,
+    ) -> None:
         all_variables = OrderedDict(
             [
                 ("epsilon_cutoff", ecuteps),
@@ -19,10 +35,10 @@ class EpsilonInput(BasicInputFile):
 
         super().__init__(all_variables, keywords)
 
-        self.q0 = q0
-        self.qpts = qpts
+        self.q0 = np.asarray(q0)
+        self.qpts = [np.asarray(q) for q in qpts]
 
-    def __str__(self):
+    def __str__(self) -> str:
         qpt_block = "\nbegin qpoints\n"
         for q0i in self.q0:
             qpt_block += f" {q0i:11.8f}"
@@ -38,7 +54,18 @@ class EpsilonInput(BasicInputFile):
 
 
 class SigmaInput(BasicInputFile):
-    def __init__(self, ibnd_min, ibnd_max, kpts, *keywords, **variables):
+    kpts: list[NDArray[np.floating[Any]]]
+    qpts: list[NDArray[np.floating[Any]]]
+    ngqpt: Sequence[int]
+
+    def __init__(
+        self,
+        ibnd_min: int,
+        ibnd_max: int,
+        kpts: Sequence[ArrayLike],
+        *keywords: str,
+        **variables: Any,
+    ) -> None:
         all_variables = OrderedDict(
             [
                 ("band_index_min", ibnd_min),
@@ -64,9 +91,9 @@ class SigmaInput(BasicInputFile):
 
         super().__init__(all_variables, keywords)
 
-        self.kpts = kpts
+        self.kpts = [np.asarray(k) for k in kpts]
 
-    def __str__(self):
+    def __str__(self) -> str:
         S = super().__str__()
 
         kpt_block = "\nbegin kpoints\n"
@@ -97,7 +124,13 @@ class SigmaInput(BasicInputFile):
 
 
 class KernelInput(BasicInputFile):
-    def __init__(self, nbnd_val, nbnd_cond, *keywords, **variables):
+    def __init__(
+        self,
+        nbnd_val: int,
+        nbnd_cond: int,
+        *keywords: str,
+        **variables: Any,
+    ) -> None:
         all_variables = OrderedDict(
             [
                 ("number_val_bands", nbnd_val),
@@ -113,13 +146,13 @@ class KernelInput(BasicInputFile):
 class AbsorptionInput(BasicInputFile):
     def __init__(
         self,
-        nbnd_val_co,
-        nbnd_cond_co,
-        nbnd_val_fi,
-        nbnd_cond_fi,
-        *keywords,
-        **variables,
-    ):
+        nbnd_val_co: int,
+        nbnd_cond_co: int,
+        nbnd_val_fi: int,
+        nbnd_cond_fi: int,
+        *keywords: str,
+        **variables: Any,
+    ) -> None:
         all_variables = OrderedDict(
             [
                 ("number_val_bands_coarse", nbnd_val_co),

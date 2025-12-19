@@ -24,7 +24,8 @@ class Workflow(Task):
 
     Attributes
     ----------
-    tasks : list[Task] of tasks in this workflow.
+    tasks : list[Task]
+        List of tasks in this workflow.
 
     Examples
     --------

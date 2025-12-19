@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import warnings
 from pathlib import Path
+from typing import Any
 
 from BGWpy.BGW import AbsorptionTask, EpsilonTask, KernelTask, SigmaTask
 from BGWpy.config import check_dft_flavor, flavors, is_dft_flavor_abinit, is_dft_flavor_espresso
@@ -23,7 +24,7 @@ class BSEFlow(Workflow):
 
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """
         Keyword arguments
         -----------------
@@ -148,7 +149,7 @@ class BSEFlow(Workflow):
 
         # Dielectric matrix computation and inversion (epsilon)
         self.epsilontask = EpsilonTask(
-            dirname=Path(self.dirname) / "11-epsilon",
+            dirname=str(Path(self.dirname) / "11-epsilon"),
             ngkpt=self.ngkpt,
             qshift=self.qshift,
             extra_lines=kwargs.pop("epsilon_extra_lines", []),
@@ -158,7 +159,7 @@ class BSEFlow(Workflow):
 
         # Self-energy calculation (sigma)
         self.sigmatask = SigmaTask(
-            dirname=Path(self.dirname) / "12-sigma",
+            dirname=str(Path(self.dirname) / "12-sigma"),
             ngkpt=self.ngkpt,
             extra_lines=kwargs.pop("sigma_extra_lines", []),
             extra_variables=kwargs.pop("sigma_extra_variables", {}),
@@ -169,7 +170,7 @@ class BSEFlow(Workflow):
 
         # Kernel calculation (BSE)
         self.kerneltask = KernelTask(
-            dirname=Path(self.dirname) / "13-kernel",
+            dirname=str(Path(self.dirname) / "13-kernel"),
             extra_lines=kwargs.pop("kernel_extra_lines", []),
             extra_variables=kwargs.pop("kernel_extra_variables", {}),
             eps0mat_fname=self.epsilontask.eps0mat_fname,
@@ -185,7 +186,7 @@ class BSEFlow(Workflow):
             kwargs["bsexmat_fname"] = self.kerneltask.bsexmat_fname
 
         self.absorptiontask = AbsorptionTask(
-            dirname=Path(self.dirname) / "14-absorption",
+            dirname=str(Path(self.dirname) / "14-absorption"),
             extra_lines=kwargs.get("absorption_extra_lines", []),
             extra_variables=kwargs.get("absorption_extra_variables", {}),
             eps0mat_fname=self.epsilontask.eps0mat_fname,
@@ -194,7 +195,9 @@ class BSEFlow(Workflow):
             **kwargs,
         )
 
-        self.truncation_flag = kwargs.get("truncation_flag")
+        truncation_flag_value = kwargs.get("truncation_flag")
+        if truncation_flag_value is not None:
+            self.truncation_flag = truncation_flag_value
 
         # Add all tasks
         self.add_tasks(
@@ -203,17 +206,17 @@ class BSEFlow(Workflow):
         )
 
     @property
-    def has_kshift(self):
+    def has_kshift(self) -> bool:
         return any(i != 0 for i in self.kshift)
 
     _truncation_flag = ""
 
     @property
-    def truncation_flag(self):
+    def truncation_flag(self) -> str:
         return self._truncation_flag
 
     @truncation_flag.setter
-    def truncation_flag(self, value):
+    def truncation_flag(self, value: str) -> None:
         for task in (
             self.epsilontask,
             self.sigmatask,
@@ -231,7 +234,7 @@ class BSEFlow(Workflow):
 
         self._truncation_flag = value
 
-    def make_dft_tasks_espresso(self, **kwargs):
+    def make_dft_tasks_espresso(self, **kwargs: Any) -> dict[str, str]:
         """
         Initialize all DFT tasks using Quantum Espresso.
         Return a dictionary of file names.
@@ -245,7 +248,7 @@ class BSEFlow(Workflow):
 
         else:
             self.scftask = QeScfTask(
-                dirname=Path(self.dirname) / "01-density",
+                dirname=str(Path(self.dirname) / "01-density"),
                 ngkpt=self.ngkpt,
                 kshift=self.kshift,
                 **kwargs,
@@ -261,7 +264,7 @@ class BSEFlow(Workflow):
 
         # Wavefunction tasks for Epsilon
         self.wfntask_ksh = QeBgwFlow(
-            dirname=Path(self.dirname) / "02-wfn",
+            dirname=str(Path(self.dirname) / "02-wfn"),
             ngkpt=self.ngkpt,
             kshift=self.kshift,
             nbnd=self.nbnd,
@@ -271,7 +274,7 @@ class BSEFlow(Workflow):
         )
 
         self.wfntask_qsh = QeBgwFlow(
-            dirname=Path(self.dirname) / "03-wfnq",
+            dirname=str(Path(self.dirname) / "03-wfnq"),
             ngkpt=self.ngkpt,
             kshift=self.kshift,
             qshift=self.qshift,
@@ -286,7 +289,7 @@ class BSEFlow(Workflow):
         # only if not already computed for Epsilon.
         if self.has_kshift:
             self.wfntask_ush = QeBgwFlow(
-                dirname=Path(self.dirname) / "04-wfn_co",
+                dirname=str(Path(self.dirname) / "04-wfn_co"),
                 ngkpt=self.ngkpt,
                 nbnd=self.nbnd,
                 rhog_flag=True,
@@ -301,7 +304,7 @@ class BSEFlow(Workflow):
 
         # Wavefunctions on fine k-point grids
         self.wfntask_fi_ush = QeBgwFlow(
-            dirname=Path(self.dirname) / "05-wfn_fi",
+            dirname=str(Path(self.dirname) / "05-wfn_fi"),
             nbnd=self.nbnd_fine,
             ngkpt=self.ngkpt_fi,
             kshift=self.kshift_fi,
@@ -311,7 +314,7 @@ class BSEFlow(Workflow):
         )
 
         self.wfntask_fi_qsh = QeBgwFlow(
-            dirname=Path(self.dirname) / "06-wfnq_fi",
+            dirname=str(Path(self.dirname) / "06-wfnq_fi"),
             ngkpt=self.ngkpt_fi,
             kshift=self.kshift_fi,
             qshift=self.qshift_fi,
@@ -331,7 +334,7 @@ class BSEFlow(Workflow):
             "wfnq_fi_fname": self.wfntask_fi_qsh.wfn_fname,
         }
 
-    def make_dft_tasks_abinit(self, **kwargs):
+    def make_dft_tasks_abinit(self, **kwargs: Any) -> dict[str, str]:
         """
         Initialize all DFT tasks using Abinit.
         Return a dictionary of file names.
@@ -346,7 +349,7 @@ class BSEFlow(Workflow):
 
         else:
             self.scftask = AbinitScfTask(
-                dirname=Path(self.dirname) / "01-density",
+                dirname=str(Path(self.dirname) / "01-density"),
                 ngkpt=self.ngkpt,
                 kshift=self.kshift,
                 **kwargs,
@@ -361,7 +364,7 @@ class BSEFlow(Workflow):
 
         # Wavefunction tasks for Epsilon
         self.wfntask_ksh = AbinitBgwFlow(
-            dirname=Path(self.dirname) / "02-wfn",
+            dirname=str(Path(self.dirname) / "02-wfn"),
             ngkpt=self.ngkpt,
             kshift=self.kshift,
             nband=self.nbnd,
@@ -370,7 +373,7 @@ class BSEFlow(Workflow):
         )
 
         self.wfntask_qsh = AbinitBgwFlow(
-            dirname=Path(self.dirname) / "03-wfnq",
+            dirname=str(Path(self.dirname) / "03-wfnq"),
             ngkpt=self.ngkpt,
             kshift=self.kshift,
             qshift=self.qshift,
@@ -384,7 +387,7 @@ class BSEFlow(Workflow):
         # only if not already computed for Epsilon.
         if self.has_kshift:
             self.wfntask_ush = AbinitBgwFlow(
-                dirname=Path(self.dirname) / "04-wfn_co",
+                dirname=str(Path(self.dirname) / "04-wfn_co"),
                 ngkpt=self.ngkpt,
                 nband=self.nbnd,
                 rhog_flag=True,
@@ -399,7 +402,7 @@ class BSEFlow(Workflow):
 
         # Wavefunctions on fine k-point grids
         self.wfntask_fi_ush = AbinitBgwFlow(
-            dirname=Path(self.dirname) / "05-wfn_fi",
+            dirname=str(Path(self.dirname) / "05-wfn_fi"),
             nband=self.nbnd_fine,
             ngkpt=self.ngkpt_fi,
             kshift=self.kshift_fi,
@@ -409,7 +412,7 @@ class BSEFlow(Workflow):
         )
 
         self.wfntask_fi_qsh = AbinitBgwFlow(
-            dirname=Path(self.dirname) / "06-wfnq_fi",
+            dirname=str(Path(self.dirname) / "06-wfnq_fi"),
             nband=None,
             ngkpt=self.ngkpt_fi,
             kshift=self.kshift_fi,

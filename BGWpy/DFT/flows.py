@@ -1,6 +1,12 @@
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
+from typing import TYPE_CHECKING
 
 from .dfttask import DFTFlow
+
+if TYPE_CHECKING:
+    from typing import Any
 
 __all__ = ["WfnBgwFlow"]
 
@@ -23,12 +29,12 @@ class WfnBgwFlow(DFTFlow, ABC):
     Subclasses must implement all abstract methods and properties to be instantiable.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
 
     @property
     @abstractmethod
-    def rho_fname(self):
+    def rho_fname(self) -> str:
         """str: The charge density file name for BerkeleyGW.
 
         Must be implemented by subclasses to return the appropriate
@@ -38,7 +44,7 @@ class WfnBgwFlow(DFTFlow, ABC):
 
     @property
     @abstractmethod
-    def wfn_fname(self):
+    def wfn_fname(self) -> str:
         """str: The wavefunctions file name for BerkeleyGW.
 
         Must be implemented by subclasses to return the appropriate
@@ -48,7 +54,7 @@ class WfnBgwFlow(DFTFlow, ABC):
 
     @property
     @abstractmethod
-    def vxc_fname(self):
+    def vxc_fname(self) -> str:
         """str: The exchange-correlation potential file name for BerkeleyGW.
 
         Must be implemented by subclasses to return the appropriate
@@ -59,7 +65,7 @@ class WfnBgwFlow(DFTFlow, ABC):
 
     @property
     @abstractmethod
-    def vxc_dat_fname(self):
+    def vxc_dat_fname(self) -> str:
         """str: The exchange-correlation potential data file name for BerkeleyGW.
 
         Must be implemented by subclasses to return the appropriate

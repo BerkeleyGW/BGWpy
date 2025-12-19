@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Any
 
 from .constructor import get_scf_input
 from .qetask import QeTask
@@ -17,7 +18,7 @@ class QeScfTask(QeTask):
     _input_fname = "scf.in"
     _output_fname = "scf.out"
 
-    def __init__(self, dirname, **kwargs):
+    def __init__(self, dirname: str, **kwargs: Any) -> None:
         """
         Arguments
         ---------
@@ -77,6 +78,7 @@ class QeScfTask(QeTask):
         kpts, wtks = self.get_kpts(**kwargs)
 
         # Input file
+        assert self.structure is not None, "structure must be provided"
         self.input = get_scf_input(
             self.prefix,
             self.pseudo_dir,
@@ -98,16 +100,16 @@ class QeScfTask(QeTask):
         )
 
     @property
-    def charge_density_fname(self):
+    def charge_density_fname(self) -> str:
         name = "charge-density.hdf5" if self._use_hdf5_qe else "charge-density.dat"
         return str(Path(self.dirname) / self.savedir / name)
 
     @property
-    def spin_polarization_fname(self):
+    def spin_polarization_fname(self) -> str:
         return str(Path(self.dirname) / self.savedir / "spin-polarization.dat")
 
     @property
-    def data_file_fname(self):
+    def data_file_fname(self) -> str:
         # It seems newer versions of QE have switched from data-file.xml to
         # data-file-schema.xml
         if self.version >= 6:

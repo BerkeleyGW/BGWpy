@@ -1,16 +1,20 @@
 from __future__ import annotations
 
 from collections import OrderedDict
+from typing import TYPE_CHECKING
 
 from BGWpy.core import BasicInputFile
 
 from .bgwtask import BGWTask
 
+if TYPE_CHECKING:
+    from typing import Any
+
 __all__ = ["IneqpInput", "IneqpTask"]
 
 
 class IneqpInput(BasicInputFile):
-    def __init__(self, *keywords, **variables):
+    def __init__(self, *keywords: str, **variables: Any) -> None:
         all_variables = OrderedDict(
             [
                 ("number_val_bands_coarse", 1),
@@ -30,7 +34,7 @@ class IneqpTask(BGWTask):
     _input_fname = "inteqp.inp"
     _output_fname = "inteqp.log"
 
-    def __init__(self, dirname, **kwargs):
+    def __init__(self, dirname: str, **kwargs: Any) -> None:
         super().__init__(dirname, **kwargs)
 
         self.eqp_co_fname = kwargs["eqp_co_fname"]
@@ -52,34 +56,34 @@ class IneqpTask(BGWTask):
         self.runscript["INTEQP"] = ex
         self.runscript.append(f"$MPIRUN $INTEQP &> {self._output_fname}")
 
-    def write(self):
+    def write(self) -> None:
         super().write()
         with self.exec_from_dirname():
             self.input.write()
 
     @property
-    def eqp_co_fname(self):
+    def eqp_co_fname(self) -> str:
         return self._eqp_co_fname
 
     @eqp_co_fname.setter
-    def eqp_co_fname(self, value):
+    def eqp_co_fname(self, value: str) -> None:
         self._eqp_co_fname = value
         self.update_link(value, "eqp_co.dat")
 
     @property
-    def wfn_co_fname(self):
+    def wfn_co_fname(self) -> str:
         return self._wfn_co_fname
 
     @wfn_co_fname.setter
-    def wfn_co_fname(self, value):
+    def wfn_co_fname(self, value: str) -> None:
         self._wfn_co_fname = value
         self.update_link(value, "WFN_co")
 
     @property
-    def wfn_fi_fname(self):
+    def wfn_fi_fname(self) -> str:
         return self._wfn_fi_fname
 
     @wfn_fi_fname.setter
-    def wfn_fi_fname(self, value):
+    def wfn_fi_fname(self, value: str) -> None:
         self._wfn_fi_fname = value
         self.update_link(value, "WFN_fi")

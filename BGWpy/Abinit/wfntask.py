@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+from typing import Any
 
 from .abinittask import AbinitTask
 
@@ -15,7 +16,7 @@ class AbinitWfnTask(AbinitTask):
     _input_fname = "wfn.in"
     _output_fname = "wfn.out"
 
-    def __init__(self, dirname, **kwargs):
+    def __init__(self, dirname: str, **kwargs: Any) -> None:
         """
         Arguments
         ---------
@@ -73,7 +74,7 @@ class AbinitWfnTask(AbinitTask):
 
         self.input.set_variables(self.get_wfn_variables(**kwargs))
 
-    def get_wfn_variables(self, **kwargs):
+    def get_wfn_variables(self, **kwargs: Any) -> dict[str, Any]:
         """Return a dict of variables required for an SCF calculation."""
 
         nband = kwargs.get("nband")
@@ -100,22 +101,22 @@ class AbinitWfnTask(AbinitTask):
         }
 
     @property
-    def wavefunction_fname(self):
+    def wavefunction_fname(self) -> str:
         return self.get_odat("WFK")
 
     wfn_fname = wavefunction_fname
     wfk_fname = wavefunction_fname
 
-    _charge_density_fname = None
+    _charge_density_fname: str | None = None
 
     @property
-    def charge_density_fname(self):
+    def charge_density_fname(self) -> str:
         if self._charge_density_fname is not None:
             return self._charge_density_fname
         return self.get_odat("DEN")
 
     @charge_density_fname.setter
-    def charge_density_fname(self, value):
+    def charge_density_fname(self, value: str) -> None:
         self._charge_density_fname = value
         dest = os.path.relpath(self.get_idat("DEN"), self.dirname)
         if value.endswith(".nc"):
@@ -124,20 +125,20 @@ class AbinitWfnTask(AbinitTask):
 
     rho_fname = charge_density_fname
 
-    _input_wavefunction_fname = ""
+    _input_wavefunction_fname: str = ""
 
     @property
-    def input_wavefunction_fname(self):
+    def input_wavefunction_fname(self) -> str:
         return self._input_wavefunction_fname
 
     @input_wavefunction_fname.setter
-    def input_wavefunction_fname(self, value):
+    def input_wavefunction_fname(self, value: str) -> None:
         self._input_wavefunction_fname = value
         dest = os.path.relpath(self.get_idat("WFK"), self.dirname)
         self.update_link(value, dest)
 
     @property
-    def exchange_correlation_potential_fname(self):
+    def exchange_correlation_potential_fname(self) -> str:
         return self.get_odat("VXC")
 
     vxc_fname = exchange_correlation_potential_fname

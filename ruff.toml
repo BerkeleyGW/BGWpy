@@ -1,0 +1,100 @@
+# Ruff configuration - modern Python linter/formatter
+# See https://docs.astral.sh/ruff/configuration/
+
+line-length = 100
+target-version = "py310"
+src = ["BGWpy"]
+extend-exclude = [
+    "*.egg-info",
+    ".git",
+    ".jj",
+    ".ruff_cache",
+    "__pycache__",
+    "build",
+    "dist",
+]
+
+[lint]
+select = [
+    "E",      # pycodestyle errors
+    "W",      # pycodestyle warnings
+    "F",      # pyflakes
+    "I",      # isort
+    "N",      # pep8-naming
+    "UP",     # pyupgrade
+    "B",      # flake8-bugbear
+    "C4",     # flake8-comprehensions
+    "DTZ",    # flake8-datetimez
+    "T10",    # flake8-debugger
+    "EM",     # flake8-errmsg
+    "FA",     # flake8-future-annotations
+    "ISC",    # flake8-implicit-str-concat
+    "ICN",    # flake8-import-conventions
+    "PIE",    # flake8-pie
+    "PT",     # flake8-pytest-style
+    "Q",      # flake8-quotes
+    "RSE",    # flake8-raise
+    "RET",    # flake8-return
+    "SIM",    # flake8-simplify
+    "TID",    # flake8-tidy-imports
+    "TCH",    # flake8-type-checking
+    "ARG",    # flake8-unused-arguments
+    "PTH",    # flake8-use-pathlib
+    "ERA",    # eradicate (commented-out code)
+    "PL",     # pylint
+    "PERF",   # perflint
+    "RUF",    # ruff-specific rules
+]
+
+ignore = [
+    "N806",     # non-lowercase variable names
+    "E501",     # line too long (handled by formatter)
+    "PLR0913",  # too many arguments
+    "PLR2004",  # magic value comparison
+    "B008",     # function call in default argument
+    "ISC001",   # implicit string concatenation (conflicts with formatter)
+    "N999",     # invalid module name (BGWpy is our package name)
+    "PTH123",   # open() vs Path.open() - both are acceptable
+    "TC002",    # move third-party imports to TYPE_CHECKING - not always beneficial
+    "PERF203",  # try-except in loop - acceptable for parsing code
+    "ARG002",   # unused method arguments - often needed for API compatibility
+    "PTH119",   # os.path.basename vs Path.name - both acceptable
+    "TC003",    # move stdlib imports to TYPE_CHECKING - not always beneficial
+]
+
+[lint.per-file-ignores]
+"__init__.py" = ["F401", "F403", "E402", "F405", "PLE0604"]  # unused imports, wildcard imports, module-level import not at top, star imports, invalid __all__
+"test_*.py" = ["ARG001", "PLR2004", "PT009", "N802"]  # unused arguments, magic values OK in tests, unittest assertions, test names can use uppercase
+"**/tests/**" = ["ARG001", "PLR2004", "PT009", "N802"]  # test-specific ignores
+"**/external/**" = ["ALL"]  # external/vendored code, ignore all checks
+"**/scripts/**" = ["PLC0415"]  # import outside top-level OK in scripts
+"**/Abinit/variable.py" = ["N802", "N803", "N806", "PLR0912"]  # naming conventions for Fortran compatibility, complex parsing
+"**/Abinit/abinitbgwflow.py" = ["PLC0415"]  # lazy imports to avoid circular dependencies
+"**/Abinit/abinitinput.py" = ["PLC0415"]  # conditional imports
+"**/Abinit/utils.py" = ["TC003"]  # runtime use of Iterable/Iterator
+"**/BGW/kgrid.py" = ["PLR0912", "PLR0915", "ARG001"]  # complex parsing logic requires many branches/statements
+"**/BGW/sigmatask.py" = ["PLR0912", "PLR0915"]  # complex initialization logic
+"**/BGW/epsilontask.py" = ["SIM108"]  # if-else more readable than ternary here
+"**/data/__init__.py" = ["N816"]  # mixed case variable names for chemical formulas (GaAs, Si)
+"**/DFT/dfttask.py" = ["N802"]  # is_flavor_QE uses uppercase for Quantum Espresso abbreviation
+"**/flows/bseflow.py" = ["PLC0415"]  # lazy imports to avoid circular dependencies
+"**/flows/gwflow.py" = ["PLC0415", "PLR0912", "PLR0915"]  # lazy imports, complex flow logic
+"**/flows/vmtxelflow.py" = ["PLC0415"]  # lazy imports to avoid circular dependencies
+"**/extractors/gw.py" = ["N802"]  # extract_multiple_GW_results uses uppercase for GW abbreviation
+"**/Wannier90/wannier90.py" = ["PLR0912"]  # complex string generation logic
+"**/core/runscript.py" = ["PLR0912"]  # complex initialization logic
+"**/core/task.py" = ["ARG002"]  # kwargs needed for API compatibility
+"**/core/tests/test_writable.py" = ["PLC0415"]  # import in test method
+
+[lint.isort]
+known-first-party = ["BGWpy"]
+section-order = ["future", "standard-library", "third-party", "first-party", "local-folder"]
+
+[lint.pydocstyle]
+convention = "numpy"
+
+[format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"

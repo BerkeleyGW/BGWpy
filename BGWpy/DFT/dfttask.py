@@ -1,38 +1,84 @@
+"""Base DFT task and flow classes for BGWpy.
+
+This module provides base classes for DFT calculations that can be used
+with different DFT codes (Quantum Espresso, Abinit).
+"""
+
 from __future__ import annotations
 
 import os
 import warnings
 from pathlib import Path
+from typing import TYPE_CHECKING, Any
 
-from numpy import array
+import numpy as np
+from numpy import ndarray
 
 from BGWpy.BGW import KgridTask
 from BGWpy.core import MPITask, Workflow
 
-# Public
+if TYPE_CHECKING:
+    from numpy.typing import ArrayLike, NDArray
+    from pymatgen.core import Structure
+
 __all__ = ["DFTFlow", "DFTTask"]
 
 
 class DFTTask(MPITask):
-    """
-    Base class for DFT calculations.
+    """Base class for DFT calculations.
+
     Handles structure, pseudopotentials and k-points grids.
+
+    Attributes
+    ----------
+    flavor : str
+        DFT code flavor ('qe' or 'abinit').
+    pseudo_dir : str
+        Path to the directory containing pseudopotential files.
+    pseudos : list[str]
+        List of pseudopotential filenames.
+    structure : Structure | None
+        Structure object containing unit cell information.
+    kgridtask : KgridTask
+        Task for generating k-point grids.
+    version : int
+        Version of the DFT code (for QE compatibility).
     """
 
-    def __init__(self, dirname, **kwargs):
-        """
-        Keyword Arguments
-        -----------------
+    flavor: str
+    _pseudo_dir: str
+    pseudos: list[str]
+    structure: Structure | None
+    kgridtask: KgridTask
+    version: int
+    _ngkpt: NDArray[np.float64] | None
+    _kshift: NDArray[np.float64] | None
+    _qshift: NDArray[np.float64] | None
 
-        flavor : str ['qe', 'abinit']
-            DFT code used for density and wavefunctions.
-        pseudo_dir : str
+    def __init__(self, dirname: str, **kwargs: Any) -> None:
+        """Initialize a DFT task.
+
+        Parameters
+        ----------
+        dirname : str
+            Directory in which the files are written and the code is executed.
+
+        Other Parameters
+        ----------------
+        flavor : str, default='qe'
+            DFT code used for density and wavefunctions ('qe' or 'abinit').
+        pseudo_dir : str, optional
             Path to the directory containing pseudopotential files.
-        pseudos : list, str of pseudopotential files.
+            Defaults to dirname.
+        pseudos : list[str], optional
+            List of pseudopotential files. Defaults to empty list.
+        structure : Structure, optional
+            Structure object containing unit cell information.
+        version : int, default=6
+            Version of QE (only used if flavor is 'qe').
+        **kwargs : Any
+            Additional keyword arguments passed to parent class.
         """
-
-        # too restrictive
-
         super().__init__(dirname, **kwargs)
 
         self.flavor = kwargs.pop("flavor", "qe")
@@ -46,7 +92,7 @@ class DFTTask(MPITask):
         self._kshift = None
         self._qshift = None
 
-        # Patches for newer verisons of qe. Originally bgwpy was written for
+        # Patches for newer versions of QE. Originally BGWpy was written for
         # QE v5 but currently defaults to QE v6.
         if self.is_flavor_QE:
             self.version = kwargs.pop("version", 6)
@@ -56,37 +102,48 @@ class DFTTask(MPITask):
         self.kgridtask = KgridTask(dirname=dirname, **kwargs)
 
     @property
-    def is_flavor_QE(self):
+    def is_flavor_QE(self) -> bool:
+        """Check if using Quantum Espresso flavor."""
         return any(tag in self.flavor.lower() for tag in ["qe", "espresso"])
 
     @property
-    def is_flavor_abinit(self):
+    def is_flavor_abinit(self) -> bool:
+        """Check if using Abinit flavor."""
         return any(tag in self.flavor.lower() for tag in ["abi", "abinit"])
 
-    def get_kpts(self, **kwargs):
+    def get_kpts(
+        self,
+        **kwargs: Any,
+    ) -> tuple[list[list[float]] | NDArray[np.float64], list[float] | NDArray[np.float64]]:
+        """Get the k-points and their weights.
+
+        Parameters
+        ----------
+        **kwargs : Any
+            Keyword arguments including:
+            - symkpt : bool, default=True
+                Use symmetries to reduce the k-point grid.
+            - structure : Structure
+                Mandatory if symkpt is True.
+            - ngkpt : list(3), int, optional
+                K-points grid dimensions.
+            - kshift : list(3), float, optional
+                Relative shift of the k-points grid.
+            - qshift : list(3), float, optional
+                Absolute shift of the k-points grid.
+            - kpts : list[list[float]], optional
+                Explicit k-points (used if ngkpt not provided).
+            - wtks : list[float], optional
+                Explicit k-point weights (used if ngkpt not provided).
+
+        Returns
+        -------
+        kpts : list[list[float]] | NDArray[np.float64]
+            List of k-points.
+        wtks : list[float] | NDArray[np.float64]
+            List of k-point weights.
         """
-        Get the k-points and their weights.
-
-        Keyword Arguments
-        -----------------
-
-        symkpt : bool (True)
-            Use symmetries to reduce the k-point grid.
-        structure : pymatgen.Structure object
-            Mandatory if symkpt.
-        ngkpt : list(3), float, optional
-            K-points grid. Number of k-points along each primitive vector
-            of the reciprocal lattice.
-            K-points are either specified using ngkpt or using kpts and wtks.
-        kshift : list(3), float, optional
-            Relative shift of the k-points grid along each direction,
-            as a fraction of the smallest division along that direction.
-        qshift : list(3), float, optional
-            Absolute shift of the k-points grid along each direction.
-
-        """
-
-        symkpt = kwargs.get("symkpt", True)
+        symkpt: bool = kwargs.get("symkpt", True)
 
         if "ngkpt" in kwargs:
             if symkpt:
@@ -99,78 +156,118 @@ class DFTTask(MPITask):
 
         return kpts, wtks
 
-    def check_pseudos(self):
-        """Check that pseudopotential files exist."""
+    def check_pseudos(self) -> None:
+        """Check that pseudopotential files exist.
+
+        Warns if any pseudopotential file is not found.
+        """
         for pseudo in self.pseudos:
             fname = os.path.relpath(Path(self.dirname) / self.pseudo_dir / pseudo)
             if not Path(fname).exists():
                 warnings.warn(f"Pseudopotential not found:\n{fname}", stacklevel=2)
 
-    _pseudo_dir = "./"
-
     @property
-    def pseudo_dir(self):
+    def pseudo_dir(self) -> str:
+        """Get the pseudopotential directory."""
         return self._pseudo_dir
 
     @pseudo_dir.setter
-    def pseudo_dir(self, value):
+    def pseudo_dir(self, value: str) -> None:
+        """Set the pseudopotential directory.
+
+        If an absolute path is given, it is used as-is.
+        Otherwise, a relative path from dirname is computed.
+        """
         if os.path.realpath(value) == value.rstrip(os.path.sep):
             self._pseudo_dir = value
         else:
             self._pseudo_dir = os.path.relpath(value, self.dirname)
 
     @property
-    def ngkpt(self):
+    def ngkpt(self) -> NDArray[np.float64] | None:
+        """Get the k-point grid dimensions."""
         return self._ngkpt
 
     @ngkpt.setter
-    def ngkpt(self, ngkpt):
-        self._ngkpt = array(ngkpt)
+    def ngkpt(self, ngkpt: ArrayLike) -> None:
+        """Set the k-point grid dimensions."""
+        self._ngkpt = np.array(ngkpt)
 
     @property
-    def kshift(self):
+    def kshift(self) -> NDArray[np.float64] | None:
+        """Get the k-point shift."""
         return self._kshift
 
     @kshift.setter
-    def kshift(self, kshift):
-        self._kshift = array(kshift)
+    def kshift(self, kshift: ArrayLike) -> None:
+        """Set the k-point shift."""
+        self._kshift = np.array(kshift)
 
     @property
-    def qshift(self):
+    def qshift(self) -> NDArray[np.float64] | None:
+        """Get the q-point shift."""
         return self._qshift
 
     @qshift.setter
-    def qshift(self, qshift):
-        self._qshift = array(qshift)
+    def qshift(self, qshift: ArrayLike) -> None:
+        """Set the q-point shift."""
+        self._qshift = np.array(qshift)
 
     @property
-    def kqshift(self):
-        return self.kshift + self.qshift * self.ngkpt
+    def kqshift(self) -> ndarray:
+        """Get the combined k+q shift.
+
+        Returns
+        -------
+        ndarray
+            The sum of kshift and qshift * ngkpt.
+
+        Raises
+        ------
+        ValueError
+            If kshift, qshift, or ngkpt is None.
+        """
+        if self._kshift is None or self._qshift is None or self._ngkpt is None:
+            msg = "kshift, qshift, and ngkpt must all be set to compute kqshift"
+            raise ValueError(msg)
+        return self._kshift + self._qshift * self._ngkpt
 
 
 # =========================================================================== #
 
 
 class DFTFlow(Workflow, DFTTask):
-    def __init__(self, dirname=None, **kwargs):
-        """
-        Initialize a DFT workflow.
+    """Workflow for DFT calculations.
+
+    This class combines Workflow and DFTTask functionality, allowing
+    multiple DFT tasks to be organized and executed as a workflow.
+
+    Attributes
+    ----------
+    Inherits all attributes from Workflow and DFTTask.
+    """
+
+    def __init__(self, dirname: str | None = None, **kwargs: Any) -> None:
+        """Initialize a DFT workflow.
 
         Parameters
         ----------
-        dirname : str or Path, optional
+        dirname : str | None, optional
             Directory in which the workflow is executed.
             If None, will use default from Task base class.
 
-        Keyword Arguments
-        -----------------
-        flavor : str ['qe', 'abinit']
+        Other Parameters
+        ----------------
+        flavor : str, default='qe'
             DFT code used for density and wavefunctions.
         pseudo_dir : str
             Path to the directory containing pseudopotential files.
-        pseudos : list, str of pseudopotential files.
-        structure : pymatgen.Structure
+        pseudos : list[str]
+            List of pseudopotential files.
+        structure : Structure
             Structure object containing unit cell information.
+        **kwargs : Any
+            Additional keyword arguments passed to parent classes.
 
         Notes
         -----

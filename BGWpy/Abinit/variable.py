@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import string
 import warnings
+from typing import Any
 
 import numpy as np
 
@@ -25,13 +26,14 @@ _UNITS = {
 }
 
 
-def convert_number(value):
+def convert_number(value: Any) -> int | float:
     """
-    Converts some object to a float or a string.
+    Converts some object to a number (int or float).
     If the argument is an integer or a float, returns the same object.
     If the argument is a string, tries to convert to an integer,
     then to a float.
     The string '1.0d-03' will be treated the same as '1.0e-03'
+    Raises ValueError if conversion fails.
     """
 
     if isinstance(value, (float, int)):
@@ -57,47 +59,47 @@ def convert_number(value):
 class InputVariable:
     """An Abinit input variable."""
 
-    def __init__(self, name, value, units="", decimals=0):
+    def __init__(self, name: str, value: Any, units: str | None = "", decimals: int = 0) -> None:
         self._name = name
         self.value = value
-        self._units = units
+        self._units = units if units is not None else ""
         self.decimals = decimals
 
         if is_iter(self.value) and isinstance(self.value[-1], str) and self.value[-1] in _UNITS:
             self.value = list(self.value)
             self._units = self.value.pop(-1)
 
-    def get_value(self):
+    def get_value(self) -> Any:
         """Return the value."""
         if self.units:
             return [*list(self.value), self.units]
         return self.value
 
     @property
-    def name(self):
+    def name(self) -> str:
         return self._name
 
     @name.setter
-    def name(self, name):
+    def name(self, name: str) -> None:
         self._name = name
 
     @property
-    def basename(self):
+    def basename(self) -> str:
         """Return the name trimmed of any dataset index."""
         basename = self.name
         return basename.rstrip(_DATASET_INDICES)
 
     @property
-    def dataset(self):
+    def dataset(self) -> str:
         """Return the dataset index in string form."""
         return self.name.split(self.basename)[-1]
 
     @property
-    def units(self):
+    def units(self) -> str:
         """Return the units."""
         return self._units
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Declaration of the variable in the input file."""
 
         value = self.value
@@ -152,7 +154,7 @@ class InputVariable:
 
         return line
 
-    def format_scalar(self, val, floatdecimal=0):
+    def format_scalar(self, val: Any, floatdecimal: int = 0) -> str:
         """
         Format a single numerical value into a string
         with the appropriate number of decimal.
@@ -190,7 +192,7 @@ class InputVariable:
 
         return sval.replace("e", "d")
 
-    def format_list2d(self, values, floatdecimal=0):
+    def format_list2d(self, values: list[Any] | tuple[Any, ...], floatdecimal: int = 0) -> str:
         """Format a list of lists."""
 
         lvals = flatten(values)
@@ -236,7 +238,9 @@ class InputVariable:
 
         return line.rstrip("\n")
 
-    def format_list(self, values, valperline=3, floatdecimal=0):
+    def format_list(
+        self, values: list[Any] | tuple[Any, ...], valperline: int = 3, floatdecimal: int = 0
+    ) -> str:
         """
         Format a list of values into a string.
         The result might be spread among several lines.
@@ -257,7 +261,7 @@ class InputVariable:
         return line.rstrip("\n")
 
     @staticmethod
-    def string_to_value(sval):
+    def string_to_value(sval: str) -> Any:
         """
         Interpret a string variable and attempt to return a value of the
         appropriate type.  If all else fails, return the initial string.
@@ -331,7 +335,7 @@ class InputVariable:
         return value
 
     @classmethod
-    def from_str(cls, bigstring):
+    def from_str(cls, bigstring: str) -> InputVariable:
         """Return an instance from a string declaration."""
         parts = bigstring.split()
 
@@ -366,7 +370,7 @@ class InputVariable:
         return cls(name, value, units)
 
     @property
-    def sorting_name(self):
+    def sorting_name(self) -> str:
         """Name for sorting purposes."""
         letters = string.ascii_letters
 
@@ -376,16 +380,22 @@ class InputVariable:
 
         return self.basename + "_" + dataset
 
-    def __gt__(self, other):
+    def __gt__(self, other: object) -> bool:
+        if not isinstance(other, InputVariable):
+            return NotImplemented
         return self.sorting_name > other.sorting_name
 
-    def __lt__(self, other):
+    def __lt__(self, other: object) -> bool:
+        if not isinstance(other, InputVariable):
+            return NotImplemented
         return self.sorting_name < other.sorting_name
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, InputVariable):
+            return NotImplemented
         return self.sorting_name == other.sorting_name
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash(self.sorting_name)
 
 
@@ -400,20 +410,20 @@ class SpecialInputVariable(InputVariable):
     """
 
     @property
-    def name(self):
+    def name(self) -> str:
         return self._name
 
     @name.setter
-    def name(self, name):
+    def name(self, name: str) -> None:
         name = self.internal_to_declared(name)
         self._name = name
 
     @property
-    def internal_name(self):
+    def internal_name(self) -> str:
         return self.declared_to_internal(self.name)
 
     @staticmethod
-    def internal_to_declared(name):
+    def internal_to_declared(name: str) -> str:
         """
         Make the conversion
             __s --> :
@@ -425,7 +435,7 @@ class SpecialInputVariable(InputVariable):
         return name
 
     @staticmethod
-    def declared_to_internal(name):
+    def declared_to_internal(name: str) -> str:
         """
         Make the conversion
              : --> __s

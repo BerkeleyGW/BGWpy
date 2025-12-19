@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
+from typing import Any
 
 from .constructor import get_bands_input
 from .qetask import QeTask
@@ -18,7 +19,7 @@ class QeWfnTask(QeTask):
     _input_fname = "wfn.in"
     _output_fname = "wfn.out"
 
-    def __init__(self, dirname, **kwargs):
+    def __init__(self, dirname: str, **kwargs: Any) -> None:
         """
         Arguments
         ---------
@@ -84,6 +85,7 @@ class QeWfnTask(QeTask):
         self.data_file_fname = kwargs["data_file_fname"]
 
         # Input file
+        assert self.structure is not None, "structure must be provided"
         self.input = get_bands_input(
             self.prefix,
             self.pseudo_dir,
@@ -106,32 +108,32 @@ class QeWfnTask(QeTask):
         )
 
     @property
-    def charge_density_fname(self):
+    def charge_density_fname(self) -> str:
         return self._charge_density_fname
 
     @charge_density_fname.setter
-    def charge_density_fname(self, value):
+    def charge_density_fname(self, value: str) -> None:
         self._charge_density_fname = value
         name = "charge-density.hdf5" if self._use_hdf5_qe else "charge-density.dat"
         dest = Path(self.savedir) / name
         self.update_link(value, dest)
 
     @property
-    def spin_polarization_fname(self):
+    def spin_polarization_fname(self) -> str:
         return self._spin_polarization_fname
 
     @spin_polarization_fname.setter
-    def spin_polarization_fname(self, value):
+    def spin_polarization_fname(self, value: str) -> None:
         self._spin_polarization_fname = value
         dest = Path(self.savedir) / "spin-polarization.dat"
         self.update_link(value, dest)
 
     @property
-    def data_file_fname(self):
+    def data_file_fname(self) -> str:
         return self._data_file_fname
 
     @data_file_fname.setter
-    def data_file_fname(self, value):
+    def data_file_fname(self, value: str) -> None:
         self._data_file_fname = value
         if self.version >= 6:
             dest = Path(self.savedir) / "data-file-schema.xml"
@@ -139,7 +141,7 @@ class QeWfnTask(QeTask):
             dest = Path(self.savedir) / "data-file.xml"
         self.update_copy(value, dest)
 
-    def add_pseudos_copy(self):
+    def add_pseudos_copy(self) -> None:
         """
         Add instructions in the runscript to copy the pseudopotential files.
         This is necessary, because otherwise, Quantum Espresso expect that
@@ -158,11 +160,11 @@ class QeWfnTask(QeTask):
     # Override parent property to trigger pseudopotential copying when pseudo_dir changes.
     # This ensures pseudos are copied to the save directory, which is required by QE.
     @property
-    def pseudo_dir(self):
+    def pseudo_dir(self) -> str:
         return self._pseudo_dir
 
     @pseudo_dir.setter
-    def pseudo_dir(self, value):
+    def pseudo_dir(self, value: str) -> None:
         if os.path.realpath(value) == value.rstrip(os.path.sep):
             self._pseudo_dir = value
         else:

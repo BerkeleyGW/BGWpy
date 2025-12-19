@@ -1,53 +1,112 @@
+"""GW data extraction from BerkeleyGW sigma output files.
+
+This module provides functions for reading and parsing output files from
+the sigma.x program in BerkeleyGW.
+"""
+
 from __future__ import annotations
 
 import pickle
 from pathlib import Path
+from typing import TYPE_CHECKING, Any, TextIO, TypedDict
 
 import numpy as np
 
+if TYPE_CHECKING:
+    from numpy.typing import NDArray
 
-def parse_sigma_output(f):
-    """
-    Extract the GW results of a calculation with BerkeleyGW.
+__all__ = ["extract_multiple_GW_results", "parse_sigma_output"]
+
+
+class SigmaBlockResult(TypedDict):
+    """Result dictionary from parsing a single sigma output block."""
+
+    k: NDArray[np.float64]
+    ik: int
+    spin: int
+    n: list[int]
+    Emf: list[float]
+    Eo: list[float]
+    Vxc: list[float]
+    X: list[float]
+    Cor: list[float]
+    Eqp0: list[float]
+    Eqp1: list[float]
+    Znk: list[float]
+
+
+class SigmaResult(TypedDict):
+    """Result dictionary from parse_sigma_output."""
+
+    nspin: int
+    nkpt: int
+    nband: int
+    kpt: NDArray[np.float64]
+    n: NDArray[np.int64]
+    Emf: NDArray[np.float64]
+    Eo: NDArray[np.float64]
+    Vxc: NDArray[np.float64]
+    X: NDArray[np.float64]
+    Cor: NDArray[np.float64]
+    Eqp0: NDArray[np.float64]
+    Eqp1: NDArray[np.float64]
+    Znk: NDArray[np.float64]
+
+
+class MultipleGWResult(TypedDict):
+    """Result dictionary from extract_multiple_GW_results."""
+
+    ndata: int
+    variables: list[dict[str, Any]]
+    results: list[SigmaResult]
+
+
+def parse_sigma_output(f: str | TextIO) -> SigmaResult:
+    """Extract the GW results of a calculation with BerkeleyGW.
+
+    Parameters
+    ----------
+    f : str | TextIO
+        Path to sigma output file, or an open file handle.
 
     Returns
     -------
+    SigmaResult
+        Dictionary containing:
+        - nspin : int
+            Number of spins.
+        - nkpt : int
+            Number of k-points.
+        - nband : int
+            Number of bands.
+        - kpt : NDArray[np.float64], shape (nkpt, 3)
+            K-points wavevectors (reduced coord).
+        - n : NDArray[np.int64], shape (nband,)
+            Band indices.
+        - Emf : NDArray[np.float64], shape (nspin, nkpt, nband)
+            Mean-field energy eigenvalue.
+        - Eo : NDArray[np.float64], shape (nspin, nkpt, nband)
+            Corrected energy eigenvalue.
+        - Vxc : NDArray[np.float64], shape (nspin, nkpt, nband)
+            Exchange-correlation potential.
+        - X : NDArray[np.float64], shape (nspin, nkpt, nband)
+            Bare exchange.
+        - Cor : NDArray[np.float64], shape (nspin, nkpt, nband)
+            Correlation (sx-x + ch = self-energy at energy ecor).
+        - Eqp0 : NDArray[np.float64], shape (nspin, nkpt, nband)
+            elda - vxc + sig(ecor).
+        - Eqp1 : NDArray[np.float64], shape (nspin, nkpt, nband)
+            eqp0 + (dsig/de) / (1 - dsig/de) * (eqp0 - ecor).
+        - Znk : NDArray[np.float64], shape (nspin, nkpt, nband)
+            Quasiparticle renormalization factor.
 
-    dict :
-        nspin : int
-            Number of spins
-        nkpt : int
-            Number of k-points
-        nband : int
-            Number of bands
-        kpt : array[nkpt, 3]
-            K-points wavevectors (reduced coord)
-        n : array[nband]
-            band indices
-        elda : array[nspin, nkpt, nband]
-            energy eigenvalue
-        ecor : array[nspin, nkpt, nband]
-            corrected energy eigenvalue
-        x : array[nkpt, nband]
-            bare exchange
-        sx-x : array[nspin, nkpt, nband]
-            sx = screened exchange at energy ecor
-        ch : array[nspin, nkpt, nband]
-            coulomb hole at energy ecor
-        sig : array[nspin, nkpt, nband]
-            sx + ch = self-energy at energy ecor
-        vxc : array[nspin, nkpt, nband]
-            vxc = exchange-correlation potential
-        eqp0 : array[nspin, nkpt, nband]
-            elda - vxc + sig(ecor)
-        eqp1 : array[nspin, nkpt, nband]
-            eqp0 + (dsig/de) / (1 - dsig/de) * (eqp0 - ecor)
-        Znk array[nspin, nkpt, nband]
-            quasiparticle renormalization factor
+    Raises
+    ------
+    ValueError
+        If no k-point blocks are found in the output file.
     """
-
     if isinstance(f, str):
-        with open(f) as fi:
+        with Path(f).open() as fi:
             return parse_sigma_output(fi)
 
     # Break the output into large kpoint block.
@@ -61,7 +120,8 @@ def parse_sigma_output(f):
         raise ValueError(msg)
 
     # Break the blocks into smaller kpt and spin block
-    kpt_spin_blocks = []
+    kpt_spin_blocks: list[str] = []
+    subblock: list[str] = []
     for block in large_kpt_blocks:
         subblock = break_kpt_spin_blocks(block)
         kpt_spin_blocks.extend(subblock)
@@ -70,16 +130,21 @@ def parse_sigma_output(f):
     nspin = len(subblock)
 
     # Parse each block
-    block_results = []
+    block_results: list[SigmaBlockResult] = []
+    block_result: SigmaBlockResult | None = None
     for block in kpt_spin_blocks:
         block_result = parse_sigma_output_block(block)
         block_results.append(block_result)
+
+    if block_result is None:
+        msg = "No valid blocks found in sigma output"
+        raise ValueError(msg)
 
     # Count number of bands from the lines of last block
     nband = len(block_result["n"])
 
     # Initialize the results dict
-    results = {"nspin": nspin, "nkpt": nkpt, "nband": nband}
+    results: dict[str, Any] = {"nspin": nspin, "nkpt": nkpt, "nband": nband}
 
     keys = ["Emf", "Eo", "Vxc", "X", "Cor", "Eqp0", "Eqp1", "Znk"]
 
@@ -94,18 +159,29 @@ def parse_sigma_output(f):
         ispin = block_result["spin"] - 1
         ikpt = block_result["ik"] - 1
         for key in keys:
-            for iband, val in enumerate(block_result[key]):
-                results[key][ispin, ikpt, iband] = val  # type: ignore[index]
+            for iband, val in enumerate(block_result[key]):  # type: ignore[literal-required]
+                results[key][ispin, ikpt, iband] = val
 
         results["kpt"][ikpt] = np.array(block_result["k"])
         results["n"] = np.array(block_result["n"], dtype=np.int64)
 
-    return results
+    return results  # type: ignore[return-value]
 
 
-def break_output_in_kpt_blocks(f):
-    """Break the output into large kpoint block."""
-    blocks = []
+def break_output_in_kpt_blocks(f: TextIO) -> list[str]:
+    """Break the sigma output into large k-point blocks.
+
+    Parameters
+    ----------
+    f : TextIO
+        Open file handle to sigma output.
+
+    Returns
+    -------
+    list[str]
+        List of text blocks, each containing data for one k-point.
+    """
+    blocks: list[str] = []
     result_str = ""
     reading_block = False
     for line in f.readlines():
@@ -124,17 +200,33 @@ def break_output_in_kpt_blocks(f):
     return blocks
 
 
-def break_kpt_spin_blocks(S):
-    """Break a block into smaller kpt and spin blocks."""
+def break_kpt_spin_blocks(s: str) -> list[str]:
+    """Break a k-point block into smaller k-point and spin blocks.
 
-    if "Symmetrized values from band-averaging" not in S:
-        raise Exception("Could not find symmetrized values in block:\n" + S)
+    Parameters
+    ----------
+    s : str
+        Text block containing k-point data.
 
-    S = S.split("Symmetrized values from band-averaging")[-1]
-    S = S.split("======================")[0]
+    Returns
+    -------
+    list[str]
+        List of text blocks, each containing data for one k-point/spin pair.
 
-    blocks = []
-    iterlines = iter(S.splitlines())
+    Raises
+    ------
+    Exception
+        If symmetrized values cannot be found in the block.
+    """
+    if "Symmetrized values from band-averaging" not in s:
+        msg = "Could not find symmetrized values in block:\n" + s
+        raise Exception(msg)
+
+    s = s.split("Symmetrized values from band-averaging")[-1]
+    s = s.split("======================")[0]
+
+    blocks: list[str] = []
+    iterlines = iter(s.splitlines())
     while True:
         try:
             line = next(iterlines)
@@ -142,7 +234,7 @@ def break_kpt_spin_blocks(S):
             break
 
         if line.startswith("       k ="):
-            lines = []
+            lines: list[str] = []
             lines.append(line)  # kpoint line
             try:
                 line = next(iterlines)  # empty line
@@ -159,62 +251,56 @@ def break_kpt_spin_blocks(S):
     return blocks
 
 
-def parse_sigma_output_block(S):
-    """
-    Extract the GW results of a calculation with BerkeleyGW
-    from a block containing a single k-point and spin results.
-    The block should be of the form
+def parse_sigma_output_block(s: str) -> SigmaBlockResult:
+    """Extract the GW results from a single k-point/spin block.
+
+    The block should be of the form::
 
            k =  0.000000  0.000000  0.000000 ik =   1 spin = 1
 
-       n     elda     ecor        x     sx-x       ch      sig      vxc     eqp0     eqp1      Znk
-       8  -13.367  -13.367  -39.235   20.589  -12.126  -30.771  -32.926  -11.213  -11.682    0.782
-       9  -13.367  -13.367  -39.235   20.589  -12.126  -30.771  -32.926  -11.213  -11.682    0.782
-      10  -13.365  -13.365  -37.756   20.136  -11.844  -29.464  -31.133  -11.696  -12.065    0.779
-      11  -12.638  -12.638  -22.446   15.295   -9.207  -16.359  -12.714  -16.283  -15.398    0.757
-      12  -12.440  -12.440  -23.654   15.693   -9.512  -17.473  -14.285  -15.627  -14.865    0.761
+           n     Emf       Eo      Vxc        X      Cor     Eqp0     Eqp1      Znk
+           8  -13.367  -13.367  -32.926  -39.235  -30.771  -11.213  -11.682    0.782
+           9  -13.367  -13.367  -32.926  -39.235  -30.771  -11.213  -11.682    0.782
 
     with no leading or trailing empty line.
 
+    Parameters
+    ----------
+    s : str
+        Text block containing data for one k-point and spin.
+
     Returns
     -------
-
-    dict:
-        nband: int
-            Number of bands
-        k: array[3]
-            K-points wavevectors (reduced coord)
-        ik: int
-            index of K-point
-        spin: int
-            index of spin
-        n: array[nband]
-            band indices
-        elda: array[nband]
-            energy eigenvalue
-        ecor: array[nband]
-            corrected energy eigenvalue
-        x: array[nband]
-            bare exchange
-        sx-x: array[nband]
-            sx = screened exchange at energy ecor
-        ch: array[nband]
-            coulomb hole at energy ecor
-        sig: array[nband]
-            sx + ch = self-energy at energy ecor
-        vxc: array[nband]
-            vxc = exchange-correlation potential
-        eqp0: array[nband]
-            elda - vxc + sig(ecor)
-        eqp1: array[nband]
-            eqp0 + (dsig/de) / (1 - dsig/de) * (eqp0 - ecor)
-        Znk array[nband]
-            quasiparticle renormalization factor
+    SigmaBlockResult
+        Dictionary containing:
+        - k : NDArray[np.float64], shape (3,)
+            K-point wavevector (reduced coord).
+        - ik : int
+            Index of k-point.
+        - spin : int
+            Index of spin.
+        - n : list[int]
+            Band indices.
+        - Emf : list[float]
+            Mean-field energy eigenvalue.
+        - Eo : list[float]
+            Corrected energy eigenvalue.
+        - Vxc : list[float]
+            Exchange-correlation potential.
+        - X : list[float]
+            Bare exchange.
+        - Cor : list[float]
+            Correlation self-energy.
+        - Eqp0 : list[float]
+            elda - vxc + sig(ecor).
+        - Eqp1 : list[float]
+            eqp0 + (dsig/de) / (1 - dsig/de) * (eqp0 - ecor).
+        - Znk : list[float]
+            Quasiparticle renormalization factor.
     """
+    results: dict[str, Any] = {}
 
-    results = {}
-
-    results_lines = S.splitlines()
+    results_lines = s.splitlines()
 
     kpt_line = results_lines.pop(0)
     del results_lines[:2]
@@ -224,7 +310,7 @@ def parse_sigma_output_block(S):
     results["spin"] = int(kpt_line.split()[10])
 
     keys = ["n", "Emf", "Eo", "Vxc", "X", "Cor", "Eqp0", "Eqp1", "Znk"]
-    types = [int] + 8 * [float]
+    types: list[type[int] | type[float]] = [int, *([float] * 8)]
 
     for key in keys:
         results[key] = []
@@ -234,24 +320,42 @@ def parse_sigma_output_block(S):
         for key, typ, token in zip(keys, types, tokens, strict=False):
             results[key].append(typ(token))
 
-    return results
+    return results  # type: ignore[return-value]
 
 
-def extract_multiple_GW_results(dirnames):
-    """Extract GW results from a list of directories."""
-    data = {}
+def extract_multiple_GW_results(dirnames: list[str]) -> MultipleGWResult:
+    """Extract GW results from a list of directories.
+
+    Parameters
+    ----------
+    dirnames : list[str]
+        List of directory paths containing sigma.out and variables.pkl files.
+
+    Returns
+    -------
+    MultipleGWResult
+        Dictionary containing:
+        - ndata : int
+            Number of directories processed.
+        - variables : list[dict[str, Any]]
+            List of variable dictionaries from each directory.
+        - results : list[SigmaResult]
+            List of parsed sigma results from each directory.
+    """
+    data: dict[str, Any] = {}
     data["variables"] = []
     data["results"] = []
     data["ndata"] = len(dirnames)
 
     for dname in dirnames:
-        with open(Path(dname) / "variables.pkl", "rb") as f:
-            variables = pickle.load(f)
+        dpath = Path(dname)
+        with (dpath / "variables.pkl").open("rb") as f:
+            variables: dict[str, Any] = pickle.load(f)
 
-        with open(Path(dname) / "sigma.out") as f:
+        with (dpath / "sigma.out").open() as f:
             out = parse_sigma_output(f)
 
         data["variables"].append(variables)
         data["results"].append(out)
 
-    return data
+    return data  # type: ignore[return-value]

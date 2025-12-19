@@ -1,5 +1,9 @@
+from __future__ import annotations
+
 import os
+from contextlib import AbstractContextManager
 from pathlib import Path
+from typing import Any
 
 from BGWpy.config import flavors
 from BGWpy.core import IOTask
@@ -16,7 +20,10 @@ class QeTask(DFTTask, IOTask):
     _TAG_JOB_COMPLETED = "JOB DONE"
     _use_hdf5_qe = flavors["use_hdf5_qe"]
 
-    def __init__(self, dirname, **kwargs):
+    prefix: str
+    savedir: str
+
+    def __init__(self, dirname: str, **kwargs: Any) -> None:
         """
         Arguments
         ---------
@@ -41,14 +48,14 @@ class QeTask(DFTTask, IOTask):
         self.runscript["PW"] = kwargs.get("PW", "pw.x")
         self.runscript["PWFLAGS"] = kwargs.get("PWFLAGS", "")
 
-    def exec_from_savedir(self):
+    def exec_from_savedir(self) -> AbstractContextManager[None]:
         """Execute from the save directory."""
         original = Path.cwd()
         if original.resolve() == Path(self.dirname).resolve():
             return exec_from_dir(self.savedir)
         return exec_from_dir(Path(self.dirname) / self.savedir)
 
-    def write(self):
+    def write(self) -> None:
         """Write the task files."""
         self.check_pseudos()
         super().write()
@@ -58,11 +65,11 @@ class QeTask(DFTTask, IOTask):
                 Path(self.savedir).mkdir(parents=True, exist_ok=True)
 
     @property
-    def pseudo_dir(self):
+    def pseudo_dir(self) -> str:
         return self._pseudo_dir
 
     @pseudo_dir.setter
-    def pseudo_dir(self, value):
+    def pseudo_dir(self, value: str) -> None:
         if os.path.realpath(value) == value.rstrip(os.path.sep):
             self._pseudo_dir = value
         else:

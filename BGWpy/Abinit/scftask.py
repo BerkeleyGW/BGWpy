@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+from typing import Any
+
 from .abinittask import AbinitTask
 
 __all__ = ["AbinitScfTask"]
@@ -11,7 +15,7 @@ class AbinitScfTask(AbinitTask):
     _input_fname = "scf.in"
     _output_fname = "scf.out"
 
-    def __init__(self, dirname, **kwargs):
+    def __init__(self, dirname: str, **kwargs: Any) -> None:
         """
         Arguments
         ---------
@@ -66,7 +70,7 @@ class AbinitScfTask(AbinitTask):
         self.input.set_variables(self.get_scf_variables(**kwargs))
 
     @staticmethod
-    def get_scf_variables(**kwargs):
+    def get_scf_variables(**kwargs: Any) -> dict[str, Any]:
         """Return a dict of variables required for an SCF calculation."""
         return {
             "prtden": 1,
@@ -76,13 +80,13 @@ class AbinitScfTask(AbinitTask):
         }
 
     @property
-    def charge_density_fname(self):
+    def charge_density_fname(self) -> str:
         return self.get_odat("DEN")
 
     rho_fname = charge_density_fname
 
     @property
-    def xc_potential_fname(self):
+    def xc_potential_fname(self) -> str:
         return self.get_odat("VXC")
 
     vxc_fname = xc_potential_fname

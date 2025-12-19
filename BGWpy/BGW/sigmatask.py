@@ -1,112 +1,168 @@
+"""Sigma task for self-energy calculation.
+
+This module provides the SigmaTask class for computing the self-energy
+using BerkeleyGW's sigma.x executable.
+"""
+
 from __future__ import annotations
 
 from pathlib import Path
+from typing import TYPE_CHECKING, Any
+
+import numpy as np
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
+
+    from numpy.typing import ArrayLike, NDArray
 
 from .bgwtask import BGWTask
 from .inputs import SigmaInput
 from .kgrid import KgridTask
 
-# Public
 __all__ = ["SigmaTask"]
 
 
 class SigmaTask(BGWTask):
-    """Self-energy calculation."""
+    """Self-energy calculation.
 
-    _TASK_NAME = "Sigma"
-    _input_fname = "sigma.inp"
-    _output_fname = "sigma.out"
+    This task computes the GW self-energy using BerkeleyGW's sigma.x
+    executable.
 
-    def __init__(self, dirname, **kwargs):
-        """
-        Arguments
-        ---------
+    Attributes
+    ----------
+    input : SigmaInput
+        The sigma input file object.
+    kgridtask : KgridTask
+        Task for generating k-point grids (if ngkpt is provided).
 
+    Properties
+    ----------
+    sigma_fname : str
+        Path to the sigma_hp.log file produced.
+    eqp0_fname : str
+        Path to the eqp0.dat file produced.
+    eqp1_fname : str
+        Path to the eqp1.dat file produced.
+    wfn_co_fname : str
+        Path to the coarse wavefunction file.
+    rho_fname : str
+        Path to the density file.
+    vxc_dat_fname : str
+        Path to the vxc.dat file.
+    vxc_fname : str
+        Path to the VXC file.
+    eps0mat_fname : str
+        Path to the eps0mat file.
+    epsmat_fname : str
+        Path to the epsmat file.
+    """
+
+    _TASK_NAME: str = "Sigma"
+    _input_fname: str = "sigma.inp"
+    _output_fname: str = "sigma.out"
+
+    input: SigmaInput
+    kgridtask: KgridTask
+    _wfn_co_fname: str
+    _rho_fname: str
+    _vxc_dat_fname: str
+    _vxc_fname: str
+    _eps0mat_fname: str | None
+    _epsmat_fname: str | None
+
+    def __init__(self, dirname: str, **kwargs: Any) -> None:
+        """Initialize a sigma task.
+
+        Parameters
+        ----------
         dirname : str
             Directory in which the files are written and the code is executed.
             Will be created if needed.
 
-
-        Keyword arguments
-        -----------------
-        (All mandatory unless specified otherwise)
-
+        Other Parameters
+        ----------------
         structure : pymatgen.Structure
             Structure object containing information on the unit cell.
-        ngkpt : list(3), float
+        ngkpt : list(3), int, optional
             K-points grid. Number of k-points along each primitive vector
             of the reciprocal lattice.
-        kpts : 2D list(nkpt,3), float, optional of k-points.
             K-points are either specified using ngkpt or using kpts.
+        kpts : Sequence[ArrayLike], optional
+            List of k-points. Alternative to ngkpt.
         ibnd_min : int
             Minimum band index for GW corrections.
         ibnd_max : int
             Maximum band index for GW corrections.
-        ngqpt : list(3), float, optional
+        ngqpt : ArrayLike, optional
             Q-points grid, for HF or hybrid functionals.
-        qpts : 2D list(nqpt,3), float, optional of q-points, for HF or hybrid functionals.
+        qpts : Sequence[ArrayLike], optional
+            List of q-points, for HF or hybrid functionals.
         wfn_co_fname : str
             Path to the wavefunction file produced by pw2bgw.
         rho_fname : str
             Path to the density file produced by pw2bgw.
-        vxc_dat_fname : str
+        vxc_dat_fname : str, optional
             Path to the vxc file produced by pw2bgw.
-        eps0mat_fname : str
+        vxc_fname : str, optional
+            Path to the VXC file (alternative to vxc_dat_fname).
+        eps0mat_fname : str, optional
             Path to the eps0mat file produced by epsilon.
-        epsmat_fname : str
+        epsmat_fname : str, optional
             Path to the epsmat file produced by epsilon.
-        extra_lines : list, optional
+        extra_lines : list[str], optional
             Any other lines that should appear in the input file.
-        extra_variables : dict, optional
+        extra_variables : dict[str, Any], optional
             Any other variables that should be declared in the input file.
-
-
-        Properties
-        ----------
-
-        sigma_fname : str
-            Path to the sigma_hp.log file produced.
-
-        eqp0_fname : str
-            Path to the eqp0.dat file produced.
-
-        eqp1_fname : str
-            Path to the eqp1.dat file produced.
-
+        symkpt : bool, default=True
+            Whether to use symmetries for k-point generation.
+        fft : ArrayLike, optional
+            FFT grid dimensions.
+        use_tr : bool, optional
+            Whether to use time-reversal symmetry.
+        clean_after : bool, optional
+            Whether to clean up after k-grid generation.
         """
-
         super().__init__(dirname, **kwargs)
 
-        extra_lines = kwargs.get("extra_lines", [])
-        extra_variables = kwargs.get("extra_variables", {})
+        extra_lines: list[str] = kwargs.get("extra_lines", [])
+        extra_variables: dict[str, Any] = kwargs.get("extra_variables", {})
 
         # Use specified kpoints or compute them from grid.
-        kpt_aliases = (
+        kpt_aliases: tuple[str, ...] = (
             "kpts",
             "kpoints",
             "sigma_kpts",
             "sigma_k_points",
             "sigma_kpoints",
         )
+        kpts: Sequence[ArrayLike] | list[list[float]] | NDArray[np.float64] | None = None
         for key in kpt_aliases:
             if key in kwargs:
                 kpts = kwargs[key]
                 break
-        else:
+
+        if kpts is None:
             # Compute k-points grids
-            kgrid_kwargs = {}
+            kgrid_kwargs: dict[str, Any] = {}
             for key in ("structure", "ngkpt", "fft", "use_tr", "clean_after"):
                 if key in kwargs:
                     kgrid_kwargs[key] = kwargs[key]
             self.kgridtask = KgridTask(dirname=dirname, **kgrid_kwargs)
 
-            symkpt = kwargs.get("symkpt", True)
+            symkpt: bool = kwargs.get("symkpt", True)
             if symkpt:
-                kpts, _wtks = self.kgridtask.get_kpoints()
+                kpts_result, _wtks = self.kgridtask.get_kpoints()
+                kpts = kpts_result
             else:
-                kpts, _wtks = self.kgridtask.get_kpt_grid_nosym()
+                kpts_result, _wtks = self.kgridtask.get_kpt_grid_nosym()
+                kpts = kpts_result.tolist()
+
+        # At this point, kpts must be defined
+        assert kpts is not None, "kpts must be provided or computed from grid"
 
         # Use specified qpoints or compute them from grid (HF).
+        qpts: Sequence[ArrayLike]
         if "qpts" in kwargs:
             qpts = kwargs["qpts"]
         elif "ngqpt" in kwargs:
@@ -116,17 +172,19 @@ class SigmaTask(BGWTask):
                     kgrid_kwargs[key] = kwargs[key]
             self.kgridtask = KgridTask(dirname=dirname, **kgrid_kwargs)
             qpts, _wtqs = self.kgridtask.get_kpoints()
-
         else:
             qpts = []
+
         if "ngqpt" in kwargs:
             extra_variables["qpts"] = qpts
             extra_variables["ngqpt"] = kwargs["ngqpt"]
 
         # Input file
+        ibnd_min: int = kwargs["ibnd_min"]
+        ibnd_max: int = kwargs["ibnd_max"]
         self.input = SigmaInput(
-            kwargs["ibnd_min"],
-            kwargs["ibnd_max"],
+            ibnd_min,
+            ibnd_max,
             kpts,
             *extra_lines,
             **extra_variables,
@@ -143,9 +201,8 @@ class SigmaTask(BGWTask):
         elif "vxc_fname" in kwargs:
             self.vxc_fname = kwargs["vxc_fname"]
         else:
-            raise Exception(
-                "Either 'vxc_dat_fname' or 'vxc_fname' must be provided " + "to SigmaTask."
-            )
+            msg = "Either 'vxc_dat_fname' or 'vxc_fname' must be provided to SigmaTask."
+            raise ValueError(msg)
 
         # It might be useful to issue a warning if those
         # files are not specified, but one would have to check the value
@@ -153,83 +210,96 @@ class SigmaTask(BGWTask):
         self.eps0mat_fname = kwargs.get("eps0mat_fname")
         self.epsmat_fname = kwargs.get("epsmat_fname")
 
-        # up the run script
+        # Set up the run script
         ex = "sigma.cplx.x" if self._flavor_complex else "sigma.real.x"
         self.runscript["SIGMA"] = ex
         self.runscript.append(f"$MPIRUN $SIGMA &> {self._output_fname}")
 
     @property
-    def wfn_co_fname(self):
+    def wfn_co_fname(self) -> str:
+        """Get path to the coarse wavefunction file."""
         return self._wfn_co_fname
 
     @wfn_co_fname.setter
-    def wfn_co_fname(self, value):
+    def wfn_co_fname(self, value: str) -> None:
+        """Set path to the coarse wavefunction file and update symlink."""
         self._wfn_co_fname = value
         self.update_link(value, "WFN_inner")
 
     @property
-    def rho_fname(self):
+    def rho_fname(self) -> str:
+        """Get path to the density file."""
         return self._rho_fname
 
     @rho_fname.setter
-    def rho_fname(self, value):
+    def rho_fname(self, value: str) -> None:
+        """Set path to the density file and update symlink."""
         self._rho_fname = value
         self.update_link(value, "RHO")
 
     @property
-    def vxc_dat_fname(self):
+    def vxc_dat_fname(self) -> str:
+        """Get path to the vxc.dat file."""
         return self._vxc_dat_fname
 
     @vxc_dat_fname.setter
-    def vxc_dat_fname(self, value):
+    def vxc_dat_fname(self, value: str) -> None:
+        """Set path to the vxc.dat file and update symlink."""
         self._vxc_dat_fname = value
         self.update_link(value, "vxc.dat")
 
     @property
-    def vxc_fname(self):
+    def vxc_fname(self) -> str:
+        """Get path to the VXC file."""
         return self._vxc_fname
 
     @vxc_fname.setter
-    def vxc_fname(self, value):
+    def vxc_fname(self, value: str) -> None:
+        """Set path to the VXC file and update symlink."""
         self._vxc_fname = value
         self.update_link(value, "VXC")
 
     @property
-    def eps0mat_fname(self):
+    def eps0mat_fname(self) -> str | None:
+        """Get path to the eps0mat file."""
         return self._eps0mat_fname
 
     @eps0mat_fname.setter
-    def eps0mat_fname(self, value):
+    def eps0mat_fname(self, value: str | None) -> None:
+        """Set path to the eps0mat file and update symlink."""
         self._eps0mat_fname = value
         dest = "eps0mat.h5" if self._use_hdf5 else "eps0mat"
         self.update_link(value, dest)
 
     @property
-    def epsmat_fname(self):
+    def epsmat_fname(self) -> str | None:
+        """Get path to the epsmat file."""
         return self._epsmat_fname
 
     @epsmat_fname.setter
-    def epsmat_fname(self, value):
+    def epsmat_fname(self, value: str | None) -> None:
+        """Set path to the epsmat file and update symlink."""
         self._epsmat_fname = value
         dest = "epsmat.h5" if self._use_hdf5 else "epsmat"
         self.update_link(value, dest)
 
-    def write(self):
+    def write(self) -> None:
+        """Write the task files to disk."""
         super().write()
         with self.exec_from_dirname():
             self.input.write()
 
     @property
-    def sigma_fname(self):
-        """Path to the sigma_hp.log file produced."""
+    def sigma_fname(self) -> str:
+        """Get path to the sigma_hp.log file produced."""
         return str(Path(self.dirname) / "sigma_hp.log")
 
     @property
-    def eqp0_fname(self):
-        """Path to the eqp0.dat file produced."""
+    def eqp0_fname(self) -> str:
+        """Get path to the eqp0.dat file produced."""
         return str(Path(self.dirname) / "eqp0.dat")
 
     @property
-    def eqp1_fname(self):
-        """Path to the eqp1.dat file produced."""
+    def eqp1_fname(self) -> str:
+        """Get path to the eqp1.dat file produced."""
         return str(Path(self.dirname) / "eqp1.dat")

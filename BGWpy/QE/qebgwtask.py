@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import TYPE_CHECKING, Any
 
 from numpy import array
 
@@ -9,16 +10,20 @@ from BGWpy.core import Namelist
 
 from .qetask import QeTask
 
+if TYPE_CHECKING:
+    import numpy as np
+    from numpy.typing import ArrayLike, NDArray
+
 # Public
 __all__ = ["Qe2BgwInput", "Qe2BgwTask"]
 
 
 class Qe2BgwInput(Namelist):
-    _ngkpt = array([1, 1, 1])
-    _kshift = array([0.0, 0.0, 0.0])
-    _qshift = array([0.0, 0.0, 0.0])
+    _ngkpt: NDArray[np.float64] = array([1, 1, 1])
+    _kshift: NDArray[np.float64] = array([0.0, 0.0, 0.0])
+    _qshift: NDArray[np.float64] = array([0.0, 0.0, 0.0])
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         ngkpt = kwargs.pop("ngkpt", 3 * [0.0])
         kshift = kwargs.pop("kshift", 3 * [0.0])
         qshift = kwargs.pop("qshift", 3 * [0.0])
@@ -58,40 +63,40 @@ class Qe2BgwInput(Namelist):
         self.qshift = qshift
 
     @property
-    def ngkpt(self):
+    def ngkpt(self) -> NDArray[np.float64]:
         return self._ngkpt
 
     @ngkpt.setter
-    def ngkpt(self, ngkpt):
+    def ngkpt(self, ngkpt: ArrayLike) -> None:
         self._ngkpt = array(ngkpt)
-        self["wfng_nk1"] = ngkpt[0]
-        self["wfng_nk2"] = ngkpt[1]
-        self["wfng_nk3"] = ngkpt[2]
+        self["wfng_nk1"] = self._ngkpt[0]
+        self["wfng_nk2"] = self._ngkpt[1]
+        self["wfng_nk3"] = self._ngkpt[2]
         self._set_kqshift()
 
     @property
-    def kshift(self):
+    def kshift(self) -> NDArray[np.float64]:
         return self._kshift
 
     @kshift.setter
-    def kshift(self, kshift):
+    def kshift(self, kshift: ArrayLike) -> None:
         self._kshift = array(kshift)
         self._set_kqshift()
 
     @property
-    def qshift(self):
+    def qshift(self) -> NDArray[np.float64]:
         return self._qshift
 
     @qshift.setter
-    def qshift(self, qshift):
+    def qshift(self, qshift: ArrayLike) -> None:
         self._qshift = array(qshift)
         self._set_kqshift()
 
     @property
-    def kqshift(self):
+    def kqshift(self) -> NDArray[np.float64]:
         return self.kshift + self.qshift * self.ngkpt
 
-    def _set_kqshift(self):
+    def _set_kqshift(self) -> None:
         self["wfng_dk1"] = self.kqshift[0]
         self["wfng_dk2"] = self.kqshift[1]
         self["wfng_dk3"] = self.kqshift[2]
@@ -105,7 +110,7 @@ class Qe2BgwTask(QeTask):
     _input_fname = "wfn.pp.in"
     _output_fname = "wfn.pp.out"
 
-    def __init__(self, dirname, **kwargs):
+    def __init__(self, dirname: str, **kwargs: Any) -> None:
         """
         Arguments
         ---------
@@ -216,32 +221,32 @@ class Qe2BgwTask(QeTask):
     _wfn_fname = "wfn.cplx"
 
     @property
-    def wfn_fname(self):
+    def wfn_fname(self) -> str:
         return str(Path(self.dirname) / self._wfn_fname)
 
     @wfn_fname.setter
-    def wfn_fname(self, value):
+    def wfn_fname(self, value: str) -> None:
         self._wfn_fname = value
         self.input["wfng_file"] = value
 
     _rho_fname = "rho.real"
 
     @property
-    def rho_fname(self):
+    def rho_fname(self) -> str:
         return str(Path(self.dirname) / self._rho_fname)
 
     @rho_fname.setter
-    def rho_fname(self, value):
+    def rho_fname(self, value: str) -> None:
         self._rho_fname = value
         self.input["rhog_file"] = value
 
     _vxc_dat_fname = "vxc.dat"
 
     @property
-    def vxc_dat_fname(self):
+    def vxc_dat_fname(self) -> str:
         return str(Path(self.dirname) / self._vxc_dat_fname)
 
     @vxc_dat_fname.setter
-    def vxc_dat_fname(self, value):
+    def vxc_dat_fname(self, value: str) -> None:
         self._vxc_dat_fname = value
         self.input["vxc_file"] = value

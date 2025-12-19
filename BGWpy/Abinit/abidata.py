@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 from collections import OrderedDict
 
-input_variable_blocks = OrderedDict(
+input_variable_blocks: OrderedDict[str, str] = OrderedDict(
     (
         (
             "Datasets",

@@ -2,8 +2,10 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
+from typing import Any
 
 import numpy as np
+from numpy.typing import NDArray
 
 from BGWpy.core import IOTask
 from BGWpy.DFT import DFTTask
@@ -18,7 +20,7 @@ class AbinitTask(DFTTask, IOTask):
 
     _TAG_JOB_COMPLETED = "Calculation completed"
 
-    def __init__(self, dirname, **kwargs):
+    def __init__(self, dirname: str, **kwargs: Any) -> None:
         """
         Arguments
         ---------
@@ -73,7 +75,10 @@ class AbinitTask(DFTTask, IOTask):
         tnons = np.round(tnons / (2 * np.pi), 5)
 
         self.input.set_variables({"symrel": symrel, "tnons": tnons, "nsym": nsym})
-        self.set_kpoints(kpt, wtk)
+        # Convert kpt and wtk to numpy arrays
+        kpt_array = np.asarray(kpt, dtype=np.float64)
+        wtk_array = np.asarray(wtk, dtype=np.float64)
+        self.set_kpoints(kpt_array, wtk_array)
 
         self.input.set_variables(kwargs.get("input_variables", {}))
 
@@ -81,7 +86,7 @@ class AbinitTask(DFTTask, IOTask):
         self.runscript.append(f"$MPIRUN $ABINIT < {self.filesfile_basename} &> {self.log_basename}")
 
     @property
-    def output_fname(self):
+    def output_fname(self) -> str:
         first = Path(self.dirname) / self.output_basename
         for s in reversed("ABCDEFGHIJKLMNOPQRSTUVWXYZ"):
             last = Path(str(first) + s)
@@ -90,45 +95,45 @@ class AbinitTask(DFTTask, IOTask):
         return str(first)
 
     @property
-    def filesfile_basename(self):
+    def filesfile_basename(self) -> str:
         return self.prefix + ".files"
 
     @property
-    def output_basename(self):
+    def output_basename(self) -> str:
         return self.prefix + ".out"
 
     @property
-    def log_basename(self):
+    def log_basename(self) -> str:
         return self.prefix + ".log"
 
     @property
-    def input_data_dir(self):
+    def input_data_dir(self) -> str:
         return str(Path(self.dirname) / "input_data")
 
     @property
-    def out_data_dir(self):
+    def out_data_dir(self) -> str:
         return str(Path(self.dirname) / "out_data")
 
     @property
-    def tmp_data_dir(self):
+    def tmp_data_dir(self) -> str:
         return str(Path(self.dirname) / "tmp_data")
 
     @property
-    def idat_root(self):
+    def idat_root(self) -> str:
         """The root name for input data files."""
         return str(Path(self.input_data_dir) / "idat")
 
     @property
-    def odat_root(self):
+    def odat_root(self) -> str:
         """The root name for output data files."""
         return str(Path(self.out_data_dir) / "odat")
 
     @property
-    def tmp_root(self):
+    def tmp_root(self) -> str:
         """The root name for temporaty data files."""
         return str(Path(self.tmp_data_dir) / "tmp")
 
-    def get_odat(self, datatype, dtset=0):
+    def get_odat(self, datatype: str, dtset: int = 0) -> str:
         """
         Returns an output data file name.
 
@@ -149,7 +154,7 @@ class AbinitTask(DFTTask, IOTask):
 
         return fname
 
-    def get_idat(self, datatype, dtset=0):
+    def get_idat(self, datatype: str, dtset: int = 0) -> str:
         """
         Returns an input data file name.
 
@@ -170,7 +175,7 @@ class AbinitTask(DFTTask, IOTask):
 
         return fname
 
-    def get_filesfile_content(self):
+    def get_filesfile_content(self) -> str:
         result_str = ""
         result_str += os.path.relpath(self.input_fname, self.dirname) + "\n"
         result_str += self.output_basename + "\n"
@@ -183,7 +188,7 @@ class AbinitTask(DFTTask, IOTask):
 
         return result_str
 
-    def write(self):
+    def write(self) -> None:
         # Main directory, etc...
         super().write()
 
@@ -200,7 +205,9 @@ class AbinitTask(DFTTask, IOTask):
 
             self.input.write()
 
-    def set_kpoints(self, kpt, wtk, **kwargs):
+    def set_kpoints(
+        self, kpt: NDArray[np.floating[Any]], wtk: NDArray[np.floating[Any]], **kwargs: Any
+    ) -> None:
         """kpoint variables."""
         wtk_normalized = np.array(wtk, dtype=np.float64) / sum(wtk)
         self.input.set_variables(
@@ -215,7 +222,12 @@ class AbinitTask(DFTTask, IOTask):
         )
         self.input.set_variable("wtk", wtk_normalized, decimals=16)
 
-    def set_ngkpt(self, ngkpt, shiftk=None, **kwargs):
+    def set_ngkpt(
+        self,
+        ngkpt: NDArray[np.floating[Any]],
+        shiftk: list[list[float]] | None = None,
+        **kwargs: Any,
+    ) -> None:
         """kpoint variables."""
         if shiftk is None:
             shiftk = [3 * [0.0]]

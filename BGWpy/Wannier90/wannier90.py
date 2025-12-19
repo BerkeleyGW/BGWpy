@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+from typing import Any
+
 import numpy as np
+from numpy.typing import ArrayLike, NDArray
 
 from BGWpy.core import Writable
 from BGWpy.core.F90io import arr_str
@@ -11,27 +14,28 @@ __all__ = ["Wannier90Input"]
 class Wannier90Input(Writable):
     def __init__(
         self,
-        structure,
-        nbnd,
-        nwann,
-        kbounds,
-        klabels,
-        mp_grid,
-        kpts,
-        projections=None,
-        **variables,
-    ):
+        structure: Any,
+        nbnd: int,
+        nwann: int,
+        kbounds: ArrayLike,
+        klabels: list[str],
+        mp_grid: ArrayLike,
+        kpts: ArrayLike,
+        projections: dict[str, str] | str | list[str] | None = None,
+        **variables: Any,
+    ) -> None:
         self.structure = structure
         self.nbnd = nbnd
         self.nwann = nwann
-        self.kbounds = kbounds
+        # Convert ArrayLike inputs to concrete numpy arrays
+        self.kbounds: NDArray[np.floating[Any]] = np.asarray(kbounds, dtype=np.float64)
         self.klabels = klabels
-        self.mp_grid = mp_grid
-        self.kpts = kpts
+        self.mp_grid: NDArray[np.floating[Any]] = np.asarray(mp_grid, dtype=np.float64)
+        self.kpts: NDArray[np.floating[Any]] = np.asarray(kpts, dtype=np.float64)
         self.projections = projections
         self.variables = variables
 
-    def __str__(self):
+    def __str__(self) -> str:
         # Validate input dimensions
         if len(self.mp_grid) != 3:
             msg = f"mp_grid must have exactly 3 elements, got {len(self.mp_grid)}"

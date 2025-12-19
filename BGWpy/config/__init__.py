@@ -23,7 +23,8 @@ if Path(config_file).exists():
     if sk in config:
         for key in keys:
             if key in config[sk]:
-                flavors[key] = config[sk].getboolean(key)
+                bool_value = config[sk].getboolean(key)
+                flavors[key] = bool_value  # type: ignore[typeddict-item]
 
     keys = ("dft_flavor",)
     if sk in config:
@@ -44,14 +45,25 @@ if Path(config_file).exists():
     if sk in config:
         for key in keys:
             if key in config[sk]:
-                default_mpi[key] = config[sk][key]
+                value = config[sk][key]
+                # Convert string values to appropriate types
+                if key in ("nproc", "nproc_per_node", "nodes"):
+                    default_mpi[key] = int(value) if value else None  # type: ignore[assignment]
+                else:
+                    default_mpi[key] = value  # type: ignore[assignment]
 
     sk = "runscript"
     keys = ("first_line", "header", "footer")
     if sk in config:
         for key in keys:
             if key in config[sk]:
-                default_runscript[key] = config[sk][key]
+                value = config[sk][key]
+                # Convert string values to appropriate types
+                if key in ("header", "footer"):
+                    # Split on newlines to convert to list
+                    default_runscript[key] = value.split("\n") if value else []  # type: ignore[assignment]
+                else:
+                    default_runscript[key] = value  # type: ignore[assignment]
 
     del sk, keys
 

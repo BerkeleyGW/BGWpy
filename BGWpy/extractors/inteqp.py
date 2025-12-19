@@ -1,35 +1,67 @@
+"""Inteqp data extraction from BerkeleyGW output files.
+
+This module provides functions for reading and parsing output files from
+the inteqp.x program in BerkeleyGW.
+"""
+
 from __future__ import annotations
+
+from pathlib import Path
+from typing import TYPE_CHECKING, TypedDict
 
 import numpy as np
 
+if TYPE_CHECKING:
+    from numpy.typing import NDArray
 
-def extract_inteqp_bandstructure(fname):
-    """
-    Extract the data in the 'bandstructure.dat' file produced by inteqp.x.
+__all__ = ["extract_inteqp_bandstructure", "extract_inteqp_eqp"]
+
+
+class InteqpResult(TypedDict):
+    """Result dictionary from inteqp extraction functions."""
+
+    nspin: int
+    nkpt: int
+    nband: int
+    kpts: NDArray[np.float64]
+    ib_min: int
+    ib_max: int
+    eigs_dft_eV: NDArray[np.float64]
+    eigs_gw_eV: NDArray[np.float64]
+    delta_eigs_eV: NDArray[np.float64]
+
+
+def extract_inteqp_bandstructure(fname: str) -> InteqpResult:
+    """Extract the data in the 'bandstructure.dat' file produced by inteqp.x.
+
+    Parameters
+    ----------
+    fname : str
+        Path to the bandstructure.dat file.
 
     Returns
     -------
-    dict:
-        nspin: int
+    InteqpResult
+        Dictionary containing:
+        - nspin : int
             Number of spin components.
-        nkpt: int
+        - nkpt : int
             Number of k-points.
-        nband: int
+        - nband : int
             Number of bands.
-        kpts: numpy.array(nkpt, 3), float
-            k-points in cartesian coordinates.
-        ib_min: int
+        - kpts : NDArray[np.float64], shape (nkpt, 3)
+            K-points in cartesian coordinates.
+        - ib_min : int
             Index of minimum band (starting at 1 for the first occupied band).
-        ib_max
+        - ib_max : int
             Index of maximum band.
-        eigs_dft_eV: numpy.array(nspin, nkpt, nband), float
+        - eigs_dft_eV : NDArray[np.float64], shape (nspin, nkpt, nband)
             DFT eigenvalues, in eV.
-        eigs_gw_eV: numpy.array(nspin, nkpt, nband), float
+        - eigs_gw_eV : NDArray[np.float64], shape (nspin, nkpt, nband)
             GW eigenvalues, in eV.
-        delta_eigs_eV: numpy.array(nspin, nkpt, nband), float
+        - delta_eigs_eV : NDArray[np.float64], shape (nspin, nkpt, nband)
             Difference between GW and DFT eigenvalues, in eV.
     """
-
     data = np.loadtxt(fname, unpack=True)
 
     spin = np.array(data[0], dtype=np.int64)
@@ -43,9 +75,11 @@ def extract_inteqp_bandstructure(fname):
     ndata = len(spin)
     nspin = 1 if spin[0] == spin[-1] else 2
 
-    ib_min, ib_max = band[0], band[-1]
+    ib_min = int(band[0])
+    ib_max = int(band[-1])
     nband = ib_max - ib_min + 1
 
+    nkpt: int = 0
     for i, b in enumerate(band):
         if b != ib_min:
             nkpt = i
@@ -59,9 +93,9 @@ def extract_inteqp_bandstructure(fname):
     delta_eigs_eV = np.zeros((nspin, nkpt, nband), dtype=np.float64)
 
     for i in range(ndata):
-        ispin = spin[i] - 1
+        ispin = int(spin[i]) - 1
         ikpt = i % nkpt
-        iband = band[i] - 1
+        iband = int(band[i]) - 1
 
         eigs_dft_eV[ispin, ikpt, iband] = E_DFT[i]
         eigs_gw_eV[ispin, ikpt, iband] = E_QP[i]
@@ -80,40 +114,44 @@ def extract_inteqp_bandstructure(fname):
     }
 
 
-def extract_inteqp_eqp(fname):
-    """
-    Extract the data in the 'eqp.dat' file produced by inteqp.x.
+def extract_inteqp_eqp(fname: str) -> InteqpResult:
+    """Extract the data in the 'eqp.dat' file produced by inteqp.x.
+
+    Parameters
+    ----------
+    fname : str
+        Path to the eqp.dat file.
 
     Returns
     -------
-    dict:
-        nspin: int
+    InteqpResult
+        Dictionary containing:
+        - nspin : int
             Number of spin components.
-        nkpt: int
+        - nkpt : int
             Number of k-points.
-        nband: int
+        - nband : int
             Number of bands.
-        kpts: numpy.array(nkpt, 3), float
-            k-points in cartesian coordinates.
-        ib_min: int
+        - kpts : NDArray[np.float64], shape (nkpt, 3)
+            K-points in cartesian coordinates.
+        - ib_min : int
             Index of minimum band (starting at 1 for the first occupied band).
-        ib_max
+        - ib_max : int
             Index of maximum band.
-        eigs_dft_eV: numpy.array(nspin, nkpt, nband), float
+        - eigs_dft_eV : NDArray[np.float64], shape (nspin, nkpt, nband)
             DFT eigenvalues, in eV.
-        eigs_gw_eV: numpy.array(nspin, nkpt, nband), float
+        - eigs_gw_eV : NDArray[np.float64], shape (nspin, nkpt, nband)
             GW eigenvalues, in eV.
-        delta_eigs_eV: numpy.array(nspin, nkpt, nband), float
+        - delta_eigs_eV : NDArray[np.float64], shape (nspin, nkpt, nband)
             Difference between GW and DFT eigenvalues, in eV.
     """
-
-    with open(fname) as f:
+    with Path(fname).open() as f:
         # Read the first block to compute the dimensions
         line = next(f)
         parts = line.split()
         nstates = int(parts[3])
-        spins = []
-        bands = []
+        spins: list[int] = []
+        bands: list[int] = []
         for _ in range(nstates):
             line = next(f)
             parts = line.split()

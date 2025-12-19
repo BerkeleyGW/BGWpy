@@ -26,6 +26,9 @@ __author__ = "Gabriel Antonius"
 __license__ = "BSD-3-Clause"
 
 # Core modules
+# External dependencies
+from pymatgen.core import Structure
+
 from . import BGW, DFT, config, core, scripts
 
 # Submodule imports
@@ -34,9 +37,6 @@ from .BGW import *
 
 # Core classes
 from .core import TaskStatus, Workflow
-
-# External dependencies
-from .external import Structure
 from .flows import *
 from .QE import *
 

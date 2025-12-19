@@ -86,7 +86,7 @@ class TestBGWTasksMaker(TestQETasksMaker):
         kwargs = copy(self.common_kwargs)
         kwargs.update(qshift=[0.001, 0.0, 0.0])
         return EpsilonTask(
-            dirname=Path(self.tmpdir) / "Epsilon",
+            dirname=str(Path(self.tmpdir) / "Epsilon"),
             wfn_fname=pw2bgwtask_ksh.wfn_fname,
             wfnq_fname=pw2bgwtask_qsh.wfn_fname,
             **kwargs,
@@ -96,7 +96,7 @@ class TestBGWTasksMaker(TestQETasksMaker):
         kwargs = copy(self.common_kwargs)
         kwargs.update(extra_lines=["screening_semiconductor"])
         return SigmaTask(
-            dirname=Path(self.tmpdir) / "Sigma",
+            dirname=str(Path(self.tmpdir) / "Sigma"),
             wfn_co_fname=pw2bgwtask_ush.wfn_fname,
             rho_fname=pw2bgwtask_ush.rho_fname,
             vxc_dat_fname=pw2bgwtask_ush.vxc_dat_fname,
@@ -110,7 +110,7 @@ class TestBGWTasksMaker(TestQETasksMaker):
         kwargs.update(extra_lines=["screening_semiconductor", "use_symmetries_coarse_grid"])
 
         return KernelTask(
-            dirname=Path(self.tmpdir) / "Kernel",
+            dirname=str(Path(self.tmpdir) / "Kernel"),
             wfn_co_fname=pw2bgwtask_ush.wfn_fname,
             eps0mat_fname=epsilontask.eps0mat_fname,
             epsmat_fname=epsilontask.epsmat_fname,
@@ -149,7 +149,7 @@ class TestBGWTasksMaker(TestQETasksMaker):
             kwargs["bsexmat_fname"] = kerneltask.bsexmat_fname
 
         return AbsorptionTask(
-            dirname=Path(self.tmpdir) / "Absorption",
+            dirname=str(Path(self.tmpdir) / "Absorption"),
             wfn_co_fname=pw2bgwtask_ush.wfn_fname,
             eps0mat_fname=epsilontask.eps0mat_fname,
             epsmat_fname=epsilontask.epsmat_fname,

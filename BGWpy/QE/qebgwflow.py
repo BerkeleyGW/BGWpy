@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+from typing import Any
+
 from BGWpy.DFT import WfnBgwFlow
 from BGWpy.QE.qebgwtask import Qe2BgwTask
 from BGWpy.QE.wfntask import QeWfnTask
@@ -16,7 +20,7 @@ class QeBgwFlow(WfnBgwFlow):
     _spin_polarization_fname = ""
     _data_file_fname = ""
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """
         Keyword Arguments
         -----------------
@@ -107,48 +111,48 @@ class QeBgwFlow(WfnBgwFlow):
         self.add_task(self.wfnbgwntask, merge=False)
 
     @property
-    def charge_density_fname(self):
+    def charge_density_fname(self) -> str:
         """The charge density file used by QE."""
         return self._charge_density_fname
 
     @charge_density_fname.setter
-    def charge_density_fname(self, value):
+    def charge_density_fname(self, value: str) -> None:
         self._charge_density_fname = value
 
     @property
-    def spin_polarization_fname(self):
+    def spin_polarization_fname(self) -> str:
         """The spin polarization file used by QE."""
         return self._spin_polarization_fname
 
     @spin_polarization_fname.setter
-    def spin_polarization_fname(self, value):
+    def spin_polarization_fname(self, value: str) -> None:
         self._spin_polarization_fname = value
 
     @property
-    def data_file_fname(self):
+    def data_file_fname(self) -> str:
         """The XML data file used by QE."""
         return self._data_file_fname
 
     @data_file_fname.setter
-    def data_file_fname(self, value):
+    def data_file_fname(self, value: str) -> None:
         self._data_file_fname = value
 
     @property
-    def rho_fname(self):
+    def rho_fname(self) -> str:
         """The charge density file name for BerkeleyGW."""
         return self.wfnbgwntask.rho_fname
 
     @property
-    def wfn_fname(self):
+    def wfn_fname(self) -> str:
         """The wavefunctions file name for BerkeleyGW."""
         return self.wfnbgwntask.wfn_fname
 
     @property
-    def vxc_fname(self):
+    def vxc_fname(self) -> str:
         msg = "Please use vxc_dat_fname instead of vxc_fname."
         raise NotImplementedError(msg)
 
     @property
-    def vxc_dat_fname(self):
+    def vxc_dat_fname(self) -> str:
         """The xc potential file name for BerkeleyGW."""
         return self.wfnbgwntask.vxc_dat_fname

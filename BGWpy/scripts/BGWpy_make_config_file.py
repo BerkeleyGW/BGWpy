@@ -5,7 +5,7 @@ import configparser
 from pathlib import Path
 
 
-def get_config():
+def get_config() -> configparser.ConfigParser:
     config = configparser.ConfigParser()
 
     config["flavors"] = {  # type: ignore[assignment]
@@ -38,7 +38,7 @@ def get_config():
     return config
 
 
-def get_header():
+def get_header() -> str:
     return """\
 ; Configuration file for BGWpy
 ; This file should be saved as ~/.BGWpyrc
@@ -49,7 +49,7 @@ def get_header():
 """
 
 
-def main():
+def main() -> None:
     import argparse
     import os
     import sys

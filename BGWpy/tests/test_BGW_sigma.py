@@ -23,7 +23,7 @@ class TestSigmaTasksMaker(TestBGWTasksMaker):
         kwargs.update(extra_variables={"frequency_dependence": -1})
         kwargs.update(ngqpt=kwargs["ngkpt"])
         return SigmaTask(
-            dirname=Path(self.tmpdir) / "Sigma",
+            dirname=str(Path(self.tmpdir) / "Sigma"),
             wfn_co_fname=pw2bgwtask_ush.wfn_fname,
             rho_fname=pw2bgwtask_ush.rho_fname,
             vxc_dat_fname=pw2bgwtask_ush.vxc_dat_fname,

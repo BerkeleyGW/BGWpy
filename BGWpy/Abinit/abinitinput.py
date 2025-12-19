@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+from typing import Any
+
 import numpy as np
+from numpy.typing import NDArray
 
 from BGWpy.core import Writable
 
@@ -14,19 +17,19 @@ __all__ = ["AbinitInput"]
 class AbinitInput(Writable):
     """Abinit input file."""
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
 
-        self.variables = {}
-        self.variables_blocks = []
-        self.decimals = {}
+        self.variables: dict[str, Any] = {}
+        self.variables_blocks: list[VariableBlock] = []
+        self.decimals: dict[str, int] = {}
 
         for name, register in input_variable_blocks.items():
             self.variables_blocks.append(VariableBlock(name, register))
         self.variables_blocks.append(VariableBlock("Other"))
 
-    def __str__(self):
-        lines = []
+    def __str__(self) -> str:
+        lines: list[str] = []
 
         # Clear blocks
         for block in self.variables_blocks:
@@ -53,21 +56,23 @@ class AbinitInput(Writable):
 
         return "\n".join(lines) + "\n"
 
-    def clear(self):
+    def clear(self) -> None:
         """Clear variables."""
         self.variables.clear()
         for block in self.variables_blocks:
             block.clear()
 
-    def __getitem__(self, key: str):
+    def __getitem__(self, key: str) -> Any:
         """Get a variable value by key."""
         return self.variables[key]
 
-    def __setitem__(self, key: str, value):
+    def __setitem__(self, key: str, value: Any) -> None:
         """Set a variable value by key."""
         self.variables[key] = value
 
-    def set_variable(self, name, value, decimals=None):  # TODO ndecimal or ndigits
+    def set_variable(
+        self, name: str, value: Any, decimals: int | None = None
+    ) -> None:  # TODO ndecimal or ndigits
         """a single variable."""
         self.variables[name] = value
         if value is None:
@@ -76,7 +81,12 @@ class AbinitInput(Writable):
         if decimals is not None:
             self.decimals[name] = decimals
 
-    def set_variables(self, variables, dataset=0, **kwargs):
+    def set_variables(
+        self,
+        variables: dict[str, Any],
+        dataset: int | list[int] | list[str] | str = 0,
+        **kwargs: Any,
+    ) -> None:
         """
         Sets variables by providing a dictionary, or expanding a dictionary,
         and possibly append them by a dataset index.
@@ -130,7 +140,7 @@ class AbinitInput(Writable):
                 newkey = key + str(ds)
                 self.set_variable(newkey, val, **kwargs)
 
-    def set_structure(self, structure):
+    def set_structure(self, structure: Any) -> None:
         variables = structure_to_abivars(structure)
         self.set_variables(variables)
 
@@ -141,20 +151,20 @@ class AbinitInput(Writable):
 class VariableBlock(list):
     """A block of abinit variables."""
 
-    def __init__(self, title, register=""):
+    def __init__(self, title: str, register: str | list[str] = "") -> None:
         # The block title
         self.title = title
 
         # A register of all possible input variable.
         if isinstance(register, str):
-            self.register = register.split()
+            self.register: list[str] = register.split()
         else:
             self.register = list(register)
 
-    def clear(self):
+    def clear(self) -> None:
         del self[:]
 
-    def __str__(self):
+    def __str__(self) -> str:
         lines = [f"#== {self.title} ==#"]
         for variable in sorted(self):
             svar = str(variable)
@@ -166,24 +176,24 @@ class VariableBlock(list):
 # =========================================================================== #
 
 
-def structure_to_abivars(structure):
+def structure_to_abivars(structure: Any) -> dict[str, Any]:
     """Get abinit variables from a pymatgen.Structure object."""
 
     from scipy import constants
 
     bohr_to_ang = constants.physical_constants["Bohr radius"][0] / constants.angstrom
-    rprim = structure.lattice.matrix / bohr_to_ang
+    rprim: NDArray[np.floating[Any]] = structure.lattice.matrix / bohr_to_ang
 
     xred = [site.frac_coords.round(14).tolist() for site in structure.sites]
 
-    natom = structure.num_sites
-    ntypat = structure.n_elems
+    natom: int = structure.num_sites
+    ntypat: int = structure.n_elems
 
     znucl_atom = structure.atomic_numbers
 
     itypat = 0
-    typat = []
-    znucl = []
+    typat: list[int] = []
+    znucl: list[int] = []
     for z in znucl_atom:
         if z not in znucl:
             itypat += 1

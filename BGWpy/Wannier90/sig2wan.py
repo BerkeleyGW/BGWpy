@@ -1,10 +1,20 @@
+from __future__ import annotations
+
 from BGWpy.core import Writable
 
 __all__ = ["Sig2WanInput"]
 
 
 class Sig2WanInput(Writable):
-    def __init__(self, prefix, nbnd, nspin=1, eqp=1, sigma_file="sigma_hp.log", prefix_gw=None):
+    def __init__(
+        self,
+        prefix: str,
+        nbnd: int,
+        nspin: int = 1,
+        eqp: int = 1,
+        sigma_file: str = "sigma_hp.log",
+        prefix_gw: str | None = None,
+    ) -> None:
         self.prefix = prefix
         self.prefix_gw = prefix_gw if prefix_gw else prefix + "_GW"
         self.nspin = nspin
@@ -12,7 +22,7 @@ class Sig2WanInput(Writable):
         self.eqp = eqp
         self.sigma_file = sigma_file
 
-    def __str__(self):
+    def __str__(self) -> str:
         return """
 {sigma:<30} ! Sigma output file to read k-points, eigenvalues and symmetries from
 {nspin:<30} ! spin component to read from sigma_hp.log file

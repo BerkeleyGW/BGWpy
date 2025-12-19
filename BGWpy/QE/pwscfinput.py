@@ -1,17 +1,34 @@
 from __future__ import annotations
 
 import warnings
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 
 from BGWpy.core import Card, Namelist, Writable, fortran_str
 
+if TYPE_CHECKING:
+    from pymatgen.core import Structure
+
 
 class PWscfInput(Writable):
-    _structure = None
-    _pseudos = None
+    _structure: Structure | None = None
+    _pseudos: list[str] | None = None
 
-    def __init__(self, **kwargs):
+    control: Namelist
+    system: Namelist
+    electrons: Namelist
+    ions: Namelist
+    cell: Namelist
+    atomic_species: Card
+    atomic_positions: Card
+    k_points: Card
+    cell_parameters: Card
+    constraints: Card
+    occupations: Card
+    atomic_forces: Card
+
+    def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
 
         self.control = Namelist("control")
@@ -30,32 +47,32 @@ class PWscfInput(Writable):
         if "variables" in kwargs:
             self.set_variables(kwargs["variables"])
 
-    def _isrelax(self):
+    def _isrelax(self) -> bool:
         """True if this is a relaxation calculation."""
         calculation = str(self.control.get("calculation")).lower()
         return calculation in ("relax", "md", "vc-relax", "vc-md")
 
-    def _isvc(self):
+    def _isvc(self) -> bool:
         """True if the volume of the cell can change."""
         calculation = str(self.control.get("calculation")).lower()
         return calculation in ("vc-relax", "vc-md")
 
-    def _isfreebrav(self):
+    def _isfreebrav(self) -> bool:
         """True if the bravais lattis is free."""
         ibrav = self.system.get("ibrav")
         if ibrav is None:
             return False
         return int(ibrav) == 0
 
-    def _isconstrained(self):
+    def _isconstrained(self) -> bool:
         """True if the ion dynamics is constrained."""
         return self.ions.get("ion_dynamics") in ("verlet", "damp")
 
-    def _is_manual_occ(self):
+    def _is_manual_occ(self) -> bool:
         """True if the occupation is specified manually."""
         return str(self.system.get("occupations", "")).lower() == "from_input"
 
-    def set_variables(self, variables):
+    def set_variables(self, variables: dict[str, Any]) -> None:
         """
         Use a nested dictionary to set variables.
         The items in the variables dictionary should
@@ -101,7 +118,7 @@ class PWscfInput(Writable):
                     obj.pop()
                 obj.extend(val[1:])
 
-    def __str__(self):
+    def __str__(self) -> str:
         # Perform checks
         self.check_pseudos_names()
 
@@ -141,18 +158,18 @@ class PWscfInput(Writable):
 
         return result_str
 
-    def set_kpoints_crystal(self, kpts, wtks):
+    def set_kpoints_crystal(self, kpts: Any, wtks: Any) -> None:
         self.k_points.option = "crystal"
         self.k_points.append(len(kpts))
         for k, w in zip(kpts, wtks, strict=False):
             self.k_points.append([*list(k), w])
 
     @property
-    def structure(self):
+    def structure(self) -> Structure | None:
         return self._structure
 
     @structure.setter
-    def structure(self, structure):
+    def structure(self, structure: Structure) -> None:
         """A pymatgen.Structure object."""
         self._structure = structure
 
@@ -186,17 +203,17 @@ class PWscfInput(Writable):
             self.atomic_positions.append([site.specie.symbol, *frac_coords])
 
     @property
-    def pseudos(self):
+    def pseudos(self) -> list[str] | None:
         return self._pseudos
 
     @pseudos.setter
-    def pseudos(self, pseudos):
+    def pseudos(self, pseudos: list[str]) -> None:
         self._pseudos = pseudos
         if self.atomic_species:
             for i, pseudo in enumerate(pseudos):
                 self.atomic_species[i].append(pseudo)
 
-    def check_pseudos_names(self):
+    def check_pseudos_names(self) -> None:
         for symbol, _mass, pseudo in self.atomic_species:
             if symbol.lower() not in pseudo.lower():
                 warnings.warn(f"Suspicious pseudo name for atom {symbol}: {pseudo}", stacklevel=2)

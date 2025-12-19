@@ -116,7 +116,8 @@ class BasicInputFile(Writable):
     ----------
     variables : dict[str, Any]
         Dictionary of variable names to values.
-    keywords : list[str] of keyword lines.
+    keywords : list[str]
+        List of keyword lines.
     """
 
     def __init__(

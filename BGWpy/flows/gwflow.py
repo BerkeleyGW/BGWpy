@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Any
 
 from BGWpy.BGW import EpsilonTask, SigmaTask
 from BGWpy.config import check_dft_flavor, flavors, is_dft_flavor_abinit, is_dft_flavor_espresso
@@ -19,7 +20,7 @@ class GWFlow(Workflow):
         - Self-energy (Sigma)
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """
         Keyword arguments
         -----------------
@@ -114,7 +115,7 @@ class GWFlow(Workflow):
 
         # Dielectric matrix computation and inversion (epsilon)
         self.epsilontask = EpsilonTask(
-            dirname=Path(self.dirname) / "11-epsilon",
+            dirname=str(Path(self.dirname) / "11-epsilon"),
             ngkpt=self.ngkpt,
             qshift=self.qshift,
             extra_lines=self.epsilon_extra_lines,
@@ -124,7 +125,7 @@ class GWFlow(Workflow):
 
         # Self-energy calculation (sigma)
         self.sigmatask = SigmaTask(
-            dirname=Path(self.dirname) / "12-sigma",
+            dirname=str(Path(self.dirname) / "12-sigma"),
             ngkpt=self.ngkpt,
             extra_lines=self.sigma_extra_lines,
             extra_variables=self.sigma_extra_variables,
@@ -135,30 +136,35 @@ class GWFlow(Workflow):
 
         self.add_tasks([self.epsilontask, self.sigmatask], merge=False)
 
-        self.truncation_flag = kwargs.get("truncation_flag")
-        self.sigma_kpts = kwargs.get("sigma_kpts")
+        truncation_flag_value = kwargs.get("truncation_flag")
+        if truncation_flag_value is not None:
+            self.truncation_flag = truncation_flag_value
+
+        sigma_kpts_value = kwargs.get("sigma_kpts")
+        if sigma_kpts_value is not None:
+            self.sigma_kpts = sigma_kpts_value
 
     @property
-    def has_kshift(self):
+    def has_kshift(self) -> bool:
         return any(i != 0 for i in self.kshift)
 
     @property
-    def sigma_kpts(self):
+    def sigma_kpts(self) -> Any:
         return self.sigmatask.input.kpts
 
     @sigma_kpts.setter
-    def sigma_kpts(self, value):
+    def sigma_kpts(self, value: Any) -> None:
         if value:
             self.sigmatask.input.kpts = value
 
     _truncation_flag = ""
 
     @property
-    def truncation_flag(self):
+    def truncation_flag(self) -> str:
         return self._truncation_flag
 
     @truncation_flag.setter
-    def truncation_flag(self, value):
+    def truncation_flag(self, value: str) -> None:
         for task in (self.epsilontask, self.sigmatask):
             # Remove old value
             if self._truncation_flag in task.input.keywords:
@@ -171,7 +177,7 @@ class GWFlow(Workflow):
 
         self._truncation_flag = value
 
-    def make_dft_tasks_espresso(self, **kwargs):
+    def make_dft_tasks_espresso(self, **kwargs: Any) -> dict[str, str]:
         """
         Initialize all DFT tasks using Quantum Espresso.
         Return a dictionary of file names.
@@ -185,7 +191,7 @@ class GWFlow(Workflow):
 
         else:
             self.scftask = QeScfTask(
-                dirname=Path(self.dirname) / "01-density",
+                dirname=str(Path(self.dirname) / "01-density"),
                 ngkpt=self.ngkpt,
                 kshift=self.kshift,
                 **kwargs,
@@ -201,7 +207,7 @@ class GWFlow(Workflow):
 
         # Wavefunction tasks for Epsilon
         self.wfntask_ksh = QeBgwFlow(
-            dirname=Path(self.dirname) / "02-wfn",
+            dirname=str(Path(self.dirname) / "02-wfn"),
             ngkpt=self.ngkpt,
             kshift=self.kshift,
             nbnd=self.nbnd,
@@ -210,7 +216,7 @@ class GWFlow(Workflow):
         )
 
         self.wfntask_qsh = QeBgwFlow(
-            dirname=Path(self.dirname) / "03-wfnq",
+            dirname=str(Path(self.dirname) / "03-wfnq"),
             ngkpt=self.ngkpt,
             kshift=self.kshift,
             qshift=self.qshift,
@@ -224,7 +230,7 @@ class GWFlow(Workflow):
         # only if not already computed for Epsilon.
         if self.has_kshift:
             self.wfntask_ush = QeBgwFlow(
-                dirname=Path(self.dirname) / "04-wfn_co",
+                dirname=str(Path(self.dirname) / "04-wfn_co"),
                 ngkpt=self.ngkpt,
                 nbnd=self.nbnd,
                 rhog_flag=True,
@@ -244,7 +250,7 @@ class GWFlow(Workflow):
             "vxc_dat_fname": self.wfntask_ush.vxc_dat_fname,
         }
 
-    def make_dft_tasks_abinit(self, **kwargs):
+    def make_dft_tasks_abinit(self, **kwargs: Any) -> dict[str, str]:
         """
         Initialize all DFT tasks using Abinit.
         Return a dictionary of file names.
@@ -259,7 +265,7 @@ class GWFlow(Workflow):
 
         else:
             self.scftask = AbinitScfTask(
-                dirname=Path(self.dirname) / "01-density",
+                dirname=str(Path(self.dirname) / "01-density"),
                 ngkpt=self.ngkpt,
                 kshift=self.kshift,
                 **kwargs,
@@ -328,7 +334,7 @@ class GWFlow(Workflow):
 
         # Wavefunction tasks for Epsilon
         self.wfntask_ksh = AbinitBgwFlow(
-            dirname=Path(self.dirname) / "02-wfn",
+            dirname=str(Path(self.dirname) / "02-wfn"),
             ngkpt=self.ngkpt,
             kshift=self.kshift,
             nband=nbnd,
@@ -337,7 +343,7 @@ class GWFlow(Workflow):
         )
 
         self.wfntask_qsh = AbinitBgwFlow(
-            dirname=Path(self.dirname) / "03-wfnq",
+            dirname=str(Path(self.dirname) / "03-wfnq"),
             ngkpt=self.ngkpt,
             kshift=self.kshift,
             qshift=self.qshift,
@@ -351,7 +357,7 @@ class GWFlow(Workflow):
         if self.split_wfn:
             nbdbuf = int(self.nbnd * 0.2)  # 20% of bands are in buffer
             self.wfntask_large = AbinitBgwFlow(
-                dirname=Path(self.dirname) / "02-wfn-large",
+                dirname=str(Path(self.dirname) / "02-wfn-large"),
                 ngkpt=self.ngkpt,
                 kshift=self.kshift,
                 nband=self.nbnd,
@@ -366,7 +372,7 @@ class GWFlow(Workflow):
         # only if not already computed for Epsilon.
         if self.has_kshift:
             self.wfntask_ush = AbinitBgwFlow(
-                dirname=Path(self.dirname) / "04-wfn_co",
+                dirname=str(Path(self.dirname) / "04-wfn_co"),
                 ngkpt=self.ngkpt,
                 nband=self.nbnd,
                 rhog_flag=True,

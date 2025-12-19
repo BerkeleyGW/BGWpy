@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
 
 from .dfttask import DFTTask
@@ -12,8 +14,9 @@ class WfnTask(DFTTask, ABC):
     the output wavefunction file name for their specific DFT code.
     """
 
+    @property
     @abstractmethod
-    def wfn_fname(self):
+    def wfn_fname(self) -> str:
         """Return the wavefunction file name.
 
         Returns
@@ -21,7 +24,7 @@ class WfnTask(DFTTask, ABC):
         str
             The wavefunction file name for this task.
         """
-        pass
+        raise NotImplementedError
 
 
 class WfnBgwConverter(DFTTask, ABC):
@@ -31,8 +34,9 @@ class WfnBgwConverter(DFTTask, ABC):
     for their specific DFT code's wavefunction format.
     """
 
+    @property
     @abstractmethod
-    def wfn_fname_in(self):
+    def wfn_fname_in(self) -> str:
         """Return the input wavefunction file name.
 
         Returns
@@ -40,10 +44,11 @@ class WfnBgwConverter(DFTTask, ABC):
         str
             The input wavefunction file name (DFT code format).
         """
-        pass
+        raise NotImplementedError
 
+    @property
     @abstractmethod
-    def wfn_fname_out(self):
+    def wfn_fname_out(self) -> str:
         """Return the output wavefunction file name.
 
         Returns
@@ -51,4 +56,4 @@ class WfnBgwConverter(DFTTask, ABC):
         str
             The output wavefunction file name (BGW format).
         """
-        pass
+        raise NotImplementedError

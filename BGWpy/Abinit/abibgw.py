@@ -5,8 +5,10 @@ from __future__ import annotations
 import os
 import subprocess
 from pathlib import Path
+from typing import Any
 
-from numpy import array
+import numpy as np
+from numpy.typing import NDArray
 
 from BGWpy.core import BasicInputFile, fortran_str
 
@@ -21,7 +23,7 @@ __all__ = ["Abi2BgwInput", "Abi2BgwTask"]
 
 
 class Abi2BgwInput(BasicInputFile):
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """
         Keyword arguments
         -----------------
@@ -90,7 +92,7 @@ class Abi2BgwInput(BasicInputFile):
         for key in ("wfng_dk1", "wfng_dk2", "wfng_dk3"):
             self[key] = kwargs.get(key, 0.0)
 
-    def __str__(self):
+    def __str__(self) -> str:
         # The keyword order is rigid for abi2bgw.
         keys = [
             "wfng_file_abi",
@@ -130,7 +132,7 @@ class Abi2BgwTask(AbinitTask):
     _input_fname = "abi2bgw.in"
     _output_fname = "abi2bgw.out"
 
-    def __init__(self, dirname, **kwargs):
+    def __init__(self, dirname: str, **kwargs: Any) -> None:
         """
         Arguments
         ---------
@@ -202,7 +204,7 @@ class Abi2BgwTask(AbinitTask):
         del self.runscript.main[:]
         self.runscript.append(f"$ABI2BGW {self._input_fname} >& {self._output_fname}")
 
-    def write(self):
+    def write(self) -> None:
         subprocess.call(["mkdir", "-p", self.dirname])
         with self.exec_from_dirname():
             self.runscript.write()
@@ -210,91 +212,91 @@ class Abi2BgwTask(AbinitTask):
         with self.exec_from_dirname():
             self.input.write()
 
-    _wfn_fname = "wfn.cplx"
+    _wfn_fname: str = "wfn.cplx"
 
     @property
-    def wfn_fname(self):
+    def wfn_fname(self) -> str:
         return str(Path(self.dirname) / self._wfn_fname)
 
     @wfn_fname.setter
-    def wfn_fname(self, value):
+    def wfn_fname(self, value: str) -> None:
         self._wfn_fname = os.path.basename(value)
         self.input["wfng_file_abi"] = os.path.relpath(value, self.dirname)
 
-    _rho_fname = "rho.cplx"
+    _rho_fname: str = "rho.cplx"
 
     @property
-    def rho_fname(self):
+    def rho_fname(self) -> str:
         return str(Path(self.dirname) / self._rho_fname)
 
     @rho_fname.setter
-    def rho_fname(self, value):
+    def rho_fname(self, value: str) -> None:
         self._rho_fname = os.path.basename(value)
         self.input["rhog_file_abi"] = os.path.relpath(value, self.dirname)
 
-    _vxc_fname = "vxc.cplx"
+    _vxc_fname: str = "vxc.cplx"
 
     @property
-    def vxc_fname(self):
+    def vxc_fname(self) -> str:
         return str(Path(self.dirname) / self._vxc_fname)
 
     @vxc_fname.setter
-    def vxc_fname(self, value):
+    def vxc_fname(self, value: str) -> None:
         self._vxc_fname = os.path.basename(value)
         self.input["vxcg_file_abi"] = os.path.relpath(value, self.dirname)
 
-    _ngkpt = 3 * [1]
+    _ngkpt: NDArray[np.floating[Any]] = np.array(3 * [1])
 
     @property
-    def ngkpt(self):
+    def ngkpt(self) -> NDArray[np.floating[Any]]:
         return self._ngkpt
 
     @ngkpt.setter
-    def ngkpt(self, ngkpt):
-        self._ngkpt = array(ngkpt)
+    def ngkpt(self, ngkpt: Any) -> None:
+        self._ngkpt = np.array(ngkpt)
         self.input["wfng_nk1"] = ngkpt[0]
         self.input["wfng_nk2"] = ngkpt[1]
         self.input["wfng_nk3"] = ngkpt[2]
         self._set_kqshift()
 
-    _kshift = 3 * [0.0]
+    _kshift: NDArray[np.floating[Any]] = np.array(3 * [0.0])
 
     @property
-    def kshift(self):
+    def kshift(self) -> NDArray[np.floating[Any]]:
         return self._kshift
 
     shiftk = kshift  # Alias
 
     @kshift.setter
-    def kshift(self, kshift):
-        self._kshift = array(kshift)
+    def kshift(self, kshift: Any) -> None:
+        self._kshift = np.array(kshift)
         self._set_kqshift()
 
-    _qshift = 3 * [0.0]
+    _qshift: NDArray[np.floating[Any]] = np.array(3 * [0.0])
 
     @property
-    def qshift(self):
+    def qshift(self) -> NDArray[np.floating[Any]]:
         return self._qshift
 
     @qshift.setter
-    def qshift(self, qshift):
-        self._qshift = array(qshift)
+    def qshift(self, qshift: Any) -> None:
+        self._qshift = np.array(qshift)
         self._set_kqshift()
 
     shiftq = qshift  # Alias
 
     @property
-    def kqshift(self):
+    def kqshift(self) -> NDArray[np.floating[Any]]:
         return self.kshift + self.qshift * self.ngkpt
 
-    def _set_kqshift(self):
+    def _set_kqshift(self) -> None:
         self.input["wfng_dk1"] = self.kqshift[0]
         self.input["wfng_dk2"] = self.kqshift[1]
         self.input["wfng_dk3"] = self.kqshift[2]
 
-    def set_rho(self):
+    def set_rho(self) -> None:
         self.input["rhog_flag"] = True
 
     @property
-    def output_fname(self):
+    def output_fname(self) -> str:
         return str(Path(self.dirname) / self._output_fname)

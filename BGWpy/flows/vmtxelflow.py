@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import warnings
 from pathlib import Path
+from typing import Any
 
 from BGWpy.BGW import VmtxelTask
 from BGWpy.config import check_dft_flavor, flavors, is_dft_flavor_abinit, is_dft_flavor_espresso
@@ -13,7 +14,7 @@ __all__ = ["VmtxelFlow"]
 
 
 class VmtxelFlow(Workflow):
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
 
         kwargs.pop("dirname")
@@ -52,20 +53,19 @@ class VmtxelFlow(Workflow):
         self.dft_flavor = check_dft_flavor(kwargs.get("dft_flavor", flavors["dft_flavor"]))
         # Quantum Espresso flavor
         if is_dft_flavor_espresso(self.dft_flavor):
-            raise NotImplementedError
-            fnames = self.make_dft_tasks_espresso(**kwargs)
-            kwargs.update(fnames)
+            msg = "Quantum Espresso flavor is not yet implemented for VmtxelFlow"
+            raise NotImplementedError(msg)
 
         # Abinit flavor
         if is_dft_flavor_abinit(self.dft_flavor):
             fnames = self.make_dft_tasks_abinit(**kwargs)
             kwargs.update(fnames)
 
-        self.vmtxeltask = VmtxelTask(dirname=Path(self.dirname) / "21-vmtxel", **kwargs)
+        self.vmtxeltask = VmtxelTask(dirname=str(Path(self.dirname) / "21-vmtxel"), **kwargs)
 
         self.add_task(self.vmtxeltask)
 
-    def make_dft_tasks_abinit(self, **kwargs):
+    def make_dft_tasks_abinit(self, **kwargs: Any) -> dict[str, str]:
         """
         Initialize all DFT tasks using Abinit.
         Return a dictionary of file names.
@@ -80,7 +80,7 @@ class VmtxelFlow(Workflow):
 
         else:
             self.scftask = AbinitScfTask(
-                dirname=Path(self.dirname) / "01-density",
+                dirname=str(Path(self.dirname) / "01-density"),
                 ngkpt=self.ngkpt,
                 kshift=self.kshift,
                 **kwargs,
@@ -95,7 +95,7 @@ class VmtxelFlow(Workflow):
 
         # Wavefunctions on fine k-point grids
         self.wfntask_fi_ush = AbinitBgwFlow(
-            dirname=Path(self.dirname) / "05-wfn_fi",
+            dirname=str(Path(self.dirname) / "05-wfn_fi"),
             nband=self.nbnd_fine,
             ngkpt=self.ngkpt_fi,
             kshift=self.kshift_fi,
@@ -105,7 +105,7 @@ class VmtxelFlow(Workflow):
         )
 
         self.wfntask_fi_qsh = AbinitBgwFlow(
-            dirname=Path(self.dirname) / "06-wfnq_fi",
+            dirname=str(Path(self.dirname) / "06-wfnq_fi"),
             nband=None,
             ngkpt=self.ngkpt_fi,
             kshift=self.kshift_fi,

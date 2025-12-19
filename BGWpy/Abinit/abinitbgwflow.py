@@ -1,12 +1,14 @@
 from __future__ import annotations
 
+from typing import Any
+
 from BGWpy.DFT import WfnBgwFlow
 
 __all__ = ["AbinitBgwFlow"]
 
 
 class AbinitBgwFlow(WfnBgwFlow):
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """
         Keyword Arguments
         -----------------
@@ -115,38 +117,38 @@ class AbinitBgwFlow(WfnBgwFlow):
 
         self.add_task(self.wfnbgwntask, merge=False)
 
-    _charge_density_fname = ""
+    _charge_density_fname: str = ""
 
     @property
-    def charge_density_fname(self):
+    def charge_density_fname(self) -> str:
         """The charge density used by Abinit."""
         return self._charge_density_fname
 
     @charge_density_fname.setter
-    def charge_density_fname(self, value):
+    def charge_density_fname(self, value: str) -> None:
         self._charge_density_fname = value
 
     @property
-    def rho_fname(self):
+    def rho_fname(self) -> str:
         """The charge density file name for BerkeleyGW."""
         return self.wfnbgwntask.rho_fname
 
     @property
-    def den_fname(self):
+    def den_fname(self) -> str:
         """The charge density file name for BerkeleyGW."""
         return self.rho_fname
 
     @property
-    def wfn_fname(self):
+    def wfn_fname(self) -> str:
         """The wavefunctions file name for BerkeleyGW."""
         return self.wfnbgwntask.wfn_fname
 
     @property
-    def vxc_fname(self):
+    def vxc_fname(self) -> str:
         """The xc potential file name for BerkeleyGW."""
         return self.wfnbgwntask.vxc_fname
 
     @property
-    def vxc_dat_fname(self):
+    def vxc_dat_fname(self) -> str:
         msg = "Please use vxc_fname instead of vxc_dat_fname."
         raise NotImplementedError(msg)

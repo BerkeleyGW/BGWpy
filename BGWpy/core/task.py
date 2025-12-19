@@ -11,7 +11,10 @@ import pickle
 import sys
 from enum import Enum
 from pathlib import Path
-from typing import Any, TextIO
+from typing import TYPE_CHECKING, Any, TextIO
+
+if TYPE_CHECKING:
+    from contextlib import AbstractContextManager
 
 from BGWpy.config import default_mpi
 
@@ -66,7 +69,7 @@ class Task:
 
     def __init__(
         self,
-        dirname: str | Path = "./",
+        dirname: str = "./",
         runscript_fname: str = "run.sh",
         store_variables: bool = False,
         **kwargs: Any,
@@ -75,7 +78,7 @@ class Task:
 
         Parameters
         ----------
-        dirname : str | Path, default="./"
+        dirname : str, default="./"
             Main directory from which the scripts are executed.
         runscript_fname : str, default="run.sh"
             Name of the main execution script.
@@ -96,7 +99,7 @@ class Task:
         return str(self._dirname)
 
     @dirname.setter
-    def dirname(self, value: str | Path) -> None:
+    def dirname(self, value: str) -> None:
         """Set the task directory."""
         self._dirname = Path(value)
 
@@ -121,12 +124,12 @@ class Task:
         """Get formatted task name for reporting."""
         return f"{self._TASK_NAME:<10} : {self.dirname}"
 
-    def exec_from_dirname(self):
+    def exec_from_dirname(self) -> AbstractContextManager[None]:
         """Get context manager to execute code from task directory.
 
         Returns
         -------
-        ContextManager
+        AbstractContextManager[None]
             Context manager that changes to task directory.
 
         Examples

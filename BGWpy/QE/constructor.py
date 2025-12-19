@@ -1,8 +1,47 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from .pwscfinput import PWscfInput
 
+if TYPE_CHECKING:
+    from numpy.typing import ArrayLike
+    from pymatgen.core import Structure
 
-def get_scf_input(prefix, pseudo_dir, pseudos, structure, ecutwfc, kpts, wtks):
-    """Construct a Quantum Espresso scf input."""
+
+def get_scf_input(
+    prefix: str,
+    pseudo_dir: str,
+    pseudos: list[str],
+    structure: Structure,
+    ecutwfc: float,
+    kpts: ArrayLike,
+    wtks: ArrayLike,
+) -> PWscfInput:
+    """Construct a Quantum Espresso scf input.
+
+    Parameters
+    ----------
+    prefix : str
+        Prefix for QE output files.
+    pseudo_dir : str
+        Directory containing pseudopotential files.
+    pseudos : list[str]
+        List of pseudopotential filenames.
+    structure : Structure
+        Pymatgen Structure object.
+    ecutwfc : float
+        Wavefunction energy cutoff in Ry.
+    kpts : ArrayLike
+        K-points array, shape (nkpt, 3).
+    wtks : ArrayLike
+        K-point weights array, shape (nkpt,).
+
+    Returns
+    -------
+    PWscfInput
+        Configured input file object for SCF calculation.
+    """
     inp = PWscfInput()
 
     inp.control.update(
@@ -30,8 +69,42 @@ def get_scf_input(prefix, pseudo_dir, pseudos, structure, ecutwfc, kpts, wtks):
     return inp
 
 
-def get_bands_input(prefix, pseudo_dir, pseudos, structure, ecutwfc, kpts, wtks, nbnd=None):
-    """Construct a Quantum Espresso bands input."""
+def get_bands_input(
+    prefix: str,
+    pseudo_dir: str,
+    pseudos: list[str],
+    structure: Structure,
+    ecutwfc: float,
+    kpts: ArrayLike,
+    wtks: ArrayLike,
+    nbnd: int | None = None,
+) -> PWscfInput:
+    """Construct a Quantum Espresso bands input.
+
+    Parameters
+    ----------
+    prefix : str
+        Prefix for QE output files.
+    pseudo_dir : str
+        Directory containing pseudopotential files.
+    pseudos : list[str]
+        List of pseudopotential filenames.
+    structure : Structure
+        Pymatgen Structure object.
+    ecutwfc : float
+        Wavefunction energy cutoff in Ry.
+    kpts : ArrayLike
+        K-points array, shape (nkpt, 3).
+    wtks : ArrayLike
+        K-point weights array, shape (nkpt,).
+    nbnd : int | None, optional
+        Number of bands to compute. If None, uses QE default.
+
+    Returns
+    -------
+    PWscfInput
+        Configured input file object for bands calculation.
+    """
     inp = get_scf_input(prefix, pseudo_dir, pseudos, structure, ecutwfc, kpts, wtks)
     inp.control["calculation"] = "bands"
     if nbnd is not None:
