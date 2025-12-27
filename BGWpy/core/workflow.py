@@ -353,6 +353,6 @@ class Workflow(Task):
         Examples
         --------
         >>> workflow
-        Workflow(dirname=PosixPath('calculation'), tasks=3)
+        Workflow(dirname='calculation', tasks=3)
         """
         return f"Workflow(dirname={self.dirname!r}, tasks={len(self.tasks)})"

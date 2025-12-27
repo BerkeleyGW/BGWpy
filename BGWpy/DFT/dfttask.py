@@ -178,7 +178,7 @@ class DFTTask(MPITask):
         If an absolute path is given, it is used as-is.
         Otherwise, a relative path from dirname is computed.
         """
-        if os.path.realpath(value) == value.rstrip(os.path.sep):
+        if Path(value).is_absolute():
             self._pseudo_dir = value
         else:
             self._pseudo_dir = os.path.relpath(value, self.dirname)

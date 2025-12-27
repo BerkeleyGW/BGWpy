@@ -13,7 +13,7 @@ from .default_configuration import (
     flavors,
 )
 
-config_file = Path(os.environ["HOME"]) / ".BGWpyrc"
+config_file = Path.home() / ".BGWpyrc"
 if Path(config_file).exists():
     config = configparser.ConfigParser(comment_prefixes=(";"))
     config.read(config_file)

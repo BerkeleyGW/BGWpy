@@ -51,14 +51,13 @@ def get_header() -> str:
 
 def main() -> None:
     import argparse
-    import os
     import sys
 
     parser = argparse.ArgumentParser(description="Process some integers.")
     parser.add_argument("-f", dest="force", action="store_true", help="Overwrite existing file")
     args = parser.parse_args()
 
-    fname = Path(os.environ["HOME"]) / ".BGWpyrc"
+    fname = str(Path.home() / ".BGWpyrc")
     if Path(fname).exists() and not args.force:
         import warnings
 

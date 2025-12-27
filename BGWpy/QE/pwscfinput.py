@@ -113,9 +113,13 @@ class PWscfInput(Writable):
             if isinstance(obj, Namelist):
                 obj.update(val)
                 # If diagonalization method is changed from 'david', remove david-specific parameters
-                if key == "electrons" and "diagonalization" in val:
-                    if val["diagonalization"] != "david" and "diago_david_ndim" in obj:
-                        del obj["diago_david_ndim"]
+                if (
+                    key == "electrons"
+                    and "diagonalization" in val
+                    and val["diagonalization"] != "david"
+                    and "diago_david_ndim" in obj
+                ):
+                    del obj["diago_david_ndim"]
             elif isinstance(obj, Card):
                 obj.option = val[0]
                 while obj:

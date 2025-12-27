@@ -70,7 +70,7 @@ class QeTask(DFTTask, IOTask):
 
     @pseudo_dir.setter
     def pseudo_dir(self, value: str) -> None:
-        if os.path.realpath(value) == value.rstrip(os.path.sep):
+        if Path(value).is_absolute():
             self._pseudo_dir = value
         else:
             self._pseudo_dir = os.path.relpath(value, self.dirname)
