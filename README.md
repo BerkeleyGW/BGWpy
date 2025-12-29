@@ -17,31 +17,37 @@ or from ipython with
 
 ## Requirements
 
-The following software and modules are required to use BGWpy.
-
-- python 3 and python 2 compatible
-- numpy 1.6+ (http://www.scipy.org/)
-- pymatgen 4.0+ (http://pymatgen.org/)
-- BerkeleyGW 1.2+ (http://www.berkeleygw.org/)
+- Python 3.10+
+- numpy 1.24+
+- pymatgen 2024+
+- BerkeleyGW 4.0+
 
 Note that the binary executables of BerkeleyGW must be found
 in your PATH environment variable.
 
 ## Installing
 
-Automatic installation:
+Install using pip:
 
-    python -m pip install BGWpy
+    pip install BGWpy
 
-Manual installation: once you have satisfied the requirements, install the package with
+Or using uv:
 
-    python setup.py install
+    uv pip install BGWpy
 
-Whether you install automatically of manually,
-you should run the script `BGWpy_make_config_file.py`
-to generate a runtime configuration file `~/.BGWpyrc`
-which you can then modify. Most options in this file
-represent default values, and can be overridden when using the module.
+For development, clone the repository and install with dev dependencies:
+
+    git clone https://github.com/BerkeleyGW/BGWpy.git
+    cd BGWpy
+    uv sync --all-extras
+
+After installation, run the configuration script to generate a runtime
+configuration file `~/.BGWpyrc`:
+
+    BGWpy_make_config_file.py
+
+You can then modify this file as needed. Most options represent default
+values and can be overridden when using the module.
 
 ## License
 

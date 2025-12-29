@@ -145,7 +145,7 @@ def parse_sigma_output(f: str | TextIO) -> SigmaResult:
 
     # Create mapping from ik values to array indices
     # (ik values may not be consecutive, e.g., 1, 2, 4)
-    ik_values = sorted(set(br["ik"] for br in block_results))
+    ik_values = sorted({br["ik"] for br in block_results})
     ik_to_index = {ik: idx for idx, ik in enumerate(ik_values)}
 
     # Initialize the results dict
