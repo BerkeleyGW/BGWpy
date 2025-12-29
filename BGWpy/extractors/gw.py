@@ -143,6 +143,11 @@ def parse_sigma_output(f: str | TextIO) -> SigmaResult:
     # Count number of bands from the lines of last block
     nband = len(block_result["n"])
 
+    # Create mapping from ik values to array indices
+    # (ik values may not be consecutive, e.g., 1, 2, 4)
+    ik_values = sorted(set(br["ik"] for br in block_results))
+    ik_to_index = {ik: idx for idx, ik in enumerate(ik_values)}
+
     # Initialize the results dict
     results: dict[str, Any] = {"nspin": nspin, "nkpt": nkpt, "nband": nband}
 
@@ -157,7 +162,7 @@ def parse_sigma_output(f: str | TextIO) -> SigmaResult:
     # Merge the blocks
     for block_result in block_results:
         ispin = block_result["spin"] - 1
-        ikpt = block_result["ik"] - 1
+        ikpt = ik_to_index[block_result["ik"]]
         for key in keys:
             for iband, val in enumerate(block_result[key]):  # type: ignore[literal-required]
                 results[key][ispin, ikpt, iband] = val
