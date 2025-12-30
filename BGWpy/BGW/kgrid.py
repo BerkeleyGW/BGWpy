@@ -22,11 +22,13 @@ if TYPE_CHECKING:
 
 __all__ = [
     "KgridTask",
+    "apply_qshift",
     "get_kgrid_input",
     "get_kpoints",
     "get_kpt_grid",
     "get_kpt_grid_nosym",
     "get_kqshift",
+    "get_patch_sampled_kgrid",
 ]
 
 
@@ -676,3 +678,149 @@ def get_kpt_grid_nosym(
                 weights.append(1.0)
 
     return np.array(kpoints, dtype=np.float64), np.array(weights, dtype=np.float64)
+
+
+def get_patch_sampled_kgrid(
+    ngkpt: ArrayLike,
+    r_patch: float,
+    kshift: ArrayLike | None = None,
+    qshift: ArrayLike | None = None,
+    center: ArrayLike | None = None,
+    normalize_weights: bool = True,
+) -> tuple[NDArray[np.float64], NDArray[np.float64]]:
+    """Generate a patch-sampled k-grid within a sphere.
+
+    Creates a dense uniform k-point grid and filters it to include only
+    points within a sphere of specified radius. This is useful for BSE
+    kernel interpolation with fine grids around specific k-points.
+
+    Parameters
+    ----------
+    ngkpt : list(3), int
+        Dense grid dimensions for sampling (e.g., [100, 100, 100]).
+    r_patch : float
+        Radius of the sphere in fractional reciprocal space units.
+    kshift : list(3), float | None, default=None
+        Relative k-point shift. Defaults to [0, 0, 0].
+    qshift : list(3), float | None, default=None
+        Absolute q-point shift. Defaults to [0, 0, 0].
+    center : list(3), float | None, default=None
+        Center of the sphere in fractional reciprocal space coordinates.
+        Defaults to [0, 0, 0] (Gamma point).
+    normalize_weights : bool, default=True
+        If True, normalize weights to sum to 1.0.
+
+    Returns
+    -------
+    kpoints : NDArray[np.float64]
+        Array of shape (nkpt_filtered, 3) containing filtered k-point coordinates.
+    weights : NDArray[np.float64]
+        Array of shape (nkpt_filtered,) containing k-point weights.
+
+    Examples
+    --------
+    Generate a 100x100x100 grid and filter for points within 0.05 of Gamma:
+
+    >>> kpts, wtks = get_patch_sampled_kgrid(
+    ...     ngkpt=[100, 100, 100],
+    ...     r_patch=0.05,
+    ...     center=[0.0, 0.0, 0.0]
+    ... )
+
+    """
+    if center is None:
+        center_arr = np.array([0.0, 0.0, 0.0], dtype=np.float64)
+    else:
+        center_arr = np.array(center, dtype=np.float64)
+
+    # Generate full dense grid
+    kpoints, weights = get_kpt_grid_nosym(ngkpt, kshift=kshift, qshift=qshift)
+
+    # Calculate distances from center
+    distances = np.linalg.norm(kpoints - center_arr, axis=1)
+
+    # Filter points within sphere
+    mask = distances <= r_patch
+    kpoints_filtered = kpoints[mask]
+    weights_filtered = weights[mask]
+
+    # Normalize weights if requested
+    if normalize_weights:
+        weights_sum = np.sum(weights_filtered)
+        if weights_sum > 0:
+            weights_filtered = weights_filtered / weights_sum
+
+    nkpt_total = len(kpoints)
+    nkpt_filtered = len(kpoints_filtered)
+    warnings.warn(
+        f"Patch sampling: filtered {nkpt_filtered} k-points from "
+        f"{nkpt_total} total ({100.0 * nkpt_filtered / nkpt_total:.2f}%)",
+        stacklevel=2,
+    )
+
+    return kpoints_filtered, weights_filtered
+
+
+def apply_qshift(
+    kpts: ArrayLike,
+    qshift: ArrayLike,
+    wtks: ArrayLike | None = None,
+) -> tuple[NDArray[np.float64], NDArray[np.float64]]:
+    """Apply an absolute q-shift to explicit k-points.
+
+    This function is useful when you have explicit k-points (e.g., from patch
+    sampling) and need to create a q-shifted grid for WFNq_fi in absorption
+    calculations.
+
+    Parameters
+    ----------
+    kpts : array-like
+        Array of shape (nkpt, 3) containing k-point coordinates.
+    qshift : array-like
+        Array of shape (3,) containing the absolute q-shift to apply.
+    wtks : array-like | None, default=None
+        Array of shape (nkpt,) containing k-point weights. If None, weights
+        are set to uniform values.
+
+    Returns
+    -------
+    kpts_shifted : NDArray[np.float64]
+        Array of shape (nkpt, 3) containing shifted k-point coordinates.
+    wtks_out : NDArray[np.float64]
+        Array of shape (nkpt,) containing k-point weights (same as input).
+
+    Examples
+    --------
+    Apply a small q-shift for WFNq_fi generation:
+
+    >>> kpts_patch, wtks_patch = get_patch_sampled_kgrid(
+    ...     ngkpt=[100, 100, 100],
+    ...     r_patch=0.1,
+    ... )
+    >>> kpts_q, wtks_q = apply_qshift(kpts_patch, [0.001, 0.0, 0.0], wtks_patch)
+
+    """
+    kpts_arr = np.array(kpts, dtype=np.float64)
+    qshift_arr = np.array(qshift, dtype=np.float64)
+
+    if kpts_arr.ndim != 2 or kpts_arr.shape[1] != 3:
+        msg = f"kpts must have shape (nkpt, 3), got {kpts_arr.shape}"
+        raise ValueError(msg)
+
+    if qshift_arr.shape != (3,):
+        msg = f"qshift must have shape (3,), got {qshift_arr.shape}"
+        raise ValueError(msg)
+
+    # Apply the shift
+    kpts_shifted = kpts_arr + qshift_arr
+
+    # Handle weights
+    if wtks is None:
+        wtks_out = np.ones(len(kpts_arr), dtype=np.float64)
+    else:
+        wtks_out = np.array(wtks, dtype=np.float64)
+        if wtks_out.shape != (len(kpts_arr),):
+            msg = f"wtks must have shape ({len(kpts_arr)},), got {wtks_out.shape}"
+            raise ValueError(msg)
+
+    return kpts_shifted, wtks_out
