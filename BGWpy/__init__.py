@@ -29,7 +29,7 @@ __license__ = "BSD-3-Clause"
 # External dependencies
 from pymatgen.core import Structure
 
-from . import BGW, DFT, config, core, scripts
+from . import BGW, DFT, config, core, extractors, scripts
 
 # Submodule imports
 from .Abinit import *
@@ -37,6 +37,7 @@ from .BGW import *
 
 # Core classes
 from .core import TaskStatus, Workflow
+from .extractors import *
 from .flows import *
 from .QE import *
 
@@ -55,10 +56,12 @@ __all__ = [
     "DFT",
     "config",
     "core",
+    "extractors",
     "scripts",
     # Re-exported from submodules
     *QE.__all__,
     *BGW.__all__,
     *flows.__all__,
     *Abinit.__all__,
+    *extractors.__all__,
 ]
