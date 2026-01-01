@@ -184,7 +184,7 @@ class PWscfInput(Writable):
         # system specifications
         self.system["ibrav"] = 0
         self.system["nat"] = structure.num_sites
-        self.system["ntyp"] = structure.ntypesp
+        self.system["ntyp"] = structure.n_elems
 
         # cell parameters
         self.cell_parameters.option = "angstrom"
