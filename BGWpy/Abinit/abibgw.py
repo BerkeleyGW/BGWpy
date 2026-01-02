@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Any
 
 import numpy as np
-from numpy.typing import NDArray
+from numpy.typing import ArrayLike, NDArray
 
 from BGWpy.core import BasicInputFile, fortran_str
 
@@ -245,48 +245,48 @@ class Abi2BgwTask(AbinitTask):
         self._vxc_fname = os.path.basename(value)
         self.input["vxcg_file_abi"] = os.path.relpath(value, self.dirname)
 
-    _ngkpt: NDArray[np.floating[Any]] = np.array(3 * [1])
+    _ngkpt: NDArray[np.float64] = np.array(3 * [1])
 
     @property
-    def ngkpt(self) -> NDArray[np.floating[Any]]:
+    def ngkpt(self) -> NDArray[np.float64]:
         return self._ngkpt
 
     @ngkpt.setter
-    def ngkpt(self, ngkpt: Any) -> None:
+    def ngkpt(self, ngkpt: ArrayLike) -> None:
         self._ngkpt = np.array(ngkpt)
-        self.input["wfng_nk1"] = ngkpt[0]
-        self.input["wfng_nk2"] = ngkpt[1]
-        self.input["wfng_nk3"] = ngkpt[2]
+        self.input["wfng_nk1"] = self._ngkpt[0]
+        self.input["wfng_nk2"] = self._ngkpt[1]
+        self.input["wfng_nk3"] = self._ngkpt[2]
         self._set_kqshift()
 
-    _kshift: NDArray[np.floating[Any]] = np.array(3 * [0.0])
+    _kshift: NDArray[np.float64] = np.array(3 * [0.0])
 
     @property
-    def kshift(self) -> NDArray[np.floating[Any]]:
+    def kshift(self) -> NDArray[np.float64]:
         return self._kshift
 
     shiftk = kshift  # Alias
 
     @kshift.setter
-    def kshift(self, kshift: Any) -> None:
+    def kshift(self, kshift: ArrayLike) -> None:
         self._kshift = np.array(kshift)
         self._set_kqshift()
 
-    _qshift: NDArray[np.floating[Any]] = np.array(3 * [0.0])
+    _qshift: NDArray[np.float64] = np.array(3 * [0.0])
 
     @property
-    def qshift(self) -> NDArray[np.floating[Any]]:
+    def qshift(self) -> NDArray[np.float64]:
         return self._qshift
 
     @qshift.setter
-    def qshift(self, qshift: Any) -> None:
+    def qshift(self, qshift: ArrayLike) -> None:
         self._qshift = np.array(qshift)
         self._set_kqshift()
 
     shiftq = qshift  # Alias
 
     @property
-    def kqshift(self) -> NDArray[np.floating[Any]]:
+    def kqshift(self) -> NDArray[np.float64]:
         return self.kshift + self.qshift * self.ngkpt
 
     def _set_kqshift(self) -> None:

@@ -14,8 +14,8 @@ if TYPE_CHECKING:
 
 
 class EpsilonInput(BasicInputFile):
-    q0: NDArray[np.floating[Any]]
-    qpts: list[NDArray[np.floating[Any]]]
+    q0: NDArray[np.float64]
+    qpts: list[NDArray[np.float64]]
 
     def __init__(
         self,
@@ -54,8 +54,8 @@ class EpsilonInput(BasicInputFile):
 
 
 class SigmaInput(BasicInputFile):
-    kpts: list[NDArray[np.floating[Any]]]
-    qpts: list[NDArray[np.floating[Any]]]
+    kpts: list[NDArray[np.float64]]
+    qpts: list[NDArray[np.float64]]
     ngqpt: Sequence[int]
 
     def __init__(

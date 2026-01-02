@@ -19,14 +19,18 @@ class WfnBgwFlow(DFTFlow, ABC):
 
     Abstract Properties
     -------------------
-    rho_fname : Charge density file name
-    wfn_fname : Wavefunctions file name
-    vxc_fname : Exchange-correlation potential file name
-    vxc_dat_fname : Exchange-correlation potential data file name
+    rho_fname : str
+        Charge density file name for BerkeleyGW
+    wfn_fname : str
+        Wavefunctions file name for BerkeleyGW
+    vxc_fname : str
+        Exchange-correlation potential file name for BerkeleyGW
+    vxc_dat_fname : str
+        Exchange-correlation potential data file name for BerkeleyGW
 
     Notes
     -----
-    Subclasses must implement all abstract methods and properties to be instantiable.
+    Subclasses must implement all abstract properties to be instantiable.
     """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:

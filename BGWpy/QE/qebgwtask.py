@@ -50,7 +50,7 @@ class Qe2BgwInput(Namelist):
         ]
         for key in prefered_order:
             value = self.pop(key, None)
-            if value:
+            if value is not None:
                 self[key] = value
         for key in self.keys():
             if key not in prefered_order:

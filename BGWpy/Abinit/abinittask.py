@@ -206,7 +206,7 @@ class AbinitTask(DFTTask, IOTask):
             self.input.write()
 
     def set_kpoints(
-        self, kpt: NDArray[np.floating[Any]], wtk: NDArray[np.floating[Any]], **kwargs: Any
+        self, kpt: NDArray[np.float64], wtk: NDArray[np.float64], **kwargs: Any
     ) -> None:
         """kpoint variables."""
         wtk_normalized = np.array(wtk, dtype=np.float64) / sum(wtk)
@@ -224,7 +224,7 @@ class AbinitTask(DFTTask, IOTask):
 
     def set_ngkpt(
         self,
-        ngkpt: NDArray[np.floating[Any]],
+        ngkpt: NDArray[np.float64],
         shiftk: list[list[float]] | None = None,
         **kwargs: Any,
     ) -> None:

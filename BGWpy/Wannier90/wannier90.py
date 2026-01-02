@@ -1,9 +1,12 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 from numpy.typing import ArrayLike, NDArray
+
+if TYPE_CHECKING:
+    from pymatgen.core import Structure
 
 from BGWpy.core import Writable
 from BGWpy.core.F90io import arr_str
@@ -12,9 +15,11 @@ __all__ = ["Wannier90Input"]
 
 
 class Wannier90Input(Writable):
+    structure: Structure
+
     def __init__(
         self,
-        structure: Any,
+        structure: Structure,
         nbnd: int,
         nwann: int,
         kbounds: ArrayLike,
@@ -28,10 +33,10 @@ class Wannier90Input(Writable):
         self.nbnd = nbnd
         self.nwann = nwann
         # Convert ArrayLike inputs to concrete numpy arrays
-        self.kbounds: NDArray[np.floating[Any]] = np.asarray(kbounds, dtype=np.float64)
+        self.kbounds: NDArray[np.float64] = np.asarray(kbounds, dtype=np.float64)
         self.klabels = klabels
-        self.mp_grid: NDArray[np.floating[Any]] = np.asarray(mp_grid, dtype=np.float64)
-        self.kpts: NDArray[np.floating[Any]] = np.asarray(kpts, dtype=np.float64)
+        self.mp_grid: NDArray[np.float64] = np.asarray(mp_grid, dtype=np.float64)
+        self.kpts: NDArray[np.float64] = np.asarray(kpts, dtype=np.float64)
         self.projections = projections
         self.variables = variables
 
@@ -91,7 +96,7 @@ class Wannier90Input(Writable):
 
         result_str += "\nBegin Unit_Cell_Cart\n"
         result_str += "Angstrom\n"
-        latt_vec = np.round(self.structure.lattice_vectors(), 8)
+        latt_vec = np.round(self.structure.lattice.matrix, 8)
         result_str += arr_str(latt_vec) + "\n"
         result_str += "End Unit_Cell_Cart\n"
 

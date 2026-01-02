@@ -3,7 +3,12 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+import numpy as np
+
+if TYPE_CHECKING:
+    from numpy.typing import NDArray
 
 from BGWpy.BGW import EpsilonTask, SigmaTask
 from BGWpy.config import check_dft_flavor, flavors, is_dft_flavor_abinit, is_dft_flavor_espresso
@@ -149,11 +154,11 @@ class GWFlow(Workflow):
         return any(i != 0 for i in self.kshift)
 
     @property
-    def sigma_kpts(self) -> Any:
+    def sigma_kpts(self) -> list[NDArray[np.float64]]:
         return self.sigmatask.input.kpts
 
     @sigma_kpts.setter
-    def sigma_kpts(self, value: Any) -> None:
+    def sigma_kpts(self, value: list[NDArray[np.float64]]) -> None:
         if value:
             self.sigmatask.input.kpts = value
 

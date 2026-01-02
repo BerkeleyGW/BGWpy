@@ -48,7 +48,7 @@ class DFTTask(MPITask):
     flavor: str
     _pseudo_dir: str
     pseudos: list[str]
-    structure: Structure | None
+    structure: Structure
     kgridtask: KgridTask
     version: int
     _ngkpt: NDArray[np.float64] | None
@@ -72,8 +72,8 @@ class DFTTask(MPITask):
             Defaults to dirname.
         pseudos : list[str], optional
             List of pseudopotential files. Defaults to empty list.
-        structure : Structure, optional
-            Structure object containing unit cell information.
+        structure : Structure
+            Structure object containing unit cell information. Required.
         version : int, default=6
             Version of QE (only used if flavor is 'qe').
         **kwargs : Any
@@ -84,7 +84,10 @@ class DFTTask(MPITask):
         self.flavor = kwargs.pop("flavor", "qe")
         self.pseudo_dir = kwargs.get("pseudo_dir", self.dirname)
         self.pseudos = kwargs.get("pseudos", [])
-        self.structure = kwargs.get("structure")
+        if "structure" not in kwargs:
+            msg = "structure is required for DFT tasks"
+            raise ValueError(msg)
+        self.structure = kwargs["structure"]
 
         # Initialize property backing attributes
         # Subclasses may set these via property setters

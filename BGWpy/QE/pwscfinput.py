@@ -8,6 +8,9 @@ import numpy as np
 from BGWpy.core import Card, Namelist, Writable, fortran_str
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
+
+    from numpy.typing import NDArray
     from pymatgen.core import Structure
 
 
@@ -166,11 +169,15 @@ class PWscfInput(Writable):
 
         return result_str
 
-    def set_kpoints_crystal(self, kpts: Any, wtks: Any) -> None:
+    def set_kpoints_crystal(
+        self,
+        kpts: Sequence[Sequence[float]] | NDArray[np.float64],
+        wtks: Sequence[float] | NDArray[np.float64],
+    ) -> None:
         self.k_points.option = "crystal"
         self.k_points.append(len(kpts))
-        for k, w in zip(kpts, wtks, strict=False):
-            self.k_points.append([*list(k), w])
+        for k, w in zip(kpts, wtks, strict=True):
+            self.k_points.append([*k, w])
 
     @property
     def structure(self) -> Structure | None:
@@ -218,8 +225,15 @@ class PWscfInput(Writable):
     def pseudos(self, pseudos: list[str]) -> None:
         self._pseudos = pseudos
         if self.atomic_species:
+            if len(pseudos) != len(self.atomic_species):
+                msg = f"Number of pseudopotentials ({len(pseudos)}) must match number of atomic species ({len(self.atomic_species)})"
+                raise ValueError(msg)
             for i, pseudo in enumerate(pseudos):
-                self.atomic_species[i].append(pseudo)
+                # Replace pseudopotential if already has 3 elements, append if only has 2
+                if len(self.atomic_species[i]) == 3:
+                    self.atomic_species[i][2] = pseudo
+                else:
+                    self.atomic_species[i].append(pseudo)
 
     def check_pseudos_names(self) -> None:
         for symbol, _mass, pseudo in self.atomic_species:

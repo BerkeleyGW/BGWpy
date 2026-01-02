@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+import numpy as np
+
 from .pwscfinput import PWscfInput
 
 if TYPE_CHECKING:
@@ -61,8 +63,11 @@ def get_scf_input(
         diago_full_acc=True,
     )
 
-    inp.system["ecutwfc"] = (ecutwfc,)
-    inp.set_kpoints_crystal(kpts, wtks)
+    inp.system["ecutwfc"] = ecutwfc
+    # Convert ArrayLike inputs to concrete numpy arrays
+    kpts_array = np.asarray(kpts, dtype=np.float64)
+    wtks_array = np.asarray(wtks, dtype=np.float64)
+    inp.set_kpoints_crystal(kpts_array, wtks_array)
     inp.structure = structure
     inp.pseudos = pseudos
 

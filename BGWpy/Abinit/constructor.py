@@ -14,7 +14,7 @@ def get_kpt_variables(**kwargs: Any) -> dict[str, Any]:
     variables: dict[str, Any] = {}
 
     if "kpt" in kwargs:
-        kpt: NDArray[np.floating[Any]] = np.array(kwargs["kpt"]).reshape((-1, 3))
+        kpt: NDArray[np.float64] = np.array(kwargs["kpt"]).reshape((-1, 3))
         variables["kptopt"] = 0
         variables["kpt"] = kpt
         variables["nkpt"] = len(kpt)
@@ -24,9 +24,7 @@ def get_kpt_variables(**kwargs: Any) -> dict[str, Any]:
         variables["ngkpt"] = kwargs["ngkpt"]
         variables["kptopt"] = kwargs.get("kptopt", 1)
 
-        shiftk: NDArray[np.floating[Any]] = np.array(kwargs.get("shiftk", 3 * [0.0])).reshape(
-            (-1, 3)
-        )
+        shiftk: NDArray[np.float64] = np.array(kwargs.get("shiftk", 3 * [0.0])).reshape((-1, 3))
         variables["shiftk"] = shiftk
         variables["nshiftk"] = len(shiftk)
 

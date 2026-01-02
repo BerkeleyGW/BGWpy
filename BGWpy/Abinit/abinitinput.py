@@ -1,9 +1,12 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 from numpy.typing import NDArray
+
+if TYPE_CHECKING:
+    from pymatgen.core import Structure
 
 from BGWpy.core import Writable
 
@@ -140,7 +143,7 @@ class AbinitInput(Writable):
                 newkey = key + str(ds)
                 self.set_variable(newkey, val, **kwargs)
 
-    def set_structure(self, structure: Any) -> None:
+    def set_structure(self, structure: Structure) -> None:
         variables = structure_to_abivars(structure)
         self.set_variables(variables)
 
@@ -176,13 +179,13 @@ class VariableBlock(list):
 # =========================================================================== #
 
 
-def structure_to_abivars(structure: Any) -> dict[str, Any]:
+def structure_to_abivars(structure: Structure) -> dict[str, Any]:
     """Get abinit variables from a pymatgen.Structure object."""
 
     from scipy import constants
 
     bohr_to_ang = constants.physical_constants["Bohr radius"][0] / constants.angstrom
-    rprim: NDArray[np.floating[Any]] = structure.lattice.matrix / bohr_to_ang
+    rprim: NDArray[np.float64] = structure.lattice.matrix / bohr_to_ang
 
     xred = [site.frac_coords.round(14).tolist() for site in structure.sites]
 
