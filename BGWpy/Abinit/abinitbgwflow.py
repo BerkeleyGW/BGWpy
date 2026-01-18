@@ -117,16 +117,7 @@ class AbinitBgwFlow(WfnBgwFlow):
 
         self.add_task(self.wfnbgwntask, merge=False)
 
-    _charge_density_fname: str = ""
-
-    @property
-    def charge_density_fname(self) -> str:
-        """The charge density used by Abinit."""
-        return self._charge_density_fname
-
-    @charge_density_fname.setter
-    def charge_density_fname(self, value: str) -> None:
-        self._charge_density_fname = value
+    charge_density_fname: str = ""
 
     @property
     def rho_fname(self) -> str:

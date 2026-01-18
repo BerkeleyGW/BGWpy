@@ -16,9 +16,9 @@ class QeBgwFlow(WfnBgwFlow):
     The charge density can optionally be computed as a first step.
     """
 
-    _charge_density_fname = ""
-    _spin_polarization_fname = ""
-    _data_file_fname = ""
+    charge_density_fname: str = ""
+    spin_polarization_fname: str = ""
+    data_file_fname: str = ""
 
     def __init__(self, **kwargs: Any) -> None:
         """
@@ -109,33 +109,6 @@ class QeBgwFlow(WfnBgwFlow):
         self.wfnbgwntask.runscript.fname = "pw2bgw.run.sh"
 
         self.add_task(self.wfnbgwntask, merge=False)
-
-    @property
-    def charge_density_fname(self) -> str:
-        """The charge density file used by QE."""
-        return self._charge_density_fname
-
-    @charge_density_fname.setter
-    def charge_density_fname(self, value: str) -> None:
-        self._charge_density_fname = value
-
-    @property
-    def spin_polarization_fname(self) -> str:
-        """The spin polarization file used by QE."""
-        return self._spin_polarization_fname
-
-    @spin_polarization_fname.setter
-    def spin_polarization_fname(self, value: str) -> None:
-        self._spin_polarization_fname = value
-
-    @property
-    def data_file_fname(self) -> str:
-        """The XML data file used by QE."""
-        return self._data_file_fname
-
-    @data_file_fname.setter
-    def data_file_fname(self, value: str) -> None:
-        self._data_file_fname = value
 
     @property
     def rho_fname(self) -> str:

@@ -88,20 +88,10 @@ class Task:
         **kwargs
             Additional keyword arguments to store (if store_variables=True).
         """
-        self._dirname = Path(dirname)
+        self.dirname = dirname
         self.runscript = RunScript()
         self.runscript.fname = runscript_fname
         self.variables: dict[str, Any] = kwargs if store_variables else {}
-
-    @property
-    def dirname(self) -> str:
-        """Get the task directory."""
-        return str(self._dirname)
-
-    @dirname.setter
-    def dirname(self, value: str) -> None:
-        """Set the task directory."""
-        self._dirname = Path(value)
 
     @property
     def runscript_fname(self) -> str:
@@ -109,7 +99,7 @@ class Task:
         if self.runscript.fname is None:
             msg = "runscript.fname is not set"
             raise ValueError(msg)
-        return str(self._dirname / self.runscript.fname)
+        return str(Path(self.dirname) / self.runscript.fname)
 
     @runscript_fname.setter
     def runscript_fname(self, value: str) -> None:
@@ -182,7 +172,7 @@ class Task:
             return
 
         # Compute relative path from dest's directory to target
-        dest_parent = self.dirname / Path(dest_str).parent
+        dest_parent = Path(self.dirname) / Path(dest_str).parent
         target_path = Path(target).resolve()
         # Use os.path.relpath to handle paths outside dest_parent
         reltarget = Path(os.path.relpath(target_path, dest_parent.resolve()))
@@ -236,6 +226,11 @@ class Task:
     def get_status(self, **kwargs: Any) -> TaskStatus:
         """Get the current status of the task.
 
+        The base Task class returns UNKNOWN since it has no way to determine
+        completion status from generic shell scripts. Subclasses like IOTask
+        override this to provide actual status checking based on output files,
+        completion tags, etc.
+
         Parameters
         ----------
         **kwargs
@@ -244,8 +239,10 @@ class Task:
         Returns
         -------
         TaskStatus
-            Current status of the task.
+            Current status of the task. Base implementation always returns UNKNOWN.
         """
+        # Base Task has no way to determine status - subclasses should override
+        # if they can check completion (e.g., IOTask checks output files)
         return TaskStatus.UNKNOWN
 
     def is_complete(self) -> bool:
@@ -520,6 +517,8 @@ class IOTask(Task):
     This class extends Task to handle tasks that depend on input files
     and produce output files, with completion checking based on output
     file content.
+
+    It does not modify Task's init function because it is designed for multiple-inheritance use.
 
     Attributes
     ----------
