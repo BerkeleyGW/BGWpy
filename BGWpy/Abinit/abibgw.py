@@ -188,9 +188,24 @@ class Abi2BgwTask(AbinitTask):
         self.input.fname = self._input_fname
 
         # TODO setter functions
-        self.ngkpt = kwargs.pop("ngkpt")
-        self.kshift = kwargs.get("kshift", 3 * [0.0])
-        self.qshift = kwargs.get("qshift", 3 * [0.0])
+        # Set the backing attributes directly first to avoid None values when setters call _set_kqshift
+        ngkpt_value = kwargs.pop("ngkpt", None)
+        if ngkpt_value is None:
+            msg = "ngkpt is a required parameter for Abi2BgwTask"
+            raise ValueError(msg)
+
+        # Set backing attributes directly without triggering setters yet
+        self._ngkpt = np.array(ngkpt_value)
+        self._kshift = np.array(kwargs.get("kshift", 3 * [0.0]))
+        self._qshift = np.array(kwargs.get("qshift", 3 * [0.0]))
+
+        # Set input variables that the setters would have set
+        self.input["wfng_nk1"] = self._ngkpt[0]
+        self.input["wfng_nk2"] = self._ngkpt[1]
+        self.input["wfng_nk3"] = self._ngkpt[2]
+
+        # Now call _set_kqshift once with all values initialized
+        self._set_kqshift()
 
         if kwargs.get("rhog_fname") or kwargs.get("rhog_file_abi"):
             self.set_rho()

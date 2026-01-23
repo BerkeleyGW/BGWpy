@@ -6,12 +6,14 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from BGWpy.core.task import TaskStatus
+
 
 class TestTask(unittest.TestCase):
     def setUp(self):
         self.tmpdir = tempfile.mkdtemp()
         self.local_testdir = "tmp.Tests"
-        self.local_tmpdir = Path(self.local_testdir) / Path(self.tmpdir).name
+        self.local_tmpdir = str(Path(self.local_testdir) / Path(self.tmpdir).name)
 
     def tearDown(self):
         shutil.rmtree(self.tmpdir)
@@ -23,7 +25,7 @@ class TestTask(unittest.TestCase):
         shutil.copytree(self.tmpdir, self.local_tmpdir, symlinks=True)
 
     def assertCompleted(self, task):
-        completed = task.get_status() == task._STATUS_COMPLETED
+        completed = task.get_status() == TaskStatus.COMPLETED
         if not completed:
             self.recover_tmpdir()
         assert completed, f"Task failed. Directory copied to: {self.local_tmpdir}"

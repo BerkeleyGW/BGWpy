@@ -53,6 +53,8 @@ class TestQETasksMaker(TestTask):
             kwargs.setdefault(key, val)
 
         kwargs.setdefault("wfn_fname", "wfn.cplx")
+        # Use 4 processors for pw2bgw in tests (small scale; pw2bgw crashes if given too many processes)
+        kwargs.setdefault("nproc", 4)
 
         return Qe2BgwTask(dirname=wfntask.dirname, **kwargs)
 

@@ -182,9 +182,9 @@ class DFTTask(MPITask):
         Otherwise, a relative path from dirname is computed.
         """
         if Path(value).is_absolute():
-            self._pseudo_dir = value
+            self._pseudo_dir = str(value)
         else:
-            self._pseudo_dir = os.path.relpath(value, self.dirname)
+            self._pseudo_dir = os.path.relpath(str(value), self.dirname)
 
     @property
     def ngkpt(self) -> NDArray[np.float64] | None:

@@ -148,7 +148,8 @@ class QeWfnTask(QeTask):
         the relative path for the pseudopotential directory be the same
         for the wavefunction calculation as for the density calculation.
         """
-        if os.path.realpath(self.pseudo_dir) == self.pseudo_dir.rstrip(os.path.sep):
+        # Check if pseudo_dir is an absolute path
+        if Path(self.pseudo_dir).is_absolute():
             sourcedir = self.pseudo_dir
         else:
             sourcedir = Path(self.dirname) / self.pseudo_dir
@@ -165,10 +166,11 @@ class QeWfnTask(QeTask):
 
     @pseudo_dir.setter
     def pseudo_dir(self, value: str) -> None:
-        if os.path.realpath(value) == value.rstrip(os.path.sep):
-            self._pseudo_dir = value
+        # Check if value is an absolute path
+        if Path(value).is_absolute():
+            self._pseudo_dir = str(value)
         else:
-            self._pseudo_dir = os.path.relpath(value, self.dirname)
+            self._pseudo_dir = os.path.relpath(str(value), self.dirname)
         if "input" in dir(self) and "control" in dir(self.input):
             self.input.control["pseudo_dir"] = self._pseudo_dir
         if "pseudos" in dir(self):
