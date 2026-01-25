@@ -159,7 +159,25 @@ class Qe2BgwTask(QeTask):
 
         kwargs.setdefault("runscript_fname", "pw2bgw.run.sh")
 
+        # Check if user explicitly provided nproc
+        user_provided_nproc = "nproc" in kwargs
+
         super().__init__(dirname, **kwargs)
+
+        # pw2bgw.x doesn't scale well to many processors, so cap at 32.
+        # Only apply this limit when using default_mpi settings.
+        # If the user explicitly provides nproc, respect their choice (they may know better).
+        if not user_provided_nproc:
+            if self._nproc is None:
+                # If nproc is None (unset in config), set it to 32.
+                # This prevents MPI launchers like ibrun from defaulting to all available cores.
+                # Use the property setter to trigger runscript update.
+                self.nproc = 32
+            elif self._nproc > 32:
+                # Cap high default values to prevent pw2bgw scaling issues.
+                # pw2bgw fails or performs poorly with large processor counts (e.g., 56+ cores).
+                # Use the property setter to trigger runscript update.
+                self.nproc = 32
 
         self.ngkpt = kwargs.pop("ngkpt")
         self.kshift = kwargs.get("kshift", 3 * [0.0])
