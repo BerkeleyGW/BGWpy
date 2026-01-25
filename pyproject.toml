@@ -94,9 +94,11 @@ addopts = [
     "-ra",
 ]
 markers = [
-    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
-    "integration: marks tests as integration tests",
-    "unit: marks tests as unit tests",
+    "unit: marks tests as unit tests (fast, no external executables)",
+    "integration: marks tests as integration tests (file I/O, may need some executables)",
+    "e2e: marks tests as end-to-end tests (expensive, full calculations on cluster)",
+    "flow: marks tests as workflow/flow tests (complete multi-task workflows)",
+    "abinit: marks tests that require Abinit to be installed",
 ]
 filterwarnings = [
     "error",

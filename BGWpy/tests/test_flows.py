@@ -1,61 +1,49 @@
 from __future__ import annotations
 
-from copy import copy
-from pathlib import Path
+import pytest
 
-from BGWpy import BSEFlow, GWFlow
+from BGWpy.core.task import TaskStatus
 
-from .test_BGW_tasks import TestBGWTasksMaker
+# Tests now use session-scoped fixtures from conftest.py
+# This eliminates redundant expensive calculations
 
 
-class TestFlows(TestBGWTasksMaker):
-    common_kwargs = copy(TestBGWTasksMaker.common_kwargs)
-    common_kwargs.update(
-        dft_flavor="espresso",
-        nbnd_fine=9,
-        kshift=[0.5, 0.5, 0.5],
-        qshift=[0.001, 0.0, 0.0],
-        sigma_extra_lines=["screening_semiconductor"],
-        kernel_extra_lines=[
-            "use_symmetries_coarse_grid",
-            "screening_semiconductor",
-        ],
-        absorption_extra_lines=[
-            "use_symmetries_coarse_grid",
-            "no_symmetries_fine_grid",
-            "no_symmetries_shifted_grid",
-            "screening_semiconductor",
-            "use_velocity",
-            "gaussian_broadening",
-            "eqp_co_corrections",
-        ],
-        absorption_extra_variables={
-            "energy_resolution": 0.15,
-        },
-    )
+@pytest.mark.e2e
+class TestFlows:
+    """Test BGW workflow (Flow) classes using shared session fixtures (end-to-end).
 
-    def get_gwflow(self):
-        kwargs = copy(self.common_kwargs)
-        return GWFlow(dirname=Path(self.tmpdir) / "GW", **kwargs)
+    These tests run complete DFT/GW/BSE workflows with real executables.
+    """
 
-    def get_bseflow(self):
-        kwargs = copy(self.common_kwargs)
-        return BSEFlow(dirname=Path(self.tmpdir) / "BSE", **kwargs)
+    @pytest.mark.flow
+    def test_gwflow(self, bgw_gwflow):
+        """Test GW workflow using shared fixture.
 
-    def test_gwflow(self):
-        """Test GWFlow."""
-        flow = self.get_gwflow()
-        flow.write()
-        flow.run()
-        flow.report()
-        for task in flow.tasks:
-            self.assertCompleted(task)
+        GWFlow runs the complete GW workflow: DFT → Epsilon → Sigma
+        """
+        assert bgw_gwflow.get_status() == TaskStatus.COMPLETED
+        # Verify all tasks in the flow completed
+        for task in bgw_gwflow.tasks:
+            assert task.get_status() == TaskStatus.COMPLETED
 
-    def test_bseflow(self):
-        """Test BSEFlow."""
-        flow = self.get_bseflow()
-        flow.write()
-        flow.run()
-        flow.report()
-        for task in flow.tasks:
-            self.assertCompleted(task)
+    @pytest.mark.flow
+    def test_bseflow(self, bgw_bseflow):
+        """Test BSE workflow using shared fixture.
+
+        BSEFlow runs the complete BSE workflow: DFT → Epsilon → Sigma → Kernel → Absorption
+        """
+        assert bgw_bseflow.get_status() == TaskStatus.COMPLETED
+        # Verify all tasks in the flow completed
+        for task in bgw_bseflow.tasks:
+            assert task.get_status() == TaskStatus.COMPLETED
+
+    @pytest.mark.flow
+    @pytest.mark.abinit
+    def test_abinit_bgwflow(self, abinit_bgwflow):
+        """Test Abinit BGW flow using shared fixture.
+
+        This tests the AbinitBgwFlow class which combines wavefunction
+        generation and BGW conversion in a single flow object.
+        This implicitly tests the full chain: SCF -> WfnBgwFlow
+        """
+        assert abinit_bgwflow.get_status() == TaskStatus.COMPLETED
