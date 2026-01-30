@@ -1,5 +1,5 @@
 
-This directory contains scripts for developpers who want to contribute
+This directory contains scripts for developers who want to contribute
 to this module or simply test it.
 
 
@@ -11,18 +11,22 @@ Please follow the coding style guide:
     PEP 0008 -- Style Guide for Python Code
     https://www.python.org/dev/peps/pep-0008/
 
+This project uses the Ruff formatter:
+    ruff format
+
+You can install Ruff using uv:
+    uv tool install ruff
+
 
 Tests
 -----
 
-For starters, the examples provided in ~BGWpy/Examples can be used
-as a test suite for this module. The script run_examples.sh can be
-executed from the Examples directory. The script sync_examples_references.sh
+For starters, the examples provided in BGWpy/Documentation/Examples can be used
+as a test suite for this module. The script sync_examples_references.sh
 can be executed from the Examples directory to update the reference files.
 
-Automated test can be launched from the top directory using nose,
-e.g. (assuming you have installed nose with color plugin):
-    nosetests --color
+Automated test can be launched from the top directory using pytest:
+    pytest BGWpy/tests/ --tb=short -q
 
 Before launching the tests, you might want to edit the file
 ~BGWpy/tests/preferences.py  to use your mpi environment.

@@ -1,4 +1,7 @@
 #!/bin/bash
+
+# OUTDATED - please use the run scripts in the Examples directory
+
 rm -rf 11-Density
 rm -rf 12-Wfn
 rm -rf 13-Wfnq
