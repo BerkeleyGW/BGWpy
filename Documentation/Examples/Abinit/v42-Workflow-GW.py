@@ -9,47 +9,47 @@ structure of a Workflow.
 
 """
 
-from os.path import join as pjoin
+from pathlib import Path
 
 from BGWpy import (
-    Structure,
-    Workflow,
+    Abi2BgwTask,
     AbinitScfTask,
     AbinitWfnTask,
-    Abi2BgwTask,
     EpsilonTask,
     SigmaTask,
+    Structure,
+    Workflow,
 )
 
 workflow = Workflow(dirname="42-Workflow")
 
 # Common arguments for tasks.
-kwargs = dict(
-    structure=Structure.from_file("../../Data/Structures/GaAs.json"),
-    prefix="GaAs",
-    pseudo_dir="../../Data/Pseudos",
-    pseudos=["31-Ga.pspnc", "33-As.pspnc"],
-    ngkpt=[2, 2, 2],
-    ecut=5.0,
-    nband=9,
+kwargs = {
+    "structure": Structure.from_file("../../Data/Structures/GaAs.json"),
+    "prefix": "GaAs",
+    "pseudo_dir": "../../Data/Pseudos",
+    "pseudos": ["31-Ga.pspnc", "33-As.pspnc"],
+    "ngkpt": [2, 2, 2],
+    "ecut": 5.0,
+    "nband": 9,
     # Parameters for the MPI runner
-    nproc=8,
-    nproc_per_node=8,
-    mpirun="mpirun",
-    nproc_flag="-n",
-    nproc_per_node_flag="--npernode",
-)
+    "nproc": 8,
+    "nproc_per_node": 8,
+    "mpirun": "mpirun",
+    "nproc_flag": "-n",
+    "nproc_per_node_flag": "--npernode",
+}
 
 
 # Ground state density calculation (SCF)
 scftask = AbinitScfTask(
-    dirname=pjoin(workflow.dirname, "density"), kshift=[0.5, 0.5, 0.5], **kwargs
+    dirname=str(Path(workflow.dirname) / "density"), kshift=[0.5, 0.5, 0.5], **kwargs
 )
 
 
 # Wavefunctions and eigenvalues calculation (NSCF) on a k-shifted grid
 wfntask_ksh = AbinitWfnTask(
-    dirname=pjoin(workflow.dirname, "wfn"),
+    dirname=str(Path(workflow.dirname) / "wfn"),
     kshift=[0.5, 0.5, 0.5],
     charge_density_fname=scftask.charge_density_fname,
     **kwargs,
@@ -67,7 +67,7 @@ abi2bgwtask_ksh = Abi2BgwTask(
 
 # Wavefunctions and eigenvalues calculation (NSCF) on a k+q-shifted grid
 wfntask_qsh = AbinitWfnTask(
-    dirname=pjoin(workflow.dirname, "wfnq"),
+    dirname=str(Path(workflow.dirname) / "wfnq"),
     kshift=[0.5, 0.5, 0.5],
     qshift=[0.001, 0.0, 0.0],
     charge_density_fname=scftask.charge_density_fname,
@@ -87,7 +87,7 @@ abi2bgwtask_qsh = Abi2BgwTask(
 
 # Wavefunctions and eigenvalues calculation (NSCF) on an unshifted grid
 wfntask_ush = AbinitWfnTask(
-    dirname=pjoin(workflow.dirname, "wfn_co"),
+    dirname=str(Path(workflow.dirname) / "wfn_co"),
     kshift=[0.0, 0.0, 0.0],
     charge_density_fname=scftask.charge_density_fname,
     **kwargs,
@@ -109,7 +109,7 @@ abi2bgwtask_ush = Abi2BgwTask(
 
 # Dielectric matrix computation and inversion (epsilon)
 epsilontask = EpsilonTask(
-    dirname=pjoin(workflow.dirname, "epsilon"),
+    dirname=str(Path(workflow.dirname) / "epsilon"),
     qshift=[0.001, 0.0, 0.0],
     ecuteps=10.0,
     wfn_fname=abi2bgwtask_ksh.wfn_fname,
@@ -120,7 +120,7 @@ epsilontask = EpsilonTask(
 
 # Self-energy calculation (sigma)
 sigmatask = SigmaTask(
-    dirname=pjoin(workflow.dirname, "sigma"),
+    dirname=str(Path(workflow.dirname) / "sigma"),
     ibnd_min=1,
     ibnd_max=8,
     extra_lines=["screening_semiconductor"],

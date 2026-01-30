@@ -19,12 +19,14 @@ def run_t15_wfn_fi(**kwargs):
     Parameters from kwargs:
         ngkpt: k-points grid
         ecutwfc: Wavefunction cutoff energy
+        use_hdf5_qe: Whether to use HDF5 format for QE files
         nproc: Number of MPI processes
         nproc_per_node: Number of MPI processes per node
         mpirun: MPI run command
         nproc_flag: Flag for number of processes
         nproc_per_node_flag: Flag for processes per node
     """
+    charge_density_ext = "hdf5" if kwargs.get("use_hdf5_qe", True) else "dat"
     task = QeBgwFlow(
         dirname="15-Wfn_fi",
         structure=Structure.from_file("../../Data/Structures/GaAs.json"),
@@ -36,7 +38,7 @@ def run_t15_wfn_fi(**kwargs):
         ecutwfc=kwargs["ecutwfc"],
         nbnd=9,
         symkpt=False,  # Do not reduce the k-point grid with symmetries.
-        charge_density_fname="11-Density/GaAs.save/charge-density.hdf5",
+        charge_density_fname=f"11-Density/GaAs.save/charge-density.{charge_density_ext}",
         data_file_fname="11-Density/GaAs.save/data-file-schema.xml",
         nproc=kwargs["nproc"],
         nproc_per_node=kwargs["nproc_per_node"],
@@ -56,6 +58,7 @@ if __name__ == "__main__":
     run_t15_wfn_fi(
         ngkpt=[2, 2, 2],
         ecutwfc=10.0,
+        use_hdf5_qe=True,
         nproc=1,
         nproc_per_node=1,
         mpirun="mpirun",

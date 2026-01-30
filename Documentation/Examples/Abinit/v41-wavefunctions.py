@@ -5,27 +5,27 @@ then adapt them for BGW.
 
 """
 
-from BGWpy import Structure, AbinitScfTask, AbinitWfnTask, Abi2BgwTask
+from BGWpy import Abi2BgwTask, AbinitScfTask, AbinitWfnTask, Structure
 
 # Common arguments for tasks.
-common = dict(
-    structure=Structure.from_file("../../Data/Structures/GaAs.json"),
-    prefix="GaAs",
-    pseudo_dir="../../Data/Pseudos",
-    pseudos=["31-Ga.pspnc", "33-As.pspnc"],
-    ngkpt=[2, 2, 2],  # k-points grid
-    kshift=[0.5, 0.5, 0.5],  # k-points shift
-    qshift=[0.001, 0.0, 0.0],  # k-points q-shift
-    ecut=5.0,  # Wavefunctions cutoff energy
+common = {
+    "structure": Structure.from_file("../../Data/Structures/GaAs.json"),
+    "prefix": "GaAs",
+    "pseudo_dir": "../../Data/Pseudos",
+    "pseudos": ["31-Ga.pspnc", "33-As.pspnc"],
+    "ngkpt": [2, 2, 2],  # k-points grid
+    "kshift": [0.5, 0.5, 0.5],  # k-points shift
+    "qshift": [0.001, 0.0, 0.0],  # k-points q-shift
+    "ecut": 5.0,  # Wavefunctions cutoff energy
     # Number of bands not specified (occupied only)
     # These are the default parameters for the MPI runner.
     # Please adapt them to your needs.
-    nproc=1,
-    nproc_per_node=1,
-    mpirun="mpirun",
-    nproc_flag="-n",
-    nproc_per_node_flag="--npernode",
-)
+    "nproc": 1,
+    "nproc_per_node": 1,
+    "mpirun": "mpirun",
+    "nproc_flag": "-n",
+    "nproc_per_node_flag": "--npernode",
+}
 
 scftask = AbinitScfTask(dirname="41-Wavefunctions/Density", **common)
 

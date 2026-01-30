@@ -40,9 +40,11 @@ def main():
         # Energy cutoffs (Ry)
         "ecutwfc": 10.0,  # Wavefunction cutoff energy
         "ecuteps": 10.0,  # Epsilon matrix cutoff energy
+        # File format
+        "use_hdf5_qe": True,  # Use HDF5 format for QE charge density files
         # MPI parameters - change as needed
-        "nproc": 4,
-        "nproc_per_node": 4,
+        "nproc": 2,
+        "nproc_per_node": 2,
         "mpirun": "mpirun",
         "nproc_flag": "-n",
         "nproc_per_node_flag": "--npernode",

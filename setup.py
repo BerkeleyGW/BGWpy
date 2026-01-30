@@ -8,8 +8,9 @@ This setup.py is maintained for backward compatibility only.
 Modern packaging configuration is in pyproject.toml.
 """
 
-import sys
 import warnings
+
+from setuptools import setup
 
 warnings.warn(
     "setup.py is deprecated. Please use 'pip install .' instead, "
@@ -17,8 +18,6 @@ warnings.warn(
     DeprecationWarning,
     stacklevel=2,
 )
-
-from setuptools import setup
 
 # All configuration is now in pyproject.toml
 # This file exists only for backward compatibility

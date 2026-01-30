@@ -7,7 +7,8 @@ the primitive cells for all calculations.
 See http://pymatgen.org/ for more information.
 """
 
-import os
+from pathlib import Path
+
 import numpy as np
 import pymatgen
 
@@ -22,13 +23,13 @@ structure = pymatgen.core.Structure(
 
 # Create a directory to store the structure.
 dirname = "01-GaAs"
-if not os.path.exists(dirname):
-    os.mkdir(dirname)
+if not Path(dirname).exists():
+    Path(dirname).mkdir()
 
 # Write file in Crystallographic Information Framework.
 # This the format defined by the International Union of Crystallography.
-structure.to(filename=os.path.join(dirname, "GaAs.cif"))
+structure.to(filename=str(Path(dirname) / "GaAs.cif"))
 
 # Write in json format. This is the prefered format
 # since it preserves the above definition of the unit cell.
-structure.to(filename=os.path.join(dirname, "GaAs.json"))
+structure.to(filename=str(Path(dirname) / "GaAs.json"))
