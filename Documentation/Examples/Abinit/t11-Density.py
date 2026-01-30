@@ -9,28 +9,51 @@ Used by:
     16-Wfnq_fi
 """
 
-from BGWpy import Structure, AbinitScfTask
-
-task = AbinitScfTask(
-    dirname="11-Density",
-    structure=Structure.from_file("../../Data/Structures/GaAs.json"),
-    prefix="GaAs",
-    pseudo_dir="../../Data/Pseudos",
-    pseudos=["31-Ga.pspnc", "33-As.pspnc"],
-    ngkpt=[2, 2, 2],  # k-points grid
-    kshift=[0.5, 0.5, 0.5],  # k-points shift
-    ecut=5.0,  # Wavefunctions cutoff energy
-    # These are the default parameters for the MPI runner.
-    # Please adapt them to your needs.
-    nproc=1,
-    nproc_per_node=1,
-    mpirun="mpirun",
-    nproc_flag="-n",
-    nproc_per_node_flag="--npernode",
-)
+from BGWpy import AbinitScfTask, Structure
 
 
-# Execution
-task.write()
-task.run()
-task.report()
+def run_t11_density(**kwargs):
+    """Run the density calculation task.
+
+    Parameters from kwargs:
+        ngkpt: k-points grid
+        ecut: Wavefunction cutoff energy
+        nproc: Number of MPI processes
+        nproc_per_node: Number of MPI processes per node
+        mpirun: MPI run command
+        nproc_flag: Flag for number of processes
+        nproc_per_node_flag: Flag for processes per node
+    """
+    task = AbinitScfTask(
+        dirname="11-Density",
+        structure=Structure.from_file("../../Data/Structures/GaAs.json"),
+        prefix="GaAs",
+        pseudo_dir="../../Data/Pseudos",
+        pseudos=["31-Ga.pspnc", "33-As.pspnc"],
+        ngkpt=kwargs["ngkpt"],
+        kshift=[0.5, 0.5, 0.5],
+        ecut=kwargs["ecut"],
+        nproc=kwargs["nproc"],
+        nproc_per_node=kwargs["nproc_per_node"],
+        mpirun=kwargs["mpirun"],
+        nproc_flag=kwargs["nproc_flag"],
+        nproc_per_node_flag=kwargs["nproc_per_node_flag"],
+    )
+
+    # Execution
+    task.write()
+    task.run()
+    task.report()
+
+
+if __name__ == "__main__":
+    # Default parameters for standalone execution
+    run_t11_density(
+        ngkpt=[2, 2, 2],
+        ecut=5.0,
+        nproc=1,
+        nproc_per_node=1,
+        mpirun="mpirun",
+        nproc_flag="-n",
+        nproc_per_node_flag="--npernode",
+    )

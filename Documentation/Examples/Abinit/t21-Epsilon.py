@@ -11,32 +11,54 @@ Used by:
     24-Absorption
 """
 
-from BGWpy import Structure, EpsilonTask
-
-task = EpsilonTask(
-    dirname="21-Epsilon",
-    structure=Structure.from_file("../../Data/Structures/GaAs.json"),
-    ngkpt=[2, 2, 2],  # k-points grid
-    qshift=[0.001, 0.0, 0.0],  # q-shift to treat the Gamma point
-    ecuteps=10.0,  # Energy cutoff for the epsilon matrix
-    extra_lines=["degeneracy_check_override"],
-    extra_variables={"number_bands": 8},
-    # Files to be linked
-    wfn_fname="12-Wfn/wfn.cplx",
-    wfnq_fname="13-Wfnq/wfn.cplx",
-    # Parameters for the MPI runner
-    nproc=2,
-    nproc_per_node=2,
-    mpirun="mpirun",
-    nproc_flag="-n",
-    nproc_per_node_flag="--npernode",
-)
+from BGWpy import EpsilonTask, Structure
 
 
-# Execution
-task.write()
-task.run()
-task.report()
+def run_t21_epsilon(**kwargs):
+    """Run the Epsilon calculation task.
 
-print(task._use_hdf5)
-print(type(task._use_hdf5))
+    Parameters from kwargs:
+        ngkpt: k-points grid
+        ecuteps: Energy cutoff for epsilon matrix
+        nproc: Number of MPI processes
+        nproc_per_node: Number of MPI processes per node
+        mpirun: MPI run command
+        nproc_flag: Flag for number of processes
+        nproc_per_node_flag: Flag for processes per node
+    """
+    task = EpsilonTask(
+        dirname="21-Epsilon",
+        structure=Structure.from_file("../../Data/Structures/GaAs.json"),
+        ngkpt=kwargs["ngkpt"],
+        qshift=[0.001, 0.0, 0.0],
+        ecuteps=kwargs["ecuteps"],
+        extra_lines=["degeneracy_check_override"],
+        extra_variables={"number_bands": 8},
+        # Files to be linked
+        wfn_fname="12-Wfn/wfn.cplx",
+        wfnq_fname="13-Wfnq/wfn.cplx",
+        # Parameters for the MPI runner
+        nproc=kwargs["nproc"],
+        nproc_per_node=kwargs["nproc_per_node"],
+        mpirun=kwargs["mpirun"],
+        nproc_flag=kwargs["nproc_flag"],
+        nproc_per_node_flag=kwargs["nproc_per_node_flag"],
+    )
+
+    # Execution
+    task.write()
+    task.run()
+    task.report()
+
+
+if __name__ == "__main__":
+    # Default parameters for standalone execution
+    run_t21_epsilon(
+        ngkpt=[2, 2, 2],
+        ecuteps=5.0,
+        nproc=2,
+        nproc_per_node=2,
+        mpirun="mpirun",
+        nproc_flag="-n",
+        nproc_per_node_flag="--npernode",
+    )

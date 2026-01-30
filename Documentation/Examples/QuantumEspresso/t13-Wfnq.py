@@ -10,31 +10,55 @@ Used by:
     21-Epsilon
 """
 
-from BGWpy import Structure, QeBgwFlow
+from BGWpy import QeBgwFlow, Structure
 
-task = QeBgwFlow(
-    dirname="13-Wfnq",
-    structure=Structure.from_file("../../Data/Structures/GaAs.json"),
-    prefix="GaAs",
-    pseudo_dir="../../Data/Pseudos",
-    pseudos=["31-Ga.PBE.UPF", "33-As.PBE.UPF"],
-    ngkpt=[2, 2, 2],  # k-points grid
-    kshift=[0.5, 0.5, 0.5],  # k-points shift
-    qshift=[0.001, 0.0, 0.0],  # k-points q-shift
-    ecutwfc=10.0,  # Wavefunctions cutoff energy
-    # Number of bands not specified (occupied only)
-    charge_density_fname="11-Density/GaAs.save/charge-density.hdf5",
-    data_file_fname="11-Density/GaAs.save/data-file-schema.xml",
-    # These are the default parameters for the MPI runner.
-    # Please adapt them to your needs.
-    nproc=1,
-    nproc_per_node=1,
-    mpirun="mpirun",
-    nproc_flag="-n",
-    nproc_per_node_flag="--npernode",
-)
 
-# Execution
-task.write()
-task.run()
-task.report()
+def run_t13_wfnq(**kwargs):
+    """Run the Wfnq calculation task.
+
+    Parameters from kwargs:
+        ngkpt: k-points grid
+        ecutwfc: Wavefunction cutoff energy
+        nproc: Number of MPI processes
+        nproc_per_node: Number of MPI processes per node
+        mpirun: MPI run command
+        nproc_flag: Flag for number of processes
+        nproc_per_node_flag: Flag for processes per node
+    """
+    task = QeBgwFlow(
+        dirname="13-Wfnq",
+        structure=Structure.from_file("../../Data/Structures/GaAs.json"),
+        prefix="GaAs",
+        pseudo_dir="../../Data/Pseudos",
+        pseudos=["31-Ga.PBE.UPF", "33-As.PBE.UPF"],
+        ngkpt=kwargs["ngkpt"],
+        kshift=[0.5, 0.5, 0.5],
+        qshift=[0.001, 0.0, 0.0],
+        ecutwfc=kwargs["ecutwfc"],
+        # Number of bands not specified (occupied only)
+        charge_density_fname="11-Density/GaAs.save/charge-density.hdf5",
+        data_file_fname="11-Density/GaAs.save/data-file-schema.xml",
+        nproc=kwargs["nproc"],
+        nproc_per_node=kwargs["nproc_per_node"],
+        mpirun=kwargs["mpirun"],
+        nproc_flag=kwargs["nproc_flag"],
+        nproc_per_node_flag=kwargs["nproc_per_node_flag"],
+    )
+
+    # Execution
+    task.write()
+    task.run()
+    task.report()
+
+
+if __name__ == "__main__":
+    # Default parameters for standalone execution
+    run_t13_wfnq(
+        ngkpt=[2, 2, 2],
+        ecutwfc=10.0,
+        nproc=1,
+        nproc_per_node=1,
+        mpirun="mpirun",
+        nproc_flag="-n",
+        nproc_per_node_flag="--npernode",
+    )
