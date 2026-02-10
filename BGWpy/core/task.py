@@ -69,7 +69,7 @@ class Task:
 
     def __init__(
         self,
-        dirname: str = "./",
+        dirname: str | Path = "./",
         runscript_fname: str = "run.sh",
         store_variables: bool = False,
         **kwargs: Any,
@@ -78,7 +78,7 @@ class Task:
 
         Parameters
         ----------
-        dirname : str, default="./"
+        dirname : str | Path, default="./"
             Main directory from which the scripts are executed.
         runscript_fname : str, default="run.sh"
             Name of the main execution script.
@@ -88,7 +88,7 @@ class Task:
         **kwargs
             Additional keyword arguments to store (if store_variables=True).
         """
-        self.dirname = dirname
+        self.dirname = str(dirname)
         self.runscript = RunScript()
         self.runscript.fname = runscript_fname
         self.variables: dict[str, Any] = kwargs if store_variables else {}
