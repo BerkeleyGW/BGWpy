@@ -15,11 +15,45 @@ import numpy as np
 if TYPE_CHECKING:
     from numpy.typing import NDArray
 
-__all__ = ["extract_multiple_GW_results", "parse_sigma_output"]
+__all__ = [
+    "extract_multiple_GW_results",
+    "parse_sigma_output",
+    "MultipleGWResult",
+    "SigmaResult",
+    "SigmaBlockResult",
+]
 
 
 class SigmaBlockResult(TypedDict):
-    """Result dictionary from parsing a single sigma output block."""
+    """Result dictionary from parsing a single sigma output block. Energies are in eV.
+
+    Attributes
+    ----------
+    k : NDArray[np.float64]
+        K-point wavevector (reduced coordinates), shape (3,).
+    ik : int
+        Index of k-point.
+    spin : int
+        Index of spin (1-based).
+    n : list[int]
+        Band indices.
+    Emf : list[float]
+        Mean-field energy eigenvalues.
+    Eo : list[float]
+        Corrected energy eigenvalues.
+    Vxc : list[float]
+        Exchange-correlation potential.
+    X : list[float]
+        Bare exchange.
+    Cor : list[float]
+        Correlation self-energy (sx-x + ch = self-energy at energy ecor).
+    Eqp0 : list[float]
+        Quasiparticle energy: elda - vxc + sig(ecor).
+    Eqp1 : list[float]
+        Linearized quasiparticle energy: eqp0 + (dsig/de) / (1 - dsig/de) * (eqp0 - ecor).
+    Znk : list[float]
+        Quasiparticle renormalization factor.
+    """
 
     k: NDArray[np.float64]
     ik: int
@@ -36,7 +70,37 @@ class SigmaBlockResult(TypedDict):
 
 
 class SigmaResult(TypedDict):
-    """Result dictionary from parse_sigma_output."""
+    """Result dictionary from parse_sigma_output. Energies are in eV.
+
+    Attributes
+    ----------
+    nspin : int
+        Number of spins.
+    nkpt : int
+        Number of k-points.
+    nband : int
+        Number of bands.
+    kpt : NDArray[np.float64]
+        K-point wavevectors (reduced coordinates), shape (nkpt, 3).
+    n : NDArray[np.int64]
+        Band indices, shape (nband,).
+    Emf : NDArray[np.float64]
+        Mean-field energy eigenvalues, shape (nspin, nkpt, nband).
+    Eo : NDArray[np.float64]
+        Corrected energy eigenvalues, shape (nspin, nkpt, nband).
+    Vxc : NDArray[np.float64]
+        Exchange-correlation potential, shape (nspin, nkpt, nband).
+    X : NDArray[np.float64]
+        Bare exchange, shape (nspin, nkpt, nband).
+    Cor : NDArray[np.float64]
+        Correlation self-energy (sx-x + ch = self-energy at energy ecor), shape (nspin, nkpt, nband).
+    Eqp0 : NDArray[np.float64]
+        Quasiparticle energy: elda - vxc + sig(ecor), shape (nspin, nkpt, nband).
+    Eqp1 : NDArray[np.float64]
+        Linearized quasiparticle energy: eqp0 + (dsig/de) / (1 - dsig/de) * (eqp0 - ecor), shape (nspin, nkpt, nband).
+    Znk : NDArray[np.float64]
+        Quasiparticle renormalization factor, shape (nspin, nkpt, nband).
+    """
 
     nspin: int
     nkpt: int
@@ -54,7 +118,17 @@ class SigmaResult(TypedDict):
 
 
 class MultipleGWResult(TypedDict):
-    """Result dictionary from extract_multiple_GW_results."""
+    """Result dictionary from extract_multiple_GW_results.
+
+    Attributes
+    ----------
+    ndata : int
+        Number of directories processed.
+    variables : list[dict[str, Any]]
+        List of variable dictionaries loaded from variables.pkl files.
+    results : list[SigmaResult]
+        List of parsed sigma results from each directory.
+    """
 
     ndata: int
     variables: list[dict[str, Any]]
