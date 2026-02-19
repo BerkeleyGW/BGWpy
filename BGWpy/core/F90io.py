@@ -132,7 +132,8 @@ def arr_str(arr: np.ndarray) -> str:
     str
         Space-separated values without brackets.
     """
-    return str(arr).replace("[", " ").replace("]", " ").replace(",", " ")
+    # Format each element individually to avoid numpy's column alignment spacing
+    return " ".join(str(x) for x in arr.flat)
 
 
 def bool_str(b: bool) -> str:

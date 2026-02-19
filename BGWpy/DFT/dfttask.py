@@ -95,6 +95,14 @@ class DFTTask(MPITask):
         self._kshift = None
         self._qshift = None
 
+        # Store ngkpt, kshift, qshift if provided in kwargs
+        if "ngkpt" in kwargs:
+            self.ngkpt = kwargs["ngkpt"]
+        if "kshift" in kwargs:
+            self.kshift = kwargs["kshift"]
+        if "qshift" in kwargs:
+            self.qshift = kwargs["qshift"]
+
         # Patches for newer versions of QE. Originally BGWpy was written for
         # QE v5 but currently defaults to QE v6.
         if self.is_flavor_QE:

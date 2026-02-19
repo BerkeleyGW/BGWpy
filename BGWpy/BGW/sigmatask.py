@@ -70,6 +70,9 @@ class SigmaTask(BGWTask):
     _vxc_fname: str
     _eps0mat_fname: str | None
     _epsmat_fname: str | None
+    _ngkpt: NDArray[np.float64] | None
+    _kshift: NDArray[np.float64] | None
+    _qshift: NDArray[np.float64] | None
 
     def __init__(self, dirname: str, **kwargs: Any) -> None:
         """Initialize a sigma task.
@@ -124,6 +127,19 @@ class SigmaTask(BGWTask):
             Whether to clean up after k-grid generation.
         """
         super().__init__(dirname, **kwargs)
+
+        # Initialize property backing attributes
+        self._ngkpt = None
+        self._kshift = None
+        self._qshift = None
+
+        # Store ngkpt, kshift, qshift if provided in kwargs
+        if "ngkpt" in kwargs:
+            self.ngkpt = kwargs["ngkpt"]
+        if "kshift" in kwargs:
+            self.kshift = kwargs["kshift"]
+        if "qshift" in kwargs:
+            self.qshift = kwargs["qshift"]
 
         extra_lines: list[str] = kwargs.get("extra_lines", [])
         extra_variables: dict[str, Any] = kwargs.get("extra_variables", {})
@@ -213,7 +229,37 @@ class SigmaTask(BGWTask):
         # Set up the run script
         ex = "sigma.cplx.x" if self._flavor_complex else "sigma.real.x"
         self.runscript["SIGMA"] = ex
-        self.runscript.append(f"$MPIRUN $SIGMA &> {self._output_fname}")
+        self.runscript.append(f"$MPIRUN $SIGMA $SIGMAFLAGS &> {self._output_fname}")
+
+    @property
+    def ngkpt(self) -> NDArray[np.float64] | None:
+        """Get the k-point grid dimensions."""
+        return self._ngkpt
+
+    @ngkpt.setter
+    def ngkpt(self, ngkpt: ArrayLike) -> None:
+        """Set the k-point grid dimensions."""
+        self._ngkpt = np.array(ngkpt)
+
+    @property
+    def kshift(self) -> NDArray[np.float64] | None:
+        """Get the k-point shift."""
+        return self._kshift
+
+    @kshift.setter
+    def kshift(self, kshift: ArrayLike) -> None:
+        """Set the k-point shift."""
+        self._kshift = np.array(kshift)
+
+    @property
+    def qshift(self) -> NDArray[np.float64] | None:
+        """Get the q-point shift."""
+        return self._qshift
+
+    @qshift.setter
+    def qshift(self, qshift: ArrayLike) -> None:
+        """Set the q-point shift."""
+        self._qshift = np.array(qshift)
 
     @property
     def wfn_co_fname(self) -> str:
