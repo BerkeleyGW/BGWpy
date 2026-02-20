@@ -179,9 +179,9 @@ class Qe2BgwTask(QeTask):
                 # Use the property setter to trigger runscript update.
                 self.nproc = 32
 
-        self.ngkpt = kwargs.pop("ngkpt")
-        self.kshift = kwargs.get("kshift", 3 * [0.0])
-        self.qshift = kwargs.get("qshift", 3 * [0.0])
+        self._ngkpt = array(kwargs.pop("ngkpt"))
+        self._kshift = array(kwargs.get("kshift", 3 * [0.0]))
+        self._qshift = array(kwargs.get("qshift", 3 * [0.0]))
 
         # Maybe let the defaults be handled by PW2BGWInput
 

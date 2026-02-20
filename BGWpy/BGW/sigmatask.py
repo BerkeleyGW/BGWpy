@@ -128,18 +128,10 @@ class SigmaTask(BGWTask):
         """
         super().__init__(dirname, **kwargs)
 
-        # Initialize property backing attributes
-        self._ngkpt = None
-        self._kshift = None
-        self._qshift = None
-
-        # Store ngkpt, kshift, qshift if provided in kwargs
-        if "ngkpt" in kwargs:
-            self.ngkpt = kwargs["ngkpt"]
-        if "kshift" in kwargs:
-            self.kshift = kwargs["kshift"]
-        if "qshift" in kwargs:
-            self.qshift = kwargs["qshift"]
+        # Store ngkpt, kshift, qshift if provided in kwargs (read-only after init)
+        self._ngkpt = np.array(kwargs["ngkpt"]) if "ngkpt" in kwargs else None
+        self._kshift = np.array(kwargs["kshift"]) if "kshift" in kwargs else None
+        self._qshift = np.array(kwargs["qshift"]) if "qshift" in kwargs else None
 
         extra_lines: list[str] = kwargs.get("extra_lines", [])
         extra_variables: dict[str, Any] = kwargs.get("extra_variables", {})
@@ -236,30 +228,15 @@ class SigmaTask(BGWTask):
         """Get the k-point grid dimensions."""
         return self._ngkpt
 
-    @ngkpt.setter
-    def ngkpt(self, ngkpt: ArrayLike) -> None:
-        """Set the k-point grid dimensions."""
-        self._ngkpt = np.array(ngkpt)
-
     @property
     def kshift(self) -> NDArray[np.float64] | None:
         """Get the k-point shift."""
         return self._kshift
 
-    @kshift.setter
-    def kshift(self, kshift: ArrayLike) -> None:
-        """Set the k-point shift."""
-        self._kshift = np.array(kshift)
-
     @property
     def qshift(self) -> NDArray[np.float64] | None:
         """Get the q-point shift."""
         return self._qshift
-
-    @qshift.setter
-    def qshift(self, qshift: ArrayLike) -> None:
-        """Set the q-point shift."""
-        self._qshift = np.array(qshift)
 
     @property
     def wfn_co_fname(self) -> str:

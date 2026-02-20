@@ -9,8 +9,10 @@ from __future__ import annotations
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
+import numpy as np
+
 if TYPE_CHECKING:
-    from numpy.typing import ArrayLike
+    from numpy.typing import ArrayLike, NDArray
 
 from .bgwtask import BGWTask
 from .inputs import EpsilonInput
@@ -96,18 +98,10 @@ class EpsilonTask(BGWTask):
         """
         super().__init__(dirname, **kwargs)
 
-        # Initialize property backing attributes
-        self._ngkpt = None
-        self._kshift = None
-        self._qshift = None
-
-        # Store ngkpt, kshift, qshift if provided in kwargs
-        if "ngkpt" in kwargs:
-            self.ngkpt = kwargs["ngkpt"]
-        if "kshift" in kwargs:
-            self.kshift = kwargs["kshift"]
-        if "qshift" in kwargs:
-            self.qshift = kwargs["qshift"]
+        # Store ngkpt, kshift, qshift if provided in kwargs (read-only after init)
+        self._ngkpt = np.array(kwargs["ngkpt"]) if "ngkpt" in kwargs else None
+        self._kshift = np.array(kwargs["kshift"]) if "kshift" in kwargs else None
+        self._qshift = np.array(kwargs["qshift"]) if "qshift" in kwargs else None
 
         # Compute k-points grids
         kgrid_kwargs: dict[str, Any] = {}
@@ -156,30 +150,15 @@ class EpsilonTask(BGWTask):
         """Get the k-point grid dimensions."""
         return self._ngkpt
 
-    @ngkpt.setter
-    def ngkpt(self, ngkpt: ArrayLike) -> None:
-        """Set the k-point grid dimensions."""
-        self._ngkpt = np.array(ngkpt)
-
     @property
     def kshift(self) -> NDArray[np.float64] | None:
         """Get the k-point shift."""
         return self._kshift
 
-    @kshift.setter
-    def kshift(self, kshift: ArrayLike) -> None:
-        """Set the k-point shift."""
-        self._kshift = np.array(kshift)
-
     @property
     def qshift(self) -> NDArray[np.float64] | None:
         """Get the q-point shift."""
         return self._qshift
-
-    @qshift.setter
-    def qshift(self, qshift: ArrayLike) -> None:
-        """Set the q-point shift."""
-        self._qshift = np.array(qshift)
 
     @property
     def wfn_fname(self) -> str:
