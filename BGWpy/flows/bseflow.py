@@ -269,7 +269,6 @@ class BSEFlow(Workflow):
             kshift=self.kshift,
             nbnd=self.nbnd,
             rhog_flag=True,
-            symkpt=False,
             **kwargs,
         )
 
@@ -279,7 +278,6 @@ class BSEFlow(Workflow):
             kshift=self.kshift,
             qshift=self.qshift,
             nbnd=None,
-            symkpt=False,
             **kwargs,
         )
 
@@ -293,7 +291,6 @@ class BSEFlow(Workflow):
                 ngkpt=self.ngkpt,
                 nbnd=self.nbnd,
                 rhog_flag=True,
-                symkpt=False,
                 **kwargs,
             )
 
