@@ -761,6 +761,93 @@ def patch_sample_sphere(
     return kpoints_filtered, weights_filtered
 
 
+def patch_sample_cube(
+    ngkpt: ArrayLike,
+    half_side: float,
+    kshift: ArrayLike | None = None,
+    qshift: ArrayLike | None = None,
+    center: ArrayLike | None = None,
+    normalize_weights: bool = True,
+) -> tuple[NDArray[np.float64], NDArray[np.float64]]:
+    """Generate a patch-sampled k-grid within a cube.
+
+    Creates a dense uniform k-point grid and filters it to include only
+    points within an axis-aligned cube of specified half-side length. This
+    uses the Chebyshev (L∞) distance metric, so a point is included if
+    all three of its coordinate differences from the center are within
+    ``half_side``. This is useful for BSE kernel interpolation with fine
+    grids around specific k-points.
+
+    Parameters
+    ----------
+    ngkpt : list(3), int
+        Dense grid dimensions for sampling (e.g., [100, 100, 100]).
+    half_side : float
+        Half the side length of the cube in fractional reciprocal space
+        units. A point ``k`` is included when
+        ``max(|k - center|) <= half_side``.
+    kshift : list(3), float | None, default=None
+        Relative k-point shift. Defaults to [0, 0, 0].
+    qshift : list(3), float | None, default=None
+        Absolute q-point shift. Defaults to [0, 0, 0].
+    center : list(3), float | None, default=None
+        Center of the cube in fractional reciprocal space coordinates.
+        Defaults to [0, 0, 0] (Gamma point).
+    normalize_weights : bool, default=True
+        If True, normalize weights to sum to 1.0.
+
+    Returns
+    -------
+    kpoints : NDArray[np.float64]
+        Array of shape (nkpt_filtered, 3) containing filtered k-point coordinates.
+    weights : NDArray[np.float64]
+        Array of shape (nkpt_filtered,) containing k-point weights.
+
+    Examples
+    --------
+    Generate a 100x100x100 grid and filter for points within a cube of
+    half-side 0.05 around Gamma:
+
+    >>> kpts, wtks = patch_sample_cube(
+    ...     ngkpt=[100, 100, 100],
+    ...     half_side=0.05,
+    ...     center=[0.0, 0.0, 0.0]
+    ... )
+
+    """
+    if center is None:
+        center_arr = np.array([0.0, 0.0, 0.0], dtype=np.float64)
+    else:
+        center_arr = np.array(center, dtype=np.float64)
+
+    # Generate full dense grid
+    kpoints, weights = get_kpt_grid_nosym(ngkpt, kshift=kshift, qshift=qshift)
+
+    # Calculate Chebyshev (L∞) distance from center: max of absolute differences
+    chebyshev_dist = np.max(np.abs(kpoints - center_arr), axis=1)
+
+    # Filter points within cube
+    mask = chebyshev_dist <= half_side
+    kpoints_filtered = kpoints[mask]
+    weights_filtered = weights[mask]
+
+    # Normalize weights if requested
+    if normalize_weights:
+        weights_sum = np.sum(weights_filtered)
+        if weights_sum > 0:
+            weights_filtered = weights_filtered / weights_sum
+
+    nkpt_total = len(kpoints)
+    nkpt_filtered = len(kpoints_filtered)
+    warnings.warn(
+        f"Patch sampling: filtered {nkpt_filtered} k-points from "
+        f"{nkpt_total} total ({100.0 * nkpt_filtered / nkpt_total:.2f}%)",
+        stacklevel=2,
+    )
+
+    return kpoints_filtered, weights_filtered
+
+
 def apply_qshift(
     kpts: ArrayLike,
     qshift: ArrayLike,
@@ -768,7 +855,7 @@ def apply_qshift(
 ) -> tuple[NDArray[np.float64], NDArray[np.float64]]:
     """Apply an absolute q-shift to explicit k-points.
 
-    This function is useful when you have explicit k-points (e.g., from patch
+    This function is useful when you have explicit k-points (e.g., for patch
     sampling) and need to create a q-shifted grid for WFNq_fi in absorption
     calculations.
 
