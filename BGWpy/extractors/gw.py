@@ -16,11 +16,11 @@ if TYPE_CHECKING:
     from numpy.typing import NDArray
 
 __all__ = [
+    "MultipleGWResult",
+    "SigmaBlockResult",
+    "SigmaResult",
     "extract_multiple_GW_results",
     "parse_sigma_output",
-    "MultipleGWResult",
-    "SigmaResult",
-    "SigmaBlockResult",
 ]
 
 
@@ -301,7 +301,7 @@ def break_kpt_spin_blocks(s: str) -> list[str]:
         msg = "Could not find symmetrized values in block:\n" + s
         raise Exception(msg)
 
-    s = s.split("Symmetrized values from band-averaging")[-1]
+    s = s.rsplit("Symmetrized values from band-averaging", maxsplit=1)[-1]
     s = s.split("======================")[0]
 
     blocks: list[str] = []

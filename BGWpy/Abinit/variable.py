@@ -181,7 +181,7 @@ class InputVariable:
             frac_str = str(frac_part)
             # Remove "0." prefix if present
             if "." in frac_str:
-                ndec = max(len(frac_str.split(".")[-1]), floatdecimal)
+                ndec = max(len(frac_str.rsplit(".", maxsplit=1)[-1]), floatdecimal)
             else:
                 ndec = floatdecimal
         else:
@@ -222,7 +222,7 @@ class InputVariable:
                 if frac_part > 0:
                     frac_str = str(frac_part)
                     if "." in frac_str:
-                        maxdec = max(maxdec, len(frac_str.split(".")[-1]))
+                        maxdec = max(maxdec, len(frac_str.rsplit(".", maxsplit=1)[-1]))
             ndec = min(max(maxdec, floatdecimal), 16)
 
             if all(f == 0 or (abs(f) > 1e-3 and abs(f) < 1e4) for f in lvals):

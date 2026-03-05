@@ -28,7 +28,7 @@ __all__ = [
     "get_kpt_grid",
     "get_kpt_grid_nosym",
     "get_kqshift",
-    "get_patch_sampled_kgrid",
+    "patch_sample_sphere",
 ]
 
 
@@ -680,7 +680,7 @@ def get_kpt_grid_nosym(
     return np.array(kpoints, dtype=np.float64), np.array(weights, dtype=np.float64)
 
 
-def get_patch_sampled_kgrid(
+def patch_sample_sphere(
     ngkpt: ArrayLike,
     r_patch: float,
     kshift: ArrayLike | None = None,
@@ -721,7 +721,7 @@ def get_patch_sampled_kgrid(
     --------
     Generate a 100x100x100 grid and filter for points within 0.05 of Gamma:
 
-    >>> kpts, wtks = get_patch_sampled_kgrid(
+    >>> kpts, wtks = patch_sample_sphere(
     ...     ngkpt=[100, 100, 100],
     ...     r_patch=0.05,
     ...     center=[0.0, 0.0, 0.0]
@@ -793,7 +793,7 @@ def apply_qshift(
     --------
     Apply a small q-shift for WFNq_fi generation:
 
-    >>> kpts_patch, wtks_patch = get_patch_sampled_kgrid(
+    >>> kpts_patch, wtks_patch = patch_sample_sphere(
     ...     ngkpt=[100, 100, 100],
     ...     r_patch=0.1,
     ... )
