@@ -62,6 +62,9 @@ class AbinitTask(DFTTask, IOTask):
         self.input.set_structure(self.structure)
 
         # Handle k-points and symmetries
+        if self.kgridtask is None:
+            msg = "'ngkpt' is required for AbinitTask."
+            raise ValueError(msg)
         ((kpt, wtk), (symrel, tnons)) = self.kgridtask.get_kpoints_and_sym()
         nsym = len(symrel)
         if not kwargs.get("symkpt", True):

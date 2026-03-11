@@ -39,8 +39,9 @@ class DFTTask(MPITask):
         List of pseudopotential filenames.
     structure : Structure | None
         Structure object containing unit cell information.
-    kgridtask : KgridTask
-        Task for generating k-point grids.
+    kgridtask : KgridTask | None
+        Task for generating k-point grids. Only set when ``ngkpt`` is provided;
+        ``None`` for tasks that use an explicit k-point list instead of a grid.
     version : int
         Version of the DFT code (for QE compatibility).
     """
@@ -49,7 +50,7 @@ class DFTTask(MPITask):
     _pseudo_dir: str
     pseudos: list[str]
     structure: Structure
-    kgridtask: KgridTask
+    kgridtask: KgridTask | None
     version: int
     _ngkpt: NDArray[np.float64] | None
     _kshift: NDArray[np.float64] | None
@@ -101,7 +102,12 @@ class DFTTask(MPITask):
 
         # This task is not part of a workflow.
         # It is executed on-the-fly and leaves no trace (clean_after=True).
-        self.kgridtask = KgridTask(dirname=dirname, **kwargs)
+        # Only construct KgridTask when a grid is actually requested; tasks that
+        # use explicit k-point lists (e.g. band-path WFN_fi for inteqp) do not
+        # need it and should not pay the cost of creating one.
+        self.kgridtask = None
+        if "ngkpt" in kwargs:
+            self.kgridtask = KgridTask(dirname=dirname, **kwargs)
 
     @property
     def is_flavor_QE(self) -> bool:
