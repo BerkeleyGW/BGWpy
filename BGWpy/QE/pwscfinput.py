@@ -215,7 +215,7 @@ class PWscfInput(Writable):
             for i in range(3):
                 if abs(frac_coords[i]) > 0.5:
                     frac_coords[i] += -1.0 * np.sign(frac_coords[i])
-            self.atomic_positions.append([site.specie.symbol, *frac_coords])
+            self.atomic_positions.append([site.specie.symbol, *[round(x, 10) for x in frac_coords]])
 
     @property
     def pseudos(self) -> list[str] | None:
