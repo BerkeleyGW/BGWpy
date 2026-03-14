@@ -31,12 +31,12 @@ class InteqpResult(TypedDict):
     delta_eigs_eV: NDArray[np.float64]
 
 
-def extract_inteqp_bandstructure(fname: str) -> InteqpResult:
+def extract_inteqp_bandstructure(fname: str | Path) -> InteqpResult:
     """Extract the data in the 'bandstructure.dat' file produced by inteqp.x.
 
     Parameters
     ----------
-    fname : str
+    fname : str | Path
         Path to the bandstructure.dat file.
 
     Returns
@@ -114,12 +114,12 @@ def extract_inteqp_bandstructure(fname: str) -> InteqpResult:
     }
 
 
-def extract_inteqp_eqp(fname: str) -> InteqpResult:
+def extract_inteqp_eqp(fname: str | Path) -> InteqpResult:
     """Extract the data in the 'eqp.dat' file produced by inteqp.x.
 
     Parameters
     ----------
-    fname : str
+    fname : str | Path
         Path to the eqp.dat file.
 
     Returns
