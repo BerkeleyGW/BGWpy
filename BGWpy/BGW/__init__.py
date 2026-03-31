@@ -1,6 +1,9 @@
 # Core
+from BGWpy.BGW import degeneracychecktask
+
 from . import bgwtask, inputs
 from .absorptiontask import *
+from .degeneracychecktask import *
 from .epsilontask import *
 from .inteqptask import *
 from .kerneltask import *
@@ -18,4 +21,5 @@ __all__ = (
     + kgrid.__all__
     + inteqptask.__all__
     + vmtxeltask.__all__
+    + degeneracychecktask.__all__
 )
