@@ -75,17 +75,11 @@ def extract_inteqp_bandstructure(fname: str | Path) -> InteqpResult:
     ndata = len(spin)
     nspin = 1 if spin[0] == spin[-1] else 2
 
-    ib_min = int(band[0])
-    ib_max = int(band[-1])
+    ib_min = int(np.min(band))
+    ib_max = int(np.max(band))
     nband = ib_max - ib_min + 1
 
-    nkpt: int = 0
-    for i, b in enumerate(band):
-        if b != ib_min:
-            nkpt = i
-            break
-    else:
-        nkpt = len(kpt) // nspin
+    nkpt = len(kpt) // (nspin * nband)
 
     # Construct data arrays
     eigs_dft_eV = np.zeros((nspin, nkpt, nband), dtype=np.float64)
@@ -95,7 +89,7 @@ def extract_inteqp_bandstructure(fname: str | Path) -> InteqpResult:
     for i in range(ndata):
         ispin = int(spin[i]) - 1
         ikpt = i % nkpt
-        iband = int(band[i]) - 1
+        iband = int(band[i]) - ib_min
 
         eigs_dft_eV[ispin, ikpt, iband] = E_DFT[i]
         eigs_gw_eV[ispin, ikpt, iband] = E_QP[i]
@@ -161,14 +155,15 @@ def extract_inteqp_eqp(fname: str | Path) -> InteqpResult:
         ib_min = min(bands)
         ib_max = max(bands)
         nspin = max(spins)
-        nband = nstates // nspin
+        nband = ib_max - ib_min + 1
 
         # Count the remaining lines
         nlines = nstates + 1
         while True:
             try:
                 line = next(f)
-                nlines += 1
+                if line.strip():
+                    nlines += 1
             except StopIteration:
                 break
 
@@ -191,8 +186,8 @@ def extract_inteqp_eqp(fname: str | Path) -> InteqpResult:
                 line = next(f)
                 parts = line.split()
 
-                ispin = i // nband
-                iband = i % nband
+                ispin = spins[i] - 1
+                iband = bands[i] - ib_min
 
                 eigs_dft_eV[ispin, ikpt, iband] = float(parts[2])
                 eigs_gw_eV[ispin, ikpt, iband] = float(parts[3])

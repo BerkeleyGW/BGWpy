@@ -186,41 +186,36 @@ def parse_sigma_output(f: str | TextIO) -> SigmaResult:
     # Break the output into large kpoint block.
     large_kpt_blocks = break_output_in_kpt_blocks(f)
 
-    # Count k-points from number of kpt blocks
-    nkpt = len(large_kpt_blocks)
-
-    if nkpt == 0:
+    if not large_kpt_blocks:
         msg = "No k-point blocks found in sigma output file"
         raise ValueError(msg)
 
     # Break the blocks into smaller kpt and spin block
     kpt_spin_blocks: list[str] = []
-    subblock: list[str] = []
     for block in large_kpt_blocks:
-        subblock = break_kpt_spin_blocks(block)
-        kpt_spin_blocks.extend(subblock)
-
-    # Count spins from number of sub-blocks
-    nspin = len(subblock)
+        kpt_spin_blocks.extend(break_kpt_spin_blocks(block))
 
     # Parse each block
-    block_results: list[SigmaBlockResult] = []
-    block_result: SigmaBlockResult | None = None
-    for block in kpt_spin_blocks:
-        block_result = parse_sigma_output_block(block)
-        block_results.append(block_result)
+    block_results: list[SigmaBlockResult] = [
+        parse_sigma_output_block(block) for block in kpt_spin_blocks
+    ]
 
-    if block_result is None:
+    if not block_results:
         msg = "No valid blocks found in sigma output"
         raise ValueError(msg)
-
-    # Count number of bands from the lines of last block
-    nband = len(block_result["n"])
 
     # Create mapping from ik values to array indices
     # (ik values may not be consecutive, e.g., 1, 2, 4)
     ik_values = sorted({br["ik"] for br in block_results})
     ik_to_index = {ik: idx for idx, ik in enumerate(ik_values)}
+    nkpt = len(ik_values)
+
+    spin_values = sorted({br["spin"] for br in block_results})
+    spin_to_index = {spin: idx for idx, spin in enumerate(spin_values)}
+    nspin = len(spin_values)
+
+    # Count number of bands from the maximum lines of blocks
+    nband = max(len(br["n"]) for br in block_results)
 
     # Initialize the results dict
     results: dict[str, Any] = {"nspin": nspin, "nkpt": nkpt, "nband": nband}
@@ -235,7 +230,7 @@ def parse_sigma_output(f: str | TextIO) -> SigmaResult:
 
     # Merge the blocks
     for block_result in block_results:
-        ispin = block_result["spin"] - 1
+        ispin = spin_to_index[block_result["spin"]]
         ikpt = ik_to_index[block_result["ik"]]
         for key in keys:
             for iband, val in enumerate(block_result[key]):  # type: ignore[literal-required]
@@ -312,7 +307,7 @@ def break_kpt_spin_blocks(s: str) -> list[str]:
         except StopIteration:
             break
 
-        if line.startswith("       k ="):
+        if line.strip().startswith("k ="):
             lines: list[str] = []
             lines.append(line)  # kpoint line
             try:
@@ -384,9 +379,13 @@ def parse_sigma_output_block(s: str) -> SigmaBlockResult:
     kpt_line = results_lines.pop(0)
     del results_lines[:2]
 
-    results["k"] = np.array(list(map(float, kpt_line.split()[2:5])))
-    results["ik"] = int(kpt_line.split()[7])
-    results["spin"] = int(kpt_line.split()[10])
+    tokens = kpt_line.split()
+    results["k"] = np.array(list(map(float, tokens[2:5])))
+    results["ik"] = int(tokens[tokens.index("ik") + 2])
+    if "spin" in tokens:
+        results["spin"] = int(tokens[tokens.index("spin") + 2])
+    else:
+        results["spin"] = 1
 
     keys = ["n", "Emf", "Eo", "Vxc", "X", "Cor", "Eqp0", "Eqp1", "Znk"]
     types: list[type[int] | type[float]] = [int, *([float] * 8)]
