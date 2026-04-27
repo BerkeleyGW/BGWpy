@@ -6,7 +6,6 @@ Depends on:
     21-Epsilon
 
 Used by:
-    22-Sigma
     23-Kernel
     24-Absorption
 """

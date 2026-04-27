@@ -1,1 +1,8 @@
-structures_files = ["GaAs.cifGaAs.jsonSi.cifSi.jsonwrite-GaAs-structure.pywrite-Si-structure.py"]
+structures_files = [
+    "GaAs.cif",
+    "GaAs.json",
+    "Si.cif",
+    "Si.json",
+    "write-GaAs-structure.py",
+    "write-Si-structure.py",
+]

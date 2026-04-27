@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Any
 
 from .abinittask import AbinitTask
@@ -15,12 +16,12 @@ class AbinitScfTask(AbinitTask):
     _input_fname = "scf.in"
     _output_fname = "scf.out"
 
-    def __init__(self, dirname: str, **kwargs: Any) -> None:
+    def __init__(self, dirname: str | Path, **kwargs: Any) -> None:
         """
         Arguments
         ---------
 
-        dirname : str
+        dirname : str | Path
             Directory in which the files are written and the code is executed.
             Will be created if needed.
 

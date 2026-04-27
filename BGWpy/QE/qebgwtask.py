@@ -109,6 +109,9 @@ class Qe2BgwInput(Namelist):
         return self.kshift + self.qshift * self.ngkpt
 
     def _set_kqshift(self) -> None:
+        if not self._has_kgrid:
+            msg = "Cannot set wfng_dk* values when wfng_kgrid is False."
+            raise AttributeError(msg)
         self["wfng_dk1"] = self.kqshift[0]
         self["wfng_dk2"] = self.kqshift[1]
         self["wfng_dk3"] = self.kqshift[2]
@@ -122,12 +125,12 @@ class Qe2BgwTask(QeTask):
     _input_fname = "wfn.pp.in"
     _output_fname = "wfn.pp.out"
 
-    def __init__(self, dirname: str, **kwargs: Any) -> None:
+    def __init__(self, dirname: str | Path, **kwargs: Any) -> None:
         """
         Arguments
         ---------
 
-        dirname : str
+        dirname : str | Path
             Directory in which the files are written and the code is executed.
             Will be created if needed.
 
@@ -227,18 +230,6 @@ class Qe2BgwTask(QeTask):
                 # Use the property setter to trigger runscript update.
                 self.nproc = 32
 
-        # Resolve and store grid arrays.  DFTTask.__init__ has already stored
-        # whatever was in kwargs as self._ngkpt / _kshift / _qshift via its own
-        # assignment, so we overwrite here to be explicit about the semantics.
-        if wfng_kgrid:
-            self._ngkpt = array(kwargs["ngkpt"])
-            self._kshift = array(kwargs.get("kshift", 3 * [0.0]))
-            self._qshift = array(kwargs.get("qshift", 3 * [0.0]))
-        else:
-            self._ngkpt = None
-            self._kshift = None
-            self._qshift = None
-
         # Build input file defaults.
         defaults: dict[str, Any] = {
             "wfng_file": kwargs.get("wfn_fname", "wfn.cplx"),
@@ -248,9 +239,9 @@ class Qe2BgwTask(QeTask):
         }
 
         if wfng_kgrid:
-            defaults["ngkpt"] = self._ngkpt
-            defaults["kshift"] = self._kshift
-            defaults["qshift"] = self._qshift
+            defaults["ngkpt"] = self.ngkpt
+            defaults["kshift"] = self.kshift if self.kshift is not None else 3 * [0.0]
+            defaults["qshift"] = self.qshift if self.qshift is not None else 3 * [0.0]
 
         rho_defaults = {
             "rhog_flag": True,
@@ -303,9 +294,10 @@ class Qe2BgwTask(QeTask):
         return str(Path(self.dirname) / self._wfn_fname)
 
     @wfn_fname.setter
-    def wfn_fname(self, value: str) -> None:
-        self._wfn_fname = value
-        self.input["wfng_file"] = value
+    def wfn_fname(self, value: str | Path) -> None:
+        value_str = str(value)
+        self._wfn_fname = value_str
+        self.input["wfng_file"] = value_str
 
     _rho_fname = "rho.real"
 
@@ -314,9 +306,10 @@ class Qe2BgwTask(QeTask):
         return str(Path(self.dirname) / self._rho_fname)
 
     @rho_fname.setter
-    def rho_fname(self, value: str) -> None:
-        self._rho_fname = value
-        self.input["rhog_file"] = value
+    def rho_fname(self, value: str | Path) -> None:
+        value_str = str(value)
+        self._rho_fname = value_str
+        self.input["rhog_file"] = value_str
 
     _vxc_dat_fname = "vxc.dat"
 
@@ -325,6 +318,7 @@ class Qe2BgwTask(QeTask):
         return str(Path(self.dirname) / self._vxc_dat_fname)
 
     @vxc_dat_fname.setter
-    def vxc_dat_fname(self, value: str) -> None:
-        self._vxc_dat_fname = value
-        self.input["vxc_file"] = value
+    def vxc_dat_fname(self, value: str | Path) -> None:
+        value_str = str(value)
+        self._vxc_dat_fname = value_str
+        self.input["vxc_file"] = value_str

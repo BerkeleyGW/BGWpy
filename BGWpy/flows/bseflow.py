@@ -30,7 +30,7 @@ class BSEFlow(Workflow):
         -----------------
         (All mandatory unless specified otherwise)
 
-        dirname : str
+        dirname : str | Path
             Directory in which the files are written and the code is executed.
             Will be created if needed.
         structure : pymatgen.Structure
@@ -41,6 +41,8 @@ class BSEFlow(Workflow):
             Prefix required by QE as a rootname.
         pseudo_dir : str
             Directory in which pseudopotential files are found.
+
+            Accepts ``str | Path`` as input; stored internally as ``str``.
         pseudos : list, str
             Pseudopotential files.
         ngkpt : list(3), float
@@ -101,7 +103,7 @@ class BSEFlow(Workflow):
         """
         super().__init__(**kwargs)
 
-        kwargs.pop("dirname")
+        kwargs.pop("dirname", None)
 
         self.structure = kwargs["structure"]
         self.ngkpt = kwargs.pop("ngkpt")
@@ -115,7 +117,7 @@ class BSEFlow(Workflow):
                 break
         else:
             msg = f"Number of bands must be specified with one of these keywords: {nband_aliases}."
-            raise Exception(msg)
+            raise ValueError(msg)
 
         # BSE parameters
         self.ngkpt_fi = kwargs.pop("ngkpt_fine", self.ngkpt)
@@ -244,7 +246,7 @@ class BSEFlow(Workflow):
         if "charge_density_fname" in kwargs:
             if "data_file_fname" not in kwargs:
                 msg = "Error, when providing charge_density_fname, data_file_fname is required."
-                raise Exception(msg)
+                raise ValueError(msg)
 
         else:
             self.scftask = QeScfTask(
@@ -342,7 +344,7 @@ class BSEFlow(Workflow):
         if "charge_density_fname" in kwargs:
             if "vxc_fname" not in kwargs:
                 msg = "Error, when providing charge_density_fname, vxc_fname is required"
-                raise Exception(msg)
+                raise ValueError(msg)
 
         else:
             self.scftask = AbinitScfTask(

@@ -25,7 +25,7 @@ class QeBgwFlow(WfnBgwFlow):
         Keyword Arguments
         -----------------
 
-        dirname : str
+        dirname : str | Path
             Directory in which the files are written and the code is executed.
             Will be created if needed.
         charge_density_fname : str
@@ -97,7 +97,7 @@ class QeBgwFlow(WfnBgwFlow):
 
         self.charge_density_fname = kwargs["charge_density_fname"]
         self.data_file_fname = kwargs["data_file_fname"]
-        self.spin_polarization_fname = kwargs.get("spin_polarization_fname", "dummy")
+        self.spin_polarization_fname = kwargs.get("spin_polarization_fname", "")
 
         # Wfn task
         self.wfntask = QeWfnTask(dirname=self.dirname, **kwargs)

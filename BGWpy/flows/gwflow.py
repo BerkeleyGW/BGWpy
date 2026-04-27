@@ -31,7 +31,7 @@ class GWFlow(Workflow):
         -----------------
         (All mandatory unless specified otherwise)
 
-        dirname : str
+        dirname : str | Path
             Directory in which the files are written and the code is executed.
             Will be created if needed.
         structure : pymatgen.Structure
@@ -93,7 +93,7 @@ class GWFlow(Workflow):
                 break
         else:
             msg = f"Number of bands must be specified with one of these keywords: {nband_aliases}."
-            raise Exception(msg)
+            raise ValueError(msg)
 
         self.dft_flavor = check_dft_flavor(kwargs.get("dft_flavor", flavors["dft_flavor"]))
 
@@ -192,7 +192,7 @@ class GWFlow(Workflow):
         if "charge_density_fname" in kwargs:
             if "data_file_fname" not in kwargs:
                 msg = "Error, when providing charge_density_fname, data_file_fname is required."
-                raise Exception(msg)
+                raise ValueError(msg)
 
         else:
             self.scftask = QeScfTask(
@@ -266,7 +266,7 @@ class GWFlow(Workflow):
         if "charge_density_fname" in kwargs:
             if "vxc_fname" not in kwargs:
                 msg = "Error, when providing charge_density_fname, vxc_fname is required"
-                raise Exception(msg)
+                raise ValueError(msg)
 
         else:
             self.scftask = AbinitScfTask(
@@ -295,31 +295,31 @@ class GWFlow(Workflow):
             wfn_fname = kwargs["wfn_fname"]
         elif not self.with_wfn:
             msg = "When with_wfn=False, wfn_fname must be provided"
-            raise Exception(msg)
+            raise ValueError(msg)
 
         if "wfnq_fname" in kwargs:
             wfnq_fname = kwargs["wfnq_fname"]
         elif not self.with_wfn:
             msg = "When with_wfn=False, wfnq_fname is also required"
-            raise Exception(msg)
+            raise ValueError(msg)
 
         if "wfn_co_fname" in kwargs:
             wfn_co_fname = kwargs["wfn_co_fname"]
         elif not self.with_wfn:
             msg = "When with_wfn=False, wfn_co_fname is also required"
-            raise Exception(msg)
+            raise ValueError(msg)
 
         if "rho_fname" in kwargs:
             rho_fname = kwargs["rho_fname"]
         elif not self.with_wfn:
             msg = "When with_wfn=False, rho_fname is required"
-            raise Exception(msg)
+            raise ValueError(msg)
 
         if "vxc_fname" in kwargs:
             vxc_fname = kwargs["vxc_fname"]
         elif not self.with_wfn:
             msg = "When with_wfn=False, vxc_fname is required"
-            raise Exception(msg)
+            raise ValueError(msg)
 
         # In case wavefunctions are already provided
         if not self.with_wfn:
@@ -393,7 +393,7 @@ class GWFlow(Workflow):
         if self.split_wfn:
             if self.has_kshift:
                 msg = "Cannot use split_wfn with a k-shift at the moment (to be fixed)"
-                raise Exception(msg)
+                raise NotImplementedError(msg)
 
             fnames = {
                 "wfn_fname": self.wfntask_large.wfn_fname,

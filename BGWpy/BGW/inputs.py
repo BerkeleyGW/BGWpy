@@ -85,7 +85,7 @@ class SigmaInput(BasicInputFile):
                     "When qpts is specified, the qpoint grid must also be specified "
                     "through 'ngqpt' or 'qgrid'."
                 )
-                raise Exception(msg)
+                raise ValueError(msg)
 
         all_variables.update(variables)
 

@@ -1,9 +1,10 @@
-import pymatgen
+from pymatgen.core import Structure
+from pymatgen.core.lattice import Lattice
 
-structure = pymatgen.Structure(
-    lattice=pymatgen.core.lattice.Lattice(
-        [[0.0, 0.5, 0.5], [0.5, 0.0, 0.5], [0.5, 0.5, 0.0]]
-    ).scale(5.4309456887829**3 / 4),
+structure = Structure(
+    lattice=Lattice([[0.0, 0.5, 0.5], [0.5, 0.0, 0.5], [0.5, 0.5, 0.0]]).scale(
+        5.4309456887829**3 / 4
+    ),
     species=["Si", "Si"],
     coords=[3 * [-0.125], 3 * [0.125]],
 )

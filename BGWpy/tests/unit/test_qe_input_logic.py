@@ -19,7 +19,7 @@ class TestQEInputConfiguration:
     These tests mock kgrid.x to test pure Python logic without external dependencies.
     """
 
-    def test_diagonalization_cg_removes_david_param(self):
+    def test_diagonalization_cg_removes_david_param(self, tmp_path):
         """Test that diago_david_ndim is removed when diagonalization='cg'.
 
         The 'cg' (conjugate gradient) algorithm doesn't use the diago_david_ndim
@@ -32,7 +32,7 @@ class TestQEInputConfiguration:
             mock_kgrid.return_value = mock_instance
 
             task = QeScfTask(
-                dirname="/tmp/test_bgwpy_cg",
+                dirname=str(tmp_path / "test_cg"),
                 prefix="GaAs",
                 pseudo_dir=data.pseudo_dir,
                 pseudos=data.pseudos_GaAs,
@@ -58,7 +58,7 @@ class TestQEInputConfiguration:
             assert task.input.electrons["diago_full_acc"] is True
             assert task.input.electrons["conv_thr"] == 1.0e-10
 
-    def test_diagonalization_david_keeps_param(self):
+    def test_diagonalization_david_keeps_param(self, tmp_path):
         """Test that diago_david_ndim is kept when diagonalization='david'.
 
         The 'david' algorithm uses the diago_david_ndim parameter to control
@@ -71,7 +71,7 @@ class TestQEInputConfiguration:
             mock_kgrid.return_value = mock_instance
 
             task = QeScfTask(
-                dirname="/tmp/test_bgwpy_david",
+                dirname=str(tmp_path / "test_david"),
                 prefix="GaAs",
                 pseudo_dir=data.pseudo_dir,
                 pseudos=data.pseudos_GaAs,
@@ -94,7 +94,7 @@ class TestQEInputConfiguration:
             # Verify diago_david_ndim is present and has correct value
             assert task.input.electrons["diago_david_ndim"] == 8
 
-    def test_default_diagonalization_is_david(self):
+    def test_default_diagonalization_is_david(self, tmp_path):
         """Test that default diagonalization method is 'david'."""
         with patch("BGWpy.DFT.dfttask.KgridTask") as mock_kgrid:
             mock_instance = MagicMock()
@@ -102,7 +102,7 @@ class TestQEInputConfiguration:
             mock_kgrid.return_value = mock_instance
 
             task = QeScfTask(
-                dirname="/tmp/test_bgwpy_default",
+                dirname=str(tmp_path / "test_default"),
                 prefix="Si",
                 pseudo_dir=data.pseudo_dir,
                 pseudos=data.pseudos_Si,

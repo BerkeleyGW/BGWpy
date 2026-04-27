@@ -8,7 +8,7 @@ bands at a given k-point in a wavefunction file.
 import re
 import subprocess
 from pathlib import Path
-from typing import TypedDict
+from typing import Any, TypedDict
 
 from BGWpy.core import Task
 
@@ -65,7 +65,7 @@ class DegeneracyCheckTask(Task):
     _wfn_fname: str
     executable: str
 
-    def __init__(self, dirname: str, **kwargs):
+    def __init__(self, dirname: str | Path, **kwargs: Any) -> None:
         """
         Initialize a DegeneracyCheckTask.
 
@@ -109,7 +109,8 @@ class DegeneracyCheckTask(Task):
         """
         wfn_path = Path(self.dirname) / self.wfn_fname
         if not wfn_path.exists():
-            raise FileNotFoundError(f"Wavefunction file not found: {wfn_path}")
+            msg = f"Wavefunction file not found: {wfn_path}"
+            raise FileNotFoundError(msg)
 
         try:
             print(f"Running {self.executable} ...")

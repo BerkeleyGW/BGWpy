@@ -29,6 +29,7 @@ class Wannier90Input(Writable):
         projections: dict[str, str] | str | list[str] | None = None,
         **variables: Any,
     ) -> None:
+        super().__init__()
         self.structure = structure
         self.nbnd = nbnd
         self.nwann = nwann

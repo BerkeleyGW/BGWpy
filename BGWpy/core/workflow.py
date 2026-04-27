@@ -6,6 +6,7 @@ including parallel and sequential execution patterns.
 
 from __future__ import annotations
 
+import shlex
 from typing import TYPE_CHECKING, Any
 
 from .task import Task, TaskStatus
@@ -174,9 +175,9 @@ class Workflow(Task):
         rel_task_dir = relative_path(task.dirname, self.dirname)
         rel_back_dir = relative_path(self.dirname, task.dirname)
 
-        self.runscript.append(f"cd {rel_task_dir}")
+        self.runscript.append(f"cd {shlex.quote(rel_task_dir)}")
         self.runscript.append(f"bash {task.runscript.fname}")
-        self.runscript.append(f"cd {rel_back_dir}")
+        self.runscript.append(f"cd {shlex.quote(rel_back_dir)}")
 
     def add_tasks(
         self,

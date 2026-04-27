@@ -7,7 +7,18 @@ workflows, including SCF, band structure, and wavefunction calculations.
 from __future__ import annotations
 
 # Core modules
-from . import abidata, abinitinput, abinittask, constructor, utils, variable
+from . import (
+    abibgw,
+    abidata,
+    abinitbgwflow,
+    abinitinput,
+    abinittask,
+    constructor,
+    scftask,
+    utils,
+    variable,
+    wfntask,
+)
 from .abibgw import *
 from .abinitbgwflow import *
 

@@ -154,11 +154,10 @@ def relative_path(
     >>> relative_path('/home/user/calc/output', '/home/user')
     'calc/output'
     """
-    target_path = Path(target).resolve()
-    base_path = Path(base).resolve()
+    # Avoid Path.resolve(): it can introduce filesystem-dependent behavior and can be
+    # surprising for non-existent paths. For runscript generation we want a purely
+    # lexical relative path computation.
+    target_str = str(target)
+    base_str = str(base)
 
-    try:
-        return str(target_path.relative_to(base_path))
-    except ValueError:
-        # Paths are not relative to each other, compute via os.path.relpath
-        return os.path.relpath(target_path, base_path)
+    return os.path.relpath(target_str, start=base_str)

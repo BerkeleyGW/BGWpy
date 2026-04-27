@@ -56,20 +56,21 @@ class DFTTask(MPITask):
     _kshift: NDArray[np.float64] | None
     _qshift: NDArray[np.float64] | None
 
-    def __init__(self, dirname: str, **kwargs: Any) -> None:
+    def __init__(self, dirname: str | Path, **kwargs: Any) -> None:
         """Initialize a DFT task.
 
         Parameters
         ----------
-        dirname : str
+        dirname : str | Path
             Directory in which the files are written and the code is executed.
 
         Other Parameters
         ----------------
         flavor : str, default='qe'
             DFT code used for density and wavefunctions ('qe' or 'abinit').
-        pseudo_dir : str, optional
+        pseudo_dir : str | Path, optional
             Path to the directory containing pseudopotential files.
+            Accepted as str or Path; stored internally as str.
             Defaults to dirname.
         pseudos : list[str], optional
             List of pseudopotential files. Defaults to empty list.
@@ -154,12 +155,21 @@ class DFTTask(MPITask):
         symkpt: bool = kwargs.get("symkpt", True)
 
         if "ngkpt" in kwargs:
+            if self.kgridtask is None:
+                msg = "kgridtask must be initialized when 'ngkpt' is provided."
+                raise ValueError(msg)
             if symkpt:
                 kpts, wtks = self.kgridtask.get_kpoints()
             else:
                 kpts, wtks = self.kgridtask.get_kpt_grid_nosym()
         else:
-            # If ngkpt not provided, kpts and wtks are required
+            # If ngkpt not provided, explicit kpts and wtks are required
+            if "kpts" not in kwargs or "wtks" not in kwargs:
+                msg = (
+                    "When 'ngkpt' is not provided, explicit 'kpts' and 'wtks' "
+                    "must be passed as keyword arguments."
+                )
+                raise ValueError(msg)
             kpts, wtks = kwargs["kpts"], kwargs["wtks"]
 
         return kpts, wtks
@@ -169,10 +179,16 @@ class DFTTask(MPITask):
 
         Warns if any pseudopotential file is not found.
         """
+        pseudo_dir = Path(self.pseudo_dir)
+
         for pseudo in self.pseudos:
-            fname = os.path.relpath(Path(self.dirname) / self.pseudo_dir / pseudo)
-            if not Path(fname).exists():
-                warnings.warn(f"Pseudopotential not found:\n{fname}", stacklevel=2)
+            pseudo_path = (
+                (pseudo_dir / pseudo)
+                if pseudo_dir.is_absolute()
+                else (Path(self.dirname) / pseudo_dir / pseudo)
+            )
+            if not pseudo_path.exists():
+                warnings.warn(f"Pseudopotential not found:\n{pseudo_path}", stacklevel=2)
 
     @property
     def pseudo_dir(self) -> str:
@@ -180,16 +196,21 @@ class DFTTask(MPITask):
         return self._pseudo_dir
 
     @pseudo_dir.setter
-    def pseudo_dir(self, value: str) -> None:
+    def pseudo_dir(self, value: str | Path) -> None:
         """Set the pseudopotential directory.
 
+        Accepts a path as str or Path.
         If an absolute path is given, it is used as-is.
         Otherwise, a relative path from dirname is computed.
         """
-        if Path(value).is_absolute():
-            self._pseudo_dir = str(value)
+        value_str = str(value)
+        if not value_str:
+            msg = "pseudo_dir must not be empty"
+            raise ValueError(msg)
+        if Path(value_str).is_absolute():
+            self._pseudo_dir = value_str
         else:
-            self._pseudo_dir = os.path.relpath(str(value), self.dirname)
+            self._pseudo_dir = os.path.relpath(value_str, self.dirname)
 
     @property
     def ngkpt(self) -> NDArray[np.float64] | None:
@@ -240,12 +261,12 @@ class DFTFlow(Workflow, DFTTask):
     Inherits all attributes from Workflow and DFTTask.
     """
 
-    def __init__(self, dirname: str | None = None, **kwargs: Any) -> None:
+    def __init__(self, dirname: str | Path | None = None, **kwargs: Any) -> None:
         """Initialize a DFT workflow.
 
         Parameters
         ----------
-        dirname : str | None, optional
+        dirname : str | Path | None, optional
             Directory in which the workflow is executed.
             If None, will use default from Task base class.
 

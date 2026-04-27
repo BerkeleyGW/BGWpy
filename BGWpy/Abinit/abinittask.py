@@ -20,12 +20,12 @@ class AbinitTask(DFTTask, IOTask):
 
     _TAG_JOB_COMPLETED = "Calculation completed"
 
-    def __init__(self, dirname: str, **kwargs: Any) -> None:
+    def __init__(self, dirname: str | Path, **kwargs: Any) -> None:
         """
         Arguments
         ---------
 
-        dirname : str
+        dirname : str | Path
             Directory in which the files are written and the code is executed.
             Will be created if needed.
 

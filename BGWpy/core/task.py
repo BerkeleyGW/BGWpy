@@ -171,11 +171,13 @@ class Task:
             self.remove_link(dest_str)
             return
 
-        # Compute relative path from dest's directory to target
         dest_parent = Path(self.dirname) / Path(dest_str).parent
-        target_path = Path(target).resolve()
-        # Use os.path.relpath to handle paths outside dest_parent
-        reltarget = Path(os.path.relpath(target_path, dest_parent.resolve()))
+
+        target_path = Path(target)
+        if not target_path.is_absolute():
+            target_path = Path(os.path.abspath(str(target_path)))
+
+        reltarget = Path(os.path.relpath(str(target_path), os.path.abspath(str(dest_parent))))
 
         # Update existing link or add new one
         for link in self.runscript.links:
@@ -210,10 +212,12 @@ class Task:
         The source will be expressed relative to the task dirname.
         If dest is already defined, the source is replaced.
         """
-        source_path = Path(source).resolve()
+        source_path = Path(source)
+        if not source_path.is_absolute():
+            source_path = Path(os.path.abspath(str(source_path)))
+
         dest_str = str(dest)
-        # Use os.path.relpath to handle paths outside dirname
-        relsource = Path(os.path.relpath(source_path, Path(self.dirname).resolve()))
+        relsource = Path(os.path.relpath(str(source_path), os.path.abspath(str(self.dirname))))
 
         # Update existing copy or add new one
         for copy in self.runscript.copies:
@@ -589,14 +593,25 @@ class IOTask(Task):
         -------
         str
             Full path to the input file.
+
         """
-        basename = self._input_fname
-        if hasattr(self, "input") and hasattr(self.input, "fname"):
-            basename = self.input.fname
+        basename: str | Path = self._input_fname
+
+        input_obj = getattr(self, "input", None)
+        if input_obj is not None and hasattr(input_obj, "fname"):
+            basename = input_obj.fname  # type: ignore[assignment]
+
         if not isinstance(basename, (str, Path)):
             msg = f"basename must be a string or Path, not {type(basename)}"
             raise TypeError(msg)
-        return str(Path(self.dirname) / basename)
+
+        # We allow relative paths like "inputs/eps.inp" but forbid absolute paths.
+        basename_path = Path(basename)
+        if basename_path.is_absolute():
+            msg = f"input_fname must be relative, not absolute: {basename}"
+            raise ValueError(msg)
+
+        return str(Path(self.dirname) / str(basename_path))
 
     @input_fname.setter
     def input_fname(self, value: str | Path) -> None:
@@ -613,14 +628,17 @@ class IOTask(Task):
             If value contains path separators.
         """
         path = Path(value)
-        if path.parent != Path():
-            msg = f"input_fname must be a basename, not a path: {value}"
+
+        # Allow relative paths but forbid absolute paths.
+        if path.is_absolute():
+            msg = f"input_fname must be relative, not absolute: {value}"
             raise ValueError(msg)
 
-        self._input_fname = str(value)
+        self._input_fname = str(path)
 
-        if hasattr(self, "input") and hasattr(self.input, "fname"):
-            self.input.fname = str(value)  # type: ignore[misc]
+        input_obj = getattr(self, "input", None)
+        if input_obj is not None and hasattr(input_obj, "fname"):
+            input_obj.fname = str(path)  # type: ignore[misc]
 
     @property
     def output_fname(self) -> str:
@@ -632,3 +650,26 @@ class IOTask(Task):
             Full path to the output file.
         """
         return str(Path(self.dirname) / self._output_fname)
+
+    @output_fname.setter
+    def output_fname(self, value: str | Path) -> None:
+        """Set output filename (must be basename only).
+
+        Parameters
+        ----------
+        value : str | Path
+            Output filename (basename only, not a full path).
+
+        Raises
+        ------
+        ValueError
+            If value contains path separators.
+        """
+        path = Path(value)
+
+        # Allow relative paths but forbid absolute paths.
+        if path.is_absolute():
+            msg = f"output_fname must be relative, not absolute: {value}"
+            raise ValueError(msg)
+
+        self._output_fname = str(path)

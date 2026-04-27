@@ -7,41 +7,47 @@ then adapt them for BGW.
 
 from BGWpy import Qe2BgwTask, QeScfTask, QeWfnTask, Structure
 
-# Common arguments for tasks.
-common = {
-    "structure": Structure.from_file("../../Data/Structures/GaAs.json"),
-    "prefix": "GaAs",
-    "pseudo_dir": "../../Data/Pseudos",
-    "pseudos": ["31-Ga.PBE.UPF", "33-As.PBE.UPF"],
-    "ngkpt": [2, 2, 2],  # k-points grid
-    "kshift": [0.5, 0.5, 0.5],  # k-points shift
-    "qshift": [0.001, 0.0, 0.0],  # k-points q-shift
-    "ecutwfc": 10.0,  # Wavefunctions cutoff energy
-    # Number of bands not specified (occupied only)
-    # These are the default parameters for the MPI runner.
-    # Please adapt them to your needs.
-    "nproc": 1,
-    "nproc_per_node": 1,
-    "mpirun": "mpirun",
-    "nproc_flag": "-n",
-    "nproc_per_node_flag": "--npernode",
-}
 
-scftask = QeScfTask(dirname="41-Wavefunctions/Density", **common)
+def main():
+    # Common arguments for tasks.
+    common = {
+        "structure": Structure.from_file("../../Data/Structures/GaAs.json"),
+        "prefix": "GaAs",
+        "pseudo_dir": "../../Data/Pseudos",
+        "pseudos": ["31-Ga.PBE.UPF", "33-As.PBE.UPF"],
+        "ngkpt": [2, 2, 2],  # k-points grid
+        "kshift": [0.5, 0.5, 0.5],  # k-points shift
+        "qshift": [0.001, 0.0, 0.0],  # k-points q-shift
+        "ecutwfc": 10.0,  # Wavefunctions cutoff energy
+        # Number of bands not specified (occupied only)
+        # These are the default parameters for the MPI runner.
+        # Please adapt them to your needs.
+        "nproc": 1,
+        "nproc_per_node": 1,
+        "mpirun": "mpirun",
+        "nproc_flag": "-n",
+        "nproc_per_node_flag": "--npernode",
+    }
 
-# Wavefunctions and eigenvalues calculation (NSCF) on a k-shifted grid
-wfntask = QeWfnTask(
-    dirname="41-Wavefunctions/Wavefunctions",
-    charge_density_fname=scftask.charge_density_fname,
-    data_file_fname=scftask.data_file_fname,
-    **common,
-)
+    scftask = QeScfTask(dirname="41-Wavefunctions/Density", **common)
 
-# Interfacing PW with BerkeleyGW.
-qe2bgwtask = Qe2BgwTask(dirname=wfntask.dirname, **common)
+    # Wavefunctions and eigenvalues calculation (NSCF) on a k-shifted grid
+    wfntask = QeWfnTask(
+        dirname="41-Wavefunctions/Wavefunctions",
+        charge_density_fname=scftask.charge_density_fname,
+        data_file_fname=scftask.data_file_fname,
+        **common,
+    )
 
-# Execution
-for task in (scftask, wfntask, qe2bgwtask):
-    task.write()
-    task.run()
-    task.report()
+    # Interfacing PW with BerkeleyGW.
+    qe2bgwtask = Qe2BgwTask(dirname=wfntask.dirname, **common)
+
+    # Execution
+    for task in (scftask, wfntask, qe2bgwtask):
+        task.write()
+        task.run()
+        task.report()
+
+
+if __name__ == "__main__":
+    main()

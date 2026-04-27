@@ -23,12 +23,12 @@ class QeTask(DFTTask, IOTask):
     prefix: str
     savedir: str
 
-    def __init__(self, dirname: str, **kwargs: Any) -> None:
+    def __init__(self, dirname: str | Path, **kwargs: Any) -> None:
         """
         Arguments
         ---------
 
-        dirname : str
+        dirname : str | Path
             Directory in which the files are written and the code is executed.
             Will be created if needed.
 
@@ -69,10 +69,11 @@ class QeTask(DFTTask, IOTask):
         return self._pseudo_dir
 
     @pseudo_dir.setter
-    def pseudo_dir(self, value: str) -> None:
+    def pseudo_dir(self, value: str | Path) -> None:
         if Path(value).is_absolute():
-            self._pseudo_dir = value
+            self._pseudo_dir = str(value)
         else:
-            self._pseudo_dir = os.path.relpath(value, self.dirname)
-        if "input" in dir(self) and "control" in dir(self.input):  # type: ignore[attr-defined]
-            self.input.control["pseudo_dir"] = self._pseudo_dir  # type: ignore[attr-defined]
+            self._pseudo_dir = os.path.relpath(str(value), self.dirname)
+        input_obj = getattr(self, "input", None)
+        if input_obj is not None and hasattr(input_obj, "control"):  # type: ignore[attr-defined]
+            input_obj.control["pseudo_dir"] = self._pseudo_dir  # type: ignore[attr-defined]

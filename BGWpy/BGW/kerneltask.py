@@ -51,12 +51,12 @@ class KernelTask(BGWTask):
     _eps0mat_fname: str
     _epsmat_fname: str
 
-    def __init__(self, dirname: str, **kwargs: Any) -> None:
+    def __init__(self, dirname: str | Path, **kwargs: Any) -> None:
         """Initialize a kernel task.
 
         Parameters
         ----------
-        dirname : str
+        dirname : str | Path
             Directory in which the files are written and the code is executed.
             Will be created if needed.
 
@@ -109,10 +109,11 @@ class KernelTask(BGWTask):
         return self._wfn_co_fname
 
     @wfn_co_fname.setter
-    def wfn_co_fname(self, value: str) -> None:
+    def wfn_co_fname(self, value: str | Path) -> None:
         """Set path to the coarse wavefunction file and update symlink."""
-        self._wfn_co_fname = value
-        self.update_link(value, "WFN_co")
+        value_str = str(value)
+        self._wfn_co_fname = value_str
+        self.update_link(value_str, "WFN_co")
 
     @property
     def eps0mat_fname(self) -> str:
@@ -120,11 +121,12 @@ class KernelTask(BGWTask):
         return self._eps0mat_fname
 
     @eps0mat_fname.setter
-    def eps0mat_fname(self, value: str) -> None:
+    def eps0mat_fname(self, value: str | Path) -> None:
         """Set path to the eps0mat file and update symlink."""
-        self._eps0mat_fname = value
+        value_str = str(value)
+        self._eps0mat_fname = value_str
         dest = "eps0mat.h5" if self._use_hdf5 else "eps0mat"
-        self.update_link(value, dest)
+        self.update_link(value_str, dest)
 
     @property
     def epsmat_fname(self) -> str:
@@ -132,11 +134,12 @@ class KernelTask(BGWTask):
         return self._epsmat_fname
 
     @epsmat_fname.setter
-    def epsmat_fname(self, value: str) -> None:
+    def epsmat_fname(self, value: str | Path) -> None:
         """Set path to the epsmat file and update symlink."""
-        self._epsmat_fname = value
+        value_str = str(value)
+        self._epsmat_fname = value_str
         dest = "epsmat.h5" if self._use_hdf5 else "epsmat"
-        self.update_link(value, dest)
+        self.update_link(value_str, dest)
 
     def write(self) -> None:
         """Write the task files to disk."""

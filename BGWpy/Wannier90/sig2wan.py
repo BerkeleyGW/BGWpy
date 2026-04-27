@@ -15,6 +15,7 @@ class Sig2WanInput(Writable):
         sigma_file: str = "sigma_hp.log",
         prefix_gw: str | None = None,
     ) -> None:
+        super().__init__()
         self.prefix = prefix
         self.prefix_gw = prefix_gw if prefix_gw else prefix + "_GW"
         self.nspin = nspin

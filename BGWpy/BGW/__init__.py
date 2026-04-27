@@ -1,7 +1,16 @@
 # Core
-from BGWpy.BGW import degeneracychecktask
-
-from . import bgwtask, inputs
+from . import (
+    absorptiontask,
+    bgwtask,
+    degeneracychecktask,
+    epsilontask,
+    inputs,
+    inteqptask,
+    kerneltask,
+    kgrid,
+    sigmatask,
+    vmtxeltask,
+)
 from .absorptiontask import *
 from .degeneracychecktask import *
 from .epsilontask import *

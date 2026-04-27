@@ -19,12 +19,12 @@ class QeWfnTask(QeTask):
     _input_fname = "wfn.in"
     _output_fname = "wfn.out"
 
-    def __init__(self, dirname: str, **kwargs: Any) -> None:
+    def __init__(self, dirname: str | Path, **kwargs: Any) -> None:
         """
         Arguments
         ---------
 
-        dirname : str
+        dirname : str | Path
             Directory in which the files are written and the code is executed.
             Will be created if needed.
 
@@ -85,7 +85,6 @@ class QeWfnTask(QeTask):
         self.data_file_fname = kwargs["data_file_fname"]
 
         # Input file
-        assert self.structure is not None, "structure must be provided"
         self.input = get_bands_input(
             self.prefix,
             self.pseudo_dir,
@@ -112,8 +111,8 @@ class QeWfnTask(QeTask):
         return self._charge_density_fname
 
     @charge_density_fname.setter
-    def charge_density_fname(self, value: str) -> None:
-        self._charge_density_fname = value
+    def charge_density_fname(self, value: str | Path) -> None:
+        self._charge_density_fname = str(value)
         name = "charge-density.hdf5" if self._use_hdf5_qe else "charge-density.dat"
         dest = Path(self.savedir) / name
         self.update_link(value, dest)
@@ -123,8 +122,8 @@ class QeWfnTask(QeTask):
         return self._spin_polarization_fname
 
     @spin_polarization_fname.setter
-    def spin_polarization_fname(self, value: str) -> None:
-        self._spin_polarization_fname = value
+    def spin_polarization_fname(self, value: str | Path) -> None:
+        self._spin_polarization_fname = str(value)
         dest = Path(self.savedir) / "spin-polarization.dat"
         self.update_link(value, dest)
 
@@ -133,8 +132,8 @@ class QeWfnTask(QeTask):
         return self._data_file_fname
 
     @data_file_fname.setter
-    def data_file_fname(self, value: str) -> None:
-        self._data_file_fname = value
+    def data_file_fname(self, value: str | Path) -> None:
+        self._data_file_fname = str(value)
         if self.version >= 6:
             dest = Path(self.savedir) / "data-file-schema.xml"
         else:
@@ -148,13 +147,11 @@ class QeWfnTask(QeTask):
         the relative path for the pseudopotential directory be the same
         for the wavefunction calculation as for the density calculation.
         """
-        # Check if pseudo_dir is an absolute path
-        if Path(self.pseudo_dir).is_absolute():
-            sourcedir = self.pseudo_dir
-        else:
-            sourcedir = Path(self.dirname) / self.pseudo_dir
+        pseudo_dir = Path(self.pseudo_dir)
+        sourcedir = pseudo_dir if pseudo_dir.is_absolute() else (Path(self.dirname) / pseudo_dir)
+
         for pseudo in self.pseudos:
-            source = Path(sourcedir) / pseudo
+            source = sourcedir / pseudo
             dest = Path(self.savedir) / pseudo
             self.update_copy(source, dest)
 
@@ -162,16 +159,17 @@ class QeWfnTask(QeTask):
     # This ensures pseudos are copied to the save directory, which is required by QE.
     @property
     def pseudo_dir(self) -> str:
-        return self._pseudo_dir
+        return str(self._pseudo_dir)
 
     @pseudo_dir.setter
-    def pseudo_dir(self, value: str) -> None:
+    def pseudo_dir(self, value: str | Path) -> None:
         # Check if value is an absolute path
         if Path(value).is_absolute():
             self._pseudo_dir = str(value)
         else:
             self._pseudo_dir = os.path.relpath(str(value), self.dirname)
-        if "input" in dir(self) and "control" in dir(self.input):
-            self.input.control["pseudo_dir"] = self._pseudo_dir
-        if "pseudos" in dir(self):
+        input_obj = getattr(self, "input", None)
+        if input_obj is not None and hasattr(input_obj, "control"):
+            input_obj.control["pseudo_dir"] = self._pseudo_dir
+        if hasattr(self, "pseudos"):
             self.add_pseudos_copy()

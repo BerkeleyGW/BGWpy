@@ -1,5 +1,5 @@
 # Core
-from . import constructor, pwscfinput, qetask
+from . import constructor, pwscfinput, qebgwflow, qebgwtask, qetask, scftask, wfntask
 from .qebgwflow import *
 from .qebgwtask import *
 

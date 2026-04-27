@@ -18,12 +18,12 @@ class QeScfTask(QeTask):
     _input_fname = "scf.in"
     _output_fname = "scf.out"
 
-    def __init__(self, dirname: str, **kwargs: Any) -> None:
+    def __init__(self, dirname: str | Path, **kwargs: Any) -> None:
         """
         Arguments
         ---------
 
-        dirname : str
+        dirname : str | Path
             Directory in which the files are written and the code is executed.
             Will be created if needed.
 
@@ -78,7 +78,6 @@ class QeScfTask(QeTask):
         kpts, wtks = self.get_kpts(**kwargs)
 
         # Input file
-        assert self.structure is not None, "structure must be provided"
         self.input = get_scf_input(
             self.prefix,
             self.pseudo_dir,

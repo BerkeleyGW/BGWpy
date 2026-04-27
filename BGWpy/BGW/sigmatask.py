@@ -74,12 +74,12 @@ class SigmaTask(BGWTask):
     _kshift: NDArray[np.float64] | None
     _qshift: NDArray[np.float64] | None
 
-    def __init__(self, dirname: str, **kwargs: Any) -> None:
+    def __init__(self, dirname: str | Path, **kwargs: Any) -> None:
         """Initialize a sigma task.
 
         Parameters
         ----------
-        dirname : str
+        dirname : str | Path
             Directory in which the files are written and the code is executed.
             Will be created if needed.
 
@@ -167,7 +167,9 @@ class SigmaTask(BGWTask):
                 kpts = kpts_result.tolist()
 
         # At this point, kpts must be defined
-        assert kpts is not None, "kpts must be provided or computed from grid"
+        if kpts is None:
+            msg = "kpts must be provided or computed from grid"
+            raise ValueError(msg)
 
         # Use specified qpoints or compute them from grid (HF).
         qpts: Sequence[ArrayLike]
@@ -244,10 +246,11 @@ class SigmaTask(BGWTask):
         return self._wfn_co_fname
 
     @wfn_co_fname.setter
-    def wfn_co_fname(self, value: str) -> None:
+    def wfn_co_fname(self, value: str | Path) -> None:
         """Set path to the coarse wavefunction file and update symlink."""
-        self._wfn_co_fname = value
-        self.update_link(value, "WFN_inner")
+        value_str = str(value)
+        self._wfn_co_fname = value_str
+        self.update_link(value_str, "WFN_inner")
 
     @property
     def rho_fname(self) -> str:
@@ -255,10 +258,11 @@ class SigmaTask(BGWTask):
         return self._rho_fname
 
     @rho_fname.setter
-    def rho_fname(self, value: str) -> None:
+    def rho_fname(self, value: str | Path) -> None:
         """Set path to the density file and update symlink."""
-        self._rho_fname = value
-        self.update_link(value, "RHO")
+        value_str = str(value)
+        self._rho_fname = value_str
+        self.update_link(value_str, "RHO")
 
     @property
     def vxc_dat_fname(self) -> str:
@@ -266,10 +270,11 @@ class SigmaTask(BGWTask):
         return self._vxc_dat_fname
 
     @vxc_dat_fname.setter
-    def vxc_dat_fname(self, value: str) -> None:
+    def vxc_dat_fname(self, value: str | Path) -> None:
         """Set path to the vxc.dat file and update symlink."""
-        self._vxc_dat_fname = value
-        self.update_link(value, "vxc.dat")
+        value_str = str(value)
+        self._vxc_dat_fname = value_str
+        self.update_link(value_str, "vxc.dat")
 
     @property
     def vxc_fname(self) -> str:
@@ -277,10 +282,11 @@ class SigmaTask(BGWTask):
         return self._vxc_fname
 
     @vxc_fname.setter
-    def vxc_fname(self, value: str) -> None:
+    def vxc_fname(self, value: str | Path) -> None:
         """Set path to the VXC file and update symlink."""
-        self._vxc_fname = value
-        self.update_link(value, "VXC")
+        value_str = str(value)
+        self._vxc_fname = value_str
+        self.update_link(value_str, "VXC")
 
     @property
     def eps0mat_fname(self) -> str | None:
@@ -288,11 +294,12 @@ class SigmaTask(BGWTask):
         return self._eps0mat_fname
 
     @eps0mat_fname.setter
-    def eps0mat_fname(self, value: str | None) -> None:
+    def eps0mat_fname(self, value: str | Path | None) -> None:
         """Set path to the eps0mat file and update symlink."""
-        self._eps0mat_fname = value
+        value_str = None if value is None else str(value)
+        self._eps0mat_fname = value_str
         dest = "eps0mat.h5" if self._use_hdf5 else "eps0mat"
-        self.update_link(value, dest)
+        self.update_link(value_str, dest)
 
     @property
     def epsmat_fname(self) -> str | None:
@@ -300,11 +307,12 @@ class SigmaTask(BGWTask):
         return self._epsmat_fname
 
     @epsmat_fname.setter
-    def epsmat_fname(self, value: str | None) -> None:
+    def epsmat_fname(self, value: str | Path | None) -> None:
         """Set path to the epsmat file and update symlink."""
-        self._epsmat_fname = value
+        value_str = None if value is None else str(value)
+        self._epsmat_fname = value_str
         dest = "epsmat.h5" if self._use_hdf5 else "epsmat"
-        self.update_link(value, dest)
+        self.update_link(value_str, dest)
 
     def write(self) -> None:
         """Write the task files to disk."""

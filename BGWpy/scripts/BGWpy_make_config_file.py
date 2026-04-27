@@ -53,7 +53,9 @@ def main() -> None:
     import argparse
     import sys
 
-    parser = argparse.ArgumentParser(description="Process some integers.")
+    parser = argparse.ArgumentParser(
+        description="Create a default BGWpy user configuration file (~/.BGWpyrc)."
+    )
     parser.add_argument("-f", dest="force", action="store_true", help="Overwrite existing file")
     args = parser.parse_args()
 

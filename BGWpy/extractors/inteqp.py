@@ -139,58 +139,56 @@ def extract_inteqp_eqp(fname: str | Path) -> InteqpResult:
         - delta_eigs_eV : NDArray[np.float64], shape (nspin, nkpt, nband)
             Difference between GW and DFT eigenvalues, in eV.
     """
-    with Path(fname).open() as f:
-        # Read the first block to compute the dimensions
-        line = next(f)
-        parts = line.split()
-        nstates = int(parts[3])
-        spins: list[int] = []
-        bands: list[int] = []
-        for _ in range(nstates):
-            line = next(f)
-            parts = line.split()
-            spins.append(int(parts[0]))
-            bands.append(int(parts[1]))
+    all_lines = [
+        line for line in Path(fname).read_text(encoding="utf-8").splitlines() if line.strip()
+    ]
 
-        ib_min = min(bands)
-        ib_max = max(bands)
-        nspin = max(spins)
-        nband = ib_max - ib_min + 1
+    if not all_lines:
+        msg = f"File is empty or contains no data: {fname}"
+        raise ValueError(msg)
 
-        # Count the remaining lines
-        nlines = nstates + 1
-        while True:
-            try:
-                line = next(f)
-                if line.strip():
-                    nlines += 1
-            except StopIteration:
-                break
+    # Determine nstates from the first block header line.
+    first_parts = all_lines[0].split()
+    nstates = int(first_parts[3])
 
-        nkpt = nlines // (nstates + 1)
+    # Read spin/band metadata from the first block to determine array dimensions.
+    spins: list[int] = []
+    bands: list[int] = []
+    for i in range(1, nstates + 1):
+        parts = all_lines[i].split()
+        spins.append(int(parts[0]))
+        bands.append(int(parts[1]))
 
-        kpts = np.zeros((nkpt, 3), dtype=np.float64)
-        eigs_dft_eV = np.zeros((nspin, nkpt, nband), dtype=np.float64)
-        eigs_gw_eV = np.zeros((nspin, nkpt, nband), dtype=np.float64)
+    ib_min = min(bands)
+    ib_max = max(bands)
+    nspin = max(spins)
+    nband = ib_max - ib_min + 1
 
-        # Rewind file to start
-        f.seek(0)
+    # Each k-point block is exactly (nstates + 1) non-empty lines.
+    block_size = nstates + 1
+    if len(all_lines) % block_size != 0:
+        msg = (
+            f"Unexpected number of lines in {fname}: "
+            f"{len(all_lines)} is not divisible by block size {block_size}"
+        )
+        raise ValueError(msg)
+    nkpt = len(all_lines) // block_size
 
-        for ikpt in range(nkpt):
-            line = next(f)
-            parts = line.split()
+    kpts = np.zeros((nkpt, 3), dtype=np.float64)
+    eigs_dft_eV = np.zeros((nspin, nkpt, nband), dtype=np.float64)
+    eigs_gw_eV = np.zeros((nspin, nkpt, nband), dtype=np.float64)
 
-            kpts[ikpt, :] = list(map(float, parts[:3]))
+    for ikpt in range(nkpt):
+        block_start = ikpt * block_size
+        header = all_lines[block_start].split()
+        kpts[ikpt, :] = list(map(float, header[:3]))
 
-            for i in range(nstates):
-                line = next(f)
-                parts = line.split()
-
-                ispin = spins[i] - 1
-                iband = bands[i] - ib_min
-
-                eigs_dft_eV[ispin, ikpt, iband] = float(parts[2])
-                eigs_gw_eV[ispin, ikpt, iband] = float(parts[3])
+        for i in range(nstates):
+            parts = all_lines[block_start + 1 + i].split()
+            ispin = spins[i] - 1
+            iband = bands[i] - ib_min
+            eigs_dft_eV[ispin, ikpt, iband] = float(parts[2])
+            eigs_gw_eV[ispin, ikpt, iband] = float(parts[3])
 
     delta_eigs_eV = eigs_gw_eV - eigs_dft_eV
 

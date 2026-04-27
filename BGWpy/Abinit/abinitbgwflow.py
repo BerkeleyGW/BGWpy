@@ -13,7 +13,7 @@ class AbinitBgwFlow(WfnBgwFlow):
         Keyword Arguments
         -----------------
 
-        dirname : str
+        dirname : str | Path
             Directory in which the files are written and the code is executed.
             Will be created if needed.
         charge_density_fname : str
@@ -73,21 +73,6 @@ class AbinitBgwFlow(WfnBgwFlow):
 
         kwargs.pop("dirname", None)
 
-        # if kwargs.get('charge_density_fname'):
-
-        ## SCF task
-        # if self.with_density:
-        #    self.scftask = AbinitScfTask(
-        #        dirname = kwargs.get('density_dirname',
-        #                             pjoin(self.dirname, 'Density')),
-        #                             **kwargs)
-
-        #    kwargs.setdefault('charge_density_fname',
-        #                      self.scftask.charge_density_fname)
-
-        #    kwargs.setdefault('vxc_fname',
-        #                      self.scftask.vxc_fname)
-
         self.charge_density_fname = kwargs["charge_density_fname"]
 
         vxc_fname = kwargs.pop("vxc_fname", "")
@@ -111,7 +96,7 @@ class AbinitBgwFlow(WfnBgwFlow):
             vxcg_flag=kwargs.pop("vxcg_flag", bool(vxc_fname)),
             rho_fname=self.charge_density_fname,
             wfn_fname=self.wfntask.wfn_fname,
-            vxc_fname=vxc_fname if vxc_fname else "dummy",
+            vxc_fname=vxc_fname if vxc_fname else "",
             **kwargs,
         )
 

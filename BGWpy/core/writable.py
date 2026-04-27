@@ -33,7 +33,17 @@ class Writable:
         fname : str | Path | None
             Optional default filename for writing.
         """
-        self.fname = str(Path(fname)) if fname else None
+        if fname is None:
+            self.fname = None
+        elif isinstance(fname, (str, Path)):
+            if str(fname) == "":
+                self.fname = None
+            else:
+                # Normalize once at the boundary so downstream code only deals with str|None.
+                self.fname = str(fname)
+        else:
+            msg = f"fname must be str | Path | None, not {type(fname)}"
+            raise TypeError(msg)
 
     def write(self, fname: str | Path | None = None) -> None:
         """Write the object to a file.
@@ -47,14 +57,22 @@ class Writable:
         ------
         ValueError
             If no filename is provided and self.fname is None.
+        TypeError
+            If fname is not str | Path | None.
         """
-        if fname:
-            target = Path(fname)
-        elif self.fname:
+        if fname is None:
+            if self.fname is None:
+                msg = "No filename provided for writing"
+                raise ValueError(msg)
             target = Path(self.fname)
+        elif isinstance(fname, (str, Path)):
+            if str(fname) == "":
+                msg = "No filename provided for writing"
+                raise ValueError(msg)
+            target = Path(fname)
         else:
-            msg = "No filename provided for writing"
-            raise ValueError(msg)
+            msg = f"fname must be str | Path | None, not {type(fname)}"
+            raise TypeError(msg)
 
         target.write_text(str(self), encoding="utf-8")
 

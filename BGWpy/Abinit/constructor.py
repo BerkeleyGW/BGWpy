@@ -14,11 +14,21 @@ def get_kpt_variables(**kwargs: Any) -> dict[str, Any]:
     variables: dict[str, Any] = {}
 
     if "kpt" in kwargs:
-        kpt: NDArray[np.float64] = np.array(kwargs["kpt"]).reshape((-1, 3))
+        kpt: NDArray[np.float64] = np.array(kwargs["kpt"], dtype=np.float64).reshape((-1, 3))
         variables["kptopt"] = 0
         variables["kpt"] = kpt
         variables["nkpt"] = len(kpt)
-        variables["wtk"] = kwargs["wtk"]
+
+        if "wtk" not in kwargs:
+            msg = "When providing explicit 'kpt', you must also provide 'wtk'."
+            raise ValueError(msg)
+        wtk: NDArray[np.float64] = np.asarray(kwargs["wtk"], dtype=np.float64).reshape((-1,))
+        if len(wtk) != len(kpt):
+            msg = (
+                f"'wtk' must be a vector of length {len(kpt)} when 'kpt' has shape ({len(kpt)}, 3)."
+            )
+            raise ValueError(msg)
+        variables["wtk"] = wtk
 
     elif "ngkpt" in kwargs:
         variables["ngkpt"] = kwargs["ngkpt"]

@@ -8,14 +8,12 @@ BerkeleyGW's inteqp.x executable.
 from __future__ import annotations
 
 from collections import OrderedDict
-from typing import TYPE_CHECKING
+from pathlib import Path
+from typing import Any
 
 from BGWpy.core import BasicInputFile
 
 from .bgwtask import BGWTask
-
-if TYPE_CHECKING:
-    from typing import Any
 
 __all__ = ["InteqpInput", "InteqpTask"]
 
@@ -84,12 +82,12 @@ class InteqpTask(BGWTask):
     _input_fname = "inteqp.inp"
     _output_fname = "inteqp.log"
 
-    def __init__(self, dirname: str, **kwargs: Any) -> None:
+    def __init__(self, dirname: str | Path, **kwargs: Any) -> None:
         """Initialize an inteqp task.
 
         Parameters
         ----------
-        dirname : str
+        dirname : str | Path
             Directory in which the files are written and the code is executed.
             Will be created if needed.
 
@@ -154,10 +152,11 @@ class InteqpTask(BGWTask):
         return self._eqp_co_fname
 
     @eqp_co_fname.setter
-    def eqp_co_fname(self, value: str) -> None:
+    def eqp_co_fname(self, value: str | Path) -> None:
         """Set path to the coarse-grid QP corrections file and update symlink."""
-        self._eqp_co_fname = value
-        self.update_link(value, "eqp_co.dat")
+        value_str = str(value)
+        self._eqp_co_fname = value_str
+        self.update_link(value_str, "eqp_co.dat")
 
     @property
     def wfn_co_fname(self) -> str:
@@ -165,10 +164,11 @@ class InteqpTask(BGWTask):
         return self._wfn_co_fname
 
     @wfn_co_fname.setter
-    def wfn_co_fname(self, value: str) -> None:
+    def wfn_co_fname(self, value: str | Path) -> None:
         """Set path to the coarse-grid wavefunction file and update symlink."""
-        self._wfn_co_fname = value
-        self.update_link(value, "WFN_co")
+        value_str = str(value)
+        self._wfn_co_fname = value_str
+        self.update_link(value_str, "WFN_co")
 
     @property
     def wfn_fi_fname(self) -> str:
@@ -176,7 +176,8 @@ class InteqpTask(BGWTask):
         return self._wfn_fi_fname
 
     @wfn_fi_fname.setter
-    def wfn_fi_fname(self, value: str) -> None:
+    def wfn_fi_fname(self, value: str | Path) -> None:
         """Set path to the fine-grid wavefunction file and update symlink."""
-        self._wfn_fi_fname = value
-        self.update_link(value, "WFN_fi")
+        value_str = str(value)
+        self._wfn_fi_fname = value_str
+        self.update_link(value_str, "WFN_fi")

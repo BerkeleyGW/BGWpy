@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 import numpy as np
@@ -13,7 +14,7 @@ if TYPE_CHECKING:
 
 def get_scf_input(
     prefix: str,
-    pseudo_dir: str,
+    pseudo_dir: str | Path,
     pseudos: list[str],
     structure: Structure,
     ecutwfc: float,
@@ -26,7 +27,7 @@ def get_scf_input(
     ----------
     prefix : str
         Prefix for QE output files.
-    pseudo_dir : str
+    pseudo_dir : str | Path
         Directory containing pseudopotential files.
     pseudos : list[str]
         List of pseudopotential filenames.
@@ -76,7 +77,7 @@ def get_scf_input(
 
 def get_bands_input(
     prefix: str,
-    pseudo_dir: str,
+    pseudo_dir: str | Path,
     pseudos: list[str],
     structure: Structure,
     ecutwfc: float,
@@ -90,7 +91,7 @@ def get_bands_input(
     ----------
     prefix : str
         Prefix for QE output files.
-    pseudo_dir : str
+    pseudo_dir : str | Path
         Directory containing pseudopotential files.
     pseudos : list[str]
         List of pseudopotential filenames.

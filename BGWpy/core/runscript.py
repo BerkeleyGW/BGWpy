@@ -7,6 +7,7 @@ file linking, and command execution.
 
 from __future__ import annotations
 
+import shlex
 import subprocess
 from typing import TYPE_CHECKING, Any
 
@@ -432,13 +433,13 @@ class RunScript(Writable):
             for target, dest in self.links:
                 # Skip if target and dest are the same
                 if target != dest:
-                    lines.append(f"ln -nfs {target} {dest}")
+                    lines.append(f"ln -nfs {shlex.quote(target)} {shlex.quote(dest)}")
 
         # File copies
         if self.copies:
             lines.append("")
             for source, dest in self.copies:
-                lines.append(f"cp -f {source} {dest}")
+                lines.append(f"cp -f {shlex.quote(source)} {shlex.quote(dest)}")
 
         # Main commands
         if self.main:

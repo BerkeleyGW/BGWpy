@@ -6,6 +6,7 @@ absorption spectrum using BerkeleyGW's absorption.x executable.
 
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Any
 
 from .bgwtask import BGWTask
@@ -65,12 +66,12 @@ class AbsorptionTask(BGWTask):
     _sigma_fname: str
     _eqp_fname: str
 
-    def __init__(self, dirname: str, **kwargs: Any) -> None:
+    def __init__(self, dirname: str | Path, **kwargs: Any) -> None:
         """Initialize an absorption task.
 
         Parameters
         ----------
-        dirname : str
+        dirname : str | Path
             Directory in which the files are written and the code is executed.
             Will be created if needed.
 
@@ -155,10 +156,11 @@ class AbsorptionTask(BGWTask):
         return self._wfn_co_fname
 
     @wfn_co_fname.setter
-    def wfn_co_fname(self, value: str) -> None:
+    def wfn_co_fname(self, value: str | Path) -> None:
         """Set path to the coarse wavefunction file and update symlink."""
-        self._wfn_co_fname = value
-        self.update_link(value, "WFN_co")
+        value_str = str(value)
+        self._wfn_co_fname = value_str
+        self.update_link(value_str, "WFN_co")
 
     @property
     def wfn_fi_fname(self) -> str:
@@ -166,10 +168,11 @@ class AbsorptionTask(BGWTask):
         return self._wfn_fi_fname
 
     @wfn_fi_fname.setter
-    def wfn_fi_fname(self, value: str) -> None:
+    def wfn_fi_fname(self, value: str | Path) -> None:
         """Set path to the fine wavefunction file and update symlink."""
-        self._wfn_fi_fname = value
-        self.update_link(value, "WFN_fi")
+        value_str = str(value)
+        self._wfn_fi_fname = value_str
+        self.update_link(value_str, "WFN_fi")
 
     @property
     def wfnq_fi_fname(self) -> str:
@@ -177,10 +180,11 @@ class AbsorptionTask(BGWTask):
         return self._wfnq_fi_fname
 
     @wfnq_fi_fname.setter
-    def wfnq_fi_fname(self, value: str) -> None:
+    def wfnq_fi_fname(self, value: str | Path) -> None:
         """Set path to the q-shifted fine wavefunction file and update symlink."""
-        self._wfnq_fi_fname = value
-        self.update_link(value, "WFNq_fi")
+        value_str = str(value)
+        self._wfnq_fi_fname = value_str
+        self.update_link(value_str, "WFNq_fi")
 
     @property
     def eps0mat_fname(self) -> str:
@@ -188,11 +192,12 @@ class AbsorptionTask(BGWTask):
         return self._eps0mat_fname
 
     @eps0mat_fname.setter
-    def eps0mat_fname(self, value: str) -> None:
+    def eps0mat_fname(self, value: str | Path) -> None:
         """Set path to the eps0mat file and update symlink."""
-        self._eps0mat_fname = value
+        value_str = str(value)
+        self._eps0mat_fname = value_str
         dest = "eps0mat.h5" if self._use_hdf5 else "eps0mat"
-        self.update_link(value, dest)
+        self.update_link(value_str, dest)
 
     @property
     def epsmat_fname(self) -> str:
@@ -200,11 +205,12 @@ class AbsorptionTask(BGWTask):
         return self._epsmat_fname
 
     @epsmat_fname.setter
-    def epsmat_fname(self, value: str) -> None:
+    def epsmat_fname(self, value: str | Path) -> None:
         """Set path to the epsmat file and update symlink."""
-        self._epsmat_fname = value
+        value_str = str(value)
+        self._epsmat_fname = value_str
         dest = "epsmat.h5" if self._use_hdf5 else "epsmat"
-        self.update_link(value, dest)
+        self.update_link(value_str, dest)
 
     @property
     def bsemat_fname(self) -> str:
@@ -212,11 +218,12 @@ class AbsorptionTask(BGWTask):
         return self._bsemat_fname
 
     @bsemat_fname.setter
-    def bsemat_fname(self, value: str) -> None:
+    def bsemat_fname(self, value: str | Path) -> None:
         """Set path to the bsemat file and update symlink."""
-        self._bsemat_fname = value
+        value_str = str(value)
+        self._bsemat_fname = value_str
         dest = "bsemat.h5" if self._use_hdf5 else "bsemat"
-        self.update_link(value, dest)
+        self.update_link(value_str, dest)
 
     @property
     def bsedmat_fname(self) -> str:
@@ -224,11 +231,12 @@ class AbsorptionTask(BGWTask):
         return self._bsedmat_fname
 
     @bsedmat_fname.setter
-    def bsedmat_fname(self, value: str) -> None:
+    def bsedmat_fname(self, value: str | Path) -> None:
         """Set path to the bsedmat file and update symlink."""
-        self._bsedmat_fname = value
+        value_str = str(value)
+        self._bsedmat_fname = value_str
         dest = "bsedmat.h5" if self._use_hdf5 else "bsedmat"
-        self.update_link(value, dest)
+        self.update_link(value_str, dest)
 
     @property
     def bsexmat_fname(self) -> str:
@@ -236,11 +244,12 @@ class AbsorptionTask(BGWTask):
         return self._bsexmat_fname
 
     @bsexmat_fname.setter
-    def bsexmat_fname(self, value: str) -> None:
+    def bsexmat_fname(self, value: str | Path) -> None:
         """Set path to the bsexmat file and update symlink."""
-        self._bsexmat_fname = value
+        value_str = str(value)
+        self._bsexmat_fname = value_str
         dest = "bsexmat.h5" if self._use_hdf5 else "bsexmat"
-        self.update_link(value, dest)
+        self.update_link(value_str, dest)
 
     @property
     def sigma_fname(self) -> str:
@@ -248,10 +257,11 @@ class AbsorptionTask(BGWTask):
         return self._sigma_fname
 
     @sigma_fname.setter
-    def sigma_fname(self, value: str) -> None:
+    def sigma_fname(self, value: str | Path) -> None:
         """Set path to the sigma_hp.log file and update symlink."""
-        self._sigma_fname = value
-        self.update_link(value, "sigma_hp.log")
+        value_str = str(value)
+        self._sigma_fname = value_str
+        self.update_link(value_str, "sigma_hp.log")
 
     @property
     def eqp_fname(self) -> str:
@@ -259,10 +269,11 @@ class AbsorptionTask(BGWTask):
         return self._eqp_fname
 
     @eqp_fname.setter
-    def eqp_fname(self, value: str) -> None:
+    def eqp_fname(self, value: str | Path) -> None:
         """Set path to the eqp file and update symlink."""
-        self._eqp_fname = value
-        self.update_link(value, "eqp_co.dat")
+        value_str = str(value)
+        self._eqp_fname = value_str
+        self.update_link(value_str, "eqp_co.dat")
 
     def write(self) -> None:
         """Write the task files to disk."""

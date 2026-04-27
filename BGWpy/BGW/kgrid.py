@@ -82,7 +82,7 @@ class KgridTask(Task):
         executable: str = "kgrid.x",
         rootname: str = "tmp.kgrid",
         clean_after: bool = True,
-        dirname: str = "",
+        dirname: str | Path = "",
         **kwargs: Any,
     ) -> None:
         """Initialize a k-grid task.
@@ -109,7 +109,7 @@ class KgridTask(Task):
             Root name for temporary files.
         clean_after : bool, default=True
             Whether to clean up temporary files after execution.
-        dirname : str, default=""
+        dirname : str | Path, default=""
             Directory for temporary files.
         **kwargs : Any
             Additional keyword arguments (unused).
@@ -160,7 +160,7 @@ class KgridTask(Task):
     def write(self) -> None:
         """Write the kgrid.x input file."""
         if self.new_dir:
-            subprocess.call(["mkdir", "-p", self.dirname])
+            Path(self.dirname).mkdir(parents=True, exist_ok=True)
 
         with open(self.inputname, "w") as f:
             f.write(self.get_kgrid_input())
@@ -201,12 +201,12 @@ class KgridTask(Task):
             if Path(fname).exists():
                 try:
                     Path(fname).unlink()
-                except Exception as e:
+                except OSError as e:
                     warnings.warn(f"Error during cleanup: {e}", stacklevel=2)
         if self.new_dir:
             try:
                 os.removedirs(self.dirname)
-            except Exception as e:
+            except OSError as e:
                 warnings.warn(f"Error during cleanup: {e}", stacklevel=2)
 
     def get_kgrid_input(self) -> str:
@@ -325,7 +325,9 @@ class KgridTask(Task):
                         nsym = int(line)
 
                         line = next(f)
-                        assert "Space group" in line
+                        if "Space group" not in line:
+                            msg = f"Expected 'Space group' line in kgrid log, got: {line!r}"
+                            raise ValueError(msg)
 
                         syms = np.zeros((nsym, 9), dtype=np.int64)
                         taus = np.zeros((nsym, 3), dtype=np.float64)
@@ -343,7 +345,7 @@ class KgridTask(Task):
 
                 except ValueError as e:
                     msg = "Could not parse kgrid file.\n\n" + str(e)
-                    raise Exception(msg) from e
+                    raise ValueError(msg) from e
 
         return syms, taus
 
@@ -462,7 +464,7 @@ def get_kpt_grid(
 
     # Write the input
     if new_dir:
-        subprocess.call(["mkdir", "-p", str(dirname)])
+        Path(dirname).mkdir(parents=True, exist_ok=True)
 
     with open(inputname, "w") as f:
         f.write(inputcontent)
@@ -488,7 +490,7 @@ def get_kpt_grid(
             + "\n"
         )
 
-        raise OSError(message) from None
+        raise OSError(message) from e
 
     # Read the output
     with open(outputname) as f:
@@ -500,12 +502,12 @@ def get_kpt_grid(
             if Path(fname).exists():
                 try:
                     Path(fname).unlink()
-                except Exception as ex:
+                except OSError as ex:
                     warnings.warn(f"Error during cleanup: {ex}", stacklevel=2)
         if new_dir:
             try:
                 os.removedirs(str(dirname))
-            except Exception as ex:
+            except OSError as ex:
                 warnings.warn(f"Error during cleanup: {ex}", stacklevel=2)
 
     # Parse the output

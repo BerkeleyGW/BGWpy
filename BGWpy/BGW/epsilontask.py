@@ -58,12 +58,12 @@ class EpsilonTask(BGWTask):
     _kshift: NDArray[np.float64] | None
     _qshift: NDArray[np.float64] | None
 
-    def __init__(self, dirname: str, **kwargs: Any) -> None:
+    def __init__(self, dirname: str | Path, **kwargs: Any) -> None:
         """Initialize an epsilon task.
 
         Parameters
         ----------
-        dirname : str
+        dirname : str | Path
             Directory in which the files are written and the code is executed.
             Will be created if needed.
 
@@ -166,10 +166,11 @@ class EpsilonTask(BGWTask):
         return self._wfn_fname
 
     @wfn_fname.setter
-    def wfn_fname(self, value: str) -> None:
+    def wfn_fname(self, value: str | Path) -> None:
         """Set path to the wavefunction file and update symlink."""
-        self._wfn_fname = value
-        self.update_link(value, "WFN")
+        value_str = str(value)
+        self._wfn_fname = value_str
+        self.update_link(value_str, "WFN")
 
     @property
     def wfnq_fname(self) -> str:
@@ -177,10 +178,11 @@ class EpsilonTask(BGWTask):
         return self._wfnq_fname
 
     @wfnq_fname.setter
-    def wfnq_fname(self, value: str) -> None:
+    def wfnq_fname(self, value: str | Path) -> None:
         """Set path to the q-shifted wavefunction file and update symlink."""
-        self._wfnq_fname = value
-        self.update_link(value, "WFNq")
+        value_str = str(value)
+        self._wfnq_fname = value_str
+        self.update_link(value_str, "WFNq")
 
     def write(self) -> None:
         """Write the task files to disk."""

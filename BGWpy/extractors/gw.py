@@ -135,13 +135,13 @@ class MultipleGWResult(TypedDict):
     results: list[SigmaResult]
 
 
-def parse_sigma_output(f: str | TextIO) -> SigmaResult:
+def parse_sigma_output(f: str | Path | TextIO) -> SigmaResult:
     """Extract the GW results of a calculation with BerkeleyGW.
 
     Parameters
     ----------
     f : str | TextIO
-        Path to sigma output file, or an open file handle.
+        Path to sigma output file (str or Path), or an open file handle.
 
     Returns
     -------
@@ -179,7 +179,7 @@ def parse_sigma_output(f: str | TextIO) -> SigmaResult:
     ValueError
         If no k-point blocks are found in the output file.
     """
-    if isinstance(f, str):
+    if isinstance(f, (str, Path)):
         with Path(f).open() as fi:
             return parse_sigma_output(fi)
 
@@ -289,12 +289,12 @@ def break_kpt_spin_blocks(s: str) -> list[str]:
 
     Raises
     ------
-    Exception
+    ValueError
         If symmetrized values cannot be found in the block.
     """
     if "Symmetrized values from band-averaging" not in s:
         msg = "Could not find symmetrized values in block:\n" + s
-        raise Exception(msg)
+        raise ValueError(msg)
 
     s = s.rsplit("Symmetrized values from band-averaging", maxsplit=1)[-1]
     s = s.split("======================")[0]
@@ -419,6 +419,13 @@ def extract_multiple_GW_results(dirnames: list[str]) -> MultipleGWResult:
             List of variable dictionaries from each directory.
         - results : list[SigmaResult]
             List of parsed sigma results from each directory.
+
+    Notes
+    -----
+    This function deserializes ``variables.pkl`` using :mod:`pickle`.
+    Pickle data is not secure against untrusted input and can execute
+    arbitrary code during loading. Only use this function with files from
+    trusted sources.
     """
     data: dict[str, Any] = {}
     data["variables"] = []
@@ -427,11 +434,14 @@ def extract_multiple_GW_results(dirnames: list[str]) -> MultipleGWResult:
 
     for dname in dirnames:
         dpath = Path(dname)
-        with (dpath / "variables.pkl").open("rb") as f:
-            variables: dict[str, Any] = pickle.load(f)
-
-        with (dpath / "sigma.out").open() as f:
-            out = parse_sigma_output(f)
+        try:
+            variables_bytes = (dpath / "variables.pkl").read_bytes()
+            variables: dict[str, Any] = pickle.loads(variables_bytes)
+            sigma_text = (dpath / "sigma.out").read_text()
+            out = parse_sigma_output(sigma_text)
+        except OSError as exc:
+            msg = f"Failed to read files from directory {dname!r}: {exc}"
+            raise OSError(msg) from exc
 
         data["variables"].append(variables)
         data["results"].append(out)

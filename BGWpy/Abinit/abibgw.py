@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import os
-import subprocess
 from pathlib import Path
 from typing import Any
 
@@ -132,12 +131,12 @@ class Abi2BgwTask(AbinitTask):
     _input_fname = "abi2bgw.in"
     _output_fname = "abi2bgw.out"
 
-    def __init__(self, dirname: str, **kwargs: Any) -> None:
+    def __init__(self, dirname: str | Path, **kwargs: Any) -> None:
         """
         Arguments
         ---------
 
-        dirname : str
+        dirname : str | Path
             Directory in which the files are written and the code is executed.
             Will be created if needed.
 
@@ -187,7 +186,6 @@ class Abi2BgwTask(AbinitTask):
         self.input = Abi2BgwInput(**kwargs)
         self.input.fname = self._input_fname
 
-        # TODO setter functions
         # Set the backing attributes directly first to avoid None values when setters call _set_kqshift
         ngkpt_value = kwargs.pop("ngkpt", None)
         if ngkpt_value is None:
@@ -210,9 +208,9 @@ class Abi2BgwTask(AbinitTask):
         if kwargs.get("rhog_fname") or kwargs.get("rhog_file_abi"):
             self.set_rho()
 
-        self.wfn_fname = kwargs.pop("wfn_fname", "dummy")
-        self.rho_fname = kwargs.pop("rho_fname", "dummy")
-        self.vxc_fname = kwargs.pop("vxc_fname", "dummy")
+        self.wfn_fname = kwargs.pop("wfn_fname", "")
+        self.rho_fname = kwargs.pop("rho_fname", "")
+        self.vxc_fname = kwargs.pop("vxc_fname", "")
 
         # Run script
         self.runscript["ABI2BGW"] = "abi2bgw.x"
@@ -220,7 +218,7 @@ class Abi2BgwTask(AbinitTask):
         self.runscript.append(f"$ABI2BGW {self._input_fname} >& {self._output_fname}")
 
     def write(self) -> None:
-        subprocess.call(["mkdir", "-p", self.dirname])
+        Path(self.dirname).mkdir(parents=True, exist_ok=True)
         with self.exec_from_dirname():
             self.runscript.write()
 
@@ -234,9 +232,10 @@ class Abi2BgwTask(AbinitTask):
         return str(Path(self.dirname) / self._wfn_fname)
 
     @wfn_fname.setter
-    def wfn_fname(self, value: str) -> None:
-        self._wfn_fname = os.path.basename(value)
-        self.input["wfng_file_abi"] = os.path.relpath(value, self.dirname)
+    def wfn_fname(self, value: str | Path) -> None:
+        value_str = str(value)
+        self._wfn_fname = os.path.basename(value_str)
+        self.input["wfng_file_abi"] = os.path.relpath(value_str, self.dirname)
 
     _rho_fname: str = "rho.cplx"
 
@@ -245,9 +244,10 @@ class Abi2BgwTask(AbinitTask):
         return str(Path(self.dirname) / self._rho_fname)
 
     @rho_fname.setter
-    def rho_fname(self, value: str) -> None:
-        self._rho_fname = os.path.basename(value)
-        self.input["rhog_file_abi"] = os.path.relpath(value, self.dirname)
+    def rho_fname(self, value: str | Path) -> None:
+        value_str = str(value)
+        self._rho_fname = os.path.basename(value_str)
+        self.input["rhog_file_abi"] = os.path.relpath(value_str, self.dirname)
 
     _vxc_fname: str = "vxc.cplx"
 
@@ -256,9 +256,10 @@ class Abi2BgwTask(AbinitTask):
         return str(Path(self.dirname) / self._vxc_fname)
 
     @vxc_fname.setter
-    def vxc_fname(self, value: str) -> None:
-        self._vxc_fname = os.path.basename(value)
-        self.input["vxcg_file_abi"] = os.path.relpath(value, self.dirname)
+    def vxc_fname(self, value: str | Path) -> None:
+        value_str = str(value)
+        self._vxc_fname = os.path.basename(value_str)
+        self.input["vxcg_file_abi"] = os.path.relpath(value_str, self.dirname)
 
     _ngkpt: NDArray[np.float64] = np.array(3 * [1])
 

@@ -17,7 +17,7 @@ class VmtxelFlow(Workflow):
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
 
-        kwargs.pop("dirname")
+        kwargs.pop("dirname", None)
 
         self.structure = kwargs["structure"]
         self.ngkpt = kwargs.pop("ngkpt")
@@ -31,7 +31,7 @@ class VmtxelFlow(Workflow):
                 break
         else:
             msg = f"Number of bands must be specified with one of these keywords: {nband_aliases}."
-            raise Exception(msg)
+            raise ValueError(msg)
 
         # BSE parameters
         self.ngkpt_fi = kwargs.pop("ngkpt_fine", self.ngkpt)
@@ -76,7 +76,7 @@ class VmtxelFlow(Workflow):
         if "charge_density_fname" in kwargs:
             if "vxc_fname" not in kwargs:
                 msg = "Error, when providing charge_density_fname, vxc_fname is required"
-                raise Exception(msg)
+                raise ValueError(msg)
 
         else:
             self.scftask = AbinitScfTask(
