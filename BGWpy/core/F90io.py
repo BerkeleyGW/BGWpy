@@ -95,7 +95,8 @@ def fortran_str(obj: Any, quotes: bool = True) -> str:
         return bool_str(obj)
     if hasattr(obj, "__iter__") and not isinstance(obj, str):
         try:
-            return arr_str(array(obj, dtype=np.double))
+            typ = find_scalar_type(obj)
+            return arr_str(array(obj, dtype=typ))
         except (ValueError, TypeError):
             return " ".join([fortran_str(o, quotes) for o in obj])
     return str(obj)
@@ -150,3 +151,43 @@ def bool_str(b: bool) -> str:
         '.true.' or '.false.'
     """
     return ".true." if b else ".false."
+
+
+def find_scalar_type(obj: Any) -> type:
+    """
+    Recursively find the type of an unknown number of nested array-like objects.
+    Can only return int, float, complex
+    """
+    if isinstance(obj, int):
+        return int
+
+    elif isinstance(obj, float):
+        return float
+
+    elif isinstance(obj, complex):
+        return complex
+
+    elif isinstance(obj, str):
+        return int
+
+    elif hasattr(obj, "__iter__"):
+        try:
+            n = len(obj)
+            if not n:
+                return int
+        except:
+            return int
+
+        any_float = False
+        for Oi in obj:
+            t = find_scalar_type(Oi)  # Recursive call
+            if t is complex:
+                return complex
+            elif t is float:
+                any_float = True
+
+        if any_float:
+            return float
+        return int
+
+    return int
