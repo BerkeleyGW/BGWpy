@@ -530,6 +530,7 @@ def bgw_gwflow(session_tmpdir, qe_common_kwargs):
         kshift=[0.5, 0.5, 0.5],
         qshift=[0.001, 0.0, 0.0],
         sigma_extra_lines=["screening_semiconductor"],
+        nproc=NPROC_QE,
     )
 
     flow = GWFlow(
@@ -552,6 +553,7 @@ def bgw_bseflow(session_tmpdir, qe_common_kwargs):
         kshift=[0.5, 0.5, 0.5],
         qshift=[0.001, 0.0, 0.0],
         sigma_extra_lines=["screening_semiconductor"],
+        nproc=NPROC_QE,
         kernel_extra_lines=[
             "use_symmetries_coarse_grid",
             "screening_semiconductor",
