@@ -738,8 +738,10 @@ def patch_sample_sphere(
     # Generate full dense grid
     kpoints, weights = get_kpt_grid_nosym(ngkpt, kshift=kshift, qshift=qshift)
 
-    # Calculate distances from center
-    distances = np.linalg.norm(kpoints - center_arr, axis=1)
+    # Minimum-image convention: fold into [-0.5, 0.5) before measuring distance
+    delta = kpoints - center_arr
+    delta -= np.round(delta)
+    distances = np.linalg.norm(delta, axis=1)
 
     # Filter points within sphere
     mask = distances <= r_patch
@@ -825,8 +827,10 @@ def patch_sample_cube(
     # Generate full dense grid
     kpoints, weights = get_kpt_grid_nosym(ngkpt, kshift=kshift, qshift=qshift)
 
-    # Calculate Chebyshev (L∞) distance from center: max of absolute differences
-    chebyshev_dist = np.max(np.abs(kpoints - center_arr), axis=1)
+    # Minimum-image convention: fold into [-0.5, 0.5) before measuring distance
+    delta = kpoints - center_arr
+    delta -= np.round(delta)
+    chebyshev_dist = np.max(np.abs(delta), axis=1)
 
     # Filter points within cube
     mask = chebyshev_dist <= half_side
@@ -900,8 +904,8 @@ def apply_qshift(
         msg = f"qshift must have shape (3,), got {qshift_arr.shape}"
         raise ValueError(msg)
 
-    # Apply the shift
-    kpts_shifted = kpts_arr + qshift_arr
+    # Apply the shift and wrap back into [0, 1)
+    kpts_shifted = (kpts_arr + qshift_arr) % 1.0
 
     # Handle weights
     if wtks is None:
