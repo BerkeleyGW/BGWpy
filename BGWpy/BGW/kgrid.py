@@ -29,6 +29,7 @@ __all__ = [
     "get_kpt_grid_nosym",
     "get_kqshift",
     "patch_sample_sphere",
+    "patch_sample_cube",
 ]
 
 
