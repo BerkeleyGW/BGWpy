@@ -192,6 +192,7 @@ class AbsorptionTask(BGWTask):
         return self._eps0mat_fname
 
     @eps0mat_fname.setter
+    @BGWTask.h5_wrap
     def eps0mat_fname(self, value: str | Path) -> None:
         """Set path to the eps0mat file and update symlink."""
         value_str = str(value)
@@ -205,6 +206,7 @@ class AbsorptionTask(BGWTask):
         return self._epsmat_fname
 
     @epsmat_fname.setter
+    @BGWTask.h5_wrap
     def epsmat_fname(self, value: str | Path) -> None:
         """Set path to the epsmat file and update symlink."""
         value_str = str(value)
@@ -220,7 +222,12 @@ class AbsorptionTask(BGWTask):
     @bsemat_fname.setter
     def bsemat_fname(self, value: str | Path) -> None:
         """Set path to the bsemat file and update symlink."""
+        # Weird workaround to handle non-hdf5 case
         value_str = str(value)
+        if not self._use_hdf5 and value_str.endswith('.h5'):
+            self.bsedmat_fname = value_str.replace('bsemat.h5', 'bsedmat')
+            self.bsexmat_fname = value_str.replace('bsemat.h5', 'bsexmat')
+        value_str = self.get_fname_with_auto_h5(value)
         self._bsemat_fname = value_str
         dest = "bsemat.h5" if self._use_hdf5 else "bsemat"
         self.update_link(value_str, dest)
@@ -231,6 +238,7 @@ class AbsorptionTask(BGWTask):
         return self._bsedmat_fname
 
     @bsedmat_fname.setter
+    @BGWTask.h5_wrap
     def bsedmat_fname(self, value: str | Path) -> None:
         """Set path to the bsedmat file and update symlink."""
         value_str = str(value)
@@ -244,6 +252,7 @@ class AbsorptionTask(BGWTask):
         return self._bsexmat_fname
 
     @bsexmat_fname.setter
+    @BGWTask.h5_wrap
     def bsexmat_fname(self, value: str | Path) -> None:
         """Set path to the bsexmat file and update symlink."""
         value_str = str(value)

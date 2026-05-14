@@ -146,10 +146,6 @@ class Task:
         with self.exec_from_dirname():
             self.runscript.write()
 
-            if self.variables:
-                with open("variables.pkl", "wb") as f:
-                    pickle.dump(self.variables, f)
-
     def update_link(self, target: str | Path | None, dest: str | Path) -> None:
         """Modify or add a symbolic link.
 

@@ -6,6 +6,8 @@ task functionality for BerkeleyGW calculations.
 
 from __future__ import annotations
 
+from pathlib import Path
+
 from BGWpy.config import flavors
 from BGWpy.core import IOTask, MPITask
 
@@ -31,3 +33,33 @@ class BGWTask(MPITask, IOTask):
     _TAG_JOB_COMPLETED: str = "TOTAL"
     _use_hdf5: bool = flavors["use_hdf5"]
     _flavor_complex: bool = flavors["flavor_complex"]
+
+    def get_fname_with_auto_h5(self, fname: str | path) -> str:
+        """
+        Convert a file name to the proper extension.
+        Issue a warning in case of mismatch.
+        """
+        name = str(fname)
+        name_no_h5 = name.split('.h5')[0]
+        name_h5 = name_no_h5 + '.h5'
+        if self._use_hdf5:
+            if name == name_no_h5:
+                # No warning
+                pass
+            return name_h5
+        else:
+            if name == name_h5:
+                import warnings
+                warnings.warn(
+                'BGWpy is configured without hdf5, but hdf5 file provided. '
+                'Edit ~/.BGWpyrc')
+            return name_no_h5
+
+    # GA: This is still not enough, because bsemat.h5 is split in two, when not using hdf5.
+    @staticmethod
+    def h5_wrap(f):
+        def g(self, fname: str | Path,  *args, **kwargs):
+            new_fname = self.get_fname_with_auto_h5(fname)
+            return f(self, new_fname, *args, **kwargs)
+        return g
+

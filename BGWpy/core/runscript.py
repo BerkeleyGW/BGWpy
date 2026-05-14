@@ -79,7 +79,7 @@ class RunScript(Writable):
         header: str | Iterable[str] | None = None,
         footer: str | Iterable[str] | None = None,
         **kwargs: Any,
-    ) -> None:
+        ) -> None:
         """Initialize a run script.
 
         Parameters

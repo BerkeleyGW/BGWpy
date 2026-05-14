@@ -26,6 +26,7 @@ dist/*.egg
 # Files produced by the tests not referenced
 Documentation/Examples/MakingStructures/[0-9]*
 Documentation/Examples/QuantumEspresso/*/[0-9]*
+Documentation/Examples/Abinit/[0-9]*
 Documentation/Examples/Abinit/*/[0-9]*
 Documentation/Tutorial/.ipynb*
 Documentation/Tutorial/Runs*

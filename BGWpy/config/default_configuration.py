@@ -34,6 +34,7 @@ class FlavorsConfig(TypedDict, total=False):
 
     use_hdf5: bool
     use_hdf5_qe: bool
+    #use_nc_abi: bool  # GA: Not sure whether nc format is supported in BGW yet.
     flavor_complex: bool
     dft_flavor: str
 
@@ -57,6 +58,7 @@ default_runscript: RunscriptConfig = {
 flavors: FlavorsConfig = {
     "use_hdf5": True,
     "use_hdf5_qe": False,
+    "use_nc_abi": False,
     "flavor_complex": True,
     "dft_flavor": "espresso",
 }

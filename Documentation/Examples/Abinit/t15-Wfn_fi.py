@@ -36,7 +36,7 @@ def run_t15_wfn_fi(**kwargs):
         ecut=kwargs["ecut"],
         nband=9,
         symkpt=False,
-        charge_density_fname="11-Density/out_data/odat_DEN",
+        charge_density_fname="11-Density/out_data/o_DEN",
         nproc=kwargs["nproc"],
         nproc_per_node=kwargs["nproc_per_node"],
         mpirun=kwargs["mpirun"],

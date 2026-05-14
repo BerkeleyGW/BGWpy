@@ -294,6 +294,7 @@ class SigmaTask(BGWTask):
         return self._eps0mat_fname
 
     @eps0mat_fname.setter
+    @BGWTask.h5_wrap
     def eps0mat_fname(self, value: str | Path | None) -> None:
         """Set path to the eps0mat file and update symlink."""
         value_str = None if value is None else str(value)
@@ -307,6 +308,7 @@ class SigmaTask(BGWTask):
         return self._epsmat_fname
 
     @epsmat_fname.setter
+    @BGWTask.h5_wrap
     def epsmat_fname(self, value: str | Path | None) -> None:
         """Set path to the epsmat file and update symlink."""
         value_str = None if value is None else str(value)

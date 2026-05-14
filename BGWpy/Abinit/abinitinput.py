@@ -32,6 +32,9 @@ class AbinitInput(Writable):
         self.variables_blocks.append(VariableBlock("Other"))
 
     def __str__(self) -> str:
+
+        # GA: TODO Please sort the input variables as boxes.
+
         lines: list[str] = []
 
         # Clear blocks

@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import os
 from pathlib import Path
 from typing import Any
 
@@ -233,9 +232,9 @@ class Abi2BgwTask(AbinitTask):
 
     @wfn_fname.setter
     def wfn_fname(self, value: str | Path) -> None:
-        value_str = str(value)
-        self._wfn_fname = os.path.basename(value_str)
-        self.input["wfng_file_abi"] = os.path.relpath(value_str, self.dirname)
+        p = Path(value).absolute().relative_to(Path(self.dirname).absolute(), walk_up=True)
+        #self._wfn_fname = p.name
+        self.input["wfng_file_abi"] = str(p)
 
     _rho_fname: str = "rho.cplx"
 
@@ -245,9 +244,9 @@ class Abi2BgwTask(AbinitTask):
 
     @rho_fname.setter
     def rho_fname(self, value: str | Path) -> None:
-        value_str = str(value)
-        self._rho_fname = os.path.basename(value_str)
-        self.input["rhog_file_abi"] = os.path.relpath(value_str, self.dirname)
+        p = Path(value).absolute().relative_to(Path(self.dirname).absolute(), walk_up=True)
+        #self._rho_fname = p.name
+        self.input["rhog_file_abi"] = str(p)
 
     _vxc_fname: str = "vxc.cplx"
 
@@ -257,9 +256,9 @@ class Abi2BgwTask(AbinitTask):
 
     @vxc_fname.setter
     def vxc_fname(self, value: str | Path) -> None:
-        value_str = str(value)
-        self._vxc_fname = os.path.basename(value_str)
-        self.input["vxcg_file_abi"] = os.path.relpath(value_str, self.dirname)
+        p = Path(value).absolute().relative_to(Path(self.dirname).absolute(), walk_up=True)
+        #self._vxc_fname = p.name
+        self.input["vxcg_file_abi"] = str(p)
 
     _ngkpt: NDArray[np.float64] = np.array(3 * [1])
 

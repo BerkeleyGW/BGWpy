@@ -137,7 +137,69 @@ input_variable_blocks: OrderedDict[str, str] = OrderedDict(
         (
             "Printing",
             """
-    prtvol enunit
+    iomode
+    enunit
+    prtvol
+    ncout 
+
+    prtden
+    prtpot
+    prtvha
+    prtvhxc
+    prtvpsp
+    prtvxc
+
+    prtvclmb
+
+    prtfsurf 
+    prtnest
+    prt_lorbmag 
+    prtden 
+    prtdensph
+    prtebands 
+    prteig
+    prtgden 
+    prtkbff
+    prtkden 
+    prtkpt
+    prtlden
+    prtwf
+    prtwf_full
+
+    prtatlist 
+    prtcif 
+    prtgeo 
+    prtposcar 
+
+    prtdos
+    prtdosm
+
+    prtbltztrp 
+    prtddb 
+    prtdipole 
+    prtelf 
+    prtevk 
+    prtgsr
+    prthist 
+    prtnabla 
+    prtprocar 
+    prtpsps 
+    prtspcur 
+    prtstm 
+    prtvdw 
+    prtvolimg 
+    prtwant 
+    prtxml 
+    write_files
+
+    prtbbb 
+    prtefmas 
+    prtgkk 
+    prtphbands
+    prtphdos
+    prtphsurf
+    prtsuscep
+
     """,
         ),
         (
@@ -148,6 +210,22 @@ input_variable_blocks: OrderedDict[str, str] = OrderedDict(
     getddk getden getgam_eig2nkq getkss getocc
     getqps getscr getsuscep getvel getwfk
     getwfq getxcart getxred get1den get1wf
+    """,
+        ),
+        (
+            "Filenames",
+            """
+    output_file
+    indata_prefix
+    outdata_prefix
+    tmpdata_prefix
+    """,
+        ),
+        (
+            "Pseudopotentials",
+            """
+    pp_dirpath
+    pseudos
     """,
         ),
     )

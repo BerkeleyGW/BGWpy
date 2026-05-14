@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from pathlib import Path
 import string
 import warnings
 from typing import Any
@@ -102,12 +103,15 @@ class InputVariable:
     def __str__(self) -> str:
         """Declaration of the variable in the input file."""
 
+        # GA TODO: This works but it is badly written.
+        #           Should at least use abinit 10.6 variable module.
+
         value = self.value
         if value is None or not str(value):
             return ""
 
+        line = f" {self.name} "
         var = self.name
-        line = " " + var
 
         # By default, do not impose a number of decimal points
         floatdecimal = self.decimals
@@ -144,13 +148,16 @@ class InputVariable:
 
                 line += self.format_list(value, valperline, floatdecimal)
 
+        elif isinstance(value, (str, Path)):
+            line += self.format_str(value)
+
         # scalar values
         else:
-            line += " " + str(value)
+            line += str(value)
 
         # Add units
         if self.units:
-            line += " " + self.units
+            line += f" {self.units}"
 
         return line
 
@@ -247,6 +254,12 @@ class InputVariable:
         """
 
         line = ""
+        if not values:
+            return line
+
+        # List of strings
+        if isinstance(values[0], (str, Path)):
+            return self.format_str(', '.join(values))
 
         # Format the line declaring the value
         for i, val in enumerate(values):
@@ -259,6 +272,15 @@ class InputVariable:
             line = "\n" + line
 
         return line.rstrip("\n")
+
+    def format_str(self, sval: str | Path) -> str:
+        """
+        Format value for declaration as a string.
+        """
+        if str(sval).startswith('*'):
+            return str(sval)
+        else:
+            return f'"{sval}"'
 
     @staticmethod
     def string_to_value(sval: str) -> Any:
@@ -287,6 +309,9 @@ class InputVariable:
 
                 # Fractions
                 if "/" in part:
+                    # FIXME not very smart, but all excetions will be caught.
+                    # Do NOT specify a file name with strings like '1/3'.
+                    # (why would you do that?)
                     (num, den) = (float(part.split("/")[i]) for i in range(2))
                     converted_part = num / den
                 else:

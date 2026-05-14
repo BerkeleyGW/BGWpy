@@ -7,6 +7,7 @@ from typing import Any
 import numpy as np
 from numpy.typing import NDArray
 
+from BGWpy.config import flavors
 from BGWpy.core import IOTask
 from BGWpy.DFT import DFTTask
 
@@ -53,12 +54,12 @@ class AbinitTask(DFTTask, IOTask):
             BGWpy.BGW.KgridTask
 
         """
+        # Since we override pseudos method, we need to initialize the input first.
+        self.prefix = kwargs.get("prefix", "abinit")
+        self.input = AbinitInput(fname=self.prefix + ".in")
 
         super().__init__(dirname, **kwargs)
 
-        self.prefix = kwargs.get("prefix", "abinit")
-
-        self.input = AbinitInput(fname=self.prefix + ".in")
         self.input.set_structure(self.structure)
 
         # Handle k-points and symmetries
@@ -83,23 +84,32 @@ class AbinitTask(DFTTask, IOTask):
         wtk_array = np.asarray(wtk, dtype=np.float64)
         self.set_kpoints(kpt_array, wtk_array)
 
-        self.input.set_variables(kwargs.get("input_variables", {}))
+        abivars = kwargs.get("input_variables", {})
+
+        # Disable netcdf output (can be set as default behavior in Abinit)
+        abivars.setdefault('iomode', 1)  # Disable netcdf output
+
+        # Set filenames variables (must be within dirname)
+        filenames = {
+            'output_file' :  Path(self.output_fname).relative_to(self.dirname),
+            'indata_prefix' : Path(self.idat_root).relative_to(self.dirname),
+            'outdata_prefix' : Path(self.odat_root).relative_to(self.dirname),
+            'tmpdata_prefix' : Path(self.tmp_root).relative_to(self.dirname),
+            }
+        abivars.update(filenames)
+
+        # Finally set all variables
+        self.input.set_variables(abivars)
 
         self.runscript["ABINIT"] = kwargs.get("ABINIT", "abinit")
-        self.runscript.append(f"$MPIRUN $ABINIT < {self.filesfile_basename} &> {self.log_basename}")
+
+        inp = Path(self.input_fname).relative_to(self.dirname)
+        self.runscript.append(f"$MPIRUN $ABINIT {inp} &> {self.log_basename}")
 
     @property
     def output_fname(self) -> str:
-        first = Path(self.dirname) / self.output_basename
-        for s in reversed("ABCDEFGHIJKLMNOPQRSTUVWXYZ"):
-            last = Path(str(first) + s)
-            if last.exists():
-                return str(last)
-        return str(first)
-
-    @property
-    def filesfile_basename(self) -> str:
-        return self.prefix + ".files"
+        # This is always the last output file produced by Abinit
+        return str(Path(self.dirname) / self.output_basename)
 
     @property
     def output_basename(self) -> str:
@@ -124,17 +134,17 @@ class AbinitTask(DFTTask, IOTask):
     @property
     def idat_root(self) -> str:
         """The root name for input data files."""
-        return str(Path(self.input_data_dir) / "idat")
+        return str(Path(self.input_data_dir) / "i")
 
     @property
     def odat_root(self) -> str:
         """The root name for output data files."""
-        return str(Path(self.out_data_dir) / "odat")
+        return str(Path(self.out_data_dir) / "o")
 
     @property
     def tmp_root(self) -> str:
         """The root name for temporaty data files."""
-        return str(Path(self.tmp_data_dir) / "tmp")
+        return str(Path(self.tmp_data_dir) / "t")
 
     def get_odat(self, datatype: str, dtset: int = 0) -> str:
         """
@@ -178,19 +188,6 @@ class AbinitTask(DFTTask, IOTask):
 
         return fname
 
-    def get_filesfile_content(self) -> str:
-        result_str = ""
-        result_str += os.path.relpath(self.input_fname, self.dirname) + "\n"
-        result_str += self.output_basename + "\n"
-        for path in (self.idat_root, self.odat_root, self.tmp_root):
-            result_str += os.path.relpath(path, self.dirname) + "\n"
-
-        for pseudo in self.pseudos:
-            pseudo_path = Path(self.pseudo_dir) / pseudo
-            result_str += str(pseudo_path) + "\n"  # pseudo_dir is already a relpath
-
-        return result_str
-
     def write(self) -> None:
         # Main directory, etc...
         super().write()
@@ -203,9 +200,6 @@ class AbinitTask(DFTTask, IOTask):
                 Path(d).mkdir(parents=True, exist_ok=True)
 
         with self.exec_from_dirname():
-            with open(self.filesfile_basename, "w") as f:
-                f.write(self.get_filesfile_content())
-
             self.input.write()
 
     def set_kpoints(
@@ -245,3 +239,55 @@ class AbinitTask(DFTTask, IOTask):
                 "nkpt": None,
             }
         )
+
+
+    # Override parent property
+    @property
+    def pseudo_dir(self) -> str:
+        """Get the pseudopotential directory."""
+        return self._pseudo_dir
+
+    @pseudo_dir.setter
+    def pseudo_dir(self, value: str | Path) -> None:
+        """Set the pseudopotential directory.
+
+        Accepts a path as str or Path.
+        If an absolute path is given, it is used as-is.
+        Otherwise, a relative path from dirname is computed.
+        """
+        value_str = str(value)
+        if not value_str:
+            msg = "pseudo_dir must not be empty"
+            raise ValueError(msg)
+        if Path(value_str).is_absolute():
+            self._pseudo_dir = value_str
+        else:
+            self._pseudo_dir = os.path.relpath(value_str, self.dirname)
+
+        # Abinit lets you set the pseudo directory as an environment variable,
+        # but here we explicitly write it in the input.
+        self.input.set_variable('pp_dirpath', self._pseudo_dir)
+
+
+    _pseudos = []
+    @property
+    def pseudos(self) -> str:
+        """The list of pseudopotentials files relative to pseudo_dir."""
+        return self._pseudos
+
+    @pseudos.setter
+    def pseudos(self, value: str | [str]) -> None:
+        """Set the pseudopotential directory.
+
+        Accepts a path as str or Path.
+        If an absolute path is given, it is used as-is.
+        Otherwise, a relative path from dirname is computed.
+        """
+        if isinstance(value, str):
+            self._pseudos = [value]
+        else:
+            self._pseudos = value
+
+        # Pass value to input object
+        self.input.set_variable('pseudos', self._pseudos)
+

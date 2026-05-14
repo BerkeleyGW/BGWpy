@@ -36,7 +36,7 @@ def run_t13_wfnq(**kwargs):
         qshift=[0.001, 0.0, 0.0],
         ecut=kwargs["ecut"],
         # Number of bands not specified (occupied only)
-        charge_density_fname="11-Density/out_data/odat_DEN",
+        charge_density_fname="11-Density/out_data/o_DEN",
         nproc=kwargs["nproc"],
         nproc_per_node=kwargs["nproc_per_node"],
         mpirun=kwargs["mpirun"],
