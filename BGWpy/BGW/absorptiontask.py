@@ -224,9 +224,9 @@ class AbsorptionTask(BGWTask):
         """Set path to the bsemat file and update symlink."""
         # Weird workaround to handle non-hdf5 case
         value_str = str(value)
-        if not self._use_hdf5 and value_str.endswith('.h5'):
-            self.bsedmat_fname = value_str.replace('bsemat.h5', 'bsedmat')
-            self.bsexmat_fname = value_str.replace('bsemat.h5', 'bsexmat')
+        if not self._use_hdf5 and value_str.endswith(".h5"):
+            self.bsedmat_fname = value_str.replace("bsemat.h5", "bsedmat")
+            self.bsexmat_fname = value_str.replace("bsemat.h5", "bsexmat")
         value_str = self.get_fname_with_auto_h5(value)
         self._bsemat_fname = value_str
         dest = "bsemat.h5" if self._use_hdf5 else "bsemat"

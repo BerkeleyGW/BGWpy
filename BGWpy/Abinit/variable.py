@@ -259,7 +259,7 @@ class InputVariable:
 
         # List of strings
         if isinstance(values[0], (str, Path)):
-            return self.format_str(', '.join(values))
+            return self.format_str(", ".join(values))
 
         # Format the line declaring the value
         for i, val in enumerate(values):
@@ -277,7 +277,7 @@ class InputVariable:
         """
         Format value for declaration as a string.
         """
-        if str(sval).startswith('*'):
+        if str(sval).startswith("*"):
             return str(sval)
         else:
             return f'"{sval}"'

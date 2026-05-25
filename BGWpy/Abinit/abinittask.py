@@ -87,15 +87,15 @@ class AbinitTask(DFTTask, IOTask):
         abivars = kwargs.get("input_variables", {})
 
         # Disable netcdf output (can be set as default behavior in Abinit)
-        abivars.setdefault('iomode', 1)  # Disable netcdf output
+        abivars.setdefault("iomode", 1)  # Disable netcdf output
 
         # Set filenames variables (must be within dirname)
         filenames = {
-            'output_file' :  Path(self.output_fname).relative_to(self.dirname),
-            'indata_prefix' : Path(self.idat_root).relative_to(self.dirname),
-            'outdata_prefix' : Path(self.odat_root).relative_to(self.dirname),
-            'tmpdata_prefix' : Path(self.tmp_root).relative_to(self.dirname),
-            }
+            "output_file": Path(self.output_fname).relative_to(self.dirname),
+            "indata_prefix": Path(self.idat_root).relative_to(self.dirname),
+            "outdata_prefix": Path(self.odat_root).relative_to(self.dirname),
+            "tmpdata_prefix": Path(self.tmp_root).relative_to(self.dirname),
+        }
         abivars.update(filenames)
 
         # Finally set all variables
@@ -240,7 +240,6 @@ class AbinitTask(DFTTask, IOTask):
             }
         )
 
-
     # Override parent property
     @property
     def pseudo_dir(self) -> str:
@@ -266,10 +265,10 @@ class AbinitTask(DFTTask, IOTask):
 
         # Abinit lets you set the pseudo directory as an environment variable,
         # but here we explicitly write it in the input.
-        self.input.set_variable('pp_dirpath', self._pseudo_dir)
-
+        self.input.set_variable("pp_dirpath", self._pseudo_dir)
 
     _pseudos = []
+
     @property
     def pseudos(self) -> str:
         """The list of pseudopotentials files relative to pseudo_dir."""
@@ -289,5 +288,4 @@ class AbinitTask(DFTTask, IOTask):
             self._pseudos = value
 
         # Pass value to input object
-        self.input.set_variable('pseudos', self._pseudos)
-
+        self.input.set_variable("pseudos", self._pseudos)

@@ -27,11 +27,10 @@ dependencies = [
     { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "numpy", version = "2.3.5", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
     { name = "pymatgen" },
-    { name = "types-xmltodict" },
     { name = "xmltodict" },
 ]
 
-[package.optional-dependencies]
+[package.dev-dependencies]
 dev = [
     { name = "ipython", version = "8.37.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "ipython", version = "9.8.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
@@ -40,22 +39,26 @@ dev = [
     { name = "pytest-xdist" },
     { name = "ruff" },
     { name = "ty" },
+    { name = "types-xmltodict" },
 ]
 
 [package.metadata]
 requires-dist = [
-    { name = "ipython", marker = "extra == 'dev'", specifier = ">=8.37.0" },
     { name = "numpy", specifier = ">=1.24" },
     { name = "pymatgen", specifier = ">=2024" },
-    { name = "pytest", marker = "extra == 'dev'", specifier = ">=9.0.2" },
-    { name = "pytest-cov", marker = "extra == 'dev'", specifier = ">=7.0.0" },
-    { name = "pytest-xdist", marker = "extra == 'dev'", specifier = ">=3.8.0" },
-    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.14.0" },
-    { name = "ty", marker = "extra == 'dev'", specifier = ">=0.0.3" },
-    { name = "types-xmltodict", specifier = ">=1.0.1" },
     { name = "xmltodict", specifier = ">=1.0.2" },
 ]
-provides-extras = ["dev"]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "ipython", specifier = ">=8.37.0" },
+    { name = "pytest", specifier = ">=9.0.2" },
+    { name = "pytest-cov", specifier = ">=7.0.0" },
+    { name = "pytest-xdist", specifier = ">=3.8.0" },
+    { name = "ruff", specifier = ">=0.14.0" },
+    { name = "ty", specifier = ">=0.0.3" },
+    { name = "types-xmltodict", specifier = ">=1.0.1" },
+]
 
 [[package]]
 name = "bibtexparser"

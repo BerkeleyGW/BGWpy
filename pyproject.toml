@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=61.0", "wheel"]
+requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -8,51 +8,49 @@ version = "4.0.0"
 description = "A modern Python interface for BerkeleyGW workflows"
 readme = "README.md"
 requires-python = ">=3.10"
-license = {file = "LICENSE.txt"}
-authors = [
-    {name = "Gabriel Antonius", email = "gabriel.antonius@gmail.com"},
-]
+license = { file = "LICENSE.txt" }
+authors = [{ name = "Gabriel Antonius", email = "gabriel.antonius@gmail.com" }]
 maintainers = [
-    {name = "Gabriel Antonius", email = "gabriel.antonius@gmail.com"},
+  { name = "Gabriel Antonius", email = "gabriel.antonius@gmail.com" },
 ]
 keywords = [
-    "BerkeleyGW",
-    "GW",
-    "BSE",
-    "DFT",
-    "computational-physics",
-    "materials-science",
-    "electronic-structure",
+  "BerkeleyGW",
+  "GW",
+  "BSE",
+  "DFT",
+  "computational-physics",
+  "materials-science",
+  "electronic-structure",
 ]
 classifiers = [
-    "Development Status :: 4 - Beta",
-    "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: BSD License",
-    "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "Programming Language :: Python :: 3.13",
-    "Topic :: Scientific/Engineering :: Physics",
-    "Topic :: Scientific/Engineering :: Chemistry",
-    "Typing :: Typed",
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: BSD License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Scientific/Engineering :: Physics",
+  "Topic :: Scientific/Engineering :: Chemistry",
+  "Typing :: Typed",
 ]
 dependencies = [
-    "numpy>=1.24",
-    "pymatgen>=2024",
-    "xmltodict>=1.0.2",
-    "types-xmltodict>=1.0.1",  # Type stubs for xmltodict
+  "numpy>=1.24",
+  "pymatgen>=2024",
+  "xmltodict>=1.0.2",
 ]
 
-[project.optional-dependencies]
+[dependency-groups]
 dev = [
-    "ipython>=8.37.0",
-    "pytest>=9.0.2",
-    "pytest-cov>=7.0.0",
-    "pytest-xdist>=3.8.0",
-    "ruff>=0.14.0",
-    "ty>=0.0.3",
+  "ipython>=8.37.0",
+  "pytest>=9.0.2",
+  "pytest-cov>=7.0.0",
+  "pytest-xdist>=3.8.0",
+  "ruff>=0.14.0",
+  "ty>=0.0.3",
+  "types-xmltodict>=1.0.1",
 ]
 
 [project.urls]
@@ -74,11 +72,7 @@ include = ["BGWpy*"]
 exclude = ["tests*", "docs*"]
 
 [tool.setuptools.package-data]
-BGWpy = [
-    "data/structures/*",
-    "data/pseudos/*",
-    "py.typed",
-]
+BGWpy = ["data/structures/*", "data/pseudos/*", "py.typed"]
 
 # Pytest configuration
 [tool.pytest.ini_options]
@@ -87,23 +81,18 @@ testpaths = ["BGWpy/tests", "BGWpy/core/tests"]
 python_files = ["test_*.py", "*_test.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
-addopts = [
-    "--strict-markers",
-    "--strict-config",
-    "--showlocals",
-    "-ra",
-]
+addopts = ["--strict-markers", "--strict-config", "--showlocals", "-ra"]
 markers = [
-    "unit: marks tests as unit tests (fast, no external executables)",
-    "integration: marks tests as integration tests (file I/O, may need some executables)",
-    "e2e: marks tests as end-to-end tests (expensive, full calculations on cluster)",
-    "flow: marks tests as workflow/flow tests (complete multi-task workflows)",
-    "abinit: marks tests that require Abinit to be installed",
+  "unit: marks tests as unit tests (fast, no external executables)",
+  "integration: marks tests as integration tests (file I/O, may need some executables)",
+  "e2e: marks tests as end-to-end tests (expensive, full calculations on cluster)",
+  "flow: marks tests as workflow/flow tests (complete multi-task workflows)",
+  "abinit: marks tests that require Abinit to be installed",
 ]
 filterwarnings = [
-    "error",
-    "ignore::DeprecationWarning",
-    "ignore::PendingDeprecationWarning",
+  "error",
+  "ignore::DeprecationWarning",
+  "ignore::PendingDeprecationWarning",
 ]
 
 # Coverage configuration
@@ -111,25 +100,21 @@ filterwarnings = [
 source = ["BGWpy"]
 branch = true
 parallel = true
-omit = [
-    "*/tests/*",
-    "*/test_*.py",
-    "*/__pycache__/*",
-]
+omit = ["*/tests/*", "*/test_*.py", "*/__pycache__/*"]
 
 [tool.coverage.report]
 precision = 2
 show_missing = true
 skip_covered = false
 exclude_lines = [
-    "pragma: no cover",
-    "def __repr__",
-    "raise AssertionError",
-    "raise NotImplementedError",
-    "if __name__ == .__main__.:",
-    "if TYPE_CHECKING:",
-    "@abstractmethod",
-    "@overload",
+  "pragma: no cover",
+  "def __repr__",
+  "raise AssertionError",
+  "raise NotImplementedError",
+  "if __name__ == .__main__.:",
+  "if TYPE_CHECKING:",
+  "@abstractmethod",
+  "@overload",
 ]
 
 [tool.coverage.html]
