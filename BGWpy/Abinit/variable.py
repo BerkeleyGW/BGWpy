@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from pathlib import Path
 import string
 import warnings
+from pathlib import Path
 from typing import Any
 
 import numpy as np
@@ -279,8 +279,7 @@ class InputVariable:
         """
         if str(sval).startswith("*"):
             return str(sval)
-        else:
-            return f'"{sval}"'
+        return f'"{sval}"'
 
     @staticmethod
     def string_to_value(sval: str) -> Any:

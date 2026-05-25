@@ -7,7 +7,6 @@ classes and specialized variants for MPI execution and I/O-based tasks.
 from __future__ import annotations
 
 import os
-import pickle
 import sys
 from enum import Enum
 from pathlib import Path

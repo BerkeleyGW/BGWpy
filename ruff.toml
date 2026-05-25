@@ -74,6 +74,7 @@ ignore = [
 "**/Abinit/utils.py" = ["TC003"]  # runtime use of Iterable/Iterator
 "**/BGW/kgrid.py" = ["PLR0912", "PLR0915", "ARG001"]  # complex parsing logic requires many branches/statements
 "**/BGW/sigmatask.py" = ["PLR0912", "PLR0915"]  # complex initialization logic
+"**/QE/qebgwtask.py" = ["PLR0912"]  # Qe2BgwTask.__init__ handles several independent concerns (kgrid, nproc, input defaults)
 "**/BGW/epsilontask.py" = ["SIM108"]  # if-else more readable than ternary here
 "**/data/__init__.py" = ["N816"]  # mixed case variable names for chemical formulas (GaAs, Si)
 "**/DFT/dfttask.py" = ["N802"]  # is_flavor_QE uses uppercase for Quantum Espresso abbreviation
@@ -83,8 +84,11 @@ ignore = [
 "**/extractors/gw.py" = ["N802"]  # extract_multiple_GW_results uses uppercase for GW abbreviation
 "**/Wannier90/wannier90.py" = ["PLR0912"]  # complex string generation logic
 "**/core/runscript.py" = ["PLR0912"]  # complex initialization logic
-"**/core/task.py" = ["ARG002"]  # kwargs needed for API compatibility
+"**/core/task.py" = ["ARG002", "PTH100"]  # kwargs needed for API compatibility; abspath intentional — resolve() would follow symlinks and break relative path calculation
 "**/core/tests/test_writable.py" = ["PLC0415"]  # import in test method
+"**/core/F90io.py" = ["PLR0911"]  # find_scalar_type has many early returns by design
+
+"Documentation/**" = ["ERA001"]  # commented-out code in examples/tutorials shows hdf5 vs non-hdf5 alternatives
 
 [lint.isort]
 known-first-party = ["BGWpy"]

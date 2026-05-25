@@ -7,7 +7,6 @@ from typing import Any
 import numpy as np
 from numpy.typing import NDArray
 
-from BGWpy.config import flavors
 from BGWpy.core import IOTask
 from BGWpy.DFT import DFTTask
 
@@ -57,6 +56,7 @@ class AbinitTask(DFTTask, IOTask):
         # Since we override pseudos method, we need to initialize the input first.
         self.prefix = kwargs.get("prefix", "abinit")
         self.input = AbinitInput(fname=self.prefix + ".in")
+        self._pseudos = []
 
         super().__init__(dirname, **kwargs)
 
@@ -266,8 +266,6 @@ class AbinitTask(DFTTask, IOTask):
         # Abinit lets you set the pseudo directory as an environment variable,
         # but here we explicitly write it in the input.
         self.input.set_variable("pp_dirpath", self._pseudo_dir)
-
-    _pseudos = []
 
     @property
     def pseudos(self) -> str:

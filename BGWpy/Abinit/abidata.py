@@ -140,7 +140,7 @@ input_variable_blocks: OrderedDict[str, str] = OrderedDict(
     iomode
     enunit
     prtvol
-    ncout 
+    ncout
 
     prtden
     prtpot
@@ -151,50 +151,50 @@ input_variable_blocks: OrderedDict[str, str] = OrderedDict(
 
     prtvclmb
 
-    prtfsurf 
+    prtfsurf
     prtnest
-    prt_lorbmag 
-    prtden 
+    prt_lorbmag
+    prtden
     prtdensph
-    prtebands 
+    prtebands
     prteig
-    prtgden 
+    prtgden
     prtkbff
-    prtkden 
+    prtkden
     prtkpt
     prtlden
     prtwf
     prtwf_full
 
-    prtatlist 
-    prtcif 
-    prtgeo 
-    prtposcar 
+    prtatlist
+    prtcif
+    prtgeo
+    prtposcar
 
     prtdos
     prtdosm
 
-    prtbltztrp 
-    prtddb 
-    prtdipole 
-    prtelf 
-    prtevk 
+    prtbltztrp
+    prtddb
+    prtdipole
+    prtelf
+    prtevk
     prtgsr
-    prthist 
-    prtnabla 
-    prtprocar 
-    prtpsps 
-    prtspcur 
-    prtstm 
-    prtvdw 
-    prtvolimg 
-    prtwant 
-    prtxml 
+    prthist
+    prtnabla
+    prtprocar
+    prtpsps
+    prtspcur
+    prtstm
+    prtvdw
+    prtvolimg
+    prtwant
+    prtxml
     write_files
 
-    prtbbb 
-    prtefmas 
-    prtgkk 
+    prtbbb
+    prtefmas
+    prtgkk
     prtphbands
     prtphdos
     prtphsurf

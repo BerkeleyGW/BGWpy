@@ -161,21 +161,21 @@ def find_scalar_type(obj: Any) -> type:
     if isinstance(obj, int):
         return int
 
-    elif isinstance(obj, float):
+    if isinstance(obj, float):
         return float
 
-    elif isinstance(obj, complex):
+    if isinstance(obj, complex):
         return complex
 
-    elif isinstance(obj, str):
+    if isinstance(obj, str):
         return int
 
-    elif hasattr(obj, "__iter__"):
+    if hasattr(obj, "__iter__"):
         try:
             n = len(obj)
             if not n:
                 return int
-        except:
+        except TypeError:
             return int
 
         any_float = False
@@ -183,7 +183,7 @@ def find_scalar_type(obj: Any) -> type:
             t = find_scalar_type(Oi)  # Recursive call
             if t is complex:
                 return complex
-            elif t is float:
+            if t is float:
                 any_float = True
 
         if any_float:
