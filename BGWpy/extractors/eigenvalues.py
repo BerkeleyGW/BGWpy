@@ -19,7 +19,7 @@ __all__ = ["get_eigs_unpol", "get_eigs_unpol_from_file"]
 
 
 def get_eigs_unpol_from_file(
-    data_file_fname: str,
+    data_file_fname: str | Path,
 ) -> tuple[NDArray[np.float64], NDArray[np.float64]]:
     """Read the band structure from a QE XML data file.
 
@@ -28,7 +28,7 @@ def get_eigs_unpol_from_file(
 
     Parameters
     ----------
-    data_file_fname : str
+    data_file_fname : str | Path
         Path to the QE XML data file.
 
     Returns
@@ -75,7 +75,7 @@ def get_eigs_unpol_from_file(
     return np.array(kpoints, dtype=np.float64), np.array(eigs, dtype=np.float64)
 
 
-def get_eigs_unpol(savedir: str) -> tuple[NDArray[np.float64], NDArray[np.float64]]:
+def get_eigs_unpol(savedir: str | Path) -> tuple[NDArray[np.float64], NDArray[np.float64]]:
     """Read the band structure from a QE save directory.
 
     This function reads the band structure from a Quantum Espresso save
@@ -84,7 +84,7 @@ def get_eigs_unpol(savedir: str) -> tuple[NDArray[np.float64], NDArray[np.float6
 
     Parameters
     ----------
-    savedir : str
+    savedir : str | Path
         Path to the QE .save directory containing the XML data file.
 
     Returns

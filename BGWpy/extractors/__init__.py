@@ -1,9 +1,11 @@
-from . import eigenvalues, gw, inteqp
+from . import absorption, eigenvalues, gw, inteqp
+from .absorption import *
 from .eigenvalues import *
 from .gw import *
 from .inteqp import *
 
 __all__ = [
+    *absorption.__all__,
     *eigenvalues.__all__,
     *gw.__all__,
     *inteqp.__all__,

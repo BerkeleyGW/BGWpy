@@ -8,11 +8,13 @@ from __future__ import annotations
 
 import pickle
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, TextIO, TypedDict
+from typing import TYPE_CHECKING, Any, TypedDict
 
 import numpy as np
 
 if TYPE_CHECKING:
+    from typing import TextIO
+
     from numpy.typing import NDArray
 
 __all__ = [
@@ -135,13 +137,13 @@ class MultipleGWResult(TypedDict):
     results: list[SigmaResult]
 
 
-def parse_sigma_output(f: str | Path | TextIO) -> SigmaResult:
+def parse_sigma_output(f: str | Path) -> SigmaResult:
     """Extract the GW results of a calculation with BerkeleyGW.
 
     Parameters
     ----------
-    f : str | TextIO
-        Path to sigma output file (str or Path), or an open file handle.
+    f : str | Path
+        Path to sigma output file.
 
     Returns
     -------
@@ -179,12 +181,8 @@ def parse_sigma_output(f: str | Path | TextIO) -> SigmaResult:
     ValueError
         If no k-point blocks are found in the output file.
     """
-    if isinstance(f, (str, Path)):
-        with Path(f).open() as fi:
-            return parse_sigma_output(fi)
-
-    # Break the output into large kpoint block.
-    large_kpt_blocks = break_output_in_kpt_blocks(f)
+    with Path(f).open() as fi:
+        large_kpt_blocks = break_output_in_kpt_blocks(fi)
 
     if not large_kpt_blocks:
         msg = "No k-point blocks found in sigma output file"
@@ -401,12 +399,12 @@ def parse_sigma_output_block(s: str) -> SigmaBlockResult:
     return results  # type: ignore[return-value]
 
 
-def extract_multiple_GW_results(dirnames: list[str]) -> MultipleGWResult:
+def extract_multiple_GW_results(dirnames: list[str | Path]) -> MultipleGWResult:
     """Extract GW results from a list of directories.
 
     Parameters
     ----------
-    dirnames : list[str]
+    dirnames : list[str | Path]
         List of directory paths containing sigma.out and variables.pkl files.
 
     Returns
