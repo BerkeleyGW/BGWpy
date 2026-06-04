@@ -19,6 +19,7 @@ class QeBgwFlow(WfnBgwFlow):
     charge_density_fname: str = ""
     spin_polarization_fname: str = ""
     data_file_fname: str = ""
+    ekin_density_fname: str = ""
 
     def __init__(self, **kwargs: Any) -> None:
         """
@@ -36,6 +37,9 @@ class QeBgwFlow(WfnBgwFlow):
         spin_polarization_fname : str, optional
             Spin polarization file produced by a density calculation.
             Giving a file name will set default value of 'with_density' to False.
+        ekin_density_fname : str, optional
+            Kinetic energy density file produced by a density calculation.
+            Only required for meta-GGA functionals.
         prefix : str
             Prefix required by QE as a rootname.
         pseudo_dir : str
@@ -98,6 +102,7 @@ class QeBgwFlow(WfnBgwFlow):
         self.charge_density_fname = kwargs["charge_density_fname"]
         self.data_file_fname = kwargs["data_file_fname"]
         self.spin_polarization_fname = kwargs.get("spin_polarization_fname", "")
+        self.ekin_density_fname = kwargs.get("ekin_density_fname", "")
 
         # Wfn task
         self.wfntask = QeWfnTask(dirname=self.dirname, **kwargs)

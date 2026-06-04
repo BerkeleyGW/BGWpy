@@ -208,6 +208,7 @@ class GWFlow(Workflow):
                 charge_density_fname=self.scftask.charge_density_fname,
                 data_file_fname=self.scftask.data_file_fname,
                 spin_polarization_fname=self.scftask.spin_polarization_fname,
+                ekin_density_fname=self.scftask.ekin_density_fname,
             )
 
         # Wavefunction tasks for Epsilon

@@ -71,6 +71,10 @@ class QeScfTask(QeTask):
 
         spin_polarization_fname : str, optional
             Path to the spin polarization file produced ('spin-polarization.dat').
+
+        ekin_density_fname : str, optional
+            Path to the kinetic energy density file produced ('ekin-density.dat'
+            or 'ekin-density.hdf5'). Only present for meta-GGA functionals.
         """
 
         super().__init__(dirname, **kwargs)
@@ -101,6 +105,11 @@ class QeScfTask(QeTask):
     @property
     def charge_density_fname(self) -> str:
         name = "charge-density.hdf5" if self._use_hdf5_qe else "charge-density.dat"
+        return str(Path(self.dirname) / self.savedir / name)
+
+    @property
+    def ekin_density_fname(self) -> str:
+        name = "ekin-density.hdf5" if self._use_hdf5_qe else "ekin-density.dat"
         return str(Path(self.dirname) / self.savedir / name)
 
     @property

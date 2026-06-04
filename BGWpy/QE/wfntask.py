@@ -55,6 +55,10 @@ class QeWfnTask(QeTask):
         spin_polarization_fname : str, optional
             Path to the spin polarization file produced
             by a density calculation ('spin-polarization.dat').
+        ekin_density_fname : str, optional
+            Path to the kinetic energy density file produced
+            by a density calculation ('ekin-density.dat' or 'ekin-density.hdf5').
+            Only required for meta-GGA functionals.
         ngkpt : list(3), float, optional
             K-points grid. Number of k-points along each primitive vector
             of the reciprocal lattice.
@@ -81,6 +85,8 @@ class QeWfnTask(QeTask):
         self.charge_density_fname = kwargs["charge_density_fname"]
         if "spin_polarization_fname" in kwargs:
             self.spin_polarization_fname = kwargs["spin_polarization_fname"]
+        if "ekin_density_fname" in kwargs:
+            self.ekin_density_fname = kwargs["ekin_density_fname"]
 
         self.data_file_fname = kwargs["data_file_fname"]
 
@@ -116,6 +122,18 @@ class QeWfnTask(QeTask):
         name = "charge-density.hdf5" if self._use_hdf5_qe else "charge-density.dat"
         dest = Path(self.savedir) / name
         self.update_link(value, dest)
+
+    @property
+    def ekin_density_fname(self) -> str:
+        return self._ekin_density_fname
+
+    @ekin_density_fname.setter
+    def ekin_density_fname(self, value: str | Path | None) -> None:
+        self._ekin_density_fname = str(value) if value else ""
+        if value:
+            name = "ekin-density.hdf5" if self._use_hdf5_qe else "ekin-density.dat"
+            dest = Path(self.savedir) / name
+            self.update_link(value, dest)
 
     @property
     def spin_polarization_fname(self) -> str:
