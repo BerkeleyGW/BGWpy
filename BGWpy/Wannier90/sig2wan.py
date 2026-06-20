@@ -10,6 +10,7 @@ class Sig2WanInput(Writable):
         self,
         prefix: str,
         nbnd: int,
+        ib_start: int,
         nspin: int = 1,
         eqp: int = 1,
         sigma_file: str = "sigma_hp.log",
@@ -20,6 +21,7 @@ class Sig2WanInput(Writable):
         self.prefix_gw = prefix_gw if prefix_gw else prefix + "_GW"
         self.nspin = nspin
         self.nbnd = nbnd
+        self.ib_start = ib_start
         self.eqp = eqp
         self.sigma_file = sigma_file
 
@@ -31,6 +33,7 @@ class Sig2WanInput(Writable):
 {nnkp:<30} ! Wannier90 input file to read k-points from
 {eig:<30} ! file where the output of sig2wan is written
 {nbnd:<30} ! number of bands to write out
+{ib_start:<30} ! band index of the first band in the output eig file
 """.format(
             sigma=self.sigma_file,
             nnkp=self.prefix + ".nnkp",
@@ -38,4 +41,5 @@ class Sig2WanInput(Writable):
             nspin=self.nspin,
             eqp=self.eqp,
             nbnd=self.nbnd,
+            ib_start=self.ib_start,
         ).lstrip()

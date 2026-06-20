@@ -14,6 +14,7 @@ class PW2WanInput(Namelist):
         outdir: str = "./",
         write_amn: bool = True,
         write_mmn: bool = True,
+        write_eig: bool = True,
         seedname: str | None = None,
         **kwargs: Any,
     ) -> None:
@@ -25,6 +26,7 @@ class PW2WanInput(Namelist):
                 ("seedname", seedname if seedname else prefix),
                 ("write_amn", write_amn),
                 ("write_mmn", write_mmn),
+                ("write_eig", write_eig),
             ],
             **kwargs,
         )
