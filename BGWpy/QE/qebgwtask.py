@@ -169,6 +169,16 @@ class Qe2BgwTask(QeTask):
         nbnd : int, optional
             Number of bands for which vxc should be computed.
             Only if output of the density and vxc is active.
+        vscg_flag : bool (False), optional
+            If True, output the self-consistent potential in G-space (VSC), an
+            input required by BerkeleyGW's ParaBands.
+        vscg_file : str ('VSC'), optional
+            Name of the output VSC file.
+        vkbg_flag : bool (False), optional
+            If True, output the Kleinman-Bylander projectors in G-space (VKB), an
+            input used by BerkeleyGW's ParaBands.
+        vkbg_file : str ('VKB'), optional
+            Name of the output VKB file.
 
 
         Properties
@@ -259,6 +269,16 @@ class Qe2BgwTask(QeTask):
         if kwargs.get("rho_fname") or kwargs.get("rhog_flag"):
             defaults.update(rho_defaults)
 
+        # VSC (self-consistent potential) and VKB (Kleinman-Bylander projectors),
+        # in G-space -- the extra inputs BerkeleyGW's ParaBands needs. Emitted only
+        # when explicitly requested, so ordinary pw2bgw runs are unaffected.
+        if kwargs.get("vscg_flag"):
+            defaults["vscg_flag"] = True
+            defaults["vscg_file"] = kwargs.get("vscg_file", "VSC")
+        if kwargs.get("vkbg_flag"):
+            defaults["vkbg_flag"] = True
+            defaults["vkbg_file"] = kwargs.get("vkbg_file", "VKB")
+
         # Allow the caller to override any default, but exclude grid keys when
         # wfng_kgrid is False so they are never forwarded to Qe2BgwInput.
         variables: dict[str, Any] = {}
@@ -274,10 +294,11 @@ class Qe2BgwTask(QeTask):
             self.wfn_fname = kwargs["wfn_fname"]
         elif "wfng_file" in kwargs:
             self.wfn_fname = kwargs["wfng_file"]
-        if "rho_fname" in kwargs:
-            self.rho_fname = kwargs["rho_fname"]
-        if "vxc_dat_fname" in kwargs:
-            self.vxc_dat_fname = kwargs["vxc_dat_fname"]
+        # Forward each output-file kwarg to its property (which also updates the
+        # corresponding Qe2BgwInput key).
+        for _fname_attr in ("rho_fname", "vxc_dat_fname", "vsc_fname", "vkb_fname"):
+            if _fname_attr in kwargs:
+                setattr(self, _fname_attr, kwargs[_fname_attr])
 
         self.input.fname = self._input_fname
 
@@ -322,3 +343,29 @@ class Qe2BgwTask(QeTask):
         value_str = str(value)
         self._vxc_dat_fname = value_str
         self.input["vxc_file"] = value_str
+
+    _vsc_fname = "VSC"
+
+    @property
+    def vsc_fname(self) -> str:
+        """Path to the VSC file (self-consistent potential; only if vscg_flag)."""
+        return str(Path(self.dirname) / self._vsc_fname)
+
+    @vsc_fname.setter
+    def vsc_fname(self, value: str | Path) -> None:
+        value_str = str(value)
+        self._vsc_fname = value_str
+        self.input["vscg_file"] = value_str
+
+    _vkb_fname = "VKB"
+
+    @property
+    def vkb_fname(self) -> str:
+        """Path to the VKB file (Kleinman-Bylander projectors; only if vkbg_flag)."""
+        return str(Path(self.dirname) / self._vkb_fname)
+
+    @vkb_fname.setter
+    def vkb_fname(self, value: str | Path) -> None:
+        value_str = str(value)
+        self._vkb_fname = value_str
+        self.input["vkbg_file"] = value_str
