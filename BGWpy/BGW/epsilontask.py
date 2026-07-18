@@ -116,8 +116,26 @@ class EpsilonTask(BGWTask):
         else:
             kpts_ush, _wtks_ush = self.kgridtask.get_kpt_grid_nosym()
 
-        extra_lines: list[str] = kwargs.get("extra_lines", [])
+        extra_lines: list[str] = list(kwargs.get("extra_lines", []))
         extra_variables: dict[str, Any] = kwargs.get("extra_variables", {})
+
+        # HDF5 WFN input: with an HDF5 WFN, BerkeleyGW reads the hardcoded names
+        # WFN.h5 / WFNq.h5 (not WFN / WFNq) and requires the use_wfn_hdf5 keyword.
+        # Detect from the .h5 suffix so callers only pass a filename; the link
+        # destinations are set to match in the wfn_fname / wfnq_fname setters. The
+        # keyword makes BerkeleyGW read *both* WFN and WFNq as HDF5, so a mixed pair
+        # would mislink one of them -- reject it rather than fail cryptically at run.
+        wfn_is_hdf5 = str(kwargs["wfn_fname"]).endswith(".h5")
+        wfnq_is_hdf5 = str(kwargs["wfnq_fname"]).endswith(".h5")
+        if wfn_is_hdf5 != wfnq_is_hdf5:
+            msg = (
+                "wfn_fname and wfnq_fname must have the same format (both HDF5 '.h5' "
+                f"or both binary): got wfn_fname={kwargs['wfn_fname']!r}, "
+                f"wfnq_fname={kwargs['wfnq_fname']!r}"
+            )
+            raise ValueError(msg)
+        if wfn_is_hdf5 and "use_wfn_hdf5" not in extra_lines:
+            extra_lines.append("use_wfn_hdf5")
 
         # Input file
         qshift: ArrayLike = kwargs["qshift"]
@@ -170,7 +188,8 @@ class EpsilonTask(BGWTask):
         """Set path to the wavefunction file and update symlink."""
         value_str = str(value)
         self._wfn_fname = value_str
-        self.update_link(value_str, "WFN")
+        # BerkeleyGW reads WFN.h5 (not WFN) when the WFN is HDF5; match by suffix.
+        self.update_link(value_str, "WFN.h5" if value_str.endswith(".h5") else "WFN")
 
     @property
     def wfnq_fname(self) -> str:
@@ -182,7 +201,8 @@ class EpsilonTask(BGWTask):
         """Set path to the q-shifted wavefunction file and update symlink."""
         value_str = str(value)
         self._wfnq_fname = value_str
-        self.update_link(value_str, "WFNq")
+        # BerkeleyGW reads WFNq.h5 (not WFNq) when the WFN is HDF5; match by suffix.
+        self.update_link(value_str, "WFNq.h5" if value_str.endswith(".h5") else "WFNq")
 
     def write(self) -> None:
         """Write the task files to disk."""

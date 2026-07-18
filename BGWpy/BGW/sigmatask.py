@@ -133,8 +133,18 @@ class SigmaTask(BGWTask):
         self._kshift = np.array(kwargs["kshift"]) if "kshift" in kwargs else None
         self._qshift = np.array(kwargs["qshift"]) if "qshift" in kwargs else None
 
-        extra_lines: list[str] = kwargs.get("extra_lines", [])
+        extra_lines: list[str] = list(kwargs.get("extra_lines", []))
         extra_variables: dict[str, Any] = kwargs.get("extra_variables", {})
+
+        # HDF5 WFN input: with an HDF5 WFN_inner, BerkeleyGW reads the hardcoded name
+        # WFN_inner.h5 (not WFN_inner) and requires the use_wfn_hdf5 keyword. Detect
+        # from the .h5 suffix so callers only pass a filename; the link destination is
+        # set to match in the wfn_co_fname setter.
+        if (
+            str(kwargs["wfn_co_fname"]).endswith(".h5")
+            and "use_wfn_hdf5" not in extra_lines
+        ):
+            extra_lines.append("use_wfn_hdf5")
 
         # Use specified kpoints or compute them from grid.
         kpt_aliases: tuple[str, ...] = (
@@ -250,7 +260,10 @@ class SigmaTask(BGWTask):
         """Set path to the coarse wavefunction file and update symlink."""
         value_str = str(value)
         self._wfn_co_fname = value_str
-        self.update_link(value_str, "WFN_inner")
+        # BerkeleyGW reads WFN_inner.h5 (not WFN_inner) when the WFN is HDF5.
+        self.update_link(
+            value_str, "WFN_inner.h5" if value_str.endswith(".h5") else "WFN_inner"
+        )
 
     @property
     def rho_fname(self) -> str:
