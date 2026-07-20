@@ -720,6 +720,12 @@ def patch_sample_sphere(
     weights : NDArray[np.float64]
         Array of shape (nkpt_filtered,) containing k-point weights.
 
+    Warns
+    -----
+    UserWarning
+        If the patch is degenerate: empty, or covering the whole grid. An ordinary patch
+        warns nothing.
+
     Examples
     --------
     Generate a 100x100x100 grid and filter for points within 0.05 of Gamma:
@@ -744,8 +750,10 @@ def patch_sample_sphere(
     delta -= np.round(delta)
     distances = np.linalg.norm(delta, axis=1)
 
-    # Filter points within sphere
-    mask = distances <= r_patch
+    # Filter points within sphere; the tolerance (a fraction of a grid step) keeps
+    # points on the boundary from being dropped by floating-point noise
+    tol = 1e-6 * min(1.0 / np.asarray(ngkpt, dtype=float))
+    mask = distances <= r_patch + tol
     kpoints_filtered = kpoints[mask]
     weights_filtered = weights[mask]
 
@@ -755,13 +763,25 @@ def patch_sample_sphere(
         if weights_sum > 0:
             weights_filtered = weights_filtered / weights_sum
 
+    # Warn only on a degenerate patch: the ordinary count is just len(kpoints_filtered),
+    # which the caller gets back. An empty patch reaches BerkeleyGW as an empty k-point
+    # list; a patch covering the whole grid usually means r_patch is in the wrong units.
     nkpt_total = len(kpoints)
     nkpt_filtered = len(kpoints_filtered)
-    warnings.warn(
-        f"Patch sampling: filtered {nkpt_filtered} k-points from "
-        f"{nkpt_total} total ({100.0 * nkpt_filtered / nkpt_total:.2f}%)",
-        stacklevel=2,
-    )
+    if nkpt_filtered == 0:
+        warnings.warn(
+            f"Patch sampling selected no k-points: no point of the {nkpt_total}-point "
+            f"grid lies within r_patch={r_patch} of center {center_arr.tolist()}. "
+            f"Increase r_patch or the grid density.",
+            stacklevel=2,
+        )
+    elif nkpt_filtered == nkpt_total:
+        warnings.warn(
+            f"Patch sampling kept the whole {nkpt_total}-point grid: r_patch={r_patch} "
+            f"spans the entire Brillouin zone, so the patch has no effect. Note r_patch "
+            f"is in fractional reciprocal-space units.",
+            stacklevel=2,
+        )
 
     return kpoints_filtered, weights_filtered
 
@@ -808,6 +828,12 @@ def patch_sample_cube(
     weights : NDArray[np.float64]
         Array of shape (nkpt_filtered,) containing k-point weights.
 
+    Warns
+    -----
+    UserWarning
+        If the patch is degenerate: empty, or covering the whole grid. An ordinary patch
+        warns nothing.
+
     Examples
     --------
     Generate a 100x100x100 grid and filter for points within a cube of
@@ -833,8 +859,10 @@ def patch_sample_cube(
     delta -= np.round(delta)
     chebyshev_dist = np.max(np.abs(delta), axis=1)
 
-    # Filter points within cube
-    mask = chebyshev_dist <= half_side
+    # Filter points within cube; the tolerance (a fraction of a grid step) keeps
+    # points on the boundary from being dropped by floating-point noise
+    tol = 1e-6 * min(1.0 / np.asarray(ngkpt, dtype=float))
+    mask = chebyshev_dist <= half_side + tol
     kpoints_filtered = kpoints[mask]
     weights_filtered = weights[mask]
 
@@ -844,13 +872,23 @@ def patch_sample_cube(
         if weights_sum > 0:
             weights_filtered = weights_filtered / weights_sum
 
+    # Warn only on a degenerate patch -- see the matching block in patch_sample_sphere.
     nkpt_total = len(kpoints)
     nkpt_filtered = len(kpoints_filtered)
-    warnings.warn(
-        f"Patch sampling: filtered {nkpt_filtered} k-points from "
-        f"{nkpt_total} total ({100.0 * nkpt_filtered / nkpt_total:.2f}%)",
-        stacklevel=2,
-    )
+    if nkpt_filtered == 0:
+        warnings.warn(
+            f"Patch sampling selected no k-points: no point of the {nkpt_total}-point "
+            f"grid lies within half_side={half_side} of center {center_arr.tolist()}. "
+            f"Increase half_side or the grid density.",
+            stacklevel=2,
+        )
+    elif nkpt_filtered == nkpt_total:
+        warnings.warn(
+            f"Patch sampling kept the whole {nkpt_total}-point grid: half_side="
+            f"{half_side} spans the entire Brillouin zone, so the patch has no effect. "
+            f"Note half_side is in fractional reciprocal-space units.",
+            stacklevel=2,
+        )
 
     return kpoints_filtered, weights_filtered
 
