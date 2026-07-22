@@ -146,6 +146,19 @@ class SigmaTask(BGWTask):
         ):
             extra_lines.append("use_wfn_hdf5")
 
+        # G-space VXC (vxc_fname) instead of the vxc.dat matrix elements: Sigma must
+        # be told to build <nk|Vxc|nk> from the VXC file rather than read vxc.dat,
+        # via the dont_use_vxcdat keyword. Auto-add it so callers can't supply VXC
+        # without the matching flag (omitting it makes Sigma look for a vxc.dat that
+        # was never produced). This is a no-op for the vxc.dat path, which sets
+        # vxc_dat_fname and never vxc_fname, so existing callers are unaffected.
+        if (
+            "vxc_fname" in kwargs
+            and "vxc_dat_fname" not in kwargs
+            and "dont_use_vxcdat" not in extra_lines
+        ):
+            extra_lines.append("dont_use_vxcdat")
+
         # Use specified kpoints or compute them from grid.
         kpt_aliases: tuple[str, ...] = (
             "kpts",

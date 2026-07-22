@@ -296,7 +296,13 @@ class Qe2BgwTask(QeTask):
             self.wfn_fname = kwargs["wfng_file"]
         # Forward each output-file kwarg to its property (which also updates the
         # corresponding Qe2BgwInput key).
-        for _fname_attr in ("rho_fname", "vxc_dat_fname", "vsc_fname", "vkb_fname"):
+        for _fname_attr in (
+            "rho_fname",
+            "vxc_dat_fname",
+            "vxc_fname",
+            "vsc_fname",
+            "vkb_fname",
+        ):
             if _fname_attr in kwargs:
                 setattr(self, _fname_attr, kwargs[_fname_attr])
 
@@ -343,6 +349,22 @@ class Qe2BgwTask(QeTask):
         value_str = str(value)
         self._vxc_dat_fname = value_str
         self.input["vxc_file"] = value_str
+
+    # Default matches the vxcg_file default in the rho_defaults block above; the
+    # setter (and the vxc_fname forward in __init__) keep this in sync with the
+    # input file's vxcg_file when a caller overrides it.
+    _vxc_fname = "vxc.real"
+
+    @property
+    def vxc_fname(self) -> str:
+        """Path to the G-space VXC file (XC potential; only if vxcg_flag)."""
+        return str(Path(self.dirname) / self._vxc_fname)
+
+    @vxc_fname.setter
+    def vxc_fname(self, value: str | Path) -> None:
+        value_str = str(value)
+        self._vxc_fname = value_str
+        self.input["vxcg_file"] = value_str
 
     _vsc_fname = "VSC"
 
