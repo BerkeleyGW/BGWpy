@@ -53,6 +53,37 @@ class EpsilonInput(BasicInputFile):
         return super().__str__() + qpt_block
 
 
+class ParabandsInput(BasicInputFile):
+    """A ``parabands.inp`` input file.
+
+    Only ``input_wfn_file``, ``output_wfn_file`` and ``vsc_file`` are required; other
+    variables are optional and bare keywords (e.g. ``use_pseudobands``) are passed
+    positionally, as for the other input classes here.
+    """
+
+    def __init__(
+        self,
+        input_wfn_file: str,
+        output_wfn_file: str,
+        *keywords: str,
+        vsc_file: str = "VSC",
+        vkb_file: str | None = "VKB",
+        nbnd: int | None = None,
+        **variables: Any,
+    ) -> None:
+        all_variables: dict[str, Any] = {
+            "input_wfn_file": input_wfn_file,
+            "output_wfn_file": output_wfn_file,
+            "vsc_file": vsc_file,
+        }
+        if vkb_file is not None:
+            all_variables["vkb_file"] = vkb_file
+        if nbnd is not None:
+            all_variables["number_bands"] = nbnd
+        all_variables.update(variables)
+        super().__init__(all_variables, keywords)
+
+
 class SigmaInput(BasicInputFile):
     kpts: list[NDArray[np.float64]]
     qpts: list[NDArray[np.float64]]

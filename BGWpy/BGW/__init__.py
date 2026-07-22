@@ -8,6 +8,7 @@ from . import (
     inteqptask,
     kerneltask,
     kgrid,
+    parabandstask,
     sigmatask,
     vmtxeltask,
 )
@@ -19,6 +20,7 @@ from .kerneltask import *
 
 # Public
 from .kgrid import *
+from .parabandstask import *
 from .sigmatask import *
 from .vmtxeltask import *
 
@@ -31,4 +33,5 @@ __all__ = (
     + inteqptask.__all__
     + vmtxeltask.__all__
     + degeneracychecktask.__all__
+    + parabandstask.__all__
 )
