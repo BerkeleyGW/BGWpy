@@ -118,21 +118,21 @@ class QeParabandsFlow(WfnBgwFlow):
     Properties
     ----------
     wfn_fname : str
-        The ParaBands ``WFN.h5`` (for Epsilon/Sigma).
+        The ParaBands ``WFN.h5`` (for Epsilon/Sigma). Always produced.
     rho_fname : str
-        The pw2bgw density -- written only with ``rhog_flag``.
+        The pw2bgw density. Requires ``rhog_flag``.
     vxc_fname : str
-        The pw2bgw G-space ``VXC`` potential (the default XC source for Sigma) --
-        written only with ``rhog_flag`` and ``use_vxcg``.
+        The pw2bgw G-space ``VXC`` potential (the default XC source for Sigma).
+        Requires ``rhog_flag`` and ``use_vxcg``.
     vxc_dat_fname : str
-        The pw2bgw ``vxc.dat`` matrix elements (the legacy XC path) -- written only
-        with ``rhog_flag`` and ``use_vxcg=False``.
+        The pw2bgw ``vxc.dat`` matrix elements (the legacy XC path). Requires
+        ``rhog_flag`` and ``use_vxcg=False``.
+    rhog_flag, use_vxcg : bool
+        Read-only echoes of the constructor flags, to branch on without catching.
 
-    As with the ``*_fname`` properties on :class:`~BGWpy.QE.qebgwtask.Qe2BgwTask`, all
-    four return the path the file *would* have and do not check that this flow was
-    configured to produce it. Read the density and XC paths only from a flow built with
-    the matching flags: a path to a file pw2bgw never wrote becomes a dangling symlink,
-    and the failure surfaces later, inside Epsilon/Sigma.
+    The density/XC properties raise ``ValueError`` when this flow was not built to produce
+    the file they name -- deliberately stricter than ``Qe2BgwTask`` / ``AbinitBgwFlow``,
+    which return the path regardless.
     """
 
     def __init__(
@@ -193,6 +193,11 @@ class QeParabandsFlow(WfnBgwFlow):
             pseudos=pseudos,
             **grid,
         )
+
+        # Backs the read-only flag properties and the fname guards below: G-space VXC
+        # with use_vxcg, vxc.dat without, neither when rhog_flag is False.
+        self._rhog_flag = rhog_flag
+        self._use_vxcg = use_vxcg
 
         # 1. QE seed nscf (a few bands above n_occ, to fix the occupations).
         self.wfntask = QeWfnTask(
@@ -260,13 +265,9 @@ class QeParabandsFlow(WfnBgwFlow):
                 pb_lines.append("use_pseudobands")
             pb_variables.setdefault("protected_cond_bands", nbnd_cond_prot)
             if pseudobands_accumulation_window is not None:
-                pb_variables.setdefault(
-                    "accumulation_window", pseudobands_accumulation_window
-                )
+                pb_variables.setdefault("accumulation_window", pseudobands_accumulation_window)
             if pseudobands_num_bands_per_slice is not None:
-                pb_variables.setdefault(
-                    "num_bands_per_slice", pseudobands_num_bands_per_slice
-                )
+                pb_variables.setdefault("num_bands_per_slice", pseudobands_num_bands_per_slice)
 
         # 3. ParaBands -> WFN.h5 (re-diagonalize to the large nbnd).
         self.parabandstask = ParabandsTask(
@@ -288,17 +289,73 @@ class QeParabandsFlow(WfnBgwFlow):
         """The ParaBands ``WFN.h5`` produced (for Epsilon/Sigma)."""
         return self.parabandstask.wfn_out_fname
 
+    # Read-only: pw2bgw's input was written at construction, so a setter would let the
+    # guards below pass for files the run never produces.
+    @property
+    def rhog_flag(self) -> bool:
+        """Whether pw2bgw was asked for the density and an XC potential."""
+        return self._rhog_flag
+
+    @property
+    def use_vxcg(self) -> bool:
+        """Whether the XC potential is the G-space ``VXC`` rather than ``vxc.dat``."""
+        return self._use_vxcg
+
+    @property
+    def _flag_state(self) -> str:
+        """This flow's flag combination, for the guard messages below."""
+        return f"rhog_flag={self._rhog_flag}, use_vxcg={self._use_vxcg}"
+
     @property
     def rho_fname(self) -> str:
-        """Path to the pw2bgw density file (only if rhog_flag)."""
+        """The pw2bgw density file. Requires ``rhog_flag``, else ``ValueError``."""
+        if not self._rhog_flag:
+            msg = (
+                f"rho_fname: pw2bgw only writes the density with rhog_flag=True, but this "
+                f"flow has {self._flag_state}. Rebuild it with rhog_flag=True (the GW "
+                f"mean-field set needs the density from the unshifted WFN_co grid only)."
+            )
+            raise ValueError(msg)
         return self.pw2bgwtask.rho_fname
 
     @property
     def vxc_fname(self) -> str:
-        """Path to the G-space VXC file (only if rhog_flag and use_vxcg)."""
+        """The G-space ``VXC`` potential, Sigma's default XC source.
+
+        Requires ``rhog_flag`` and ``use_vxcg``, else ``ValueError``.
+        """
+        if not self._rhog_flag:
+            msg = (
+                f"vxc_fname: pw2bgw only writes an XC potential with rhog_flag=True, but "
+                f"this flow has {self._flag_state}. Rebuild it with rhog_flag=True."
+            )
+            raise ValueError(msg)
+        if not self._use_vxcg:
+            msg = (
+                f"vxc_fname: this flow ({self._flag_state}) writes the vxc.dat matrix "
+                f"elements, not the G-space VXC. Read vxc_dat_fname instead, or rebuild "
+                f"with use_vxcg=True."
+            )
+            raise ValueError(msg)
         return self.pw2bgwtask.vxc_fname
 
     @property
     def vxc_dat_fname(self) -> str:
-        """Path to the vxc.dat matrix elements (only if rhog_flag and not use_vxcg)."""
+        """The ``vxc.dat`` matrix elements, the legacy XC path.
+
+        Requires ``rhog_flag`` and ``use_vxcg=False``, else ``ValueError``.
+        """
+        if not self._rhog_flag:
+            msg = (
+                f"vxc_dat_fname: pw2bgw only writes an XC potential with rhog_flag=True, "
+                f"but this flow has {self._flag_state}. Rebuild it with rhog_flag=True."
+            )
+            raise ValueError(msg)
+        if self._use_vxcg:
+            msg = (
+                f"vxc_dat_fname: this flow ({self._flag_state}) writes the G-space VXC, "
+                f"not the vxc.dat matrix elements. Read vxc_fname instead (preferred: it "
+                f"does not cap Sigma's QP band range), or rebuild with use_vxcg=False."
+            )
+            raise ValueError(msg)
         return self.pw2bgwtask.vxc_dat_fname

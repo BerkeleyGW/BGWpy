@@ -140,10 +140,7 @@ class SigmaTask(BGWTask):
         # WFN_inner.h5 (not WFN_inner) and requires the use_wfn_hdf5 keyword. Detect
         # from the .h5 suffix so callers only pass a filename; the link destination is
         # set to match in the wfn_co_fname setter.
-        if (
-            str(kwargs["wfn_co_fname"]).endswith(".h5")
-            and "use_wfn_hdf5" not in extra_lines
-        ):
+        if str(kwargs["wfn_co_fname"]).endswith(".h5") and "use_wfn_hdf5" not in extra_lines:
             extra_lines.append("use_wfn_hdf5")
 
         # G-space VXC (vxc_fname) instead of the vxc.dat matrix elements: Sigma must
@@ -274,9 +271,7 @@ class SigmaTask(BGWTask):
         value_str = str(value)
         self._wfn_co_fname = value_str
         # BerkeleyGW reads WFN_inner.h5 (not WFN_inner) when the WFN is HDF5.
-        self.update_link(
-            value_str, "WFN_inner.h5" if value_str.endswith(".h5") else "WFN_inner"
-        )
+        self.update_link(value_str, "WFN_inner.h5" if value_str.endswith(".h5") else "WFN_inner")
 
     @property
     def rho_fname(self) -> str:

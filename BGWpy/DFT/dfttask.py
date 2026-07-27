@@ -185,7 +185,7 @@ class DFTTask(MPITask):
             pseudo_path = (
                 (pseudo_dir / pseudo)
                 if pseudo_dir.is_absolute()
-                else (Path(self.dirname) / pseudo_dir / pseudo)
+                else Path(os.path.normpath(Path(self.dirname) / pseudo_dir / pseudo))
             )
             if not pseudo_path.exists():
                 warnings.warn(f"Pseudopotential not found:\n{pseudo_path}", stacklevel=2)

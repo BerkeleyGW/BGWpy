@@ -137,6 +137,7 @@ class TestQeParabandsFlow:
         """rhog_flag + use_vxcg (default): pw2bgw is told to write the G-space VXC."""
         flow = self._make_flow(tmp_path, rhog_flag=True)
         assert flow.vxc_fname.endswith("/VXC")
+        assert flow.rho_fname.endswith("/rho.real")
         assert flow.pw2bgwtask.input["vxcg_flag"] is True
         assert flow.pw2bgwtask.input["vxc_flag"] is False
 
@@ -147,19 +148,38 @@ class TestQeParabandsFlow:
         assert flow.pw2bgwtask.input["vxc_flag"] is True
         assert flow.pw2bgwtask.input["vxcg_flag"] is False
 
-    def test_fnames_unguarded_without_rhog(self, tmp_path):
-        """Without rhog_flag nothing XC-ish is written, but the paths still resolve.
+    def test_wrong_xc_accessor_points_at_the_other_one(self, tmp_path):
+        """With rhog_flag set, the unused XC accessor names the one that was produced."""
+        vxcg = self._make_flow(tmp_path / "a", rhog_flag=True)
+        with pytest.raises(ValueError, match="Read vxc_fname instead"):
+            _ = vxcg.vxc_dat_fname
 
-        Deliberate: these mirror the ``*_fname`` properties on ``Qe2BgwTask`` (and
-        ``Abi2BgwTask`` / ``AbinitBgwFlow``), which name the file a task *would* write
-        without checking the flags that decide whether it does. Callers must only read
-        these off a flow built with the matching flags.
-        """
+        vxcdat = self._make_flow(tmp_path / "b", rhog_flag=True, use_vxcg=False)
+        with pytest.raises(ValueError, match="Read vxc_dat_fname instead"):
+            _ = vxcdat.vxc_fname
+
+    def test_all_xc_fnames_raise_without_rhog(self, tmp_path):
+        """Without rhog_flag pw2bgw writes no density or XC potential, so all three
+        raise -- and say to rebuild, since no other accessor would help either."""
         flow = self._make_flow(tmp_path)  # rhog_flag=False
-        assert flow.rho_fname
-        assert flow.vxc_fname
-        assert flow.vxc_dat_fname
-        assert not flow.pw2bgwtask.input.get("rhog_flag")
+        for attr in ("rho_fname", "vxc_fname", "vxc_dat_fname"):
+            with pytest.raises(ValueError, match="rhog_flag=True"):
+                getattr(flow, attr)
+        # the WFN itself is unconditional
+        assert flow.wfn_fname.endswith("parabands/WFN.h5")
+
+    def test_flags_are_exposed_read_only(self, tmp_path):
+        """Callers can branch on the flags instead of catching; assigning them cannot
+        desync the guards from the pw2bgw input, which was written at construction."""
+        flow = self._make_flow(tmp_path, rhog_flag=True)
+        assert flow.rhog_flag is True
+        assert flow.use_vxcg is True
+        assert self._make_flow(tmp_path / "c").rhog_flag is False
+
+        with pytest.raises(AttributeError):
+            flow.rhog_flag = False
+        with pytest.raises(AttributeError):
+            flow.use_vxcg = False
 
     def test_pseudobands_requires_nbnd_cond_prot(self, tmp_path):
         with pytest.raises(ValueError, match="nbnd_cond_prot"):
