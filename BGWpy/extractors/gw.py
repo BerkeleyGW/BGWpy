@@ -6,7 +6,6 @@ the sigma.x program in BerkeleyGW.
 
 from __future__ import annotations
 
-import pickle
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, TypedDict
 
@@ -18,10 +17,8 @@ if TYPE_CHECKING:
     from numpy.typing import NDArray
 
 __all__ = [
-    "MultipleGWResult",
     "SigmaBlockResult",
     "SigmaResult",
-    "extract_multiple_GW_results",
     "parse_sigma_output",
 ]
 
@@ -117,24 +114,6 @@ class SigmaResult(TypedDict):
     Eqp0: NDArray[np.float64]
     Eqp1: NDArray[np.float64]
     Znk: NDArray[np.float64]
-
-
-class MultipleGWResult(TypedDict):
-    """Result dictionary from extract_multiple_GW_results.
-
-    Attributes
-    ----------
-    ndata : int
-        Number of directories processed.
-    variables : list[dict[str, Any]]
-        List of variable dictionaries loaded from variables.pkl files.
-    results : list[SigmaResult]
-        List of parsed sigma results from each directory.
-    """
-
-    ndata: int
-    variables: list[dict[str, Any]]
-    results: list[SigmaResult]
 
 
 def parse_sigma_output(f: str | Path) -> SigmaResult:
@@ -397,51 +376,3 @@ def parse_sigma_output_block(s: str) -> SigmaBlockResult:
             results[key].append(typ(token))
 
     return results  # type: ignore[return-value]
-
-
-def extract_multiple_GW_results(dirnames: list[str | Path]) -> MultipleGWResult:
-    """Extract GW results from a list of directories.
-
-    Parameters
-    ----------
-    dirnames : list[str | Path]
-        List of directory paths containing sigma.out and variables.pkl files.
-
-    Returns
-    -------
-    MultipleGWResult
-        Dictionary containing:
-        - ndata : int
-            Number of directories processed.
-        - variables : list[dict[str, Any]]
-            List of variable dictionaries from each directory.
-        - results : list[SigmaResult]
-            List of parsed sigma results from each directory.
-
-    Notes
-    -----
-    This function deserializes ``variables.pkl`` using :mod:`pickle`.
-    Pickle data is not secure against untrusted input and can execute
-    arbitrary code during loading. Only use this function with files from
-    trusted sources.
-    """
-    data: dict[str, Any] = {}
-    data["variables"] = []
-    data["results"] = []
-    data["ndata"] = len(dirnames)
-
-    for dname in dirnames:
-        dpath = Path(dname)
-        try:
-            variables_bytes = (dpath / "variables.pkl").read_bytes()
-            variables: dict[str, Any] = pickle.loads(variables_bytes)
-            sigma_text = (dpath / "sigma.out").read_text()
-            out = parse_sigma_output(sigma_text)
-        except OSError as exc:
-            msg = f"Failed to read files from directory {dname!r}: {exc}"
-            raise OSError(msg) from exc
-
-        data["variables"].append(variables)
-        data["results"].append(out)
-
-    return data  # type: ignore[return-value]

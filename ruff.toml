@@ -81,7 +81,6 @@ ignore = [
 "**/flows/bseflow.py" = ["PLC0415"]  # lazy imports to avoid circular dependencies
 "**/flows/gwflow.py" = ["PLC0415", "PLR0912", "PLR0915"]  # lazy imports, complex flow logic
 "**/flows/vmtxelflow.py" = ["PLC0415"]  # lazy imports to avoid circular dependencies
-"**/extractors/gw.py" = ["N802"]  # extract_multiple_GW_results uses uppercase for GW abbreviation
 "**/Wannier90/wannier90.py" = ["PLR0912"]  # complex string generation logic
 "**/core/runscript.py" = ["PLR0912"]  # complex initialization logic
 "**/core/task.py" = ["ARG002", "PTH100"]  # kwargs needed for API compatibility; abspath intentional — resolve() would follow symlinks and break relative path calculation

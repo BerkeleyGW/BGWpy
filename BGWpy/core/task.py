@@ -60,8 +60,6 @@ class Task:
         Main directory from which the task is executed.
     runscript : RunScript
         The execution script for this task.
-    variables : dict[str, Any]
-        Stored initialization variables (if store_variables=True).
     """
 
     _TASK_NAME: str = "Task"
@@ -70,7 +68,6 @@ class Task:
         self,
         dirname: str | Path = "./",
         runscript_fname: str = "run.sh",
-        store_variables: bool = False,
         **kwargs: Any,
     ) -> None:
         """Initialize a task.
@@ -81,16 +78,12 @@ class Task:
             Main directory from which the scripts are executed.
         runscript_fname : str, default="run.sh"
             Name of the main execution script.
-        store_variables : bool, default=False
-            Write all the initialization variables in a pkl file
-            at writing time.
         **kwargs
-            Additional keyword arguments to store (if store_variables=True).
+            Additional keyword arguments, consumed by subclasses.
         """
         self.dirname = str(dirname)
         self.runscript = RunScript()
         self.runscript.fname = runscript_fname
-        self.variables: dict[str, Any] = kwargs if store_variables else {}
 
     @property
     def runscript_fname(self) -> str:
@@ -137,8 +130,7 @@ class Task:
     def write(self) -> None:
         """Write the task to disk.
 
-        Creates the task directory, writes the runscript, and saves
-        variables if store_variables was enabled.
+        Creates the task directory and writes the runscript.
         """
         ensure_directory(self.dirname)
 

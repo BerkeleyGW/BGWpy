@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import pickle
 from pathlib import Path
 
 from BGWpy.core import Task
@@ -20,17 +19,6 @@ class TestBasicTask(TestTask):
         task.write()
         assert Path(task.dirname).exists()
         assert (Path(task.dirname) / task.runscript.fname).exists()
-
-    def test_variable_storage(self):
-        """Test storage of keyword arguments."""
-        variables = {"a": 1, "b": 2, "c": 3}
-        task = self.get_task(store_variables=True, **variables)
-        assert task.variables == variables
-        task.write()
-        fname = Path(task.dirname) / "variables.pkl"
-        with open(fname, "rb") as f:
-            read_variables = pickle.load(f)
-        assert read_variables == variables
 
     def test_run(self):
         """Test Runscript run function."""
