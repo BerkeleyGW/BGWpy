@@ -127,7 +127,10 @@ def extract_inteqp_eqp(fname: str | Path) -> InteqpResult:
         - nband : int
             Number of bands.
         - kpts : NDArray[np.float64], shape (nkpt, 3)
-            K-points in cartesian coordinates.
+            K-points in crystal coordinates. Note this differs from
+            :func:`extract_inteqp_bandstructure`, which returns cartesian ones:
+            an eqp.dat header carries the k-point exactly as BerkeleyGW stores
+            it, whereas bandstructure.dat is deliberately converted for plotting.
         - ib_min : int
             Index of minimum band (starting at 1 for the first occupied band).
         - ib_max : int

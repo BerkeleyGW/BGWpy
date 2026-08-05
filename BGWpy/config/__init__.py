@@ -53,7 +53,7 @@ if Path(config_file).exists():
                     default_mpi[key] = value  # type: ignore[assignment]
 
     sk = "runscript"
-    keys = ("first_line", "header", "footer")
+    keys = ("first_line", "header", "footer", "fix_cpu_affinity")
     if sk in config:
         for key in keys:
             if key in config[sk]:
@@ -62,6 +62,8 @@ if Path(config_file).exists():
                 if key in ("header", "footer"):
                     # Split on newlines to convert to list
                     default_runscript[key] = value.split("\n") if value else []  # type: ignore[assignment]
+                elif key == "fix_cpu_affinity":
+                    default_runscript[key] = config[sk].getboolean(key)  # type: ignore[typeddict-item]
                 else:
                     default_runscript[key] = value  # type: ignore[assignment]
 

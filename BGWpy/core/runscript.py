@@ -7,8 +7,10 @@ file linking, and command execution.
 
 from __future__ import annotations
 
+import os
 import shlex
 import subprocess
+import warnings
 from typing import TYPE_CHECKING, Any
 
 from BGWpy.config import default_runscript
@@ -20,6 +22,47 @@ if TYPE_CHECKING:
     from pathlib import Path
 
 __all__ = ["RunScript"]
+
+# A flow runs many tasks, so warn about a repaired affinity mask only once.
+_warned_cpu_affinity = False
+
+
+def _widen_cpu_affinity() -> set[int] | None:
+    """Lift a single-CPU affinity mask, returning the previous one to restore.
+
+    A child process inherits the caller's CPU affinity, so a driver pinned to
+    one CPU would confine every MPI rank it launches to that CPU. Returns None
+    when there is nothing to do.
+    """
+    if not default_runscript.get("fix_cpu_affinity", True):
+        return None
+    if not hasattr(os, "sched_getaffinity"):
+        return None  # Not Linux; no inheritable affinity mask to repair.
+
+    previous = os.sched_getaffinity(0)
+    ncpu = os.cpu_count()
+    if len(previous) > 1 or not ncpu or ncpu <= 1:
+        return None
+
+    try:
+        # The kernel intersects this with the cgroup's allowed set, so it
+        # restores the allocation rather than escaping it.
+        os.sched_setaffinity(0, range(ncpu))
+    except OSError:
+        return None
+
+    global _warned_cpu_affinity
+    if not _warned_cpu_affinity:
+        _warned_cpu_affinity = True
+        warnings.warn(
+            "This process was pinned to a single CPU, which every launched MPI "
+            "rank would have inherited; widening the mask for the job. (The usual "
+            "cause is OMP_PROC_BIND being set in the environment, which makes a "
+            "threaded BLAS bind the process when numpy is imported. Set "
+            "OMP_PROC_BIND=false for the Python process to avoid this.)",
+            stacklevel=3,
+        )
+    return previous
 
 
 class RunScript(Writable):
@@ -477,11 +520,16 @@ class RunScript(Writable):
             msg = "Cannot run script: no filename set"
             raise ValueError(msg)
 
-        result = subprocess.run(
-            ["bash", str(self.fname)],
-            capture_output=False,
-            check=False,
-        )
+        previous_affinity = _widen_cpu_affinity()
+        try:
+            result = subprocess.run(
+                ["bash", str(self.fname)],
+                capture_output=False,
+                check=False,
+            )
+        finally:
+            if previous_affinity is not None:
+                os.sched_setaffinity(0, previous_affinity)
         return result.returncode
 
     def __repr__(self) -> str:

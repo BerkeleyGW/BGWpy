@@ -27,6 +27,7 @@ class RunscriptConfig(TypedDict, total=False):
     first_line: str
     header: list[str]
     footer: list[str]
+    fix_cpu_affinity: bool
 
 
 class FlavorsConfig(TypedDict, total=False):
@@ -53,6 +54,11 @@ default_runscript: RunscriptConfig = {
     "first_line": "#!/bin/bash",
     "header": [],
     "footer": [],
+    # Widen a single-CPU affinity mask before launching a run script, so that
+    # MPI ranks do not inherit it. Wanted when OMP_PROC_BIND is true, since that
+    # pins the calling process as soon as numpy loads a threaded BLAS. Set False
+    # to keep a deliberate pinning.
+    "fix_cpu_affinity": True,
 }
 
 flavors: FlavorsConfig = {

@@ -33,6 +33,7 @@ def get_config() -> configparser.ConfigParser:
         "footer": """
 # Lines after execution
 """,
+        "fix_cpu_affinity": True,
     }
 
     return config
