@@ -58,8 +58,9 @@ class BGWTask(MPITask, IOTask):
     # GA: This is still not enough, because bsemat.h5 is split in two, when not using hdf5.
     @staticmethod
     def h5_wrap(f):
-        def g(self, fname: str | Path, *args, **kwargs):
-            new_fname = self.get_fname_with_auto_h5(fname)
+        def g(self, fname: str | Path | None, *args, **kwargs):
+            # A missing name must stay missing: converting it would yield 'None.h5'.
+            new_fname = fname if not fname else self.get_fname_with_auto_h5(fname)
             return f(self, new_fname, *args, **kwargs)
 
         return g

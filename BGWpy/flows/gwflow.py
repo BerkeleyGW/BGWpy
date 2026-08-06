@@ -75,6 +75,10 @@ class GWFlow(Workflow):
             Any other lines that should appear in the sigma input file.
         sigma_extra_variables : dict, optional
             Any other variables that should be declared in the sigma input file.
+        use_kih : bool (False), optional
+            Quantum Espresso only. Have pw2bgw write the kih.dat matrix elements
+            instead of vxc.dat, and Sigma subtract KIH instead of Vxc. Valid for
+            any functional; required for meta-GGA and hybrid starting points.
 
         """
         super().__init__(**kwargs)
@@ -96,6 +100,8 @@ class GWFlow(Workflow):
             raise ValueError(msg)
 
         self.dft_flavor = check_dft_flavor(kwargs.get("dft_flavor", flavors["dft_flavor"]))
+
+        self.use_kih: bool = kwargs.pop("use_kih", False)
 
         # ==== DFT calculations ==== #
 
@@ -218,6 +224,7 @@ class GWFlow(Workflow):
             kshift=self.kshift,
             nbnd=self.nbnd,
             rhog_flag=True,
+            kih_flag=self.use_kih,
             **kwargs,
         )
 
@@ -240,6 +247,7 @@ class GWFlow(Workflow):
                 ngkpt=self.ngkpt,
                 nbnd=self.nbnd,
                 rhog_flag=True,
+                kih_flag=self.use_kih,
                 **kwargs,
             )
 
@@ -248,13 +256,18 @@ class GWFlow(Workflow):
         else:
             self.wfntask_ush = self.wfntask_ksh
 
-        return {
+        fnames = {
             "wfn_fname": self.wfntask_ksh.wfn_fname,
             "wfnq_fname": self.wfntask_qsh.wfn_fname,
             "wfn_co_fname": self.wfntask_ush.wfn_fname,
             "rho_fname": self.wfntask_ush.rho_fname,
-            "vxc_dat_fname": self.wfntask_ush.vxc_dat_fname,
         }
+        # pw2bgw writes no vxc.dat under use_kih, so Sigma gets the kih.dat name.
+        if self.use_kih:
+            fnames["kih_dat_fname"] = self.wfntask_ush.kih_dat_fname
+        else:
+            fnames["vxc_dat_fname"] = self.wfntask_ush.vxc_dat_fname
+        return fnames
 
     def make_dft_tasks_abinit(self, **kwargs: Any) -> dict[str, str]:
         """
@@ -262,6 +275,10 @@ class GWFlow(Workflow):
         Return a dictionary of file names.
         """
         from BGWpy.Abinit import AbinitBgwFlow, AbinitScfTask
+
+        if self.use_kih:
+            msg = "use_kih is only available with the Quantum Espresso flavor (pw2bgw)."
+            raise ValueError(msg)
 
         # Either charge density is provided or an SCF task is initialized.
         if "charge_density_fname" in kwargs:

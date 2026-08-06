@@ -77,3 +77,13 @@ class WfnBgwFlow(DFTFlow, ABC):
         raise NotImplementedError if they use vxc_fname instead.
         """
         raise NotImplementedError
+
+    @property
+    def kih_dat_fname(self) -> str:
+        """str: The KIH matrix elements file name for BerkeleyGW.
+
+        Only Quantum Espresso's pw2bgw writes this file; other codes leave
+        this property raising NotImplementedError.
+        """
+        msg = f"{type(self).__name__} does not produce a kih.dat file."
+        raise NotImplementedError(msg)

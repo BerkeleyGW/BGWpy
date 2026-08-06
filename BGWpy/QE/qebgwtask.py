@@ -47,6 +47,8 @@ class Qe2BgwInput(Namelist):
             "vxc_file",
             "vxcg_flag",
             "vxcg_file",
+            "kih_flag",
+            "kih_file",
             "vxc_offdiag_nmin",
             "vxc_offdiag_nmax",
             "vxc_diag_nmin",
@@ -167,8 +169,24 @@ class Qe2BgwTask(QeTask):
             Name of the output density file.
             If provided, will activate the output of the density and vxc.
         nbnd : int, optional
-            Number of bands for which vxc should be computed.
-            Only if output of the density and vxc is active.
+            Number of bands for which vxc / kih should be computed.
+            Only if output of an XC file is active.
+        vxc_flag : bool, optional
+            If True, output the vxc.dat matrix elements. Defaults to True when
+            the density is written and neither vxcg_flag nor kih_flag is set,
+            else False. Pass it explicitly to write vxc.dat alongside another
+            XC file.
+        vxcg_flag : bool (False), optional
+            If True, output the XC potential in G-space (VXC). Unlike vxc.dat,
+            it does not tie Sigma's QP band range to this calculation.
+        kih_flag : bool (False), optional
+            If True, output the kih.dat matrix elements of the KIH energy
+            (Kinetic + Ionic + Hartree). Valid for any functional, and the only
+            option pw2bgw accepts for meta-GGA and hybrid starting points.
+            Requires nbnd (or an explicit vxc_diag_nmax), which caps Sigma's QP
+            band range as vxc.dat does.
+        kih_dat_fname : str ('kih.dat'), optional
+            Name of the output kih.dat file. Providing it implies kih_flag.
         vscg_flag : bool (False), optional
             If True, output the self-consistent potential in G-space (VSC), an
             input required by BerkeleyGW's ParaBands.
@@ -190,6 +208,8 @@ class Qe2BgwTask(QeTask):
             Path to the density file produced.
         vxc_dat_fname : str
             Path to the vxc.dat file produced.
+        kih_dat_fname : str
+            Path to the kih.dat file produced.
         """
 
         kwargs.setdefault("runscript_fname", "pw2bgw.run.sh")
@@ -253,21 +273,56 @@ class Qe2BgwTask(QeTask):
             defaults["kshift"] = self.kshift if self.kshift is not None else 3 * [0.0]
             defaults["qshift"] = self.qshift if self.qshift is not None else 3 * [0.0]
 
-        rho_defaults = {
-            "rhog_flag": True,
-            "rhog_file": "rho.real",
-            "vxcg_flag": False,
-            "vxcg_file": "vxc.real",
-            "vxc_flag": True,
-            "vxc_file": "vxc.dat",
-            "vxc_diag_nmin": 1,
-            "vxc_diag_nmax": kwargs.get("nbnd", 1),
-            "vxc_offdiag_nmin": 0,
-            "vxc_offdiag_nmax": 0,
-        }
+        # pw2bgw's XC flags are independent namelist switches, so they are resolved
+        # separately from rhog_flag; only vxc_flag is defaulted from it, so callers
+        # that have always got a vxc.dat alongside the density keep getting one.
+        rhog_flag = bool(kwargs.get("rho_fname") or kwargs.get("rhog_flag"))
+        kih_flag = bool(kwargs.get("kih_flag", kwargs.get("kih_dat_fname")))
+        # Sigma reads exactly one XC file, so asking for VXC or kih.dat drops the
+        # vxc.dat that rhog_flag would otherwise imply -- also what pw2bgw requires
+        # under a hybrid, where it errors out unless every vxc*_flag is off.
+        vxcg_flag = bool(kwargs.get("vxcg_flag", False))
+        vxc_flag = bool(kwargs.get("vxc_flag", rhog_flag and not (kih_flag or vxcg_flag)))
 
-        if kwargs.get("rho_fname") or kwargs.get("rhog_flag"):
-            defaults.update(rho_defaults)
+        # vxc_diag_nmin/nmax bound the band range of kih.dat too: pw2bgw aliases
+        # kih_diag_nmin/nmax onto them. Without nbnd the fallback below is a single
+        # band, giving a kih.dat that Sigma reads past the end of, so refuse instead.
+        # The vxc.dat path keeps its old behaviour, one-band file and all.
+        nbnd = kwargs.get("nbnd")
+        if kih_flag and not (nbnd or kwargs.get("vxc_diag_nmax")):
+            msg = (
+                "kih_flag requires a band range: pass nbnd, or set vxc_diag_nmax "
+                "explicitly (pw2bgw aliases kih_diag_nmax onto it). Otherwise kih.dat "
+                "covers a single band and Sigma reads past the end of it."
+            )
+            raise ValueError(msg)
+
+        if rhog_flag:
+            defaults["rhog_flag"] = True
+            defaults["rhog_file"] = "rho.real"
+            # Both vxc keys have always been written alongside the density, whatever
+            # their value; keep doing that so existing input files are unchanged.
+            defaults["vxc_flag"] = vxc_flag
+            defaults["vxc_file"] = "vxc.dat"
+            defaults["vxcg_flag"] = vxcg_flag
+            defaults["vxcg_file"] = "vxc.real"
+        else:
+            if vxc_flag:
+                defaults["vxc_flag"] = True
+                defaults["vxc_file"] = "vxc.dat"
+            if vxcg_flag:
+                defaults["vxcg_flag"] = True
+                defaults["vxcg_file"] = "vxc.real"
+
+        if kih_flag:
+            defaults["kih_flag"] = True
+            defaults["kih_file"] = "kih.dat"
+
+        if vxc_flag or vxcg_flag or kih_flag:
+            defaults["vxc_diag_nmin"] = 1
+            defaults["vxc_diag_nmax"] = nbnd if nbnd else 1
+            defaults["vxc_offdiag_nmin"] = 0
+            defaults["vxc_offdiag_nmax"] = 0
 
         # VSC (self-consistent potential) and VKB (Kleinman-Bylander projectors),
         # in G-space -- the extra inputs BerkeleyGW's ParaBands needs. Emitted only
@@ -300,6 +355,7 @@ class Qe2BgwTask(QeTask):
             "rho_fname",
             "vxc_dat_fname",
             "vxc_fname",
+            "kih_dat_fname",
             "vsc_fname",
             "vkb_fname",
         ):
@@ -350,7 +406,20 @@ class Qe2BgwTask(QeTask):
         self._vxc_dat_fname = value_str
         self.input["vxc_file"] = value_str
 
-    # Default matches the vxcg_file default in the rho_defaults block above; the
+    _kih_dat_fname = "kih.dat"
+
+    @property
+    def kih_dat_fname(self) -> str:
+        """Path to the kih.dat file (KIH matrix elements; only if kih_flag)."""
+        return str(Path(self.dirname) / self._kih_dat_fname)
+
+    @kih_dat_fname.setter
+    def kih_dat_fname(self, value: str | Path) -> None:
+        value_str = str(value)
+        self._kih_dat_fname = value_str
+        self.input["kih_file"] = value_str
+
+    # Default matches the vxcg_file default in the XC block above; the
     # setter (and the vxc_fname forward in __init__) keep this in sync with the
     # input file's vxcg_file when a caller overrides it.
     _vxc_fname = "vxc.real"

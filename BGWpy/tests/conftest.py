@@ -206,10 +206,8 @@ def qe_pw2bgwtask_ksh(session_tmpdir, qe_wfntask_ksh, qe_common_kwargs):
         qshift=[0.0, 0.0, 0.0],
         wfn_fname="wfn.cplx",
         rho_fname="rho.real",
-        vxc_fname="vxc.dat",
         wfng_flag=True,
         rhog_flag=True,
-        vxcg_flag=True,
         nproc=NPROC_QE,  # pw2bgw can crash if given too many processes
     )
     task = Qe2BgwTask(**kwargs)
@@ -286,10 +284,8 @@ def qe_pw2bgwtask_ush(session_tmpdir, qe_wfntask_ush, qe_common_kwargs):
         qshift=[0.0, 0.0, 0.0],
         wfn_fname="wfn_co.cplx",
         rho_fname="rho.real",
-        vxc_fname="vxc.dat",
         wfng_flag=True,
         rhog_flag=True,
-        vxcg_flag=True,
         vxc_diag_nmax=8,
         nproc=NPROC_QE,
     )

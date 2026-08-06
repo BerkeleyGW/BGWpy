@@ -6,6 +6,7 @@ using BerkeleyGW's sigma.x executable.
 
 from __future__ import annotations
 
+import warnings
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
@@ -52,6 +53,8 @@ class SigmaTask(BGWTask):
         Path to the vxc.dat file.
     vxc_fname : str
         Path to the VXC file.
+    kih_dat_fname : str
+        Path to the kih.dat file.
     eps0mat_fname : str
         Path to the eps0mat file.
     epsmat_fname : str
@@ -68,6 +71,7 @@ class SigmaTask(BGWTask):
     _rho_fname: str
     _vxc_dat_fname: str
     _vxc_fname: str
+    _kih_dat_fname: str
     _eps0mat_fname: str | None
     _epsmat_fname: str | None
     _ngkpt: NDArray[np.float64] | None
@@ -109,6 +113,11 @@ class SigmaTask(BGWTask):
             Path to the vxc file produced by pw2bgw.
         vxc_fname : str, optional
             Path to the VXC file (alternative to vxc_dat_fname).
+        kih_dat_fname : str, optional
+            Path to the kih.dat file produced by pw2bgw (alternative to both
+            vxc_dat_fname and vxc_fname; valid for any functional, and required
+            for meta-GGA and hybrid starting points). Adds the use_kihdat and
+            dont_use_vxcdat keywords.
         eps0mat_fname : str, optional
             Path to the eps0mat file produced by epsilon.
         epsmat_fname : str, optional
@@ -143,6 +152,22 @@ class SigmaTask(BGWTask):
         if str(kwargs["wfn_co_fname"]).endswith(".h5") and "use_wfn_hdf5" not in extra_lines:
             extra_lines.append("use_wfn_hdf5")
 
+        # Sigma reads exactly one XC source, and dies if use_vxcdat and use_kihdat are
+        # both on. The older vxc_dat/vxc pair keeps its long-standing precedence.
+        if "kih_dat_fname" in kwargs and ("vxc_dat_fname" in kwargs or "vxc_fname" in kwargs):
+            msg = (
+                "kih_dat_fname is mutually exclusive with vxc_dat_fname / vxc_fname: "
+                "Sigma cannot read kih.dat and a Vxc source in the same run."
+            )
+            raise ValueError(msg)
+        if "vxc_dat_fname" in kwargs and "vxc_fname" in kwargs:
+            warnings.warn(
+                "Both vxc_dat_fname and vxc_fname given to SigmaTask; using "
+                "vxc_dat_fname and ignoring vxc_fname.",
+                UserWarning,
+                stacklevel=2,
+            )
+
         # G-space VXC (vxc_fname) instead of the vxc.dat matrix elements: Sigma must
         # be told to build <nk|Vxc|nk> from the VXC file rather than read vxc.dat,
         # via the dont_use_vxcdat keyword. Auto-add it so callers can't supply VXC
@@ -155,6 +180,13 @@ class SigmaTask(BGWTask):
             and "dont_use_vxcdat" not in extra_lines
         ):
             extra_lines.append("dont_use_vxcdat")
+
+        # kih.dat needs both keywords: use_kihdat switches Sigma to subtracting
+        # E_DFT - KIH, and dont_use_vxcdat because it dies if use_vxcdat is left on.
+        if "kih_dat_fname" in kwargs:
+            for keyword in ("dont_use_vxcdat", "use_kihdat"):
+                if keyword not in extra_lines:
+                    extra_lines.append(keyword)
 
         # Use specified kpoints or compute them from grid.
         kpt_aliases: tuple[str, ...] = (
@@ -230,8 +262,13 @@ class SigmaTask(BGWTask):
             self.vxc_dat_fname = kwargs["vxc_dat_fname"]
         elif "vxc_fname" in kwargs:
             self.vxc_fname = kwargs["vxc_fname"]
+        elif "kih_dat_fname" in kwargs:
+            self.kih_dat_fname = kwargs["kih_dat_fname"]
         else:
-            msg = "Either 'vxc_dat_fname' or 'vxc_fname' must be provided to SigmaTask."
+            msg = (
+                "One of 'vxc_dat_fname', 'vxc_fname' or 'kih_dat_fname' "
+                "must be provided to SigmaTask."
+            )
             raise ValueError(msg)
 
         # It might be useful to issue a warning if those
@@ -308,6 +345,19 @@ class SigmaTask(BGWTask):
         value_str = str(value)
         self._vxc_fname = value_str
         self.update_link(value_str, "VXC")
+
+    @property
+    def kih_dat_fname(self) -> str:
+        """Get path to the kih.dat file."""
+        return self._kih_dat_fname
+
+    @kih_dat_fname.setter
+    def kih_dat_fname(self, value: str | Path) -> None:
+        """Set path to the kih.dat file and update symlink."""
+        value_str = str(value)
+        self._kih_dat_fname = value_str
+        # Sigma opens the literal name 'kih.dat'.
+        self.update_link(value_str, "kih.dat")
 
     @property
     def eps0mat_fname(self) -> str | None:

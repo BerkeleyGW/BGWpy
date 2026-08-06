@@ -93,6 +93,9 @@ class QeBgwFlow(WfnBgwFlow):
 
         vxc_dat_fname : str
             Path to the vxc.dat file used by BerkeleyGW.
+
+        kih_dat_fname : str
+            Path to the kih.dat file used by BerkeleyGW, if kih_flag was set.
         """
 
         super().__init__(**kwargs)
@@ -134,3 +137,8 @@ class QeBgwFlow(WfnBgwFlow):
     def vxc_dat_fname(self) -> str:
         """The xc potential file name for BerkeleyGW."""
         return self.wfnbgwntask.vxc_dat_fname
+
+    @property
+    def kih_dat_fname(self) -> str:
+        """The KIH matrix elements file name for BerkeleyGW (only if kih_flag)."""
+        return self.wfnbgwntask.kih_dat_fname
