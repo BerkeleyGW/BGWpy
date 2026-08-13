@@ -1,8 +1,9 @@
-"""Unit tests for the HDF5 path of DegeneracyCheckTask (and read_wfn_h5_mnband).
+"""Unit tests for DegeneracyCheckTask parsing (and read_wfn_h5_mnband).
 
-These exercise pure Python/numpy logic against small synthetic ``WFN.h5`` files -- no
-BerkeleyGW executables. ``degeneracy_check.x`` cannot read HDF5, so
-:class:`~BGWpy.BGW.degeneracychecktask.DegeneracyCheckTask` reads the eigenvalue
+These exercise pure Python/numpy logic against small synthetic ``WFN.h5`` files and a
+captured ``degeneracy_check.out`` -- no BerkeleyGW executables. Stock
+``degeneracy_check.x`` is binary-only, so
+:class:`~BGWpy.BGW.degeneracychecktask.DegeneracyCheckTask` reads an HDF5 eigenvalue
 spectrum directly and reproduces the utility's rule: a band count ``n`` is allowed
 only if bands ``n`` and ``n+1`` are non-degenerate at *every* k-point and spin.
 """
@@ -74,6 +75,8 @@ class TestDegeneracyHDF5:
         assert res["allowed_bands"] == [1, 2, 3, 4, 5]
         assert res["allowed_valence_bands"] == [1, 2, 3]
         assert res["allowed_conduction_bands"] == [1, 2]
+        # Off a pseudobands WFN the summation and QP-window counts coincide.
+        assert res["allowed_qp_bands"] == res["allowed_bands"]
 
     def test_conduction_degeneracy_excludes_split_point(self, tmp_path):
         """A degenerate conduction pair removes only the count that splits it.
@@ -192,6 +195,99 @@ class TestDegeneracyHDF5:
         with pytest.raises(ValueError, match="pseudobands"):
             task.run()
 
+    def test_pseudobands_allowed_restricts_to_protection_window(self, tmp_path):
+        """allow_pseudobands confines the check to the protected bands 1..nb_fixed.
+
+        Bands above nb_fixed are stochastic, so they must not contribute a count even
+        when their (meaningless) spacings look non-degenerate: the conduction list
+        stops at nb_fixed - max(ifmax) - 1 rather than running to mnband.
+        """
+        # 3 valence + 3 protected conduction (nb_fixed=6), then 2 stochastic bands
+        # whose spacings would otherwise admit the counts 3 and 4.
+        el = [[[0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.9, 1.3]]]
+        path = write_wfn_h5(tmp_path / "WFN.h5", el, ifmax=[[3]], ifmin=[[1]])
+        with h5py.File(path, "a") as f:
+            f["parabands/pseudobands/is_on"] = np.int64(1)
+            f["parabands/pseudobands/nb_fixed"] = np.int64(6)
+
+        task = DegeneracyCheckTask(
+            dirname=str(tmp_path), wfn_fname="WFN.h5", allow_pseudobands=True
+        )
+        task.run()
+        res = task.parse_output()
+
+        assert res["allowed_conduction_bands"] == [1, 2]  # not [1, 2, 3, 4]
+        assert res["allowed_valence_bands"] == [1, 2, 3]  # valence is fully protected
+        assert res["allowed_qp_bands"] == [1, 2, 3, 4, 5]  # not [1, ..., 7]
+        # The window counts from band 1, so it spans the valence manifold too.
+        assert res["n_bands_protected"] == 6
+        assert res["n_bands"] == 8  # the file's mnband, what epsilon/sigma need
+        # Withheld: on a compressed file epsilon and sigma must use every band.
+        assert "allowed_bands" not in res
+
+    def test_qp_window_never_reaches_the_top_protected_band(self, tmp_path):
+        """The QP window stops one short of nb_fixed, whatever the spectrum does there.
+
+        Band nb_fixed pairs with the first stochastic band, so its degeneracy is
+        unknowable. Here bands 6 and 7 are in fact degenerate -- invisible to a check
+        confined to the window, which is exactly why the count 6 is never offered.
+        """
+        el = [[[0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.5, 1.3]]]
+        path = write_wfn_h5(tmp_path / "WFN.h5", el, ifmax=[[3]], ifmin=[[1]])
+        with h5py.File(path, "a") as f:
+            f["parabands/pseudobands/is_on"] = np.int64(1)
+            f["parabands/pseudobands/nb_fixed"] = np.int64(6)
+
+        task = DegeneracyCheckTask(
+            dirname=str(tmp_path), wfn_fname="WFN.h5", allow_pseudobands=True
+        )
+        task.run()
+        res = task.parse_output()
+
+        assert res["allowed_qp_bands"] == [1, 2, 3, 4, 5]
+        assert res["n_bands_protected"] not in res["allowed_qp_bands"]
+
+    @pytest.mark.parametrize("nb_fixed", [12, 2, 0, -1])
+    def test_out_of_range_protection_window_raises(self, tmp_path, nb_fixed):
+        """A window outside max(ifmax)..mnband is rejected, not silently applied.
+
+        Too large and the check would slide back over the stochastic bands; too small
+        and it would cut into the valence manifold. Neither can come from ParaBands,
+        but both used to pass as a bare IndexError or a plausible-looking answer.
+        """
+        el = [[[0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.9, 1.3]]]  # mnband=8, max(ifmax)=3
+        path = write_wfn_h5(tmp_path / "WFN.h5", el, ifmax=[[3]], ifmin=[[1]])
+        with h5py.File(path, "a") as f:
+            f["parabands/pseudobands/is_on"] = np.int64(1)
+            f["parabands/pseudobands/nb_fixed"] = np.int64(nb_fixed)
+
+        task = DegeneracyCheckTask(
+            dirname=str(tmp_path), wfn_fname="WFN.h5", allow_pseudobands=True
+        )
+        with pytest.raises(ValueError, match="protection window"):
+            task.run()
+
+    def test_pseudobands_allowed_without_nb_fixed_raises(self, tmp_path):
+        """Opting in still fails if ParaBands recorded no protection window."""
+        el = [[[0.0, 0.1, 0.2, 0.3, 0.4, 0.5]]]
+        path = write_wfn_h5(tmp_path / "WFN.h5", el, ifmax=[[3]], ifmin=[[1]])
+        with h5py.File(path, "a") as f:
+            f["parabands/pseudobands/is_on"] = np.int64(1)
+
+        task = DegeneracyCheckTask(
+            dirname=str(tmp_path), wfn_fname="WFN.h5", allow_pseudobands=True
+        )
+        with pytest.raises(ValueError, match="nb_fixed"):
+            task.run()
+
+    def test_allow_pseudobands_is_inert_on_a_normal_wfn(self, tmp_path):
+        """The flag only softens the pseudobands guard; it changes nothing else."""
+        el = [[[0.0, 0.1, 0.2, 0.3, 0.3, 0.5]]]
+        plain = degeneracy(tmp_path, el, ifmax=[[3]], ifmin=[[1]])
+        opted_in = degeneracy(tmp_path, el, ifmax=[[3]], ifmin=[[1]], allow_pseudobands=True)
+        assert opted_in == plain
+        assert "n_bands_protected" not in opted_in
+
     def test_empty_pseudobands_group_is_not_pseudobands(self, tmp_path):
         """ParaBands writes the group even with pseudobands off; that must not trip."""
         el = [[[0.0, 0.1, 0.2, 0.3, 0.4, 0.5]]]
@@ -208,3 +304,43 @@ class TestDegeneracyHDF5:
         el = [[[0.0, 0.1, 0.2, 0.3, 0.4, 0.5]]]
         path = write_wfn_h5(tmp_path / "WFN.h5", el, ifmax=[[3]], ifmin=[[1]])
         assert read_wfn_h5_mnband(path) == 6
+
+    def test_parse_binary_output(self, tmp_path):
+        """The binary path parses degeneracy_check.x output and carries both lists.
+
+        The trailing 'Note: cannot assess ...' lines hold band numbers but are not
+        bare integers, so they must not be picked up as allowed counts.
+        """
+        (tmp_path / "degeneracy_check.out").write_text(
+            "Reading eigenvalues from file WFN\n"
+            "Number of spins:               1\n"
+            "Number of bands:              10\n"
+            "Number of k-points:            2\n"
+            "\n"
+            "== Degeneracy-allowed numbers of bands (for epsilon and sigma) ==\n"
+            "           1\n"
+            "           4\n"
+            "Note: cannot assess whether or not highest band     10 is degenerate.\n"
+            "\n"
+            "== Degeneracy-allowed numbers of valence bands (for inteqp, kernel, and"
+            " absorption) ==\n"
+            "           1\n"
+            "           4\n"
+            "\n"
+            "== Degeneracy-allowed numbers of conduction bands (for inteqp, kernel, and"
+            " absorption) ==\n"
+            "           2\n"
+            "Note: cannot assess whether or not highest conduction band      6"
+            " is degenerate.\n"
+        )
+
+        res = DegeneracyCheckTask(dirname=str(tmp_path), wfn_fname="WFN").parse_output()
+
+        assert res["n_spins"] == 1
+        assert res["n_bands"] == 10
+        assert res["n_kpoints"] == 2
+        assert res["allowed_bands"] == [1, 4]
+        assert res["allowed_valence_bands"] == [1, 4]
+        assert res["allowed_conduction_bands"] == [2]
+        # A binary WFN is never a pseudobands WFN, so the two total lists agree.
+        assert res["allowed_qp_bands"] == [1, 4]
