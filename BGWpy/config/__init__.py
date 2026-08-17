@@ -74,7 +74,7 @@ else:
 
     warnings.warn(
         "Did not find user configuration file ~/.BGWpyrc. "
-        "Try running the script BGWpy_make_config_file.py",
+        "Try running 'python -m BGWpy' to create one.",
         stacklevel=2,
     )
     del warnings

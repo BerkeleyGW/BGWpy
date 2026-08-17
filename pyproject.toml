@@ -1,17 +1,18 @@
 [build-system]
-requires = ["setuptools>=61.0"]
+requires = ["setuptools>=77.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "BGWpy"
-version = "4.0.0"
+dynamic = ["version"]
 description = "A modern Python interface for BerkeleyGW workflows"
 readme = "README.md"
 requires-python = ">=3.10"
-license = { file = "LICENSE.txt" }
-authors = [{ name = "Gabriel Antonius", email = "gabriel.antonius@gmail.com" }]
+license = "BSD-3-Clause-LBNL"
+license-files = ["LICENSE.txt"]
+authors = [{ name = "Gabriel Antonius", email = "gabriel.antonius@uqtr.ca" }]
 maintainers = [
-  { name = "Gabriel Antonius", email = "gabriel.antonius@gmail.com" },
+  { name = "Gabriel Antonius", email = "gabriel.antonius@uqtr.ca" },
 ]
 keywords = [
   "BerkeleyGW",
@@ -25,7 +26,6 @@ keywords = [
 classifiers = [
   "Development Status :: 4 - Beta",
   "Intended Audience :: Science/Research",
-  "License :: OSI Approved :: BSD License",
   "Operating System :: OS Independent",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3.10",
@@ -65,12 +65,18 @@ Documentation = "https://github.com/BerkeleyGW/BGWpy"
 bgwpy-config = "BGWpy.scripts.BGWpy_make_config_file:main"
 
 [tool.setuptools]
-zip-safe = false
+# Keep the wheel to declared packages and package-data only. MANIFEST.in grafts
+# the test suite into the sdist, and include-package-data would drag it (and any
+# stale .pyc) back into the wheel.
+include-package-data = false
+
+[tool.setuptools.dynamic]
+version = { attr = "BGWpy.__version__" }
 
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["BGWpy*"]
-exclude = ["tests*", "docs*"]
+exclude = ["BGWpy.tests*", "BGWpy.core.tests*"]
 
 [tool.setuptools.package-data]
 BGWpy = ["data/structures/*", "data/pseudos/*", "py.typed"]

@@ -16,6 +16,10 @@ wheels/
 .ruff_cache
 *.pyc
 *.swp
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
 BGWpy.egg-info
 build
 build/*
@@ -30,6 +34,9 @@ doc/Examples/Abinit/[0-9]*
 doc/Examples/Abinit/*/[0-9]*
 doc/Tutorial/.ipynb*
 doc/Tutorial/Runs*
+
+# ... but the example reference outputs are committed
+!doc/Examples/*/Reference/[0-9]*
 
 # ctags
 tags

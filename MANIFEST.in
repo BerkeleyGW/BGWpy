@@ -1,9 +1,10 @@
 include *.md
-include *.rst
 include *.txt
 include INSTALL
 graft config
 graft doc
 prune doc/Tutorial/Runs
 prune doc/Examples/*/[0-9]*
-exclude BGWpy/tags
+graft BGWpy/tests
+graft BGWpy/core/tests
+global-exclude *.py[cod]

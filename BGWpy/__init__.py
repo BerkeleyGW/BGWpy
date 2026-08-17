@@ -23,7 +23,7 @@ Quick imports:
 
 __version__ = "4.0.0"
 __author__ = "Gabriel Antonius"
-__license__ = "BSD-3-Clause"
+__license__ = "BSD-3-Clause-LBNL"
 
 # Core modules
 # External dependencies
