@@ -3,7 +3,7 @@ include *.rst
 include *.txt
 include INSTALL
 graft config
-graft Documentation
-prune Documentation/Tutorial/Runs
-prune Documentation/Examples/*/[0-9]*
+graft doc
+prune doc/Tutorial/Runs
+prune doc/Examples/*/[0-9]*
 exclude BGWpy/tags
